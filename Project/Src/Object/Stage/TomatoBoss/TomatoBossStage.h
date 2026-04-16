@@ -4,7 +4,7 @@ class TomatoBossStage
 {
 public:
 	TomatoBossStage();
-	~TomatoBossStage();
+	~TomatoBossStage() = default;
 
 private:
 

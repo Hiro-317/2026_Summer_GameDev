@@ -3,7 +3,3 @@
 TomatoBossStage::TomatoBossStage()
 {
 }
-
-TomatoBossStage::~TomatoBossStage()
-{
-}
