@@ -42,3 +42,7 @@
 .vs/
 x64/
 Log.txt
+Project/.vs/
+Project/x64/
+Project/Log.txt
+
