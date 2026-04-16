@@ -51,6 +51,13 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 void ActorBase::Init(void)
 {
 	SubInit();
+	
+	// ƒpƒ‰ƒ[ƒ^‚Ì‰ð•ú
+	if (parameter != nullptr) {
+		parameter->Release();
+		delete parameter;
+		parameter = nullptr;
+	}
 }
 
 void ActorBase::Update(void)

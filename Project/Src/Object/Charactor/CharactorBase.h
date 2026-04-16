@@ -13,8 +13,6 @@ public:
 	CharactorBase(const std::string& parameterPath);
 	virtual ~CharactorBase()override = default;
 
-	virtual void Load(void) = 0;
-
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
 
@@ -60,7 +58,7 @@ protected:
 
 #pragma region アニメーションコントローラー
 	// アニメーションコントローラーの作成
-	void CreateAnimationController(void) { anime = new AnimationController(trans.model); }
+	void CreateAnimationController(void) { if (anime == nullptr) anime = new AnimationController(trans.model); }
 	
 	/// <summary>
 	/// モデルにくっついてるFBXアニメーションを全部登録する

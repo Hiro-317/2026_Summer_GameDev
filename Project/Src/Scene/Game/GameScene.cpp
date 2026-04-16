@@ -1,23 +1,25 @@
-#include"GameScene.h"
+#include "GameScene.h"
 
-#include<DxLib.h>
-#include<cmath>
+#include <DxLib.h>
+#include <cmath>
 
-#include"../../Application/Application.h"
-#include"../../scene/SceneManager/SceneManager.h"
+#include "../../Application/Application.h"
+#include "../../scene/SceneManager/SceneManager.h"
 
-#include"../../Manager/Camera/Camera.h"
-#include"../../Manager/Input/KeyManager.h"
-#include"../../Manager/Sound/SoundManager.h"
-#include"../../Manager/Font/FontManager.h"
+#include "../../Manager/Camera/Camera.h"
+#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Sound/SoundManager.h"
+#include "../../Manager/Font/FontManager.h"
 
-#include"../../Utility/Utility.h"
+#include "../../Utility/Utility.h"
 
-#include"Pause/GamePauseh.h"
+#include "Pause/GamePauseh.h"
 
-#include"../Clear/ClearScene.h"
+#include "../Clear/ClearScene.h"
 
-#include"../Common/GameDebugScene.h"
+#include "../Common/GameDebugScene.h"
+
+#include "../../Object/Charactor/Player/Orange/OrangePlayer.h"
 
 
 int GameScene::hitStop = 0;
@@ -64,6 +66,8 @@ void GameScene::Load(void)
 
 	// オブジェクト生成（生成の順番がそのまま(更新/描画)順）
 	//<例>ObjAdd(new Player());
+
+	ObjAdd(new OrangePlayer());
 }
 
 void GameScene::Init(void)
@@ -75,7 +79,7 @@ void GameScene::Init(void)
 	for (ActorBase*& obj : objects) { obj->Init(); }
 
 	// カメラ設定
-
+	Camera::GetIns().ChangeModeFollowRemote(&ObjSerch<OrangePlayer>()->GetTrans().pos);
 }
 
 void GameScene::Update(void)
