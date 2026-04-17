@@ -19,14 +19,14 @@ private:
 	// ÉXÉPÅ[Éã
 	const Vector3 MODEL_SCALE = GetParameterToVector3("ModelScale");
 
-	//// ÉTÉCÉY
-	//const Vector3 SIZE = GetParameterToVector3("ModelSize") * MODEL_SCALE;
+	// ÉTÉCÉY
+	const Vector3 MODEL_SIZE = GetParameterToVector3("ModelSize") * MODEL_SCALE;
 
-	//// íÜêSì_ÇÃÉYÉå
-	//const Vector3 CENTER_DIFF = GetParameterToVector3("ModelCenterDiff") * MODEL_SCALE;
+	// íÜêSì_ÇÃÉYÉå
+	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("ModelCenterDiff") * MODEL_SCALE;
 
 	// äpìxÇÃÉYÉå
-	const Vector3 LOCAL_ROT = GetParameterToVector3("ModelLocalRot") * (DX_PI_F / 180.0f);
+	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("ModelLocalRot") * (DX_PI_F / 180.0f);
 
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
@@ -45,7 +45,6 @@ private:
 		NONE = -1,
 
 		MOVE,
-		ATTACK,
 
 		MAX
 	};
@@ -82,11 +81,6 @@ private:
 		IDLE,
 		WALK,
 		RUN,
-		//PUNCH_FIRST,
-		//PUNCH_SECOND,
-		//PUNCH_THIRD,
-		//DAMAGE,
-		//DEAD,
 
 		MAX
 	};
@@ -97,11 +91,6 @@ private:
 		GetParameter("IdleAnimeSpeed"),			// IDLE
 		GetParameter("WalkAnimeSpeed"),			// WALK
 		GetParameter("RunAnimeSpeed"),			// RUN
-		//GetParameter("PunchFirstAnimeSpeed"),	// PUNCH_FIRST
-		//GetParameter("PunchSecondAnimeSpeed"),	// PUNCH_SECOND
-		//GetParameter("PunchThirdAnimeSpeed"),	// PUNCH_THIRD
-		//GetParameter("DamageAnimeSpeed"),		// DAMAGE
-		//GetParameter("DeadAnimeSpeed"),			// DEAD
 	};
 
 	// ÉAÉjÉÅÅ[ÉVÉáÉìÇÃÉtÉHÉãÉ_Ç‹Ç≈ÇÃÉpÉX
@@ -113,11 +102,6 @@ private:
 		ANIME_FOLDER_PATH + "Idle.mv1",			// IDLE
 		ANIME_FOLDER_PATH + "Walk.mv1",			// WALK
 		ANIME_FOLDER_PATH + "Run.mv1",			// RUN
-		//ANIME_FOLDER_PATH + "PunchFirst.mv1",	// PUNCH_FIRST
-		//ANIME_FOLDER_PATH + "PunchSecond.mv1",	// PUNCH_SECOND
-		//ANIME_FOLDER_PATH + "PunchThird.mv1",	// PUNCH_THIRD
-		//ANIME_FOLDER_PATH + "Damage.mv1",		// DAMAGE
-		//ANIME_FOLDER_PATH + "Dead.mv1",			// DEAD
 	};
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`

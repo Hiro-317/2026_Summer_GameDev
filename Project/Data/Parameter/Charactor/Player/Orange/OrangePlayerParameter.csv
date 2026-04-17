@@ -1,5 +1,7 @@
-ModelScale,1,1,1
+ModelSize,60,180.923,32.07
+ModelScale,1,0.75,1
 ModelLocalRot,0,180,0
+ModelCenterDiff,0,-90.409,0
 DashStaminaMax,250
 DashSpeedRate,2
 MoveSpeed,10

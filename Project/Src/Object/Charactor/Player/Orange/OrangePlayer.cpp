@@ -18,8 +18,11 @@ void OrangePlayer::Load(void)
 	// ƒ‚ƒfƒ‹‚ÌƒXƒP[ƒ‹‚ğİ’è
 	trans.scale = MODEL_SCALE;
 
+	// ƒ‚ƒfƒ‹‚Ì’†S“_‚ÌƒYƒŒ
+	trans.centerDiff = MODEL_CENTER_DIFF;
+
 	// Šp“x‚ÌƒYƒŒ(ƒ[ƒJƒ‹‰ñ“])
-	trans.localAngle = LOCAL_ROT;
+	trans.localAngle = MODEL_LOCAL_ROT;
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“````````````````````````````
 
@@ -62,6 +65,7 @@ void OrangePlayer::Load(void)
 
 void OrangePlayer::CharactorInit(void)
 {
+	// d—Í‚Ì‰e‹¿‚ğó‚¯‚È‚¢‚æ‚¤‚É‚·‚é(ˆê’U‚Ìˆ—AƒXƒe[ƒWÀ‘•‚ÅÁ‹)
 	SetGravityFlg(false);
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
