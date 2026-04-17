@@ -141,6 +141,7 @@
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\PlayerCommon\State\Move\PlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
     <ClInclude Include="Src\Object\Charactor\Player\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Charactor\Player\PlayerCommon\State\Move\PlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />
