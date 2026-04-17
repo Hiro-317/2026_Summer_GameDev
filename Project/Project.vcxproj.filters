@@ -224,5 +224,8 @@
     <ClInclude Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,6 +20,7 @@
 #include "../Common/GameDebugScene.h"
 
 #include "../../Object/Charactor/Player/Orange/OrangePlayer.h"
+#include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
 
 int GameScene::hitStop = 0;
@@ -68,12 +69,13 @@ void GameScene::Load(void)
 	//<例>ObjAdd(new Player());
 
 	ObjAdd(new OrangePlayer());
+	ObjAdd(new BoxDebugObject(Vector3(10000, 50, 5000)));
 }
 
 void GameScene::Init(void)
 {
 	// マウスカーソル
-	Key::GetIns().SetMouceFixed(false);
+	Key::GetIns().SetMouceFixed(true);
 
 	// オブジェクト全ての初期化処理
 	for (ActorBase*& obj : objects) { obj->Init(); }

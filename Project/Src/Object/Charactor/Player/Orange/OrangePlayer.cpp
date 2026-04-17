@@ -2,6 +2,9 @@
 
 #include "../PlayerCommon/State/Move/PlayerMoveState.h"
 
+#include "../../../Common/Collider/LineCollider.h"
+#include "../../../Common/Collider/CapsuleCollider.h"
+
 OrangePlayer::OrangePlayer() :
 	CharactorBase("Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv")
 {
@@ -39,6 +42,13 @@ void OrangePlayer::Load(void)
 #pragma endregion
 
 
+#pragma region 当たり判定情報設定
+
+	ColliderCreate(new LineCollider(TAG::PLAYER, Vector3(), Vector3::Yonly(-MODEL_SIZE.y * 0.5f)));
+
+#pragma endregion
+
+
 #pragma region 状態設定
 
 	// 移動状態を追加する
@@ -65,9 +75,7 @@ void OrangePlayer::Load(void)
 
 void OrangePlayer::CharactorInit(void)
 {
-	// 重力の影響を受けないようにする(一旦の処理、ステージ実装で消去)
-	SetGravityFlg(false);
-
+	SetGravityFlg(true);
 	// 初期状態を移動状態にする
 	state = (int)STATE::MOVE;
 }

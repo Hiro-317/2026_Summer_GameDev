@@ -4,8 +4,8 @@ ModelLocalRot,0,180,0
 ModelCenterDiff,0,-90.409,0
 DashStaminaMax,250
 DashSpeedRate,2
-MoveSpeed,10
-MoveSpeedMax,100
+MoveSpeed,5
+MoveSpeedMax,20
 RunAnimeSpeed,1
 IdleAnimeSpeed,1
 WalkAnimeSpeed,1

@@ -29,7 +29,9 @@ public:
 		std::function<bool(void)> isOwnState,
 		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
 		float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
-		const std::function<void(void)> PlayIdleAnime, const std::function<void(void)> PlayWalkAnime, const std::function<void(void)> PlayRunAnime
+		const std::function<void(void)> PlayIdleAnime,
+		const std::function<void(void)> PlayWalkAnime,
+		const std::function<void(void)> PlayRunAnime
 	);
 	~PlayerMoveState()override = default;
 

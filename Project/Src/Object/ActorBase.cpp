@@ -135,29 +135,29 @@ void ActorBase::Release(void)
 
 void ActorBase::AccelUpdate(void)
 {
-	// à¯êîÇÃêîílÇÃïÑçÜÇê‚ëŒílÇPÇ≈ï‘Ç∑ÉâÉÄÉ_ä÷êî
-	auto Sign = [&](float value)->float {
-		if (value > 0.0f) { return +1.0f; }
-		else if (value < 0.0f) { return -1.0f; }
-		else { return 0.0f; }
-		};
+	// â°é≤(â°é≤ÇÕå∏êäÇ‡Ç∑ÇÈ)Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 
-	// â°é≤(â°é≤ÇÕå∏êäÇ‡Ç∑ÇÈ)
-	if (accelSum.x != 0.0f) {
-		if (abs(accelSum.x) > ACCEL_MAX) { accelSum.x = ACCEL_MAX * Sign(accelSum.x); }
-		trans.pos.x += accelSum.x;
-		accelSum.x -= ATTENUATION * Sign(accelSum.x);
-		if (abs(accelSum.x) <= ATTENUATION / 2) { accelSum.x = 0.0f; }
-	}
-	if (accelSum.z != 0.0f) {
-		if (abs(accelSum.z) > ACCEL_MAX) { accelSum.z = ACCEL_MAX * Sign(accelSum.z); }
-		trans.pos.z += accelSum.z;
-		accelSum.z -= ATTENUATION * Sign(accelSum.z);
-		if (abs(accelSum.z) <= ATTENUATION / 2) { accelSum.z = 0.0f; }
+	// â°é≤ÇÃÇ›ÇÃâ¡ë¨ìxÇÃí∑Ç≥ÇãÅÇﬂÇÈ
+	float widthAccelLen = sqrt(accelSum.x * accelSum.x + accelSum.z * accelSum.z);
+
+	// â°é≤ÇÃâ¡ë¨ìxÇ™Ç†ÇÈèÍçáÅAå∏êäèàóùÇçsÇ§
+	if (widthAccelLen > 0.0f) {
+
+		// â°é≤ÇÃâ¡ë¨ìxÇ™å∏êäÇÃîºï™à»â∫ÇÃèÍçáÇÕÅAâ°é≤ÇÃâ¡ë¨ìxÇ0Ç…Ç∑ÇÈ
+		if (widthAccelLen <= ATTENUATION * 0.5f) { accelSum.x = accelSum.z = 0.0f; }
+
+		float scale = (widthAccelLen - ATTENUATION) / widthAccelLen;
+		if (widthAccelLen > ACCEL_MAX) { scale = ACCEL_MAX / widthAccelLen; }
+
+		accelSum.x *= scale;
+		accelSum.z *= scale;
 	}
 
-	// ècé≤
-	if (accelSum.y != 0.0f) { trans.pos.y += accelSum.y; }
+	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
+
+
+	// â¡ë¨ìxÇç¿ïWÇ…îΩâf
+	if (accelSum != 0.0f) { trans.pos += accelSum; }
 }
 
 void ActorBase::Gravity(void)
