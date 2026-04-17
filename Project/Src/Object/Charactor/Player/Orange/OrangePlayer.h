@@ -81,7 +81,6 @@ private:
 		IDLE,
 		WALK,
 		RUN,
-		RUN_STOP,
 
 		MAX
 	};
@@ -92,7 +91,6 @@ private:
 		GetParameter("IdleAnimeSpeed"),			// IDLE
 		GetParameter("WalkAnimeSpeed"),			// WALK
 		GetParameter("RunAnimeSpeed"),			// RUN
-		GetParameter("RunStopAnimeSpeed"),		// RUN_STOP
 	};
 
 	// ÉAÉjÉÅÅ[ÉVÉáÉìÇÃÉtÉHÉãÉ_Ç‹Ç≈ÇÃÉpÉX
@@ -104,7 +102,6 @@ private:
 		ANIME_FOLDER_PATH + "Idle.mv1",			// IDLE
 		ANIME_FOLDER_PATH + "Walk.mv1",			// WALK
 		ANIME_FOLDER_PATH + "Run.mv1",			// RUN
-		ANIME_FOLDER_PATH + "RunStop.mv1",		// RUN_STOP
 	};
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
