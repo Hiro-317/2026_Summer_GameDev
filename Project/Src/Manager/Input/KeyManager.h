@@ -46,6 +46,9 @@ public:
 		PLAYER_MOVE_RIGHT,
 		PLAYER_MOVE_LEFT,
 
+		//	ダッシュ
+		PLAYER_DASH,
+
 		// ジャンプ
 		PLAYER_JUMP,
 

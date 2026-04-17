@@ -19,7 +19,14 @@ private:
 	// ÉXÉPÅ[Éã
 	const Vector3 MODEL_SCALE = GetParameterToVector3("ModelScale");
 
+	//// ÉTÉCÉY
+	//const Vector3 SIZE = GetParameterToVector3("ModelSize") * MODEL_SCALE;
 
+	//// íÜêSì_ÇÃÉYÉå
+	//const Vector3 CENTER_DIFF = GetParameterToVector3("ModelCenterDiff") * MODEL_SCALE;
+
+	// äpìxÇÃÉYÉå
+	const Vector3 LOCAL_ROT = GetParameterToVector3("ModelLocalRot") * (DX_PI_F / 180.0f);
 
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`

@@ -1,8 +1,9 @@
 #pragma once
-#include"../ActorBase.h"
-#include"../Common/AnimationController/AnimationController.h"
+#include "../ActorBase.h"
+#include "../Common/AnimationController/AnimationController.h"
+#include "CharactorStateBase.h"
 
-#include<map>
+#include <map>
 
 class CharactorBase : public ActorBase
 {
@@ -42,12 +43,15 @@ private:
 	// 無敵カウンターによるダメージ演出を行うかどうか（true = 「する」、false = 「しない」）← デフォルトは「する」
 	bool isInviEffect;
 
+	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
+	std::map<int, CharactorStateBase*> stateMap;
+
 protected:
 	// ステート管理用変数
 	int state;
-	using STATEFUNC = void (CharactorBase::*)(void);
-	std::map<int, STATEFUNC>stateFuncPtr;
-#define CHARACTOR_SET_STATE(state, func) {stateFuncPtr[(int)(state)] = static_cast<STATEFUNC>(func);}
+
+	// ステートの追加
+	void AddState(int stateNum, CharactorStateBase* stateIns) { stateMap.emplace(stateNum, stateIns); }
 
 	// キャラクター固有の処理をここに追加
 	virtual void CharactorInit(void) = 0;

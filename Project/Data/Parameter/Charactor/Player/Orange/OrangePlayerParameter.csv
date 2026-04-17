@@ -1,4 +1,5 @@
 ModelScale,1,1,1
+ModelLocalRot,0,180,0
 RunAnimeSpeed,1
 IdleAnimeSpeed,1
 WalkAnimeSpeed,1

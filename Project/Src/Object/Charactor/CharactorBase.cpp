@@ -4,7 +4,7 @@ CharactorBase::CharactorBase() :
 	ActorBase(),
 
 	state(0),
-	stateFuncPtr(),
+	stateMap(),
 
 	DEFAULT_COLOR(),
 
@@ -19,7 +19,7 @@ CharactorBase::CharactorBase(const std::string& parameterPath) :
 	ActorBase(parameterPath),
 
 	state(0),
-	stateFuncPtr(),
+	stateMap(),
 
 	DEFAULT_COLOR(),
 
@@ -47,8 +47,9 @@ void CharactorBase::SubUpdate(void)
 	// キャラクター固有の更新
 	CharactorUpdate();
 
-	// 派生先で割り振り可能のステート別関数
-	(this->*stateFuncPtr[state])();
+	// ステートの更新
+	for (auto& s : stateMap) { s.second->OtherStateConditionsUpdate(); }
+	stateMap.at(state)->Update();
 
 	// アニメーション更新
 	if (anime) { anime->Update(); }
@@ -70,6 +71,12 @@ void CharactorBase::SubRelease(void)
 {
 	// キャラクター固有の解放
 	CharactorRelease();
+
+	// ステート管理用マップの解放
+	for (auto& s : stateMap) {
+		if (s.second) { delete s.second; }
+	}
+	stateMap.clear();
 
 	// デフォルトカラー情報の解放
 	if (!DEFAULT_COLOR.empty()) {
