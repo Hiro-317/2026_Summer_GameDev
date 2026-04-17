@@ -53,6 +53,13 @@ protected:
 	// ステートの追加
 	void AddState(int stateNum, CharactorStateBase* stateIns) { stateMap.emplace(stateNum, stateIns); }
 
+	// 指定のステートインスタンスをゲットする関数
+	const CharactorStateBase& GetStateIns(int state) {
+		auto it = stateMap.find(state);
+		if (it != stateMap.end()) { return *(it->second); }
+		else { throw std::runtime_error("指定のステートインスタンスが見つかりません"); }
+	}
+
 	// キャラクター固有の処理をここに追加
 	virtual void CharactorInit(void) = 0;
 	virtual void CharactorUpdate(void) = 0;
