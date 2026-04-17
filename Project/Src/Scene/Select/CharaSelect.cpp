@@ -1,4 +1,4 @@
-#include"TitleScene.h"
+#include"CharaSelect.h"
 
 #include<DxLib.h>
 #include"../../Utility/Utility.h"
@@ -12,30 +12,30 @@
 
 #include"../SceneManager/SceneManager.h"
 
-#include"End/EndScene.h"
+#include"../Title/End/EndScene.h"
 
-TitleScene::TitleScene()
+CharaSelect::CharaSelect()
 {
 }
 
-void TitleScene::Load(void)
+void CharaSelect::Load(void)
 {
 	// 音声のシーン切り替え
 	Snd::GetIns().ChangeScene("Title");
 
 	Key::GetIns().SetMouceFixed(false);
 }
-void TitleScene::Init(void)
+void CharaSelect::Init(void)
 {
 	// カメラの初期化
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
 }
-void TitleScene::Update(void)
+void CharaSelect::Update(void)
 {
 	// ゲーム終了処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		Snd::GetIns().Pause();
- 		Snd::GetIns().Play("SystemSelect");
+		Snd::GetIns().Play("SystemSelect");
 		SceneManager::GetIns().PushScene(std::make_shared<EndScene>());
 		return;
 	}
@@ -43,14 +43,14 @@ void TitleScene::Update(void)
 	// シーン進行処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 		Snd::GetIns().Play("SystemButton");
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CHARACTOR);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BOSS);
 		return;
 	}
 }
-void TitleScene::Draw(void)
+void CharaSelect::Draw(void)
 {
-	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "タイトルシーン");
+	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "キャラクターシーン");
 }
-void TitleScene::Release(void)
+void CharaSelect::Release(void)
 {
 }

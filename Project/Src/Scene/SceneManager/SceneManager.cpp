@@ -7,6 +7,8 @@
 #include"../Title/TitleScene.h"
 #include"../Game/GameScene.h"
 #include"../Clear/ClearScene.h"
+#include"../Select/CharaSelect.h"
+#include"../Select/BossSelect.h"
 
 #include"../Common/Fade/FadeInScene.h"
 #include"../Common/Fade/FadeOutScene.h"
@@ -113,6 +115,12 @@ void SceneManager::ChangeScene(SCENE_ID scene)
 	case SCENE_ID::TITLE:
 		ChangeScene(std::make_shared<TitleScene>());
 		break;
+	case SCENE_ID::CHARACTOR:
+		ChangeScene(std::make_shared<CharaSelect>());
+		break;
+	case SCENE_ID::BOSS:
+		ChangeScene(std::make_shared<BossSelect>());
+		break;
 	case SCENE_ID::GAME:
 		ChangeScene(std::make_shared<GameScene>());
 		break;
@@ -135,6 +143,12 @@ void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, uns
 	{
 	case SCENE_ID::TITLE:
 		ChangeSceneFade(std::make_shared<TitleScene>(), FADE_TIME, FADE_COLOR);
+		break;
+	case SCENE_ID::CHARACTOR:
+		ChangeSceneFade(std::make_shared<CharaSelect>(), FADE_TIME, FADE_COLOR);
+		break;
+	case SCENE_ID::BOSS:
+		ChangeSceneFade(std::make_shared<BossSelect>(), FADE_TIME, FADE_COLOR);
 		break;
 	case SCENE_ID::GAME:
 		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR);
@@ -161,6 +175,12 @@ void SceneManager::PushScene(SCENE_ID scene)
 	{
 	case SCENE_ID::TITLE:
 		PushScene(std::make_shared<TitleScene>());
+		break;
+	case SCENE_ID::CHARACTOR:
+		PushScene(std::make_shared<CharaSelect>());
+		break;
+	case SCENE_ID::BOSS:
+		PushScene(std::make_shared<BossSelect>());
 		break;
 	case SCENE_ID::GAME:
 		PushScene(std::make_shared<GameScene>());
