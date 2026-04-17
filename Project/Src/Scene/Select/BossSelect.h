@@ -4,11 +4,11 @@
 #include"../../Common/Vector3.h"
 
 
-class TitleScene : public SceneBase
+class BossSelect : public SceneBase
 {
 public:
-	TitleScene();
-	~TitleScene()override = default;
+	BossSelect();
+	~BossSelect()override = default;
 
 	// ì«Ç›çûÇ›
 	void Load(void)override;
