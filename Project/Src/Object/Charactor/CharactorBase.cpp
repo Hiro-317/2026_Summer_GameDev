@@ -48,7 +48,7 @@ void CharactorBase::SubUpdate(void)
 	CharactorUpdate();
 
 	// ステートの更新
-	for (std::pair<const int, CharactorStateBase*>& s : stateMap) { s.second->OtherStateConditionsUpdate(); }
+	stateMap.at(state)->OtherStateConditionsUpdate();
 	stateMap.at(state)->Update();
 	for (std::pair<const int, CharactorStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
 

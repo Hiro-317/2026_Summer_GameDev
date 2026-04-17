@@ -22,12 +22,12 @@ public:
 	// ‘¼‚Ìó‘Ô‚É‘JˆÚ‚·‚éğŒŠÖ”‚ğ’Ç‰Á‚·‚éŠÖ”
 	void AddOtherStateCondition(const std::function<void(void)>& func) {
 		otherStateConditions.push_back(func);
-		if (!isOwnState()) { Exit(); }
 	}
 
 	// ‘¼‚Ìó‘Ô‚É‘JˆÚ‚·‚éğŒŠÖ”‚ğ‚·‚×‚ÄŒÄ‚Ño‚·ŠÖ”
 	void OtherStateConditionsUpdate(void) {
 		for (std::function<void(void)>& func : otherStateConditions) { func(); }
+		if (!isOwnState()) { Exit(); }
 	}
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
