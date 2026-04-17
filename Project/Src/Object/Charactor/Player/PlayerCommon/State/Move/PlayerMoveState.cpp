@@ -6,20 +6,21 @@
 PlayerMoveState::PlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
 	std::function<bool(void)> isOwnState,
-	Vector3& accelSum, Vector3& angle,
-	float ADD_MOVE_SPEED, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
+	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
+	float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
 	const std::function<void(void)> PlayIdleAnime,
 	const std::function<void(void)> PlayWalkAnime,
 	const std::function<void(void)> PlayRunAnime
 ) :
 	CharactorStateBase(ownChangeState, isOwnState),
-	accelSum(accelSum), angle(angle),
-	ADD_MOVE_SPEED(ADD_MOVE_SPEED),	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX),
+	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle),
+	MOVE_SPEED(MOVE_SPEED), MOVE_SPEED_MAX(MOVE_SPEED_MAX),
+	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX),
 	PlayIdleAnime(PlayIdleAnime),
 	PlayWalkAnime(PlayWalkAnime),
 	PlayRunAnime(PlayRunAnime),
 
-	dashFlg(false), dashStamina(0)
+	isDash(false), dashStamina(DASH_STAMINA_MAX), isTired(false)
 {
 }
 
@@ -38,11 +39,8 @@ void PlayerMoveState::OwnStateConditionUpdate(void)
 	}
 }
 
-void PlayerMoveState::Init(void)
+void PlayerMoveState::Enter(void)
 {
-	accelSum = 0.0f;
-	dashFlg = false;
-	dashStamina = DASH_STAMINA_MAX;
 }
 
 void PlayerMoveState::Update(void)
@@ -58,8 +56,11 @@ void PlayerMoveState::Update(void)
 		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { vec.z--; }
 	}
 
-	// ダッシュフラグを更新
-	dashFlg = (dashStamina <= 0)? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now;
+	// ダッシュフラグを立てる
+	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now;
+
+	// 移動量の最大値を更新する
+	ACCEL_MAX = MOVE_SPEED_MAX * (isDash ? DASH_SPEED_RATE : 1.0f);
 
 	// 最終的に入力があれば加速度に加算する
 	if (vec != 0.0f) { 
@@ -71,21 +72,29 @@ void PlayerMoveState::Update(void)
 		vec.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
 
 		// 移動量を加算
-		accelSum += vec * (ADD_MOVE_SPEED * (dashFlg ? DASH_SPEED_RATE : 1.0f));
+		accelSum += vec * (MOVE_SPEED * (isDash ? DASH_SPEED_RATE : 1.0f));
 
 		// ダッシュスタミナを更新 / アニメーションを更新
-		if (dashFlg) {
-			if (--dashStamina < 0) { dashStamina = 0; }
+		if (isDash) {
+
+			// ダッシュしているときはスタミナを減らす
+			if (--dashStamina < 0) {
+				dashStamina = 0;
+
+				// 息切れ
+				isTired = true;
+			}
+
+			// ダッシュしているときは走るアニメーションにする
 			PlayRunAnime();
 		}
 		else {
-			if (++dashStamina > DASH_STAMINA_MAX) { dashStamina = DASH_STAMINA_MAX; }
+			// ダッシュしていないときは歩くアニメーションにする
 			PlayWalkAnime();
 		}
 	}
 	else {
-		// 移動入力がなければダッシュスタミナを回復させて待機アニメーションにする
-		if (++dashStamina > DASH_STAMINA_MAX) { dashStamina = DASH_STAMINA_MAX; }
+		// 待機アニメーションにする
 		PlayIdleAnime();
 	}
 
@@ -95,4 +104,17 @@ void PlayerMoveState::Update(void)
 
 void PlayerMoveState::Exit(void)
 {
+}
+
+void PlayerMoveState::AlwaysUpdate(void)
+{
+	// ダッシュしていないときはスタミナを回復させる
+	if (!isDash) {
+		if (++dashStamina > DASH_STAMINA_MAX) {
+			dashStamina = DASH_STAMINA_MAX;
+
+			// 息切れ回復
+			isTired = false;
+		}
+	}
 }

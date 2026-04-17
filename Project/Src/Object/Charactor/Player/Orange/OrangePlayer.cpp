@@ -35,6 +35,10 @@ void OrangePlayer::Load(void)
 
 #pragma endregion
 
+
+#pragma region 状態設定
+
+	// 移動状態を追加する
 	AddState(
 		(int)STATE::MOVE,
 		new PlayerMoveState(
@@ -42,24 +46,25 @@ void OrangePlayer::Load(void)
 			[&]() { state = (int)STATE::MOVE; },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::MOVE; },
-			// 移動量 / 角度 の参照
-			accelSum, trans.angle,
-			// 定数
-			10.0f, 2.0f, 250,
-			// アニメーションの再生関数のポインタ
+			// 参照（移動量 / 横軸加速度の最大値 / 角度）
+			accelSum, ACCEL_MAX,trans.angle,
+			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量）
+			MOVE_SPEED, MOVE_SPEED_MAX, DASH_SPEED_RATE, DASH_STAMINA_MAX,
+			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
 			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
 		)
 	);
 
-	ACCEL_MAX = 100.0f;
-
+#pragma endregion
 }
 
 void OrangePlayer::CharactorInit(void)
 {
 	SetGravityFlg(false);
+
+	// 初期状態を移動状態にする
 	state = (int)STATE::MOVE;
 }
 

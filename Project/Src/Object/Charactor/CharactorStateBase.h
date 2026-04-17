@@ -30,9 +30,15 @@ public:
 		for (std::function<void(void)>& func : otherStateConditions) { func(); }
 	}
 
-	virtual void Init(void) {}
+	// 状態遷移後1度行う初期化処理
+	virtual void Enter(void) {}
+	// 更新処理
 	virtual void Update(void) {}
+	// 状態遷移前1度行う終了処理
 	virtual void Exit(void) {}
+
+	// 状態関係なく呼び出す処理
+	virtual void AlwaysUpdate(void) {}
 
 protected:
 	// 自分の状態に遷移させる関数のポインタ

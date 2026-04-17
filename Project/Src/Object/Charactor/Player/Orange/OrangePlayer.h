@@ -55,6 +55,23 @@ private:
 	// `````````````````````````````````
 
 
+	// ˆÚ“®ó‘Ô`````````````````````````````
+
+	// ‰ÁZˆÚ“®—Ê
+	const float MOVE_SPEED = GetParameter("MoveSpeed");
+
+	// Å‘åˆÚ“®—Ê
+	const float MOVE_SPEED_MAX = GetParameter("MoveSpeedMax");
+
+	// ƒ_ƒbƒVƒ…‚ÌˆÚ“®—Ê”{—¦
+	const float DASH_SPEED_RATE = GetParameter("DashSpeedRate");
+
+	// ƒ_ƒbƒVƒ…‚ÌƒXƒ^ƒ~ƒi‚ÌÅ‘å—Êi1ƒtƒŒ[ƒ€‚¸‚ÂƒfƒNƒŠƒƒ“ƒgj
+	const short DASH_STAMINA_MAX = (short)GetParameterToInt("DashStaminaMax");
+
+	// `````````````````````````````````
+
+
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìí—Ş

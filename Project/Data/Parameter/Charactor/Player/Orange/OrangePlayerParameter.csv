@@ -1,5 +1,9 @@
 ModelScale,1,1,1
 ModelLocalRot,0,180,0
+DashStaminaMax,250
+DashSpeedRate,2
+MoveSpeed,10
+MoveSpeedMax,100
 RunAnimeSpeed,1
 IdleAnimeSpeed,1
 WalkAnimeSpeed,1
