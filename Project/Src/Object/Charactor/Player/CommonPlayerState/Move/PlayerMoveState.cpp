@@ -1,7 +1,7 @@
 #include "PlayerMoveState.h"
 
-#include "../../../../../../Manager/Input/KeyManager.h"
-#include "../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../Manager/Camera/Camera.h"
 
 PlayerMoveState::PlayerMoveState(
 	const std::function<void(void)>& ownChangeState,

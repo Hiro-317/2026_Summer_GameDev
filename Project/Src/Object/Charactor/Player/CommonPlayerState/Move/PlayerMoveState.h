@@ -2,9 +2,9 @@
 
 #include <functional>
 
-#include "../../../../CharactorStateBase.h"
+#include "../../../CharactorStateBase.h"
 
-#include "../../../../../../Common/Vector3.h"
+#include "../../../../../Common/Vector3.h"
 
 class PlayerMoveState : public CharactorStateBase
 {
