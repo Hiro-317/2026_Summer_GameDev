@@ -1,7 +1,15 @@
-#include "StageBase.h"
+#include"StageBase.h"
 
-StageBase::StageBase(int modelId) :
-	stageInfo_()
+StageBase::StageBase(int model) : ActorBase()
 {
-	stageInfo_.modelId_ = modelId;
+	trans.model = model;
+}
+
+void StageBase::Init(void)
+{
+	// ステージの初期設定
+	SetDynamicFlg(false);
+	SetGravityFlg(false);
+	SetPushFlg(true);
+	SetPushWeight(100);
 }

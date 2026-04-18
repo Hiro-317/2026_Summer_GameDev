@@ -25,12 +25,14 @@ public:
 	void Draw(void);	// 描画
 	void Release(void);	// 解放
 
-	void SetStageID(STAGE_ID stageId) { stageId_ = stageId; }
+	void ChangeStage(STAGE_ID id);		// ステージの切り替え
 
 private:
 
-	std::map<STAGE_ID, StageBase*> stages_;
+	// ステージのインスタンス管理用変数
+	std::map<STAGE_ID, StageBase*> stages;
+	StageBase* currentStage;
+	STAGE_ID stageId;
 
-	STAGE_ID stageId_;
-
+	int modelId[(int)STAGE_ID::MAX];
 };

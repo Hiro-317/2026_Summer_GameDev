@@ -1,6 +1,6 @@
 #include "TomatoBossStage.h"
 
-TomatoBossStage::TomatoBossStage()
+TomatoBossStage::TomatoBossStage(int model) : StageBase(-1)
 {
 
 }
