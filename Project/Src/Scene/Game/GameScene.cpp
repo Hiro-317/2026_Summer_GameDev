@@ -22,6 +22,8 @@
 #include "../../Object/Charactor/Player/Orange/OrangePlayer.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
+#include "../../Object/Stage/StageManager/StageManager.h"
+
 
 int GameScene::hitStop = 0;
 
@@ -36,6 +38,8 @@ GameScene::GameScene():
 	collision(nullptr),
 
 	objects(),
+
+	stageManager(nullptr),
 
 	mainScreen(-1)
 {
@@ -55,6 +59,13 @@ void GameScene::Load(void)
 	// 当たり判定管理クラスを生成
 	collision = new CollisionManager();
 
+	// ステージ管理クラスを生成
+	stageManager = new StageManager();
+	stageManager->Load();
+
+	// 最初のステージを指定
+	stageManager->ChangeStage(StageManager::STAGE_ID::TOMATO_BOSS_STAGE);
+
 	// 初期化も含めたオブジェクト生成のラムダ関数
 	auto ObjAdd = [&](ActorBase* newClass)->void {
 		// 配列の末尾に追加
@@ -70,6 +81,9 @@ void GameScene::Load(void)
 
 	ObjAdd(new OrangePlayer());
 	ObjAdd(new BoxDebugObject(Vector3(10000, 50, 5000)));
+
+	ObjAdd(stageManager->GetCurrentStage());
+
 }
 
 void GameScene::Init(void)
@@ -173,6 +187,14 @@ void GameScene::Release(void)
 		obj->Release();
 		delete obj;
 		obj = nullptr;
+	}
+
+	// ステージ管理クラスの解放
+	if (stageManager)
+	{
+		stageManager->Release();
+		delete stageManager;
+		stageManager = nullptr;
 	}
 
 	// 画面演出用のメインスクリーンを解放
