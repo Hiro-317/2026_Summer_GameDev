@@ -12,44 +12,18 @@ StageManager::StageManager() :
 void StageManager::Load(void)
 {
 	// ステージの登録・生成
-	stages.emplace(STAGE_ID::TOMATO_BOSS_STAGE, new TomatoBossStage(-1));
-
-    
-
+	stages.emplace(STAGE_ID::TOMATO_BOSS_STAGE, new TomatoBossStage("Stage/TomatoBoss/TomatBossStage"));
 }
 
 void StageManager::Init(void)
 {
+    // 最初に設定されるステージを指定
     ChangeStage(STAGE_ID::TOMATO_BOSS_STAGE);
-}
-
-void StageManager::Update(void)
-{
-    if (currentStage)
-    {
-        currentStage->Update();
-    }
-}
-
-void StageManager::Draw(void)
-{
-    if (currentStage)
-    {
-        currentStage->Draw();
-    }
 }
 
 void StageManager::Release(void)
 {
-    for (auto& stage : stages)
-    {
-        if (stage.second)
-        {
-            stage.second->Release();
-            delete stage.second;
-            stage.second = nullptr;
-        }
-    }
+    // マップの解放
 	stages.clear();
 }
 
@@ -57,15 +31,18 @@ void StageManager::ChangeStage(STAGE_ID id)
 {
     if(currentStage)
     {
+        // 現在のステージを解放
         currentStage->Release();
     }
 
     auto it = stages.find(id);
 	if (it != stages.end())
     {
+        // ステージを切り替える
         currentStage = it->second;
         stageId = id;
 
+        // 新しく切り替えたステージを初期化
         currentStage->Init();
     }
 

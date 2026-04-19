@@ -5,7 +5,7 @@
 class TomatoBossStage : public StageBase
 {
 public:
-    TomatoBossStage(int model);
+    TomatoBossStage(const std::string& path);
     ~TomatoBossStage() = default;
 
     void Load(void) override {}

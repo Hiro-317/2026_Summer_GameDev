@@ -21,11 +21,11 @@ public:
 
 	void Load(void);	// ロード
 	void Init(void);	// 初期化
-	void Update(void);	// 更新
-	void Draw(void);	// 描画
 	void Release(void);	// 解放
 
 	void ChangeStage(STAGE_ID id);		// ステージの切り替え
+
+	ActorBase* GetCurrentStage(void) { return currentStage; }	// 現在のステージのゲット関数
 
 private:
 
@@ -33,6 +33,4 @@ private:
 	std::map<STAGE_ID, StageBase*> stages;
 	StageBase* currentStage;
 	STAGE_ID stageId;
-
-	int modelId[(int)STAGE_ID::MAX];
 };

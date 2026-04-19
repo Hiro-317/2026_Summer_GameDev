@@ -1,8 +1,12 @@
 #include"StageBase.h"
 
-StageBase::StageBase(int model) : ActorBase()
+StageBase::StageBase(const std::string& path) : ActorBase()
 {
-	trans.model = model;
+	trans.Load(path);
+}
+
+void StageBase::Load(void)
+{
 }
 
 void StageBase::Init(void)
@@ -12,4 +16,7 @@ void StageBase::Init(void)
 	SetGravityFlg(false);
 	SetPushFlg(true);
 	SetPushWeight(100);
+	SetGravityFlg(false);
+
+	trans.scale = MODEL_SCALE;
 }
