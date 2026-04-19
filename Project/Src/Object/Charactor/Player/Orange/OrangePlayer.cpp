@@ -107,8 +107,8 @@ void OrangePlayer::Load(void)
 			[&]() { state = (int)STATE::MOVE; },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::MOVE; },
-			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量）
-			MOVE_SPEED, MOVE_SPEED_MAX, DASH_SPEED_RATE, DASH_STAMINA_MAX,
+			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
+			MOVE_SPEED, MOVE_SPEED_MAX, DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
 			// 参照（移動量 / 横軸加速度の最大値 / 角度）
 			accelSum, ACCEL_MAX, trans.angle,
 			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
@@ -178,6 +178,9 @@ void OrangePlayer::CharactorUpdate(void)
 void OrangePlayer::CharactorDraw(void)
 {
 	skil1CollOperator->Draw();
+
+	// 加速度をデバッグ表示
+	DrawFormatString(0, 0, 0xffffff, "%2f", accelSum.Length());
 }
 
 void OrangePlayer::CharactorAlphaDraw(void)

@@ -6,7 +6,7 @@
 PlayerMoveState::PlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
+	float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
 	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
 	const std::function<void(void)>& PlayIdleAnime,
 	const std::function<void(void)>& PlayWalkAnime,
@@ -14,7 +14,7 @@ PlayerMoveState::PlayerMoveState(
 ) :
 	CharactorStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), MOVE_SPEED_MAX(MOVE_SPEED_MAX),
-	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX),
+	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX), ATTENUATION(ATTENUATION),
 	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle),
 	PlayIdleAnime(PlayIdleAnime),
 	PlayWalkAnime(PlayWalkAnime),
@@ -61,6 +61,8 @@ void PlayerMoveState::Update(void)
 
 	// 移動量の最大値を更新する
 	ACCEL_MAX = MOVE_SPEED_MAX * (isDash ? DASH_SPEED_RATE : 1.0f);
+	// もし加速度の合計が最大値を超えていたら、その値から1フレーム分減衰した値を最大値にする
+	if (ACCEL_MAX < accelSum.Length()) { ACCEL_MAX = accelSum.Length() - ATTENUATION; }
 
 	// 最終的に入力があれば加速度に加算する
 	if (vec != 0.0f) { 

@@ -25,7 +25,7 @@ public:
 	PlayerMoveState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
+		float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
 		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
 		const std::function<void(void)>& PlayIdleAnime,
 		const std::function<void(void)>& PlayWalkAnime,
@@ -61,6 +61,9 @@ private:
 
 	// ダッシュのスタミナの最大量（1フレームずつデクリメント）
 	const short DASH_STAMINA_MAX;
+
+	// 加速度の減衰量
+	const float ATTENUATION;
 
 #pragma endregion
 
