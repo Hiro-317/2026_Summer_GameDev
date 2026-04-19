@@ -119,7 +119,7 @@ protected:
 	/// <typeparam name="T">探したいクラス</typeparam>
 	/// <param name="tag">タグ種類</param>
 	/// <returns></returns>
-	template<typename T>
+	template<typename T = ColliderBase>
 	std::vector<T*> ColliderSerch(TAG tag = TAG::NON) {
 		std::vector<T*> out;
 		out.reserve(collider.size());
