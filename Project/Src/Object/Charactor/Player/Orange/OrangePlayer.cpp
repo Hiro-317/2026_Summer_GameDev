@@ -1,5 +1,9 @@
 #include "OrangePlayer.h"
 
+#include "../../../../Application/Application.h"
+
+#include "../../../../Manager/Font/FontManager.h"
+
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
 
@@ -179,8 +183,20 @@ void OrangePlayer::CharactorDraw(void)
 {
 	skil1CollOperator->Draw();
 
-	// 加速度をデバッグ表示
-	DrawFormatString(0, 0, 0xffffff, "%2f", accelSum.Length());
+	if (App::GetIns().IsDrawDebug()) {
+
+		// 1行ずつ描画するためのラムダ式（デバッグ用）
+		int yPos = 100; const int FONT_SIZE = 20;
+		auto debugDrwStr = [&](std::string str)->void {
+			DrawStringToHandle(0, yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
+			yPos += FONT_SIZE;
+			};
+
+		// 加速度をデバッグ表示
+		debugDrwStr("プレイヤー～～～～～～");
+		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
+		debugDrwStr("～～～～～～～～～～～");
+	}
 }
 
 void OrangePlayer::CharactorAlphaDraw(void)

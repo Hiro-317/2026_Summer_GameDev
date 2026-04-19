@@ -28,6 +28,7 @@ public:
 
 	enum class FONT_KINDS_SIZE
 	{
+		DEFAULT_20,
 		DEFAULT_45,
 		DEFAULT_64,
 
@@ -49,6 +50,7 @@ public:
 	// サイズテーブル
 	const unsigned char FONT_SIZE_TABLE[(int)FONT_KINDS_SIZE::MAX] =
 	{
+		20,		// DEFAULT_20
 		45,		// DEFAULT_45
 		64,		// DEFAULT_64
 		32,		// GOKUSYOU_32
@@ -72,6 +74,7 @@ private:
 	// フォント名テーブル
 	const char* FONT_NAME_TABLE[(int)FONT_KINDS_SIZE::MAX] =
 	{
+		nullptr,				// DEFAULT_20
 		nullptr,				// DEFAULT_45
 		nullptr,				// DEFAULT_64
 		"x10y12pxDonguriDuel",	// GOKUSYOU_32
@@ -86,6 +89,7 @@ private:
 	// フォントの太さテーブル
 	const int FONT_THICK_TABLE[(int)FONT_KINDS_SIZE::MAX] =
 	{
+		-1,	// DEFAULT_20
 		-1,	// DEFAULT_45
 		-1,	// DEFAULT_64
 		-1,	// GOKUSYOU_32
@@ -113,6 +117,7 @@ private:
 	// フォントタイプテーブル
 	const int FONT_TYPE_TABLE[(int)FONT_KINDS_SIZE::MAX] =
 	{
+		0x01,	// DEFAULT_20
 		0x01,	// DEFAULT_45
 		0x01,	// DEFAULT_64
 		0x01,	// GOKUSYOU_32
