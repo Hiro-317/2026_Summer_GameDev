@@ -54,7 +54,7 @@ protected:
 	void AddState(int stateNum, CharactorStateBase* stateIns) { stateMap.emplace(stateNum, stateIns); }
 
 	// 指定のステートインスタンスをゲットする関数
-	const CharactorStateBase& GetStateIns(int state) {
+	CharactorStateBase& GetStateIns(int state) {
 		auto it = stateMap.find(state);
 		if (it != stateMap.end()) { return *(it->second); }
 		else { throw std::runtime_error("指定のステートインスタンスが見つかりません"); }

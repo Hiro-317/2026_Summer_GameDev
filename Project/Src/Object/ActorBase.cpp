@@ -87,9 +87,7 @@ void ActorBase::Draw(void)
 	if (!isDraw) { return; }
 
 	// モデルの描画
-	if (!isAlphaDraw) {
-		trans.Draw(); 
-	}
+	if (!isAlphaDraw) { trans.Draw(); }
 }
 
 void ActorBase::AlphaDraw(void)
@@ -105,7 +103,7 @@ void ActorBase::AlphaDraw(void)
 
 	// 当たり判定のデバッグ描画
 	if (App::GetIns().IsDrawDebug()) {
-		for (ColliderBase*& c : collider) { c->DrawDebug(); }
+		for (ColliderBase*& c : collider) { if (c->GetJudge()) c->DrawDebug(); }
 	}
 }
 
