@@ -16,7 +16,7 @@ public:
 #pragma endregion
 
 
-	StageBase(const std::string& path);				// コンストラクタ
+	StageBase();				// コンストラクタ
 	virtual ~StageBase() = default;		// デストラクタ
 
 	virtual void Load(void) override;		// ステージの情報を読み込む

@@ -22,7 +22,7 @@
 #include "../../Object/Charactor/Player/Orange/OrangePlayer.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
-#include "../../Object/Stage/StageManager/StageManager.h"
+#include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
 
 
 int GameScene::hitStop = 0;
@@ -39,7 +39,7 @@ GameScene::GameScene():
 
 	objects(),
 
-	stageManager(nullptr),
+	tomatoBossStage(nullptr),
 
 	mainScreen(-1)
 {
@@ -59,13 +59,6 @@ void GameScene::Load(void)
 	// 当たり判定管理クラスを生成
 	collision = new CollisionManager();
 
-	// ステージ管理クラスを生成
-	stageManager = new StageManager();
-	stageManager->Load();
-
-	// 最初のステージを指定
-	stageManager->ChangeStage(StageManager::STAGE_ID::TOMATO_BOSS_STAGE);
-
 	// 初期化も含めたオブジェクト生成のラムダ関数
 	auto ObjAdd = [&](ActorBase* newClass)->void {
 		// 配列の末尾に追加
@@ -80,9 +73,7 @@ void GameScene::Load(void)
 	//<例>ObjAdd(new Player());
 
 	ObjAdd(new OrangePlayer());
-	ObjAdd(new BoxDebugObject(Vector3(10000, 50, 5000)));
-
-	ObjAdd(stageManager->GetCurrentStage());
+	ObjAdd(new TomatoBossStage());
 
 }
 
@@ -190,11 +181,11 @@ void GameScene::Release(void)
 	}
 
 	// ステージ管理クラスの解放
-	if (stageManager)
+	if (tomatoBossStage)
 	{
-		stageManager->Release();
-		delete stageManager;
-		stageManager = nullptr;
+		tomatoBossStage->Release();
+		delete tomatoBossStage;
+		tomatoBossStage = nullptr;
 	}
 
 	// 画面演出用のメインスクリーンを解放

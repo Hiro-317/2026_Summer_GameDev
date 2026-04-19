@@ -14,7 +14,7 @@ class BlockManager;
 class RockWall;
 class Player;
 class Boss;
-class StageManager;
+class TomatoBossStage;
 
 class SkyDome;
 
@@ -63,7 +63,7 @@ private:
 	std::vector<ActorBase*>objects;
 
 	// ステージ管理クラス
-	StageManager* stageManager;
+	TomatoBossStage* tomatoBossStage;
 
 	// 配列の中から特定のオブジェクトを探す
 	template<typename T>
