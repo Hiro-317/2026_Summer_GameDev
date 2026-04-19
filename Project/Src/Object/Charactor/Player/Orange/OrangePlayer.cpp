@@ -1,18 +1,19 @@
 #include "OrangePlayer.h"
 
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
+#include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 OrangePlayer::OrangePlayer() :
-	CharactorBase("Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv")
+	CharactorBase("Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
+	skil1CollOperator(nullptr)
 {
 }
 
 void OrangePlayer::Load(void)
 {
-
 #pragma region モデル
 
 	// モデルを読み込む
@@ -42,27 +43,74 @@ void OrangePlayer::Load(void)
 #pragma endregion
 
 
-#pragma region 当たり判定情報設定
+#pragma region 基底クラスにある機能の挙動設定
 
-	ColliderCreate(new LineCollider(TAG::PLAYER, Vector3(), Vector3::Yonly(-MODEL_SIZE.y * 0.5f)));
+	// 動的オブジェクトとしての挙動を有効にする
+	SetDynamicFlg(true);
+
+	// 重力を有効にする
+	SetGravityFlg(true);
+
+	// 衝突時の押し出しを有効にする
+	SetPushFlg(true);
+
+	// 押し出す力の大きさを設定する
+	SetPushWeight(COLLISION_PUSH_WEIGHT);
 
 #pragma endregion
+
+
+#pragma region 当たり判定情報設定
+
+	// 当たり判定を生成する（線分コライダー）
+	ColliderCreate(new LineCollider(TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+
+	// 当たり判定を生成する（カプセルコライダー）
+	ColliderCreate(
+		new CapsuleCollider(
+			TAG::PLAYER,
+			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+
+#pragma endregion
+
+
+#pragma region プレイヤーが抱える下位クラスを生成する
+
+	skil1CollOperator = new PlayerTripleAttackCollOperator(
+		SKILL_1_TARGET_SERCH_RANGE,
+		SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
+		SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
+		SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
+		SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
+		SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
+		SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
+		SKILL_1_COLL_LOCAL_POS,
+		trans.pos, trans.angle
+	);
+
+	skil1CollOperator->Load();
+#pragma endregion
+
 
 
 #pragma region 状態設定
 
 	// 移動状態を追加する
-	AddState(
+    	AddState(
 		(int)STATE::MOVE,
 		new PlayerMoveState(
 			// 自分の状態に遷移する関数
 			[&]() { state = (int)STATE::MOVE; },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::MOVE; },
-			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX,trans.angle,
 			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量）
 			MOVE_SPEED, MOVE_SPEED_MAX, DASH_SPEED_RATE, DASH_STAMINA_MAX,
+			// 参照（移動量 / 横軸加速度の最大値 / 角度）
+			accelSum, ACCEL_MAX, trans.angle,
 			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
@@ -70,28 +118,78 @@ void OrangePlayer::Load(void)
 		)
 	);
 
+	// 三段攻撃状態を追加する
+	AddState(
+		(int)STATE::SKILL_1,
+		new PlayerTripleAttackState(
+			// 自分の状態に遷移する関数
+			[&]() { state = (int)STATE::SKILL_1; },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_1; },
+			// 定数（クールタイム / 次段に繋がるまでの猶予時間）
+			SKILL_1_COOL_TIME, SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME,
+			// 定数（（1段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
+			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
+			// 定数（（2段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
+			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
+			// 定数（（3段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
+			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
+			// 定数（攻撃対象が見つかった場合の移動速度）
+			SKILL_1_ATTACK_MOVE_SPEED,
+			// 当たり判定のオペレーター
+			*skil1CollOperator,
+			// 参照（座標 / 角度）
+			trans.pos, trans.angle,
+			// アニメーションの再生関数のポインタ（1段目 / 2段目 / 3段目）
+			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH1, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH2, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3, false); },
+			// アニメーションの再生割合を取得する関数のポインタ
+			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; }
+		)
+	);
+
+
+	GetStateIns((int)STATE::MOVE).AddOtherStateCondition(
+		[this](void) { GetStateIns((int)STATE::SKILL_1).OwnStateConditionUpdate(); }
+	);
 #pragma endregion
 }
 
 void OrangePlayer::CharactorInit(void)
 {
-	SetGravityFlg(true);
+	// 位置を初期位置にする
+	trans.pos = INIT_POS;
+
 	// 初期状態を移動状態にする
 	state = (int)STATE::MOVE;
+
+	skil1CollOperator->Init();
+
 }
 
 void OrangePlayer::CharactorUpdate(void)
 {
+	skil1CollOperator->Update();
 }
 
 void OrangePlayer::CharactorDraw(void)
 {
+	skil1CollOperator->Draw();
 }
 
 void OrangePlayer::CharactorAlphaDraw(void)
 {
+	skil1CollOperator->AlphaDraw();
 }
 
 void OrangePlayer::CharactorRelease(void)
 {
+	if (skil1CollOperator) {
+		skil1CollOperator->Release();
+		delete skil1CollOperator;
+		skil1CollOperator = nullptr;
+	}
 }

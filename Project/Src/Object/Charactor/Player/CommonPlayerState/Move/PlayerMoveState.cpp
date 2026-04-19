@@ -5,17 +5,17 @@
 
 PlayerMoveState::PlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
-	std::function<bool(void)> isOwnState,
-	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
+	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
-	const std::function<void(void)> PlayIdleAnime,
-	const std::function<void(void)> PlayWalkAnime,
-	const std::function<void(void)> PlayRunAnime
+	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
+	const std::function<void(void)>& PlayIdleAnime,
+	const std::function<void(void)>& PlayWalkAnime,
+	const std::function<void(void)>& PlayRunAnime
 ) :
 	CharactorStateBase(ownChangeState, isOwnState),
-	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle),
 	MOVE_SPEED(MOVE_SPEED), MOVE_SPEED_MAX(MOVE_SPEED_MAX),
 	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX),
+	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle),
 	PlayIdleAnime(PlayIdleAnime),
 	PlayWalkAnime(PlayWalkAnime),
 	PlayRunAnime(PlayRunAnime),
@@ -35,7 +35,7 @@ void PlayerMoveState::OwnStateConditionUpdate(void)
 		Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).down
 		) {
 		// 自分の状態に遷移
-		ownChangeState();
+		OwnChangeState();
 	}
 }
 
@@ -104,6 +104,7 @@ void PlayerMoveState::Update(void)
 
 void PlayerMoveState::Exit(void)
 {
+	accelSum = 0.0f; // 加速度をリセット
 }
 
 void PlayerMoveState::AlwaysUpdate(void)

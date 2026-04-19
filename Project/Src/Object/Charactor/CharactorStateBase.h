@@ -8,10 +8,10 @@ class CharactorStateBase
 public:
 	CharactorStateBase(
 		const std::function<void(void)>& ownChangeState,
-		std::function<bool(void)> isOwnState
+		const std::function<bool(void)>& isOwnState
 	) :
-		ownChangeState(ownChangeState),
-		isOwnState(isOwnState)
+		OwnChangeState(ownChangeState),
+		IsOwnState(isOwnState)
 	{
 	}
 	virtual ~CharactorStateBase() = default;
@@ -21,13 +21,13 @@ public:
 
 	// 他の状態に遷移する条件関数を追加する関数
 	void AddOtherStateCondition(const std::function<void(void)>& func) {
-		otherStateConditions.push_back(func);
+		OtherStateConditions.push_back(func);
 	}
 
 	// 他の状態に遷移する条件関数をすべて呼び出す関数
 	void OtherStateConditionsUpdate(void) {
-		for (std::function<void(void)>& func : otherStateConditions) { func(); }
-		if (!isOwnState()) { Exit(); }
+		for (std::function<void(void)>& func : OtherStateConditions) { func(); }
+		if (!IsOwnState()) { Exit(); }
 	}
 
 	// 状態遷移後1度行う初期化処理
@@ -42,12 +42,12 @@ public:
 
 protected:
 	// 自分の状態に遷移させる関数のポインタ
-	const std::function<void(void)> ownChangeState;
+	const std::function<void(void)> OwnChangeState;
 
-private:
 	// 現在自分の状態かどうかを返す関数のポインタ
-	std::function<bool(void)> isOwnState;
+	const std::function<bool(void)> IsOwnState;
+private:
 
 	// 他の状態に遷移する条件関数のポインタを格納するベクター
-	std::vector<std::function<void(void)>> otherStateConditions;
+	std::vector<std::function<void(void)>> OtherStateConditions;
 };
