@@ -46,6 +46,14 @@ void TitleScene::Update(void)
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CHARACTOR);
 		return;
 	}
+
+	// でばっぐ
+	// シーン進行処理
+	if (Key::GetIns().GetInfo(KEY_TYPE::TEXT_INPUT_LANGUAGE_SWITCH).down) {
+		Snd::GetIns().Play("SystemButton");
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+		return;
+	}
 }
 void TitleScene::Draw(void)
 {
