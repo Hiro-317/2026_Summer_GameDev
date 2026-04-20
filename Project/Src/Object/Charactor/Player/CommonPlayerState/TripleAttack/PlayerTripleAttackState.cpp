@@ -54,7 +54,7 @@ void PlayerTripleAttackState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_ATTACK).down) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_1).down) {
 		OwnChangeState();
 		Enter();
 	}

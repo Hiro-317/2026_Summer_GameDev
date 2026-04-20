@@ -12,7 +12,7 @@
 
 OrangePlayer::OrangePlayer() :
 	CharactorBase("Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
-	skil1CollOperator(nullptr)
+	subObjArray()
 {
 }
 
@@ -84,19 +84,22 @@ void OrangePlayer::Load(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	skil1CollOperator = new PlayerTripleAttackCollOperator(
-		SKILL_1_TARGET_SERCH_RANGE,
-		SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
-		SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
-		SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
-		SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
-		SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
-		SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
-		SKILL_1_COLL_LOCAL_POS,
-		trans.pos, trans.angle
+	subObjArray.emplace_back(
+		new PlayerTripleAttackCollOperator(
+			SKILL_1_TARGET_SERCH_RANGE,
+			SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
+			SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
+			SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
+			SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
+			SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
+			SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
+			SKILL_1_COLL_LOCAL_POS,
+			trans.pos, trans.angle
+		)
 	);
 
-	skil1CollOperator->Load();
+	// まとめて読み込み処理
+	for (ActorBase*& c : subObjArray) { c->Load(); }
 #pragma endregion
 
 
@@ -141,7 +144,7 @@ void OrangePlayer::Load(void)
 			// 定数（攻撃対象が見つかった場合の移動速度）
 			SKILL_1_ATTACK_MOVE_SPEED,
 			// 当たり判定のオペレーター
-			*skil1CollOperator,
+			*SubObjSerch<PlayerTripleAttackCollOperator>(),
 			// 参照（座標 / 角度）
 			trans.pos, trans.angle,
 			// アニメーションの再生関数のポインタ（1段目 / 2段目 / 3段目）
@@ -170,18 +173,18 @@ void OrangePlayer::CharactorInit(void)
 	// 初期状態を移動状態にする
 	state = (int)STATE::MOVE;
 
-	skil1CollOperator->Init();
+	for (ActorBase*& c : subObjArray) { c->Init(); }
 
 }
 
 void OrangePlayer::CharactorUpdate(void)
 {
-	skil1CollOperator->Update();
+	for (ActorBase*& c : subObjArray) { c->Update(); }
 }
 
 void OrangePlayer::CharactorDraw(void)
 {
-	skil1CollOperator->Draw();
+	for (ActorBase*& c : subObjArray) { c->Draw(); }
 
 	if (App::GetIns().IsDrawDebug()) {
 
@@ -201,14 +204,17 @@ void OrangePlayer::CharactorDraw(void)
 
 void OrangePlayer::CharactorAlphaDraw(void)
 {
-	skil1CollOperator->AlphaDraw();
+	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
 
 void OrangePlayer::CharactorRelease(void)
 {
-	if (skil1CollOperator) {
-		skil1CollOperator->Release();
-		delete skil1CollOperator;
-		skil1CollOperator = nullptr;
+	for (ActorBase*& c : subObjArray) {
+		if (c) {
+			c->Release();
+			delete c;
+			c = nullptr;
+		}
 	}
+	subObjArray.clear();
 }

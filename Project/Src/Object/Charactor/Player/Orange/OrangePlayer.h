@@ -210,8 +210,16 @@ private:
 #pragma endregion 定数定義
 
 
-	// スキル1（基本的に「通常攻撃」）の当たり判定管理
-	PlayerTripleAttackCollOperator* skil1CollOperator;
+	// 抱える下位クラスを格納する配列
+	std::vector<ActorBase*> subObjArray;
+	// 抱える下位クラスを格納する配列の中から特定のオブジェクトを探す
+	template<typename SubClass = ActorBase>
+	SubClass* SubObjSerch(void) {
+		for (ActorBase* obj : subObjArray) {
+			if (dynamic_cast<SubClass*>(obj)) { return dynamic_cast<SubClass*>(obj); }
+		}
+		return nullptr;
+	}
 
 	// メイン処理～～～～～～～～～～～～～～
 	void CharactorInit(void)override;
