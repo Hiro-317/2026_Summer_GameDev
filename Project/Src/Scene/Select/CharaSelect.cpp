@@ -13,6 +13,7 @@
 #include"../SceneManager/SceneManager.h"
 
 #include"../Title/End/EndScene.h"
+#include"../../Object/CharaSelect/Orange/OrangeSelect.h"
 
 CharaSelect::CharaSelect()
 {
@@ -24,14 +25,23 @@ void CharaSelect::Load(void)
 	Snd::GetIns().ChangeScene("Title");
 
 	Key::GetIns().SetMouceFixed(false);
+
+	// キャラクターのロード
+	objects.push_back(new OrangeSelect());
+	objects.back()->Load();
 }
 void CharaSelect::Init(void)
 {
 	// カメラの初期化
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
+
+	// キャラクターの初期化
+	objects.back()->Init();
 }
 void CharaSelect::Update(void)
 {
+	objects.back()->Update();
+
 	// ゲーム終了処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		Snd::GetIns().Pause();

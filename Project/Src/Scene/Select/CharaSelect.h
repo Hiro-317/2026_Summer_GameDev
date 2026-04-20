@@ -3,6 +3,8 @@
 
 #include"../../Common/Vector3.h"
 
+#include"../../Object/ActorBase.h"
+
 
 class CharaSelect : public SceneBase
 {
@@ -22,4 +24,8 @@ public:
 	void Release(void)override;
 
 private:
+
+	// オブジェクト格納用の配列
+	std::vector<ActorBase*>objects;
+
 };

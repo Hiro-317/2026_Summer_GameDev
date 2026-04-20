@@ -31,6 +31,7 @@ public:
 		const std::function<void(void)>& PlayWalkAnime,
 		const std::function<void(void)>& PlayRunAnime
 	);
+
 	~PlayerMoveState()override = default;
 
 	// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éğŒŠÖ”
