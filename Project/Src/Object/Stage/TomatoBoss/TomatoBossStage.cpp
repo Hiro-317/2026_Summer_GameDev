@@ -14,8 +14,6 @@ void TomatoBossStage::Load(void)
 	trans.centerDiff = MODEL_CENTER_DIFF;
 
 	ColliderLoad();
-
-
 }
 
 void TomatoBossStage::ColliderLoad()
