@@ -13,6 +13,7 @@ public:
 	~OrangePlayer()override = default;
 
 	void Load(void)override;
+	void UiDraw(void)override;
 
 private:
 

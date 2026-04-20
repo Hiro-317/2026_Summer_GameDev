@@ -46,6 +46,11 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
+	// スタミナを返す関数
+	short GetDashStamina(void)const { return dashStamina; }
+	// 息切れかどうかを返す関数
+	bool IsTired(void)const { return isTired; }
+
 private:
 
 #pragma region 定数

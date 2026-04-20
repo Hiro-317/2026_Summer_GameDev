@@ -185,7 +185,15 @@ void OrangePlayer::CharactorUpdate(void)
 void OrangePlayer::CharactorDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
+}
 
+void OrangePlayer::CharactorAlphaDraw(void)
+{
+	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
+}
+
+void OrangePlayer::UiDraw(void)
+{
 	if (App::GetIns().IsDrawDebug()) {
 
 		// 1行ずつ描画するためのラムダ式（デバッグ用）
@@ -198,14 +206,12 @@ void OrangePlayer::CharactorDraw(void)
 		// 加速度をデバッグ表示
 		debugDrwStr("プレイヤー～～～～～～");
 		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
+		debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
+		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("～～～～～～～～～～～");
 	}
 }
 
-void OrangePlayer::CharactorAlphaDraw(void)
-{
-	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
-}
 
 void OrangePlayer::CharactorRelease(void)
 {
