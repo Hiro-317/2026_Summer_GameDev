@@ -118,6 +118,17 @@ void GameScene::Update(void)
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR);
 		return;
 	}
+
+#if _DEBUG
+
+	// ƒV[ƒ“‚ğÄ“Ç‚İ‚İ
+	if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_RELOAD).down) {
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+		return;
+	}
+
+#endif // _DEBUG
+
 #pragma endregion
 }
 
