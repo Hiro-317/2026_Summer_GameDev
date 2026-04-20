@@ -118,8 +118,9 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 	if (a->GetTag() == b->GetTag()) { return false; }
 
 	// お互いの距離による雑な判定スキップ（軽量化目的）
-	float enoughDisSub = a->GetEnoughDistance() + b->GetEnoughDistance();
-	if (enoughDisSub > 0.0f) {
+	float enoughDisA = a->GetEnoughDistance(), enoughDisB = b->GetEnoughDistance();
+	if (enoughDisA != -1.0f && enoughDisB != -1.0f) {
+		float enoughDisSub = enoughDisA + enoughDisB;
 		if ((a->GetPos() - b->GetPos()).LengthSq() > enoughDisSub * enoughDisSub) { return false; }
 	}
 
