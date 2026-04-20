@@ -1,11 +1,10 @@
 #include "PlayerTripleAttackState.h"
 
-#include "../../../../../Manager/Input/KeyManager.h"
-
 PlayerTripleAttackState::PlayerTripleAttackState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 
+	KEY_TYPE ATTACK_KEY,
 	int COOL_TIME,
 	int ATTACK_NEXT_STAGE_CONTINUE_TIME,
 	float COLL_START_TIME_1, float COLL_END_TIME_1,
@@ -27,6 +26,7 @@ PlayerTripleAttackState::PlayerTripleAttackState(
 ) :
 CharactorStateBase(ownChangeState, isOwnState),
 
+ATTACK_KEY(ATTACK_KEY),
 COOL_TIME(COOL_TIME),
 ATTACK_NEXT_STAGE_CONTINUE_TIME(ATTACK_NEXT_STAGE_CONTINUE_TIME),
 COLL_START_TIME(COLL_START_TIME_1, COLL_START_TIME_2, COLL_START_TIME_3),
@@ -54,7 +54,7 @@ void PlayerTripleAttackState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_1).down) {
+	if (Key::GetIns().GetInfo(ATTACK_KEY).down) {
 		OwnChangeState();
 		Enter();
 	}
@@ -129,8 +129,6 @@ void PlayerTripleAttackState::Exit(void)
 
 	// 探索情報をリセットする
 	collOperator.ResetTarget();
-
-
 }
 
 void PlayerTripleAttackState::AlwaysUpdate(void)

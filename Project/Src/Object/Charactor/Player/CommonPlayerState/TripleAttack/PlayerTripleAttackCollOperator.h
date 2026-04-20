@@ -77,7 +77,7 @@ private:
 	const float COLL_SIZE[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
 
 	// 攻撃の段階ごとの判定のローカル座標
-	const Vector3& COLL_LOCAL_POS;
+	const Vector3 COLL_LOCAL_POS;
 
 #pragma endregion
 

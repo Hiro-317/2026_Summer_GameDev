@@ -6,6 +6,7 @@
 
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
+#include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -97,6 +98,15 @@ void OrangePlayer::Load(void)
 			trans.pos, trans.angle
 		)
 	);
+	subObjArray.emplace_back(
+		new PlayerSimpleAttackCollOperator(
+			SKILL_2_TARGET_SERCH_RANGE,
+			SKILL_2_COLL_TAG,
+			SKILL_2_COLL_SIZE_TABLE,
+			SKILL_2_COLL_LOCAL_POS,
+			trans.pos, trans.angle
+		)
+	);
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
@@ -107,7 +117,7 @@ void OrangePlayer::Load(void)
 #pragma region 状態設定
 
 	// 移動状態を追加する
-    	AddState(
+	AddState(
 		(int)STATE::MOVE,
 		new PlayerMoveState(
 			// 自分の状態に遷移する関数
@@ -133,8 +143,8 @@ void OrangePlayer::Load(void)
 			[&]() { state = (int)STATE::SKILL_1; },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
-			// 定数（クールタイム / 次段に繋がるまでの猶予時間）
-			SKILL_1_COOL_TIME, SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME,
+			// 定数（使用するキー / クールタイム / 次段に繋がるまでの猶予時間）
+			KEY_TYPE::PLAYER_SKILL_1, SKILL_1_COOL_TIME, SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME,
 			// 定数（（1段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
 			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
 			// 定数（（2段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
@@ -158,10 +168,42 @@ void OrangePlayer::Load(void)
 		)
 	);
 
-
-	GetStateIns((int)STATE::MOVE).AddOtherStateCondition(
-		[this](void) { GetStateIns((int)STATE::SKILL_1).OwnStateConditionUpdate(); }
+	// 攻撃状態を追加する (キック)
+	AddState(
+		(int)STATE::SKILL_2,
+		new PlayerSimpleAttackState(
+			// 自分の状態に遷移する関数
+			[&]() { state = (int)STATE::SKILL_2; },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_2; },
+			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
+			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
+			// 当たり判定のオペレーター
+			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
+			// 参照（座標 / 角度）
+			trans.pos, trans.angle,
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
+			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; }
+		)
 	);
+
+	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
+	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
+		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
+		};
+
+	// 移動状態 -> スキル1 の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
+	// 移動状態 -> スキル2 の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
+	// スキル1 -> スキル2 の遷移を登録
+	AddChangeStateCondition(STATE::SKILL_1, STATE::SKILL_2);
+	// スキル2 -> スキル1 の遷移を登録
+	AddChangeStateCondition(STATE::SKILL_2, STATE::SKILL_1);
 #pragma endregion
 }
 

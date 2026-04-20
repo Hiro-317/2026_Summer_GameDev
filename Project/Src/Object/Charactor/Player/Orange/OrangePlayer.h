@@ -76,7 +76,7 @@ private:
 	// ‰ŠúÀ•W
 	const Vector3 INIT_POS = GetParameterToVector3("InitPos");
 
-	// ````````````````````````````````
+	// ``````````````````````````•Ï”‰Šú‰»Œn
 
 	// ó‘Ô‚Ìí—Ş
 	enum class STATE
@@ -106,7 +106,7 @@ private:
 	// ƒ_ƒbƒVƒ…‚ÌƒXƒ^ƒ~ƒi‚ÌÅ‘å—Êi1ƒtƒŒ[ƒ€‚¸‚ÂƒfƒNƒŠƒƒ“ƒgj
 	const short DASH_STAMINA_MAX = (short)GetParameterToInt("DashStaminaMax");
 
-	// `````````````````````````````````
+	// `````````````````````````````ˆÚ“®ó‘Ô
 
 
 	// ƒXƒLƒ‹1ó‘Ô```````````````````````````
@@ -157,8 +157,36 @@ private:
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
 	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("Skill1AttackMoveSpeed");
 
+	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
 
-	// `````````````````````````````````
+
+	// ƒXƒLƒ‹2ó‘Ô```````````````````````````
+
+	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
+	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("Skill2TargetSerchRange");
+
+	// “–‚½‚è”»’è‚Ìƒ^ƒO
+	const TAG SKILL_2_COLL_TAG = TAG::ORANGE_PLAYER_KICK_ATTACK;
+
+	// “–‚½‚è”»’è‚ÌƒTƒCƒYi”¼Œaj
+	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("Skill2CollSize");
+
+	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
+	const Vector3 SKILL_2_COLL_LOCAL_POS = GetParameterToVector3("Skill2CollLocalPos");
+
+	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int SKILL_2_COOL_TIME = GetParameterToInt("Skill2CoolTime");
+
+	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const float SKILL_2_COLL_START_TIME = GetParameter("Skill2CollStartTime");
+
+	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const float SKILL_2_COLL_END_TIME = GetParameter("Skill2CollEndTime");
+
+	// UŒ‚’†‚ÌˆÚ“®‘¬“x
+	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("Skill2AttackMoveSpeed");
+
+	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
@@ -206,7 +234,7 @@ private:
 		ANIME_FOLDER_PATH + "Kick.mv1",		// KICK
 	};
 
-	// `````````````````````````````````
+	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
 
 #pragma endregion ’è”’è‹`
 
@@ -228,5 +256,5 @@ private:
 	void CharactorDraw(void)override;
 	void CharactorAlphaDraw(void)override;
 	void CharactorRelease(void)override;
-	// ```````````````````
+	// ``````````````ƒƒCƒ“ˆ—
 };
