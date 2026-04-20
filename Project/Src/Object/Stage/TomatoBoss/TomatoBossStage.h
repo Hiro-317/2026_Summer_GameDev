@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../StageBase.h"
+#include"../../ActorBase.h"
 
 class TomatoBossStage : public ActorBase
 {
