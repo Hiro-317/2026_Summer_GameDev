@@ -33,7 +33,7 @@ void CharaSelect::Load(void)
 void CharaSelect::Init(void)
 {
 	// カメラの初期化
-	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
+	Camera::GetIns().ChangeModeFixedPoint(Vector3(0, 150, -350), Vector3());
 
 	// キャラクターの初期化
 	objects.back()->Init();
@@ -59,8 +59,22 @@ void CharaSelect::Update(void)
 }
 void CharaSelect::Draw(void)
 {
+#pragma region 画面演出
+
+	//SetDrawScreen(DX_SCREEN_BACK);
+
+	//// 画面リセット
+	//ClearDrawScreen();
+
+	//// カメラ適用
+	//Camera::GetIns().Apply();
+	
+	objects.back()->Draw();
+
 	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "キャラクターシーン");
 }
 void CharaSelect::Release(void)
 {
+	objects.back()->Release();
+	objects.clear();
 }

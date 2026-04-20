@@ -1,15 +1,17 @@
 #pragma once
 
-#include "../Charactor/CharactorBase.h"
+#include "../ActorBase.h"
 
-class CharaSelectObj : public CharactorBase
+#include "../Common/AnimationController/AnimationController.h"
+
+class CharaSelectObj : public ActorBase
 {
 public:
 
 	CharaSelectObj();
 	~CharaSelectObj()override = default;
 
-	virtual void Load(void)override {};
+	virtual void Load(void)override;
 
 protected:
 
@@ -27,7 +29,7 @@ protected:
 	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("ModelCenterDiff") * MODEL_SCALE;
 
 	// Šp“x‚ÌƒYƒŒ
-	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("ModelLocalRot") * (DX_PI_F / 180.0f);
+	const Vector3 MODEL_LOCAL_ROT = Vector3();
 
 	// `````````````````````````````````
 
@@ -57,13 +59,19 @@ protected:
 	// Å‘åˆÚ“®—Ê
 	const float MOVE_SPEED_MAX = GetParameter("MoveSpeedMax");
 
-	// ƒ_ƒbƒVƒ…‚ÌˆÚ“®—Ê”{—¦
-	const float DASH_SPEED_RATE = GetParameter("DashSpeedRate");
-
-	// ƒ_ƒbƒVƒ…‚ÌƒXƒ^ƒ~ƒi‚ÌÅ‘å—Êi1ƒtƒŒ[ƒ€‚¸‚ÂƒfƒNƒŠƒƒ“ƒgj
-	const short DASH_STAMINA_MAX = (short)GetParameterToInt("DashStaminaMax");
-
 	// `````````````````````````````````
+	
+#pragma region ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[
+	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚Ìì¬
+	void CreateAnimationController(void) { if (anime == nullptr) anime = new AnimationController(trans.model); }
+
+	/// <summary>
+	/// •Êƒtƒ@ƒCƒ‹‚É•Û‘¶‚³‚ê‚Ä‚¢‚éFBXƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚·‚é
+	/// </summary>
+	/// <param name="index">QÆ”Ô†</param>
+	/// <param name="speed">Ä¶‘¬“x</param>
+	/// <param name="filePath">ƒpƒX</param>
+	void AddAnimation(int index, float speed, const char* filePath);
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
 
@@ -96,4 +104,12 @@ protected:
 	};
 
 	// `````````````````````````````````
+
+private:
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	AnimationController* anime;
+
+	// ”h¶æ’Ç‰ÁXV
+	void SubUpdate(void) override;
 };

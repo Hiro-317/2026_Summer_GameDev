@@ -13,11 +13,4 @@ public:
 
 private:
 
-	// ƒƒCƒ“ˆ—``````````````
-	void CharactorInit(void)override;
-	void CharactorUpdate(void)override;
-	void CharactorDraw(void)override;
-	void CharactorAlphaDraw(void)override;
-	void CharactorRelease(void)override;
-	// ```````````````````
 };

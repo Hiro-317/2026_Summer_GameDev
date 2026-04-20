@@ -1,0 +1,9 @@
+ModelSize,60,180.923,32.07
+ModelScale,1.2,0.5,1.2
+ModelLocalRot,0,180,0
+ModelCenterDiff,0,-90.409,0
+InitPos,0,100,0
+MoveSpeed,5
+MoveSpeedMax,20
+IdleAnimeSpeed,1
+WalkAnimeSpeed,1
