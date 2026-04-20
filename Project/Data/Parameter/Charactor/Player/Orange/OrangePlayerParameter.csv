@@ -7,9 +7,9 @@ ModelToColliderRate,1
 CollisionPushWeight,50
 InitPos,0,100,0
 DashStaminaMax,250
-DashSpeedRate,2
-MoveSpeed,5
-MoveSpeedMax,20
+DashSpeedRate,1.5
+MoveSpeed,4
+MoveSpeedMax,10
 Skill1AttackNextStageContinueTime,60
 Skill1CoolTime,30
 Skill1CollStartTime1,0.4

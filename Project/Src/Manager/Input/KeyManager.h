@@ -112,6 +112,9 @@ public:
 
 		// デバッグモード時元のシーンの更新
 		DEBUG_MODE_TOPUPDATE,
+
+		// シーンの再ロード
+		DEBUG_RELOAD,
 #pragma endregion
 
 		MAX,

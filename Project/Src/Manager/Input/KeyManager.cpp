@@ -173,6 +173,9 @@ void KeyManager::Init(void)
 
 	// デバッグモード時元のシーンの更新
 	SET_KEYBOARD(KEY_TYPE::DEBUG_MODE_TOPUPDATE, KEY_INPUT_0);
+
+	// シーンの再ロード
+	SET_KEYBOARD(KEY_TYPE::DEBUG_RELOAD, KEY_INPUT_MINUS);
 #pragma endregion
 
 	// キーボードによるテキスト入力管理クラスの生成
