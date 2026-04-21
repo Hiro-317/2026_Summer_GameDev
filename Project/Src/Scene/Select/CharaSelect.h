@@ -3,6 +3,8 @@
 
 #include"../../Common/Vector3.h"
 
+#include"../../Object/CharaSelect/CharaSelectObj.h"
+
 
 class CharaSelect : public SceneBase
 {
@@ -22,4 +24,10 @@ public:
 	void Release(void)override;
 
 private:
+
+	// オブジェクト格納用の配列
+	std::vector<CharaSelectObj*>objects;
+
+	// 現在のキャラを保存
+	int tempNowChara;
 };

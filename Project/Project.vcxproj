@@ -144,6 +144,10 @@
     <ClCompile Include="Src\Object\Charactor\Player\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
@@ -176,12 +180,16 @@
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
     <ClInclude Include="Src\Object\Charactor\Player\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />
