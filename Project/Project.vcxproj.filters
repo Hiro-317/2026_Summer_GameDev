@@ -22,7 +22,6 @@
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Object\Charactor\CharactorBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
@@ -34,8 +33,6 @@
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -69,7 +66,6 @@
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
-    <ClInclude Include="Src\Object\Stage\StageBase.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
@@ -84,7 +80,5 @@
     <ClInclude Include="Src\Scene\Title\End\EndScene.h" />
     <ClInclude Include="Src\Scene\Title\TitleScene.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
   </ItemGroup>
 </Project>
