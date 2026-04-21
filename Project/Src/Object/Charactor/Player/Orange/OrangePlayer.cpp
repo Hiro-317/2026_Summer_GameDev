@@ -7,6 +7,7 @@
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
 #include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+#include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -190,6 +191,21 @@ void OrangePlayer::Load(void)
 			[&]() { state = (int)STATE::MOVE; }
 		)
 	);
+
+	//AddState(
+	//	(int)STATE::SKILL_3,
+	//	new PlayerDodgeState(
+	//		[&]() { state = (int)STATE::SKILL_3; },
+	//		[&]() {return state == (int)STATE::SKILL_3; },
+	//		KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
+	//		SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
+	//		trans.pos,trans.angle,
+	//		[&]() {AnimePlay((int)ANIME_TYPE::RUN, false); },
+	//		[&]() { return GetAnimeRatio(); },
+	//		[&]() {return IsAnimeEnd(); },
+	//		[
+	//	)
+	//);
 
 	// ‘JˆÚðŒ‚Ì“o˜^ibefore = ‘JˆÚŒ³)(after = ‘JˆÚŒãj
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {

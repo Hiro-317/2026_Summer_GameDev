@@ -189,6 +189,25 @@ private:
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
 
+	// ƒXƒLƒ‹3ó‘Ô```````````````````````````
+
+	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
+	const float SKILL_3_TARGET_SERCH_RANGE = GetParameter("Skill3TargetSerchRange");
+
+	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int SKILL_3_COOL_TIME = GetParameterToInt("Skill3CoolTime");
+
+	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const float SKILL_3_INVI_START_TIME = GetParameter("Skill3InviStartTime");
+	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const float SKILL_3_INVI_END_TIME = GetParameter("Skill3InviEndTime");
+
+	// UŒ‚’†‚ÌˆÚ“®‘¬“x
+	const float SKILL_3_MOVE_SPEED = GetParameter("Skill3AttackMoveSpeed");
+
+	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
+
+
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìí—Ş
