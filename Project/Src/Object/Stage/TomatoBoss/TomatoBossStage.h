@@ -11,7 +11,7 @@ private:
     const Vector3 GROUND_COLLISION_SIZE = Vector3(10077.034f, 50.0f, 9234.112f);       // 地面の当たり判定のサイズ
     const Vector3 MODEL_CENTER_DIFF = Vector3::Yonly(-80.0f);       // モデルの描画位置と当たり判定の中心座標の差分
     const Vector3 WALL_LOCAL_ENDPOS = Vector3(0.0f, 1000.0f, 0.0f);        // モデルの描画位置
-    const Vector3 ROCK_LOCAL_ENDPOS = Vector3(0.0f, 100.0f, 0.0f);        // モデルの描画位置
+    const Vector3 ROCK_LOCAL_ENDPOS = Vector3(0.0f, 200.0f, 0.0f);        // モデルの描画位置
 
     struct ColliderInfo
     {
@@ -44,7 +44,14 @@ private:
         { GetParameterToVector3("RockCollisionPos20") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius20")},
         { GetParameterToVector3("RockCollisionPos21") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius21")},
         { GetParameterToVector3("RockCollisionPos22") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius22")},
-        { GetParameterToVector3("RockCollisionPos23") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius23")}
+        { GetParameterToVector3("RockCollisionPos23") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius23")},
+        { GetParameterToVector3("RockCollisionPos24") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius24")},
+        { GetParameterToVector3("RockCollisionPos25") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius25")},
+        { GetParameterToVector3("RockCollisionPos26") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius26")},
+        { GetParameterToVector3("RockCollisionPos27") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius27")},
+        { GetParameterToVector3("RockCollisionPos28") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius28")},
+        { GetParameterToVector3("RockCollisionPos29") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius29")},
+        { GetParameterToVector3("RockCollisionPos30") + MODEL_CENTER_DIFF, GetParameter("RockCollisionRadius30")},
     };
 
     const std::vector<ColliderInfo> WALL_COLLISION_INFO = 
