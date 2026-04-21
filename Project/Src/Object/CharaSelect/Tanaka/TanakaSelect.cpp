@@ -1,10 +1,11 @@
-#include "OrangeSelect.h"
+#include "TanakaSelect.h"
 
-OrangeSelect::OrangeSelect()
+
+TanakaSelect::TanakaSelect()
 {
 }
 
-void OrangeSelect::Load(void)
+void TanakaSelect::Load(void)
 {
 	// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
 	trans.Load("Charactor/Orange/OrangePlayer");

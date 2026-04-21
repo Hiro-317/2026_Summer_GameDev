@@ -14,6 +14,8 @@
 
 #include"../Title/End/EndScene.h"
 #include"../../Object/CharaSelect/Orange/OrangeSelect.h"
+#include"../../Object/CharaSelect/Tomato/TomatoSelect.h"
+#include"../../Object/CharaSelect/Tanaka/TanakaSelect.h"
 
 CharaSelect::CharaSelect()
 {
@@ -28,19 +30,33 @@ void CharaSelect::Load(void)
 
 	// キャラクターのロード
 	objects.push_back(new OrangeSelect());
-	objects.back()->Load();
+	objects.push_back(new TomatoSelect());
+	objects.push_back(new TanakaSelect());
+
+	for (CharaSelectObj* i : objects) {
+
+		i->Load();
+	}
+	tempNowChara = static_cast<int>(CharaSelectObj::SELECT_PLAYER::NON) + 1;
 }
 void CharaSelect::Init(void)
 {
 	// カメラの初期化
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(0, 150, -350), Vector3());
-
-	// キャラクターの初期化
-	objects.back()->Init();
 }
 void CharaSelect::Update(void)
 {
-	objects.back()->Update();
+	// キャラクターの更新
+	tempNowChara += objects.at(tempNowChara)->GetNowChara();
+
+	if (tempNowChara <= static_cast<int>(CharaSelectObj::SELECT_PLAYER::NON)) {
+		tempNowChara = 0;
+	}
+	if (tempNowChara >= static_cast<int>(CharaSelectObj::SELECT_PLAYER::MAX)) {
+		tempNowChara = static_cast<int>(CharaSelectObj::SELECT_PLAYER::MAX) - 1;
+	}
+
+	objects.at(tempNowChara)->Update();
 
 	// ゲーム終了処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -69,12 +85,17 @@ void CharaSelect::Draw(void)
 	//// カメラ適用
 	//Camera::GetIns().Apply();
 	
-	objects.back()->Draw();
+	// キャラクターの描画
+	objects.at(tempNowChara)->Draw();
 
 	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "キャラクターシーン");
 }
 void CharaSelect::Release(void)
 {
-	objects.back()->Release();
+	// キャラクターの解放
+	for (ActorBase* i : objects) {
+
+		i->Release();
+	}
 	objects.clear();
 }

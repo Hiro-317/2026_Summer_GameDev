@@ -32,6 +32,7 @@ public:
 
 	// アニメーション再生
 	void Play(int type, bool loop = true);
+	void Stop(void);
 	void Update(void);
 	void Release(void);
 

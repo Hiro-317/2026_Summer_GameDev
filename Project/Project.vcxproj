@@ -146,6 +146,8 @@
     <ClCompile Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
@@ -186,6 +188,8 @@
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />

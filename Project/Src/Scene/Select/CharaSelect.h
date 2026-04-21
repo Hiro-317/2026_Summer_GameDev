@@ -3,7 +3,7 @@
 
 #include"../../Common/Vector3.h"
 
-#include"../../Object/ActorBase.h"
+#include"../../Object/CharaSelect/CharaSelectObj.h"
 
 
 class CharaSelect : public SceneBase
@@ -26,6 +26,8 @@ public:
 private:
 
 	// オブジェクト格納用の配列
-	std::vector<ActorBase*>objects;
+	std::vector<CharaSelectObj*>objects;
 
+	// 現在のキャラを保存
+	int tempNowChara;
 };

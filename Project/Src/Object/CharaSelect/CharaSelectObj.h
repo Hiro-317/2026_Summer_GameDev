@@ -8,10 +8,23 @@ class CharaSelectObj : public ActorBase
 {
 public:
 
+	enum class SELECT_PLAYER
+	{
+		NON = -1,
+
+		ORANGE,
+		TOMATO,
+		TANAKA,
+
+		MAX
+	};
+
 	CharaSelectObj();
 	~CharaSelectObj()override = default;
 
 	virtual void Load(void)override;
+
+	int GetNowChara(void) { return nowChara; }
 
 protected:
 
@@ -19,26 +32,13 @@ protected:
 
 	// ƒ‚ƒfƒ‹``````````````````````````````
 
-	// ƒXƒP[ƒ‹
-	const Vector3 MODEL_SCALE = GetParameterToVector3("ModelScale");
-
-	// ƒTƒCƒY
-	const Vector3 MODEL_SIZE = GetParameterToVector3("ModelSize") * MODEL_SCALE;
-
-	// ’†S“_‚ÌƒYƒŒ
-	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("ModelCenterDiff") * MODEL_SCALE;
+	// ‰ŠúÀ•W
+	const Vector3 INIT_POS = GetParameterToVector3("InitPos");
 
 	// Šp“x‚ÌƒYƒŒ
 	const Vector3 MODEL_LOCAL_ROT = Vector3();
 
 	// `````````````````````````````````
-
-	// •Ï”‰Šú‰»Œn``````````````````````````
-
-	// ‰ŠúÀ•W
-	const Vector3 INIT_POS = GetParameterToVector3("InitPos");
-
-	// ````````````````````````````````
 
 	// ó‘Ô‚Ìí—Ş
 	enum class STATE
@@ -110,6 +110,11 @@ private:
 	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
 	AnimationController* anime;
 
+	// Œ»İ‚ÌƒLƒƒƒ‰ƒNƒ^[
+	int nowChara;
+
 	// ”h¶æ’Ç‰ÁXV
 	void SubUpdate(void) override;
+	// ”h¶æ’Ç‰Á‰ğ•ú
+	void SubRelease(void) override;
 };

@@ -1,14 +1,15 @@
-#include "OrangeSelect.h"
+#include "TomatoSelect.h"
 
-OrangeSelect::OrangeSelect()
+
+TomatoSelect::TomatoSelect()
 {
 }
 
-void OrangeSelect::Load(void)
+void TomatoSelect::Load(void)
 {
 	// モデルを読み込む
 	trans.Load("Charactor/Orange/OrangePlayer");
-
+	
 	// モデルのスケールを設定
 	trans.scale = MODEL_SCALE;
 

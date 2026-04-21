@@ -37,7 +37,7 @@ void AnimationController::AddInFbx(int type, float speed, int animIndex)
 void AnimationController::Play(int type,bool loop)
 {
 	if (playType == type) {
-		if (!loop)playAnim.step = 0.0f;
+		if (!loop) playAnim.step = 0.0f;
 		return;
 	}
 	if (playType != -1) {
@@ -66,6 +66,12 @@ void AnimationController::Play(int type,bool loop)
 	// アニメーション総時間の取得
 	playAnim.totalTime = MV1GetAttachAnimTotalTime(modelId, playAnim.attachNo);
 
+}
+
+void AnimationController::Stop(void)
+{
+	MV1DetachAnim(modelId, playAnim.attachNo);
+	playType = -1;
 }
 
 
