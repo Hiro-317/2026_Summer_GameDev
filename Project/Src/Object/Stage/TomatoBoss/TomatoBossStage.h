@@ -13,9 +13,9 @@ private:
     // モデルの描画位置と当たり判定の中心座標の差分
     const Vector3 MODEL_CENTER_DIFF = Vector3::Yonly(-80.0f);
     // モデルの描画位置
-    const Vector3 WALL_LOCAL_ENDPOS = Vector3(0.0f, 1000.0f, 0.0f);
+    const Vector3 WALL_LOCAL_ENDPOS = Vector3(0, -100, 0);
     // モデルの描画位置
-    const Vector3 ROCK_LOCAL_ENDPOS = Vector3(0.0f, -100.0f, 0.0f);
+    const Vector3 ROCK_LOCAL_ENDPOS = Vector3(0, -100, 0);
 
     struct ColliderInfo
     {
