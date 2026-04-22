@@ -18,6 +18,7 @@ OrangePlayer::OrangePlayer() :
 {
 }
 
+
 void OrangePlayer::Load(void)
 {
 #pragma region モデル
@@ -86,6 +87,7 @@ void OrangePlayer::Load(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
+	// 三弾攻撃の当たり判定オペレーターを生成する
 	subObjArray.emplace_back(
 		new PlayerTripleAttackCollOperator(
 			SKILL_1_TARGET_SERCH_RANGE,
@@ -99,6 +101,8 @@ void OrangePlayer::Load(void)
 			trans.pos, trans.angle
 		)
 	);
+
+	// キック用の当たり判定オペレーターを生成する
 	subObjArray.emplace_back(
 		new PlayerSimpleAttackCollOperator(
 			SKILL_2_TARGET_SERCH_RANGE,
@@ -135,6 +139,7 @@ void OrangePlayer::Load(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
 		)
 	);
+
 
 	// 三段攻撃状態を追加する
 	AddState(
@@ -200,11 +205,11 @@ void OrangePlayer::Load(void)
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
 			trans.pos,trans.angle,
-			[&]() {AnimePlay((int)ANIME_TYPE::RUN, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
 			[&]() { return GetAnimeRatio(); },
-			[&]() {return IsAnimeEnd(); },
+			[&]() { return IsAnimeEnd(); },
 			[&]() { state = (int)STATE::MOVE; },
-			[&](unsigned char inviCounter) { SetInviCounter(inviCounter); }
+			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1)
 		)
 	);
 
@@ -217,10 +222,9 @@ void OrangePlayer::Load(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
 	// 移動状態 -> スキル2 の遷移を登録
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
-	// スキル1 -> スキル2 の遷移を登録
-	AddChangeStateCondition(STATE::SKILL_1, STATE::SKILL_2);
-	// スキル2 -> スキル1 の遷移を登録
-	AddChangeStateCondition(STATE::SKILL_2, STATE::SKILL_1);
+	// 移動中 -> スキル3の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+
 #pragma endregion
 }
 
