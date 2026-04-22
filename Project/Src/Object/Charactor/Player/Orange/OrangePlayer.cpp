@@ -7,6 +7,7 @@
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
 #include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+#include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -191,6 +192,22 @@ void OrangePlayer::Load(void)
 		)
 	);
 
+	AddState(
+		(int)STATE::SKILL_3,
+		new PlayerDodgeState(
+			[&]() { state = (int)STATE::SKILL_3; },
+			[&]() {return state == (int)STATE::SKILL_3; },
+			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
+			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
+			trans.pos,trans.angle,
+			[&]() {AnimePlay((int)ANIME_TYPE::RUN, false); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() {return IsAnimeEnd(); },
+			[&]() { state = (int)STATE::MOVE; },
+			[&](unsigned char inviCounter) { SetInviCounter(inviCounter); }
+		)
+	);
+
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
 		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
@@ -247,6 +264,7 @@ void OrangePlayer::UiDraw(void)
 
 		// 加速度をデバッグ表示
 		debugDrwStr("プレイヤー～～～～～～");
+		debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));	
 		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
 		debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
 		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));

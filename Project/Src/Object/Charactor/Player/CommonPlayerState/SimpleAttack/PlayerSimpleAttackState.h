@@ -65,7 +65,7 @@ private:
 #pragma region 定数
 
 	// 攻撃に使うキー
-	KEY_TYPE ATTACK_KEY;
+	const KEY_TYPE ATTACK_KEY;
 
 	// 攻撃そのもののクールタイム
 	const int COOL_TIME;

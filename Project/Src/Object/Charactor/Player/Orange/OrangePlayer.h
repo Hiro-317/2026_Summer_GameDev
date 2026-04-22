@@ -189,6 +189,22 @@ private:
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
 
+	// ƒXƒLƒ‹3ó‘Ô```````````````````````````
+
+	// ‰ñ”ğ‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int SKILL_3_COOL_TIME = GetParameterToInt("Skill3CoolTime");
+
+	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const float SKILL_3_INVI_START_TIME = GetParameter("Skill3InviStartTime");
+	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const float SKILL_3_INVI_END_TIME = GetParameter("Skill3InviEndTime");
+
+	// ‰ñ”ğ’†‚ÌˆÚ“®‘¬“x
+	const float SKILL_3_MOVE_SPEED = GetParameter("Skill3DodgeMoveSpeed");
+
+	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
+
+
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìí—Ş
@@ -203,6 +219,7 @@ private:
 		PUNCH2,
 		PUNCH3,
 		KICK,
+		DODGE,
 
 		MAX
 	};
@@ -217,6 +234,7 @@ private:
 		GetParameter("Punch2AnimeSpeed"),	// PUNCH2
 		GetParameter("Punch3AnimeSpeed"),	// PUNCH3
 		GetParameter("KickAnimeSpeed"),		// KICK
+		GetParameter("DodgeAnimeSpeed"),	// DODGE
 	};
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒHƒ‹ƒ_‚Ü‚Å‚ÌƒpƒX
@@ -232,6 +250,7 @@ private:
 		ANIME_FOLDER_PATH + "Punch2.mv1",	// PUNCH2
 		ANIME_FOLDER_PATH + "Punch3.mv1",	// PUNCH3
 		ANIME_FOLDER_PATH + "Kick.mv1",		// KICK
+		ANIME_FOLDER_PATH + "Dodge.mv1"		// DODGE
 	};
 
 	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
