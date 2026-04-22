@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <functional>
 
 #include "../../../../../Common/Vector3.h"
@@ -22,25 +23,7 @@ enum class	PLAYER_TRIPLE_ATTACK_STAGE
 	MAX
 };
 
-// 三弾攻撃の当たり判定オペレーター用のコンテキスト構造体
-struct PlayerTripleAttackCollOperatorContext
-{
-	// 攻撃対象の探索範囲
-	float FIND_ATTACK_TARGET_RANGE;
-
-	// 当たり判定のタグテーブル
-	TAG COLL_TAG[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
-	// 当たり判定のサイズテーブル（半径）
-	float COLL_SIZE[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
-	// 当たり判定のオフセット
-	Vector3 COLL_LOCAL_POS;
-	// プレイヤーの座標の参照
-	const Vector3& PLAYER_POS;
-	// プレイヤーの角度の参照
-	const Vector3& PLAYER_ANGLE;
-};
-
-// 三弾攻撃のステート用のコンテキスト構造体
+// 三弾攻撃のステート用の定数をまとめて渡すための構造体
 struct PlayerTripleAttackStateContext
 {
 	// 攻撃に使うキー
@@ -53,28 +36,28 @@ struct PlayerTripleAttackStateContext
 	int ATTACK_NEXT_STAGE_CONTINUE_TIME;
 
 	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
-	float COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	std::array<float,(size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_START_TIME;
 	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
-	float COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_END_TIME;
 
 	// 攻撃中の移動速度
 	float ATTACK_MOVE_SPEED;
 
 	// 当たり判定のオペレーターの参照
-	PlayerTripleAttackCollOperator& collOperator;
+	PlayerTripleAttackCollOperator* collOperator;
 
 	// 座標の参照
-	Vector3& pos;
+	Vector3* pos;
 	// 角度の参照
-	Vector3& angle;
+	Vector3* angle;
 
 	// 攻撃1～3段目アニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayAttackAnimes[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	std::array<std::function<void(void)>, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> PlayAttackAnimes;
 	// アニメーションの再生割合を取得する関数のポインタ
-	const std::function<float(void)> GetAnimePlayRatio;
+	std::function<float(void)> GetAnimePlayRatio;
 	// アニメーションが終了したかのフラグを取得する関数のポインタ
-	const std::function<bool(void)> IsAnimeEnd;
+	std::function<bool(void)> IsAnimeEnd;
 
 	// 攻撃終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	std::function<void(void)> DefaultChangeState;
 };

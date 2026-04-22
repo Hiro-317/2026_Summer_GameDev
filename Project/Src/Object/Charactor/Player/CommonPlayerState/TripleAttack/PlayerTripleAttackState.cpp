@@ -4,47 +4,30 @@ PlayerTripleAttackState::PlayerTripleAttackState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 
-	KEY_TYPE ATTACK_KEY,
-	int COOL_TIME,
-	int ATTACK_NEXT_STAGE_CONTINUE_TIME,
-	float COLL_START_TIME_1, float COLL_END_TIME_1,
-	float COLL_START_TIME_2, float COLL_END_TIME_2,
-	float COLL_START_TIME_3, float COLL_END_TIME_3,
-	float ATTACK_MOVE_SPEED,
-
-	PlayerTripleAttackCollOperator& collOperator,
-	Vector3& pos, Vector3& angle,
-
-	const std::function<void(void)>& PlayAttack1Anime,
-	const std::function<void(void)>& PlayAttack2Anime,
-	const std::function<void(void)>& PlayAttack3Anime,
-
-	const std::function<float(void)>& GetAnimePlayRatio,
-	const std::function<bool(void)>& IsAnimeEnd,
-
-	const std::function<void(void)>& DefaultChangeState
+	PlayerTripleAttackStateContext& stateContext
 ) :
-CharactorStateBase(ownChangeState, isOwnState),
+	CharactorStateBase(ownChangeState, isOwnState),
 
-ATTACK_KEY(ATTACK_KEY),
-COOL_TIME(COOL_TIME),
-ATTACK_NEXT_STAGE_CONTINUE_TIME(ATTACK_NEXT_STAGE_CONTINUE_TIME),
-COLL_START_TIME(COLL_START_TIME_1, COLL_START_TIME_2, COLL_START_TIME_3),
-COLL_END_TIME(COLL_END_TIME_1, COLL_END_TIME_2, COLL_END_TIME_3),
-ATTACK_MOVE_SPEED(ATTACK_MOVE_SPEED),
+	ATTACK_KEY(stateContext.ATTACK_KEY),
+	COOL_TIME(stateContext.COOL_TIME),
+	ATTACK_NEXT_STAGE_CONTINUE_TIME(stateContext.ATTACK_NEXT_STAGE_CONTINUE_TIME),
+	COLL_START_TIME(stateContext.COLL_START_TIME),
+	COLL_END_TIME(stateContext.COLL_END_TIME),
+	ATTACK_MOVE_SPEED(stateContext.ATTACK_MOVE_SPEED),
 
-collOperator(collOperator),
-pos(pos), angle(angle),
+	collOperator(*stateContext.collOperator),
+	pos(*stateContext.pos), angle(*stateContext.angle),
 
-PlayAttackAnimes{ PlayAttack1Anime, PlayAttack2Anime, PlayAttack3Anime },
-GetAnimePlayRatio(GetAnimePlayRatio),
-IsAnimeEnd(IsAnimeEnd),
+	PlayAttackAnimes(stateContext.PlayAttackAnimes),
 
-DefaultChangeState(DefaultChangeState),
+	GetAnimePlayRatio(stateContext.GetAnimePlayRatio),
+	IsAnimeEnd(stateContext.IsAnimeEnd),
 
-attackStage(PLAYER_TRIPLE_ATTACK_STAGE::NON),
-coolTimeCounter(0),
-attackNextStageContinueTimeCounter(0)
+	DefaultChangeState(stateContext.DefaultChangeState),
+
+	attackStage(PLAYER_TRIPLE_ATTACK_STAGE::NON),
+	coolTimeCounter(0),
+	attackNextStageContinueTimeCounter(0)
 {
 }
 

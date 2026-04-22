@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "../../../CharactorStateBase.h"
 
 #include "../../../../../Common/Vector3.h"
@@ -17,50 +19,14 @@ public:
 	/// <summary>
 	/// コンストラクト
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
+	/// <param name="ownChangeState">自分の状態に遷移させる関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="ATTACK_KEY">使用するキー</param>
-	/// <param name="COOL_TIME">攻撃そのもののクールタイム</param>
-	/// <param name="ATTACK_NEXT_STAGE_CONTINUE_TIME">次段に繋がるまでの猶予時間</param>
-	/// <param name="COLL_START_TIME_1">攻撃の判定を発生させる開始時間（1段目）（アニメーションの再生割合）</param>
-	/// <param name="COLL_END_TIME_1">攻撃の判定を発生させる終了時間（1段目）（アニメーションの再生割合）</param>
-	/// <param name="COLL_START_TIME_2">攻撃の判定を発生させる開始時間（2段目）（アニメーションの再生割合）</param>
-	/// <param name="COLL_END_TIME_2">攻撃の判定を発生させる終了時間（2段目）（アニメーションの再生割合）</param>
-	/// <param name="COLL_START_TIME_3">攻撃の判定を発生させる開始時間（3段目）（アニメーションの再生割合）</param>
-	/// <param name="COLL_END_TIME_3">攻撃の判定を発生させる終了時間（3段目）（アニメーションの再生割合）</param>
-	/// <param name="ATTACK_MOVE_SPEED">攻撃中の移動速度</param>
-	/// <param name="collOperator">当たり判定のオペレーターの参照</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="PlayAttack1Anime">攻撃1段目アニメーションの再生関数</param>
-	/// <param name="PlayAttack2Anime">攻撃2段目アニメーションの再生関数</param>
-	/// <param name="PlayAttack3Anime">攻撃3段目アニメーションの再生関数</param>
-	/// <param name="GetAnimePlayRatio">アニメーションの再生割合を取得する関数</param>
-	/// <param name="IsAnimeEnd">アニメーションの終了フラグを返す関数</param>
-	/// <param name="DefaultChangeState">攻撃終了後の状態遷移関数</param>
+	/// <param name="stateContext">コンテキスト構造体</param>
 	PlayerTripleAttackState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 
-		KEY_TYPE ATTACK_KEY,
-		int COOL_TIME,
-		int ATTACK_NEXT_STAGE_CONTINUE_TIME,
-		float COLL_START_TIME_1, float COLL_END_TIME_1,
-		float COLL_START_TIME_2, float COLL_END_TIME_2,
-		float COLL_START_TIME_3, float COLL_END_TIME_3,
-		float ATTACK_MOVE_SPEED,
-
-		PlayerTripleAttackCollOperator& collOperator,
-		Vector3& pos, Vector3& angle,
-
-		const std::function<void(void)>& PlayAttack1Anime,
-		const std::function<void(void)>& PlayAttack2Anime,
-		const std::function<void(void)>& PlayAttack3Anime,
-
-		const std::function<float(void)>& GetAnimePlayRatio,
-		const std::function<bool(void)>& IsAnimeEnd,
-
-		const std::function<void(void)>& DefaultChangeState
+		PlayerTripleAttackStateContext& stateContext
 	);
 	~PlayerTripleAttackState()override = default;
 
@@ -91,9 +57,9 @@ private:
 	const int ATTACK_NEXT_STAGE_CONTINUE_TIME;
 
 	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
-	const float COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_START_TIME;
 	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
-	const float COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_END_TIME;
 
 	// 攻撃中の移動速度
 	const float ATTACK_MOVE_SPEED;
@@ -112,7 +78,7 @@ private:
 	Vector3& angle;
 
 	// 攻撃1～3段目アニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayAttackAnimes[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	const std::array<std::function<void(void)>, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> PlayAttackAnimes;
 	// アニメーションの再生割合を取得する関数のポインタ
 	const std::function<float(void)> GetAnimePlayRatio;
 	// アニメーションが終了したかのフラグを取得する関数のポインタ

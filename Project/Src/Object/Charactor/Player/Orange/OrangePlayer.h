@@ -15,6 +15,20 @@ public:
 	void Load(void)override;
 	void UiDraw(void)override;
 
+	std::vector<ColliderBase*> GetCollider(void)const override {
+		std::vector<ColliderBase*> ret = {};
+		// 自身のコライダーを返却用一時変数に格納
+		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
+
+		// 抱える下位クラスの返却用一時変数に格納
+		for (ActorBase* const& subObj : subObjArray) {
+			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
+		}
+		// 最終的な返却用一時変数を返却
+		return ret;
+	}
+
+
 private:
 
 #pragma region 定数定義
@@ -115,7 +129,7 @@ private:
 	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("Skill1TargetSerchRange");
 
 	// 当たり判定のタグテーブル
-	const TAG SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX] =
+	const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
 	{
 		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1,
 		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2,
@@ -123,7 +137,7 @@ private:
 	};
 
 	// 当たり判定のサイズテーブル（半径）
-	const float SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX] =
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_SIZE_TABLE =
 	{
 		GetParameter("Skill1CollSize1"),
 		GetParameter("Skill1CollSize2"),
@@ -140,14 +154,14 @@ private:
 	const int SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME = GetParameterToInt("Skill1AttackNextStageContinueTime");
 
 	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
-	const float SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX] =
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_START_TIME =
 	{
 		GetParameter("Skill1CollStartTime1"),
 		GetParameter("Skill1CollStartTime2"),
 		GetParameter("Skill1CollStartTime3"),
 	};
 	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
-	const float SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX] =
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_END_TIME =
 	{
 		GetParameter("Skill1CollEndTime1"),
 		GetParameter("Skill1CollEndTime2"),
