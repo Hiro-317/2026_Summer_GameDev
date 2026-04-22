@@ -22,6 +22,8 @@
 #include "../../Object/Charactor/Player/Orange/OrangePlayer.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
+#include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
+
 
 int GameScene::hitStop = 0;
 
@@ -36,6 +38,8 @@ GameScene::GameScene():
 	collision(nullptr),
 
 	objects(),
+
+	tomatoBossStage(nullptr),
 
 	mainScreen(-1)
 {
@@ -69,7 +73,8 @@ void GameScene::Load(void)
 	//<例>ObjAdd(new Player());
 
 	ObjAdd(new OrangePlayer());
-	ObjAdd(new BoxDebugObject(Vector3(10000, 50, 5000)));
+	ObjAdd(new TomatoBossStage());
+
 }
 
 void GameScene::Init(void)
@@ -113,6 +118,17 @@ void GameScene::Update(void)
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR);
 		return;
 	}
+
+#if _DEBUG
+
+	// シーンを再読み込み
+	if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_RELOAD).down) {
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+		return;
+	}
+
+#endif // _DEBUG
+
 #pragma endregion
 }
 
@@ -175,6 +191,14 @@ void GameScene::Release(void)
 		obj->Release();
 		delete obj;
 		obj = nullptr;
+	}
+
+	// ステージ管理クラスの解放
+	if (tomatoBossStage)
+	{
+		tomatoBossStage->Release();
+		delete tomatoBossStage;
+		tomatoBossStage = nullptr;
 	}
 
 	// 画面演出用のメインスクリーンを解放

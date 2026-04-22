@@ -9,10 +9,12 @@
 
 #include"../../Object/ActorBase.h"
 
+
 class BlockManager;
 class RockWall;
 class Player;
 class Boss;
+class TomatoBossStage;
 
 class SkyDome;
 
@@ -59,6 +61,9 @@ private:
 
 	// オブジェクト格納用の配列
 	std::vector<ActorBase*>objects;
+
+	// ステージ管理クラス
+	TomatoBossStage* tomatoBossStage;
 
 	// 配列の中から特定のオブジェクトを探す
 	template<typename T>

@@ -139,6 +139,9 @@
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\Orange\OrangePlayer.cpp" />
@@ -158,8 +161,6 @@
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Object\Charactor\CharactorBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageManager\StageManager.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
@@ -181,6 +182,9 @@
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
@@ -208,8 +212,6 @@
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
-    <ClInclude Include="Src\Object\Stage\StageBase.h" />
-    <ClInclude Include="Src\Object\Stage\StageManager\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />

@@ -49,17 +49,16 @@ public:
 		//	ダッシュ
 		PLAYER_DASH,
 
-		// ジャンプ
-		PLAYER_JUMP,
+		// スキル1（基本的に「通常攻撃」）
+		PLAYER_SKILL_1,
+		// スキル2（キャラごとの「特殊技」）
+		PLAYER_SKILL_2,
+		// スキル3（キャラごとの「特殊技」）
+		PLAYER_SKILL_3,
+		// スペシャルスキル（キャラごとの「必殺技」）
+		PLAYER_SPECIAL_SKILL,
 
-		// 回避
-		PLAYER_EVASION,
 
-		// 通常攻撃（パンチ）
-		PLAYER_ATTACK,
-
-		// 特殊行動（えぐり取り）
-		PLAYER_GOUGE,
 #pragma endregion
 
 #pragma region カメラ操作
@@ -112,6 +111,9 @@ public:
 
 		// デバッグモード時元のシーンの更新
 		DEBUG_MODE_TOPUPDATE,
+
+		// シーンの再ロード
+		DEBUG_RELOAD,
 #pragma endregion
 
 		MAX,
