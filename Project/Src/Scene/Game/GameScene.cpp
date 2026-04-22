@@ -81,7 +81,7 @@ void GameScene::Init(void)
 	for (ActorBase*& obj : objects) { obj->Init(); }
 
 	// カメラ設定
-	Camera::GetIns().ChangeModeFollowRemote(&ObjSerch<OrangePlayer>()->GetTrans().pos);
+	Camera::GetIns().ChangeModeFollowRemote(&ObjSerch<OrangePlayer>()->GetTrans().pos, Vector3::Zonly(-600), Deg2Rad(3.0f), Vector3::Xonly(Deg2Rad(20.0f)));
 }
 
 void GameScene::Update(void)
@@ -137,6 +137,8 @@ void GameScene::Draw(void)
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "ゲームシーン");
+
+	Camera::GetIns().DrawDebug();
 #pragma endregion
 
 #pragma region 画面演出

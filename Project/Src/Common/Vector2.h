@@ -74,6 +74,7 @@ struct Vector2I
 	Vector2 operator/(const float value)const;
 	void operator/=(const int value) { x = x / value; y = y / value; }
 	//--------------------------------------------
+
 #pragma endregion
 
 	Vector2 ToVector2(void)const;

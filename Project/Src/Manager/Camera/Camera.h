@@ -115,6 +115,10 @@ public:
 	void Release(void);
 
 private:
+	
+	// マウス感度
+	static constexpr float MOUSE_SENSI = 25.0f;
+
 	// 初期化
 	void Init(void);
 

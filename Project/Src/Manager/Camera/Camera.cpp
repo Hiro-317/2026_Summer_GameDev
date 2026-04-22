@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include "../../Utility/Utility.h"
+#include "../../Application/Application.h"
 #include "../input/KeyManager.h"
 #include "InstantCamera.h"
 
@@ -82,6 +83,9 @@ void Camera::ChangeModeFixedPoint(const Vector3& pos, const Vector3& angle, floa
 	// 現在の情報を破棄
 	Release();
 
+	// マウスを真ん中に
+	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+
 	// 状態遷移
 	mode = MODE::FIXED_POINT;
 
@@ -112,6 +116,9 @@ void Camera::ChangeModeFree(float ROT_POWER, float MOVE_POWER, const Vector3& po
 	// 現在の情報を破棄
 	Release();
 
+	// マウスを真ん中に
+	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+
 	// 状態遷移
 	mode = MODE::FREE;
 
@@ -133,12 +140,15 @@ void Camera::ChangeModeFree(float ROT_POWER, float MOVE_POWER, const Vector3& po
 
 void Camera::FreeModeFunc(void)
 {
+	// マウスを真ん中に
+	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+
 #pragma region 角度 (コントローラースティック -> マウス -> ボタン の順に確認して入力があったもので回転させる)
 	// コントローラーの右スティックベクトルを代入
 	Vector3 rot = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (rot == 0.0f) { rot = Key::GetIns().GetMouceMove().ToVector3YX(); }
+	if (rot == 0.0f) { rot = Key::GetIns().GetMouceMoveNorm().ToVector3YX(); }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (rot == 0.0f) {
@@ -200,6 +210,9 @@ void Camera::ChangeModeLookAtFree(const Vector3& fixedLookAtPos, const Vector3& 
 	// 現在の情報を破棄
 	Release();
 
+	// マウスを真ん中に
+	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+
 	// 状態遷移
 	mode = MODE::LOOK_AT_FREE;
 
@@ -227,7 +240,7 @@ void Camera::LookAtFreeModeFunc(void)
 	Vector3 vec = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (vec == 0.0f) { vec = Key::GetIns().GetMouceMove().ToVector3YX(); }
+	if (vec == 0.0f) { vec = Key::GetIns().GetMouceMoveNorm().ToVector3YX(); }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (vec == 0.0f) {
@@ -308,6 +321,9 @@ void Camera::ChangeModeFollowRemote(const Vector3* lookAt, const Vector3& lookAt
 	// 現在の情報を破棄
 	Release();
 
+	// マウスを真ん中に
+	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+
 	// 状態遷移
 	mode = MODE::FOLLOW_REMOTE;
 
@@ -336,29 +352,27 @@ void Camera::FollowRemoteModeFunc(void)
 	if (lookAt == nullptr) { return; }
 
 	// 回転処理(コントローラー -> マウス-> ボタン の順に入力を確認していく)
+	bool mouse = false;
 
 	// コントローラーの右スティックベクトルを代入
 	Vector3 vec = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (vec == 0.0f) { vec = Key::GetIns().GetMouceMove().ToVector3YX(); }
+	if (vec == 0.0f) { vec = Vector3::Yonly((float)Key::GetIns().GetMouceMoveSize().x / MOUSE_SENSI); mouse = true; }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (vec == 0.0f) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_ROT_FRONT).now) { vec.x++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_ROT_BACK).now) { vec.x--; }
 		if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_ROT_RIGHT).now) { vec.y++; }
 		if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_ROT_LEFT).now) { vec.y--; }
 	}
 
 	// 最終的に入力が１つでもあれば回転させる
 	if (vec != 0.0f) {
-		angle += vec.Normalized() * ROT_POWER;
+		if (!mouse) vec = vec.Normalized();
+		angle += vec * ROT_POWER;
 
-		if (angle.y >= Deg2Rad(360.0f)) { angle.y -= Deg2Rad(360.0f); }
-		if (angle.y <= Deg2Rad(0.0f)) { angle.y += Deg2Rad(360.0f); }
-		if (angle.x < Deg2Rad(-30.0f)) { angle.x = Deg2Rad(-30.0f); }
-		if (angle.x > Deg2Rad(60.0f)) { angle.x = Deg2Rad(60.0f); }
+		while (angle.y >= Deg2Rad(360.0f)) { angle.y -= Deg2Rad(360.0f); }
+		while (angle.y <= Deg2Rad(0.0f)) { angle.y += Deg2Rad(360.0f); }
 	}
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
@@ -506,12 +520,12 @@ void Camera::FollowAutoApply(void)
 void Camera::DrawDebug(void)
 {
 	DrawFormatString(
-		0, 10, 0xffffff,
+		0, 70, 0xffffff,
 		"カメラ座標　 ：(% .1f, % .1f, % .1f)",
 		pos.x, pos.y, pos.z
 	);
 	DrawFormatString(
-		0, 30, 0xffffff,
+		0, 100, 0xffffff,
 		"カメラ角度　 ：(% .1f, % .1f, % .1f)",
 		Rad2Deg(angle.x),
 		Rad2Deg(angle.y),

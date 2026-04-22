@@ -94,10 +94,8 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::CAMERA_MOVE_LEFT, KEY_INPUT_J);
 	SET_C_OTHERS(KEY_TYPE::CAMERA_MOVE_LEFT, CONTROLLER_OTHERS::LEFTSTICK_LEFT);
 
-	SET_KEYBOARD(KEY_TYPE::CAMERA_MOVE_UP, KEY_INPUT_O);
 	SET_C_BUTTON(KEY_TYPE::CAMERA_MOVE_UP, XINPUT_BUTTON_DPAD_UP);
 
-	SET_KEYBOARD(KEY_TYPE::CAMERA_MOVE_DOWN, KEY_INPUT_U);
 	SET_C_BUTTON(KEY_TYPE::CAMERA_MOVE_DOWN, XINPUT_BUTTON_DPAD_DOWN);
 
 	// 回転
@@ -107,11 +105,13 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_BACK, KEY_INPUT_DOWN);
 	SET_C_OTHERS(KEY_TYPE::CAMERA_ROT_BACK, CONTROLLER_OTHERS::RIGHTSTICK_DOWN);
 
-	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_RIGHT, KEY_INPUT_RIGHT);
-	SET_C_OTHERS(KEY_TYPE::CAMERA_ROT_RIGHT, CONTROLLER_OTHERS::RIGHTSTICK_RIGHT);
+	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_RIGHT, KEY_INPUT_E);
+	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_RIGHT, KEY_INPUT_O);
+	SET_C_BUTTON(KEY_TYPE::CAMERA_ROT_RIGHT, XINPUT_BUTTON_RIGHT_SHOULDER);
 
-	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_LEFT, KEY_INPUT_LEFT);
-	SET_C_OTHERS(KEY_TYPE::CAMERA_ROT_LEFT, CONTROLLER_OTHERS::RIGHTSTICK_LEFT);
+	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_LEFT, KEY_INPUT_Q);
+	SET_KEYBOARD(KEY_TYPE::CAMERA_ROT_LEFT, KEY_INPUT_U);
+	SET_C_BUTTON(KEY_TYPE::CAMERA_ROT_LEFT, XINPUT_BUTTON_LEFT_SHOULDER);
 #pragma endregion
 
 
@@ -292,15 +292,16 @@ void KeyManager::MouceUpdate(void)
 {
 	if (mouceFixed) {
 
-		mouceInfo.prev = { Application::SCREEN_SIZE_X / 2,Application::SCREEN_SIZE_Y / 2 };
+		mouceInfo.prev = { Application::SCREEN_SIZE_X_HALF,Application::SCREEN_SIZE_Y_HALF };
 
 		GetMousePoint(&mouceInfo.now.x, &mouceInfo.now.y);
 
 		Vector2 move = mouceInfo.now.ToVector2() - mouceInfo.prev.ToVector2();
 
-		mouceInfo.move = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
+		mouceInfo.moveNorm = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
+		mouceInfo.moveSize = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev) : Vector2I(0, 0);
 
-		SetMousePoint(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2);
+		SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
 
 	}
 	else {
@@ -311,7 +312,8 @@ void KeyManager::MouceUpdate(void)
 
 		Vector2 move = mouceInfo.now.ToVector2() - mouceInfo.prev.ToVector2();
 
-		mouceInfo.move = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
+		mouceInfo.moveNorm = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
+		mouceInfo.moveSize = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev) : Vector2I(0, 0);
 	}
 }
 

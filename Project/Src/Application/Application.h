@@ -10,6 +10,10 @@ public:
 	static constexpr int SCREEN_SIZE_X = 1440;	// スクリーン横幅;
 	static constexpr int SCREEN_SIZE_Y = 810;	// スクリーン縦幅;
 
+	// スクリーンの真ん中
+	static constexpr int SCREEN_SIZE_X_HALF = SCREEN_SIZE_X / 2;
+	static constexpr int SCREEN_SIZE_Y_HALF = SCREEN_SIZE_Y / 2;
+
 public:
 	// シングルトン（生成・取得・削除）
 	static void CreateIns(void) { if (ins == nullptr) { ins = new Application(); ins->Init(); } }

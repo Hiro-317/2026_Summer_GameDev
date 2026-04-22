@@ -130,11 +130,13 @@ public:
 	{
 		Vector2I now = {};
 		Vector2I prev = {};
-		Vector2 move = {};
+		Vector2 moveNorm = {};
+		Vector2I moveSize = {};
 	};
 
 	const MOUCE_INFO GetMouceInfo(void)const { return mouceInfo; }
-	const Vector2 GetMouceMove(void)const { return mouceInfo.move; }
+	const Vector2 GetMouceMoveNorm(void)const { return mouceInfo.moveNorm; }
+	const Vector2I GetMouceMoveSize(void)const { return mouceInfo.moveSize; }
 
 	const Vector2I GetMoucePoint(void)const { return mouceInfo.now; }
 
