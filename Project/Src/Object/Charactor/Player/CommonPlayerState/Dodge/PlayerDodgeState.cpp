@@ -51,9 +51,6 @@ void PlayerDodgeState::Enter(void)
 
 void PlayerDodgeState::Update(void)
 {
-	// 無敵カウンターをセットする
-	SetInviCounter(INVI_START_TIME);
-
 	// アニメーションの再生割合を取得する
 	float animePlayRate = GetAnimePlayRatio();
 
