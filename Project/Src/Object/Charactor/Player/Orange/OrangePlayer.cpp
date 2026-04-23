@@ -91,12 +91,8 @@ void OrangePlayer::Load(void)
 	subObjArray.emplace_back(
 		new PlayerTripleAttackCollOperator(
 			SKILL_1_TARGET_SERCH_RANGE,
-			SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
-			SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
-			SKILL_1_COLL_TAG_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
-			SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
-			SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
-			SKILL_1_COLL_SIZE_TABLE[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
+			SKILL_1_COLL_TAG_TABLE,
+			SKILL_1_COLL_SIZE_TABLE,
 			SKILL_1_COLL_LOCAL_POS,
 			trans.pos, trans.angle
 		)
@@ -141,6 +137,46 @@ void OrangePlayer::Load(void)
 	);
 
 
+	// 三弾攻撃状態用のコンテキスト構造体を定義して設定～～～～～～～～～～～
+	PlayerTripleAttackStateContext stateSkill1Context;
+
+	// キー
+	stateSkill1Context.ATTACK_KEY = KEY_TYPE::PLAYER_SKILL_1;
+	// クールタイム
+	stateSkill1Context.COOL_TIME = SKILL_1_COOL_TIME;
+	// 攻撃が次段に繋がる猶予時間
+	stateSkill1Context.ATTACK_NEXT_STAGE_CONTINUE_TIME = SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME;
+	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
+	stateSkill1Context.COLL_START_TIME = SKILL_1_COLL_START_TIME;
+	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
+	stateSkill1Context.COLL_END_TIME = SKILL_1_COLL_END_TIME;
+	// 攻撃中の移動速度
+	stateSkill1Context.ATTACK_MOVE_SPEED = SKILL_1_ATTACK_MOVE_SPEED;
+
+	// 当たり判定のオペレーター
+	stateSkill1Context.collOperator = SubObjSerch<PlayerTripleAttackCollOperator>();
+
+	// 座標
+	stateSkill1Context.pos = &trans.pos;
+	// 角度
+	stateSkill1Context.angle = &trans.angle;
+
+	// 攻撃1～3段目アニメーションの再生関数のポインタ
+	stateSkill1Context.PlayAttackAnimes = {
+		[&]() { AnimePlay((int)ANIME_TYPE::PUNCH1,false); },
+		[&]() { AnimePlay((int)ANIME_TYPE::PUNCH2,false); },
+		[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3,false); }
+	};
+	// アニメーションの再生割合を取得する関数のポインタ
+	stateSkill1Context.GetAnimePlayRatio = std::bind(&OrangePlayer::GetAnimeRatio, this);
+	// アニメーションが終了したかのフラグを取得する関数のポインタ
+	stateSkill1Context.IsAnimeEnd = std::bind(&OrangePlayer::IsAnimeEnd, this);
+
+	// 攻撃終了後の状態遷移関数のポインタ
+	stateSkill1Context.DefaultChangeState = [&]() { state = (int)STATE::MOVE; };
+
+	// ～～～～～～～～～～～三弾攻撃状態用のコンテキスト構造体を定義して設定
+
 	// 三段攻撃状態を追加する
 	AddState(
 		(int)STATE::SKILL_1,
@@ -149,28 +185,8 @@ void OrangePlayer::Load(void)
 			[&]() { state = (int)STATE::SKILL_1; },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
-			// 定数（使用するキー / クールタイム / 次段に繋がるまでの猶予時間）
-			KEY_TYPE::PLAYER_SKILL_1, SKILL_1_COOL_TIME, SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME,
-			// 定数（（1段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
-			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::FIRST],
-			// 定数（（2段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
-			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::SECOND],
-			// 定数（（3段目）攻撃の判定を発生させる 開始/終了 時間（アニメーションの再生割合））
-			SKILL_1_COLL_START_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD], SKILL_1_COLL_END_TIME[(int)PLAYER_TRIPLE_ATTACK_STAGE::THIRD],
-			// 定数（攻撃対象が見つかった場合の移動速度）
-			SKILL_1_ATTACK_MOVE_SPEED,
-			// 当たり判定のオペレーター
-			*SubObjSerch<PlayerTripleAttackCollOperator>(),
-			// 参照（座標 / 角度）
-			trans.pos, trans.angle,
-			// アニメーションの再生関数のポインタ（1段目 / 2段目 / 3段目）
-			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH1, false); },
-			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH2, false); },
-			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3, false); },
-			// アニメーションの再生割合を取得する関数のポインタ
-			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; }
+			// コンテキスト構造体
+			stateSkill1Context
 		)
 	);
 
@@ -200,8 +216,11 @@ void OrangePlayer::Load(void)
 	AddState(
 		(int)STATE::SKILL_3,
 		new PlayerDodgeState(
+			// 自分の状態に関する関数
 			[&]() { state = (int)STATE::SKILL_3; },
+			// 自分の状態かどうかを返す関数
 			[&]() {return state == (int)STATE::SKILL_3; },
+			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合））
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
 			trans.pos,trans.angle,

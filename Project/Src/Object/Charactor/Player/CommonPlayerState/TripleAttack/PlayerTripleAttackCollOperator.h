@@ -12,19 +12,15 @@ public:
 	/// コンストラクト
 	/// </summary>
 	/// <param name="FIND_ATTACK_TARGET_RANGE">攻撃対象の探索範囲</param>
-	/// <param name="COLL_TAG_1">攻撃1段目のタグ</param>
-	/// <param name="COLL_TAG_2">攻撃2段目のタグ</param>
-	/// <param name="COLL_TAG_3">攻撃3段目のタグ</param>
-	/// <param name="COLL_SIZE_1">攻撃1段目のサイズ</param>
-	/// <param name="COLL_SIZE_2">攻撃2段目のサイズ</param>
-	/// <param name="COLL_SIZE_3">攻撃3段目のサイズ</param>
+	/// <param name="COLL_TAG"></param>
+	/// <param name="COLL_SIZE"></param>
 	/// <param name="COLL_LOCAL_POS">攻撃判定の座標（プレイヤー座標からのローカル座標）</param>
 	/// <param name="playerPos">プレイヤーの座標</param>
 	/// <param name="playerAngle">プレイヤーの角度</param>
 	PlayerTripleAttackCollOperator(
 		float FIND_ATTACK_TARGET_RANGE,
-		TAG COLL_TAG_1, TAG COLL_TAG_2, TAG COLL_TAG_3,
-		float COLL_SIZE_1, float COLL_SIZE_2, float COLL_SIZE_3,
+		const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
+		const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
 
 		const Vector3& playerPos, const Vector3& playerAngle
@@ -71,10 +67,10 @@ private:
 	const float FIND_ATTACK_TARGET_RANGE;
 
 	// 攻撃の段階ごとのタグ
-	const TAG COLL_TAG[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG;
 
 	// 攻撃の段階ごとの判定のサイズ（半径）
-	const float COLL_SIZE[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE;
 
 	// 攻撃の段階ごとの判定のローカル座標
 	const Vector3 COLL_LOCAL_POS;

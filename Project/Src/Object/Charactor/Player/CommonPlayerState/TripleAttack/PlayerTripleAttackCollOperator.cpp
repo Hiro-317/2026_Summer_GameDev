@@ -4,16 +4,15 @@
 
 PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 	float FIND_ATTACK_TARGET_RANGE,
-	TAG COLL_TAG_1, TAG COLL_TAG_2, TAG COLL_TAG_3,
-	float COLL_SIZE_1, float COLL_SIZE_2, float COLL_SIZE_3,
+	const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
+	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 	const Vector3& COLL_LOCAL_POS,
 
 	const Vector3& playerPos, const Vector3& playerAngle
 ) :
-	ActorBase(),
 	FIND_ATTACK_TARGET_RANGE(FIND_ATTACK_TARGET_RANGE),
-	COLL_TAG(COLL_TAG_1, COLL_TAG_2, COLL_TAG_3),
-	COLL_SIZE(COLL_SIZE_1, COLL_SIZE_2, COLL_SIZE_3),
+
+	COLL_TAG(COLL_TAG), COLL_SIZE(COLL_SIZE),
 	COLL_LOCAL_POS(COLL_LOCAL_POS),
 
 	playerPos(playerPos), playerAngle(playerAngle),
