@@ -4,7 +4,7 @@ ModelLocalRot,0,180,0
 ModelCenterDiff,0,-1.7145,0
 ClimbOverHeight,5
 ModelToColliderRate,1
-CollisionPushWeight,50
+CollisionPushWeight,100
 InitPos,0,1000,300
 DashStaminaMax,250
 DashSpeedRate,1.5
