@@ -519,19 +519,20 @@ void Camera::FollowAutoApply(void)
 
 void Camera::DrawDebug(void)
 {
-	DrawFormatString(
-		0, 70, 0xffffff,
-		"カメラ座標　 ：(% .1f, % .1f, % .1f)",
-		pos.x, pos.y, pos.z
-	);
-	DrawFormatString(
-		0, 100, 0xffffff,
-		"カメラ角度　 ：(% .1f, % .1f, % .1f)",
-		Rad2Deg(angle.x),
-		Rad2Deg(angle.y),
-		Rad2Deg(angle.z)
-	);
-
+	if (App::GetIns().IsDrawDebug()) {
+		DrawFormatString(
+			0, 70, 0xffffff,
+			"カメラ座標　 ：(% .1f, % .1f, % .1f)",
+			pos.x, pos.y, pos.z
+		);
+		DrawFormatString(
+			0, 100, 0xffffff,
+			"カメラ角度　 ：(% .1f, % .1f, % .1f)",
+			Rad2Deg(angle.x),
+			Rad2Deg(angle.y),
+			Rad2Deg(angle.z)
+		);
+	}
 }
 
 void Camera::Release(void)

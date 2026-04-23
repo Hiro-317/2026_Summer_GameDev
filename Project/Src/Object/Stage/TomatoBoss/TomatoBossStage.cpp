@@ -15,6 +15,16 @@ void TomatoBossStage::Load(void)
 
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;
+
+#pragma region 基底クラスにある機能の挙動設定
+
+	// 動的オブジェクトとしての挙動を有効にする
+	SetDynamicFlg(false);
+
+	// 衝突時の押し出しを有効にする
+	SetPushFlg(true);
+
+#pragma endregion
 	
 	// 衝突判定の情報読み込み
 	ColliderLoad();
