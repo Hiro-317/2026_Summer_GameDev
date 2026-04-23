@@ -15,6 +15,10 @@ public:
 	void Load(void)override;
 	void UiDraw(void)override;
 
+	// ダメージ状態に遷移する関数
+	void ToDamageState(const int damage, const Vector3& pos);
+
+	// 状態遷移後1度行う初期化処理
 	std::vector<ColliderBase*> GetCollider(void)const override {
 		std::vector<ColliderBase*> ret = {};
 		// 自身のコライダーを返却用一時変数に格納
@@ -104,8 +108,8 @@ private:
 		SKILL_3,		// スキル3（キャラごとの「特殊技」）
 		SPECIAL_SKILL,	// スペシャルスキル（キャラごとの「必殺技」）
 
-		DAMAGE,
-		DEAD,
+		DAMAGE,			// ダメージ
+		DEAD,			// 倒される
 
 		MAX
 	};

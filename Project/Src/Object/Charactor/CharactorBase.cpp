@@ -17,6 +17,7 @@ CharactorBase::CharactorBase() :
 
 CharactorBase::CharactorBase(const std::string& parameterPath) :
 	ActorBase(parameterPath),
+	hp(0),
 
 	state(0),
 	stateMap(),

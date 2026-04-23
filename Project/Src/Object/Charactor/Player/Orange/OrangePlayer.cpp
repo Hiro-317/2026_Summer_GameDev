@@ -8,6 +8,7 @@
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
 #include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
 #include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
+#include "../CommonPlayerState/Damage/PlayerDamageState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -202,7 +203,7 @@ void OrangePlayer::Load(void)
 			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
 			// 当たり判定のオペレーター
 			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
-			// 参照（座標 / 角度）
+			// 座標 / 角度
 			trans.pos, trans.angle,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
@@ -220,15 +221,26 @@ void OrangePlayer::Load(void)
 			[&]() { state = (int)STATE::SKILL_3; },
 			// 自分の状態かどうかを返す関数
 			[&]() {return state == (int)STATE::SKILL_3; },
-			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合））
+			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
+			// 座標 / 角度
 			trans.pos,trans.angle,
 			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
 			[&]() { return GetAnimeRatio(); },
 			[&]() { return IsAnimeEnd(); },
 			[&]() { state = (int)STATE::MOVE; },
 			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1)
+		)
+	);
+
+	AddState(
+		(int)STATE::DAMAGE,
+		new PlayerDamageState(
+			[&]() { state = (int)STATE::DAMAGE; },
+			[&]() { return state == (int)STATE::DAMAGE; },
+
+			[&]() { state = (int)STATE::MOVE; }
 		)
 	);
 
@@ -293,6 +305,12 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("～～～～～～～～～～～");
 	}
+}
+
+void OrangePlayer::ToDamageState(const int damage, const Vector3& pos)
+{
+	state = (int)STATE::DAMAGE;
+	
 }
 
 

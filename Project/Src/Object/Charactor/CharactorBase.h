@@ -45,6 +45,10 @@ private:
 
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharactorStateBase*> stateMap;
+protected:
+
+	// HP管理用変数
+	unsigned short hp;
 
 protected:
 	// ステート管理用変数
