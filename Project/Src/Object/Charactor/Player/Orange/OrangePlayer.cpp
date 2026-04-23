@@ -239,7 +239,11 @@ void OrangePlayer::Load(void)
 		new PlayerDamageState(
 			[&]() { state = (int)STATE::DAMAGE; },
 			[&]() { return state == (int)STATE::DAMAGE; },
-
+			DAMAGE_INVI_START_TIME, DAMAGE_INVI_END_TIME,
+			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() { return IsAnimeEnd(); },
+			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
 			[&]() { state = (int)STATE::MOVE; }
 		)
 	);
@@ -274,6 +278,10 @@ void OrangePlayer::CharactorInit(void)
 void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+
+	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		state = (int)STATE::DAMAGE;
+	}
 }
 
 void OrangePlayer::CharactorDraw(void)
