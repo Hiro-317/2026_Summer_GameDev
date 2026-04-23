@@ -216,8 +216,11 @@ void OrangePlayer::Load(void)
 	AddState(
 		(int)STATE::SKILL_3,
 		new PlayerDodgeState(
+			// 自分の状態に関する関数
 			[&]() { state = (int)STATE::SKILL_3; },
+			// 自分の状態かどうかを返す関数
 			[&]() {return state == (int)STATE::SKILL_3; },
+			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合））
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
 			trans.pos,trans.angle,
