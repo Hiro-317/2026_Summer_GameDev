@@ -93,6 +93,18 @@ void CharactorBase::SubRelease(void)
 	}
 }
 
+void CharactorBase::SetInviCounter(unsigned char counter)
+{
+	inviCounter = (counter < 0) ? 0 : (counter > 255) ? 255 : counter;
+
+	// 0 以下の代入であればついでに（バグ防止のために）
+	if (counter <= 0) {
+		for (int i = 0; i < DEFAULT_COLOR.size(); i++) {
+			MV1SetMaterialEmiColor(trans.model, i, DEFAULT_COLOR[i]);
+		}
+	}
+}
+
 void CharactorBase::Invi(void)
 {
 	if (inviCounter > 0) { inviCounter--; }

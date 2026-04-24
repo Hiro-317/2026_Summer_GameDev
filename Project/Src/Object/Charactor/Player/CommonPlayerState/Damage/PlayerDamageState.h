@@ -5,14 +5,20 @@
 class PlayerDamageState : public CharactorStateBase
 {
 public:
-
-	// コンストラクタ
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
+	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
+	/// <param name="INVI_TIME">無敵時間</param>
+	/// <param name="PlayDamageAnime">アニメーション再生関数</param>
+	/// <param name="IsAnimeEnd">アニメーションが終了したかどうかを返す関数</param>
+	/// <param name="DefaultChangeState">次の状態に遷移する関数</param>
 	PlayerDamageState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		int DAMAGE_INVI_START_TIME, int DAMAGE_INVI_END_TIME,
+		unsigned char INVI_TIME,
 		const std::function<void(void)> PlayDamageAnime,
-		const std::function<float(void)> GetAnimePlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(unsigned char)> SetInviCounter,
 		const std::function<void()> DefaultChangeState
@@ -32,26 +38,23 @@ public:
 private:
 
 #pragma region 定数
-	// 無敵の開始時間（アニメーションの再生割合）
-	const int DAMAGE_INVI_START_TIME;
 
-	// 無敵の終了時間（アニメーションの再生割合）
-	const int DAMAGE_INVI_END_TIME;
+	// 無敵時間(フレーム数)
+	const unsigned char INVI_TIME;
+
 #pragma endregion
 
 #pragma region 関数ポインタ
-	// 攻撃アニメーションの再生関数のポインタ
+	// アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayDamageAnime;
-	// アニメーションの再生割合を取得する関数のポインタ
-	const std::function<float(void)> GetAnimePlayRatio;
 	// アニメーションが終了したかのフラグを取得する関数のポインタ
 	const std::function<bool(void)> IsAnimeEnd;
 
+	// 無敵時間のセット関数
+	const std::function<void(unsigned char)> SetInviCounter;
+
 	// ダメージ状態終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
-
-	// 無敵カウンターを設定する関数のポインタ
-	const std::function<void(unsigned char)> SetInviCounter;
 #pragma endregion
 
 };

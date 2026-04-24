@@ -64,6 +64,18 @@ protected:
 		else { throw std::runtime_error("指定のステートインスタンスが見つかりません"); }
 	}
 
+	// 指定のステートへ遷移
+	void ChangeState(int nextState) {
+		// 遷移前のステートの終了処理を呼び出す
+		stateMap.at(state)->Exit();
+
+		// 遷移
+		state = nextState;
+
+		// 遷移後のステートの初期化処理を呼び出す
+		stateMap.at(state)->Enter();
+	}
+
 	// キャラクター固有の処理をここに追加
 	virtual void CharactorInit(void) = 0;
 	virtual void CharactorUpdate(void) = 0;
@@ -105,7 +117,7 @@ protected:
 	// 無敵カウンターのゲット関数
 	unsigned char GetInviCounter(void)const { return inviCounter; }
 	// 無敵カウンターのセット関数
-	void SetInviCounter(unsigned char counter = 1) { inviCounter = (counter < 0) ? 0 : (counter > 255) ? 255 : counter; }
+	void SetInviCounter(unsigned char counter = 1);
 
 	// 無敵演出フラグのセット関数（true = 「する」、false = 「しない」）← デフォルトは「する」
 	void SetInviEffectFlg(bool flg = true) {

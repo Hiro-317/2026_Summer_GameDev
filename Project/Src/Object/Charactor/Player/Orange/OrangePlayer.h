@@ -109,7 +109,7 @@ private:
 		SPECIAL_SKILL,	// ƒXƒyƒVƒƒƒ‹ƒXƒLƒ‹iƒLƒƒƒ‰‚²‚Æ‚Ìu•KE‹Zvj
 
 		DAMAGE,			// ƒ_ƒ[ƒW
-		DEAD,			// “|‚³‚ê‚é
+		DEATH,			// “|‚³‚ê‚é
 
 		MAX
 	};
@@ -229,9 +229,7 @@ private:
 	// ƒ_ƒ[ƒWó‘Ô`````````````````````````
 
 	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float DAMAGE_INVI_START_TIME = GetParameter("DamageInviStartTime");
-	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float DAMAGE_INVI_END_TIME = GetParameter("DamageInviEndTime");
+	const unsigned char DAMAGE_INVI_TIME = (unsigned char)GetParameter("DamageInviTime");
 	// `````````````````````````ƒ_ƒ[ƒWó‘Ô
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
@@ -250,6 +248,7 @@ private:
 		KICK,
 		DODGE,
 		DAMAGE,
+		DEATH,
 
 		MAX
 	};
@@ -266,6 +265,7 @@ private:
 		GetParameter("KickAnimeSpeed"),		// KICK
 		GetParameter("DodgeAnimeSpeed"),	// DODGE
 		GetParameter("DamageAnimeSpeed"),	// DAMAGE
+		GetParameter("DeathAnimeSpeed"),	// DEATH
 	};
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒHƒ‹ƒ_‚Ü‚Å‚ÌƒpƒX
@@ -282,7 +282,8 @@ private:
 		ANIME_FOLDER_PATH + "Punch3.mv1",	// PUNCH3
 		ANIME_FOLDER_PATH + "Kick.mv1",		// KICK
 		ANIME_FOLDER_PATH + "Dodge.mv1",	// DODGE
-		ANIME_FOLDER_PATH + "Hit.mv1"		// DAMAGE
+		ANIME_FOLDER_PATH + "Hit.mv1",		// DAMAGE
+		ANIME_FOLDER_PATH + "Death.mv1"		// DEATH
 	};
 
 	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“

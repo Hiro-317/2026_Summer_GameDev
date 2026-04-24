@@ -139,6 +139,7 @@
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />

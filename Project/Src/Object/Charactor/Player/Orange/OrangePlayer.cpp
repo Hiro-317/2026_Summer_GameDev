@@ -9,6 +9,7 @@
 #include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
 #include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
+#include "../CommonPlayerState/Death/PlayerDeathState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -64,6 +65,8 @@ void OrangePlayer::Load(void)
 
 	// 押し出す力の大きさを設定する
 	SetPushWeight(COLLISION_PUSH_WEIGHT);
+
+	SetInviEffectFlg(true);
 
 #pragma endregion
 
@@ -220,7 +223,7 @@ void OrangePlayer::Load(void)
 			// 自分の状態に関する関数
 			[&]() { state = (int)STATE::SKILL_3; },
 			// 自分の状態かどうかを返す関数
-			[&]() {return state == (int)STATE::SKILL_3; },
+			[&]() { return state == (int)STATE::SKILL_3; },
 			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
@@ -239,15 +242,23 @@ void OrangePlayer::Load(void)
 		new PlayerDamageState(
 			[&]() { state = (int)STATE::DAMAGE; },
 			[&]() { return state == (int)STATE::DAMAGE; },
-			DAMAGE_INVI_START_TIME, DAMAGE_INVI_END_TIME,
+			DAMAGE_INVI_TIME,
 			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
-			[&]() { return GetAnimeRatio(); },
 			[&]() { return IsAnimeEnd(); },
 			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
 			[&]() { state = (int)STATE::MOVE; }
 		)
 	);
 
+	AddState(
+		(int)STATE::DEATH,
+		new PlayerDeathState(
+			[&]() { state = (int)STATE::DEATH; },
+			[&]() { return state == (int)STATE::DEATH; },
+			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			[&]() { state = (int)STATE::MOVE; }
+		)
+	);
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
 		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
@@ -280,7 +291,7 @@ void OrangePlayer::CharactorUpdate(void)
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-		state = (int)STATE::DAMAGE;
+		ChangeState((int)STATE::DEATH);
 	}
 }
 
