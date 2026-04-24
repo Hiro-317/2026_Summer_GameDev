@@ -262,6 +262,7 @@ void OrangePlayer::CharactorInit(void)
 void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+	interestPos = trans.pos + INTEREST_POS;
 }
 
 void OrangePlayer::CharactorDraw(void)

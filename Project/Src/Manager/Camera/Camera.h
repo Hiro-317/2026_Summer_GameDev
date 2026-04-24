@@ -59,11 +59,11 @@ public:
 	// ディスプレイ（特定の座標を起点に周回しながら注視する）モードに変更
 	void ChangeModeDisplay(const Vector3& fixedLookAtPos, const Vector3& lookAtDiff = Vector3::Zonly(-400), float ROT_POWER = 0.5f * (DX_PI_F / 180.0f), const Vector3& angle = Vector3(), float fov = 60.0f * (DX_PI_F / 180.0f));
 	// 追従（手動操作）モードに変更
-	void ChangeModeFollowRemote(const Vector3* lookAt, const Vector3& lookAtDiff = Vector3::Zonly(-400), float ROT_POWER = 3.0f * (DX_PI_F / 180.0f), const Vector3& angle = Vector3(), float fov = (60.0f * (DX_PI_F / 180.0f)));
+	void ChangeModeFollowRemote(const Vector3* folowAt, const Vector3& lookAt = Vector3(), const Vector3& lookAtDiff = Vector3::Zonly(-400), float ROT_POWER = 3.0f * (DX_PI_F / 180.0f), const Vector3& angle = Vector3(), float fov = (60.0f * (DX_PI_F / 180.0f)));
 	// 追従（自動操作）モードに変更（引数省略バージョン）
-	void ChangeModeFollowAuto(const Transform& lookAt, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 400.0f, float FOLLOW_AUTO_MAX_DISTANCE = 500.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
+	void ChangeModeFollowAuto(const Transform& folowAt, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 400.0f, float FOLLOW_AUTO_MAX_DISTANCE = 500.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
 	// 追従（自動操作）モードに変更（引数非省略バージョン）
-	void ChangeModeFollowAuto(const Vector3* lookAt,const float* lookAtYangle, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 400.0f, float FOLLOW_AUTO_MAX_DISTANCE = 500.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
+	void ChangeModeFollowAuto(const Vector3* folowAt,const float* lookAtYangle, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 400.0f, float FOLLOW_AUTO_MAX_DISTANCE = 500.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
 #pragma endregion
 
 	// 更新
@@ -73,7 +73,7 @@ public:
 	void Apply(void);
 
 	// デバッグ用描画
-	void DrawDebug(void);
+	void DrawDebug(void) const;
 
 #pragma region ゲット関数
 	// 座標
@@ -103,7 +103,7 @@ public:
 	// 追従モードのときの追従対象を途中で変更する。追従モード = FOLLOW_REMOTE / FOLLOW_AUTO
 	void FollowToLookAtChange(const Transform& trans) {
 		if (mode != MODE::FOLLOW_REMOTE && mode != MODE::FOLLOW_AUTO) { return; }
-		lookAt = &trans.pos;
+		folowAt = &trans.pos;
 		if (mode == MODE::FOLLOW_AUTO) { lookAtYangle = &trans.angle.y; }
 	}
 
@@ -211,7 +211,13 @@ private:
 	void FollowRemoteModeFunc(void);
 
 	// 追従対象
-	const Vector3* lookAt;
+	const Vector3* folowAt;
+
+	// 追従対象からの相対注視点対象
+	Vector3 lookAt;
+
+	// 注視点座標
+	Vector3 lookAtPos;
 
 	// 追従対象からのローカル座標
 	//Vector3 lookAtDiff;

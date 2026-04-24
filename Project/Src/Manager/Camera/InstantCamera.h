@@ -32,7 +32,7 @@ public:
 	// 定点
 	void ChangeModePoint(const Vector3& pos, const Vector3& angle);
 	// 追従（角度固定）
-	void ChangeModeFollow(const Vector3* lookAt, const Vector3& lookAtDiff = Vector3(0, 0, -400), const Vector3& angle = Vector3());
+	void ChangeModeFollow(const Vector3* folowAt, const Vector3& lookAtDiff = Vector3(0, 0, -400), const Vector3& angle = Vector3());
 #pragma endregion
 
 	// 初期化
@@ -91,7 +91,7 @@ private:
 	void FollowModeFunc(void);
 
 	// 追従対象
-	const Vector3* lookAt;
+	const Vector3* folowAt;
 
 	// 追従対象からのローカル座標
 	Vector3 lookAtDiff;

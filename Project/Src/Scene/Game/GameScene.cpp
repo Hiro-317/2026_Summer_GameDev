@@ -88,7 +88,7 @@ void GameScene::Init(void)
 	for (ActorBase*& obj : objects) { obj->Init(); }
 
 	// ƒJƒƒ‰İ’è
-	Camera::GetIns().ChangeModeFollowRemote(&ObjSerch<OrangePlayer>()->GetTrans().pos, Vector3::Zonly(-600), Deg2Rad(3.0f), Vector3::Xonly(Deg2Rad(20.0f)));
+	Camera::GetIns().ChangeModeFollowRemote(&ObjSerch<OrangePlayer>()->GetTrans().pos, ObjSerch<OrangePlayer>()->GetInterestPos(), Vector3::YZonly(150,-400), Deg2Rad(5.0f));
 	//Camera::GetIns().ChangeModeFree(Deg2Rad(5.0f), 10.0f);
 }
 

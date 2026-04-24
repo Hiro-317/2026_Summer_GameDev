@@ -12,7 +12,7 @@ InstantCamera::InstantCamera() :
 	pos(),
 	angle(),
 
-	lookAt(nullptr),
+	folowAt(nullptr),
 	lookAtDiff()
 {
 }
@@ -75,13 +75,13 @@ void InstantCamera::PointApply(void)
 
 #pragma region FOLLOWモード
 
-void InstantCamera::ChangeModeFollow(const Vector3* lookAt, const Vector3& lookAtDiff , const Vector3& angle)
+void InstantCamera::ChangeModeFollow(const Vector3* folowAt, const Vector3& lookAtDiff , const Vector3& angle)
 {
 	// 状態遷移
 	mode = MODE::FOLLOW;
 
 	// 追従対象を設定
-	this->lookAt = lookAt;
+	this->folowAt = folowAt;
 
 	// 追従対象とのローカル座標を設定
 	this->lookAtDiff = lookAtDiff;
@@ -90,25 +90,25 @@ void InstantCamera::ChangeModeFollow(const Vector3* lookAt, const Vector3& lookA
 	this->angle = angle;
 
 	// 座標をセット
-	pos = *lookAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *folowAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
 }
 
 void InstantCamera::FollowModeFunc(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
-	if (lookAt == nullptr) { return; }
+	if (folowAt == nullptr) { return; }
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = *lookAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *folowAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
 }
 
 void InstantCamera::FolloweApply(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
-	if (lookAt == nullptr) { return; }
+	if (folowAt == nullptr) { return; }
 
 	// 適用
-	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), lookAt->ToVECTOR());
+	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), folowAt->ToVECTOR());
 }
 
 #pragma endregion

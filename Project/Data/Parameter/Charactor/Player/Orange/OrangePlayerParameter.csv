@@ -6,7 +6,7 @@ ClimbOverHeight,5
 ModelToColliderRate,1
 CollisionPushWeight,10
 InitPos,0,100,0
-InterestPos,0,0,250
+InterestPos,0,0,350
 DashStaminaMax,250
 DashSpeedRate,1.5
 MoveSpeed,4

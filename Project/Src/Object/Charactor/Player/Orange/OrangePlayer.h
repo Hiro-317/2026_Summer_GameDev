@@ -28,6 +28,7 @@ public:
 		return ret;
 	}
 
+	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
 
 private:
 
@@ -89,6 +90,9 @@ private:
 
 	// ‰ŠúÀ•W
 	const Vector3 INIT_POS = GetParameterToVector3("InitPos");
+
+	// ’‹“_‚Ì‘Š‘ÎÀ•W
+	const Vector3 INTEREST_POS = GetParameterToVector3("InterestPos");
 
 	// ``````````````````````````•Ï”‰Šú‰»Œn
 
@@ -286,6 +290,9 @@ private:
 		}
 		return nullptr;
 	}
+
+	// ’‹“_À•W
+	Vector3 interestPos;
 
 	// ƒƒCƒ“ˆ—``````````````
 	void CharactorInit(void)override;

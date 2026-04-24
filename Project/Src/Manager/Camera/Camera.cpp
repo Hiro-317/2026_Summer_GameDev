@@ -24,7 +24,7 @@ Camera::Camera(void) :
 	fixedLookAtPos(),
 	lookAtDiff(),
 
-	lookAt(nullptr),
+	folowAt(nullptr),
 
 	lookAtYangle(nullptr),
 	lookTarget(nullptr),
@@ -316,7 +316,7 @@ void Camera::DisplayAplly(void)
 #pragma endregion
 
 #pragma region 追従（手動操作）
-void Camera::ChangeModeFollowRemote(const Vector3* lookAt, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov)
+void Camera::ChangeModeFollowRemote(const Vector3* folowAt, const Vector3& lookAt, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov)
 {
 	// 現在の情報を破棄
 	Release();
@@ -328,6 +328,9 @@ void Camera::ChangeModeFollowRemote(const Vector3* lookAt, const Vector3& lookAt
 	mode = MODE::FOLLOW_REMOTE;
 
 	// 追従対象を設定
+	this->folowAt = folowAt;
+
+	// 注視点対象を設定
 	this->lookAt = lookAt;
 
 	// 追従対象とのローカル座標を設定
@@ -340,7 +343,7 @@ void Camera::ChangeModeFollowRemote(const Vector3* lookAt, const Vector3& lookAt
 	this->angle = angle;
 
 	// 座標をセット
-	pos = *lookAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = (*folowAt + lookAt.TransMat(MatrixAllMultXY({ Vector3::Xonly(angle.x) }))) + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::Xonly(angle.x) }));
 
 	// 視野角を設定
 	this->fov = fov;
@@ -349,7 +352,7 @@ void Camera::ChangeModeFollowRemote(const Vector3* lookAt, const Vector3& lookAt
 void Camera::FollowRemoteModeFunc(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
-	if (lookAt == nullptr) { return; }
+	if (folowAt == nullptr) { return; }
 
 	// 回転処理(コントローラー -> マウス-> ボタン の順に入力を確認していく)
 	bool mouse = false;
@@ -358,7 +361,10 @@ void Camera::FollowRemoteModeFunc(void)
 	Vector3 vec = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (vec == 0.0f) { vec = Vector3::Yonly((float)Key::GetIns().GetMouceMoveSize().x / MOUSE_SENSI); mouse = true; }
+	if (vec == 0.0f) {
+		vec += Vector3::Yonly((float)Key::GetIns().GetMouceMoveSize().x / MOUSE_SENSI);
+		mouse = true;
+	}
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (vec == 0.0f) {
@@ -376,21 +382,22 @@ void Camera::FollowRemoteModeFunc(void)
 	}
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = *lookAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *folowAt + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	lookAtPos = *folowAt + lookAt.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x, angle.y) }));
 }
 
 void Camera::FollowRemoteApply(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
-	if (lookAt == nullptr) { return; }
+	if (folowAt == nullptr) { return; }
 
 	// 適用
-	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), lookAt->ToVECTOR());
+	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), lookAtPos.ToVECTOR());
 }
 #pragma endregion
 
 #pragma region 追従（自動操作）
-void Camera::ChangeModeFollowAuto(const Transform& lookAt, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE, float FOLLOW_AUTO_MAX_DISTANCE, float fov)
+void Camera::ChangeModeFollowAuto(const Transform& folowAt, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE, float FOLLOW_AUTO_MAX_DISTANCE, float fov)
 {
 	// 現在の情報を破棄
 	Release();
@@ -399,10 +406,10 @@ void Camera::ChangeModeFollowAuto(const Transform& lookAt, const Vector3* lookTa
 	mode = MODE::FOLLOW_AUTO;
 
 	// 追従対象を設定
-	this->lookAt = &lookAt.pos;
+	this->folowAt = &folowAt.pos;
 
 	// 追従対象の向き
-	this->lookAtYangle = &lookAt.angle.y;
+	this->lookAtYangle = &folowAt.angle.y;
 
 	// 視野に入れる対象物
 	this->lookTarget = lookTarget;
@@ -418,23 +425,23 @@ void Camera::ChangeModeFollowAuto(const Transform& lookAt, const Vector3* lookTa
 
 #pragma region 座標
 	// ２点間ベクトル
-	Vector3 atToTarget = *this->lookAt - *this->lookTarget;
+	Vector3 atToTarget = *this->folowAt - *this->lookTarget;
 
 	// fovから必要距離を計算（縦fov基準）
 	float needDist = (atToTarget.Length() * 0.5f) / tanf(fov * 0.5f);
 
 	// 位置を算出
-	pos = *this->lookAt + atToTarget.Normalized() * needDist;
-	pos.y += (*this->lookAt - ((*this->lookAt + *this->lookTarget) * 0.5f)).Length();
+	pos = *this->folowAt + atToTarget.Normalized() * needDist;
+	pos.y += (*this->folowAt - ((*this->folowAt + *this->lookTarget) * 0.5f)).Length();
 #pragma endregion
 
 #pragma region 角度
-	angle = ((*this->lookAt + *this->lookTarget) * 0.5f) - pos;
+	angle = ((*this->folowAt + *this->lookTarget) * 0.5f) - pos;
 	angle = Vector3::Yonly(atan2f(angle.x, angle.z));
 #pragma endregion
 }
 
-void Camera::ChangeModeFollowAuto(const Vector3* lookAt, const float* lookAtYangle, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE, float FOLLOW_AUTO_MAX_DISTANCE, float fov)
+void Camera::ChangeModeFollowAuto(const Vector3* folowAt, const float* lookAtYangle, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE, float FOLLOW_AUTO_MAX_DISTANCE, float fov)
 {
 	// 現在の情報を破棄
 	Release();
@@ -443,7 +450,7 @@ void Camera::ChangeModeFollowAuto(const Vector3* lookAt, const float* lookAtYang
 	mode = MODE::FOLLOW_AUTO;
 
 	// 追従対象を設定
-	this->lookAt = lookAt;
+	this->folowAt = folowAt;
 
 	// 追従対象の向き
 	this->lookAtYangle = lookAtYangle;
@@ -462,18 +469,18 @@ void Camera::ChangeModeFollowAuto(const Vector3* lookAt, const float* lookAtYang
 
 #pragma region 座標
 	// ２点間ベクトル
-	Vector3 atToTarget = *this->lookAt - *this->lookTarget;
+	Vector3 atToTarget = *this->folowAt - *this->lookTarget;
 
 	// fovから必要距離を計算（縦fov基準）
 	float needDist = (atToTarget.Length() * 0.5f) / tanf(fov * 0.5f);
 
 	// 位置を算出
-	pos = *this->lookAt + atToTarget.Normalized() * needDist;
-	pos.y += (*this->lookAt - ((*this->lookAt + *this->lookTarget) * 0.5f)).Length();
+	pos = *this->folowAt + atToTarget.Normalized() * needDist;
+	pos.y += (*this->folowAt - ((*this->folowAt + *this->lookTarget) * 0.5f)).Length();
 #pragma endregion
 
 #pragma region 角度
-	angle = ((*this->lookAt + *this->lookTarget) * 0.5f) - pos;
+	angle = ((*this->folowAt + *this->lookTarget) * 0.5f) - pos;
 	angle = Vector3::Yonly(atan2f(angle.x, angle.z));
 #pragma endregion
 }
@@ -481,10 +488,10 @@ void Camera::ChangeModeFollowAuto(const Vector3* lookAt, const float* lookAtYang
 void Camera::FollowAutoModeFunc(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
-	if (lookAt == nullptr || lookTarget == nullptr) { return; }
+	if (folowAt == nullptr || lookTarget == nullptr) { return; }
 
 	// ２点間ベクトル
-	Vector3 atToTarget = *lookAt - *lookTarget;
+	Vector3 atToTarget = *folowAt - *lookTarget;
 
 	// fovから必要距離を計算（縦fov基準）
 	float needDist = std::clamp((atToTarget.Length() * 0.5f) / tanf(fov * 0.5f), FOLLOW_AUTO_MIN_DISTANCE, FOLLOW_AUTO_MAX_DISTANCE);
@@ -493,31 +500,31 @@ void Camera::FollowAutoModeFunc(void)
 	Vector3 backDir = atToTarget.Normalized();
 
 	// 目標カメラ位置
-	Vector3 desiredPos = *lookAt + backDir * needDist;
+	Vector3 desiredPos = *folowAt + backDir * needDist;
 
 	// 高さ補正
-	desiredPos.y += std::clamp(((*lookAt - *lookTarget) * 0.5f).Length(), 250.0f, 400.0f);
+	desiredPos.y += std::clamp(((*folowAt - *lookTarget) * 0.5f).Length(), 250.0f, 400.0f);
 
 	// 補間（ガタつき防止）
 	const float smooth = 0.1f;
 	pos += (desiredPos - pos) * smooth;
 
 	// 角度を算出する
-	angle = ((*lookAt + *lookTarget) * 0.5f) - pos;
+	angle = ((*folowAt + *lookTarget) * 0.5f) - pos;
 	angle = Vector3::Yonly(atan2f(angle.x, angle.z));
 }
 
 void Camera::FollowAutoApply(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
-	if (lookAt == nullptr || lookTarget == nullptr) { return; }
+	if (folowAt == nullptr || lookTarget == nullptr) { return; }
 
 	// 適用
-	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), ((*lookAt + *lookTarget) * 0.5f).ToVECTOR());
+	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), ((*folowAt + *lookTarget) * 0.5f).ToVECTOR());
 }
 #pragma endregion
 
-void Camera::DrawDebug(void)
+void Camera::DrawDebug(void) const
 {
 	if (App::GetIns().IsDrawDebug()) {
 		DrawFormatString(
@@ -526,12 +533,20 @@ void Camera::DrawDebug(void)
 			pos.x, pos.y, pos.z
 		);
 		DrawFormatString(
-			0, 100, 0xffffff,
+			0, 90, 0xffffff,
 			"カメラ角度　 ：(% .1f, % .1f, % .1f)",
 			Rad2Deg(angle.x),
 			Rad2Deg(angle.y),
 			Rad2Deg(angle.z)
 		);
+		DrawFormatString(
+			0, 110, 0xffffff,
+			"カメラ注視点 ：(% .1f, % .1f, % .1f)",
+			lookAtPos.ToVECTOR().x,
+			lookAtPos.ToVECTOR().y,
+			lookAtPos.ToVECTOR().z
+		);
+		DrawSphere3D(lookAtPos.ToVECTOR(), 20, 16, 0xff0000, 0xffffff, false);
 	}
 }
 
@@ -550,13 +565,13 @@ void Camera::Release(void)
 	case Camera::MODE::DISPLAY:
 		break;
 	case Camera::MODE::FOLLOW_REMOTE:
-		lookAt = nullptr;
+		folowAt = nullptr;
 
 		lookAtDiff = {};
 		ROT_POWER = 0.0f;
 		break;
 	case Camera::MODE::FOLLOW_AUTO:
-		lookAt = nullptr;
+		folowAt = nullptr;
 		lookAtYangle = nullptr;
 		lookTarget = nullptr;
 
