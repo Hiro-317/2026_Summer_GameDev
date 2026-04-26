@@ -181,6 +181,7 @@
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
+    <ClInclude Include="Src\Object\Charactor\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
