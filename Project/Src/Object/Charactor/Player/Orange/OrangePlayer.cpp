@@ -279,7 +279,7 @@ void OrangePlayer::UiDraw(void)
 	if (App::GetIns().IsDrawDebug()) {
 
 		// 1çsÇ∏Ç¬ï`âÊÇ∑ÇÈÇΩÇﬂÇÃÉâÉÄÉ_éÆÅiÉfÉoÉbÉOópÅj
-		int yPos = 100; const int FONT_SIZE = 20;
+		int yPos = 150; const int FONT_SIZE = 20;
 		auto debugDrwStr = [&](std::string str)->void {
 			DrawStringToHandle(0, yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
 			yPos += FONT_SIZE;
@@ -291,7 +291,7 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("â¡ë¨ìx:" + std::to_string(accelSum.Length()));
 		debugDrwStr("ÉXÉ^É~Éi:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
 		debugDrwStr("ëßêÿÇÍ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
-		debugDrwStr("Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`");
+		debugDrwStr("Å`Å`Å`Å`Å`Å`('#ÅGÉ÷;`)");
 	}
 }
 

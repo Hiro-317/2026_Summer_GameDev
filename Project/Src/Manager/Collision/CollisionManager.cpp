@@ -25,15 +25,11 @@ void CollisionManager::Add(ColliderBase* collider)
 
 	case TAG::ENEMY:
 
-	case TAG::GOLEM_ATTACK_FALL:
-	case TAG::GOLEM_ATTACK_PSYCHOROCK:
-	case TAG::GOLEM_ATTACK_STONE:
 		enemyColliders.emplace_back(collider);
 		break;
 
 		// ステージ系
 	case TAG::STAGE:
-	case TAG::GOLEM_ATTACK_WALL:
 		stageColliders.emplace_back(collider);
 		break;
 
