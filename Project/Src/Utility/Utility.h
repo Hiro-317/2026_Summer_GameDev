@@ -632,3 +632,6 @@ static std::vector<after> ArrayCast(const std::vector<before>& array) {
     // •ÏŠ·Œã‚ÌŒ^‚Ì”z—ñ‚ð•Ô‚·
     return ret;
 }
+
+// %•ÏŠ·
+static float PercentConversion(int percent) { return ((float)percent * 0.01f); }
