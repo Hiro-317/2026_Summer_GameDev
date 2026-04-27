@@ -6,6 +6,7 @@
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
+#include "../../../Common/Collider/SphereCollider.h"
 
 TomatoBoss::TomatoBoss() :
 	CharactorBase("Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
@@ -66,7 +67,15 @@ void TomatoBoss::Load(void)
 	ColliderCreate(
 		new CapsuleCollider(
 			TAG::BOSS,
-			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
+			CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			TAG::BOSS,
+			CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE
 		)
@@ -104,6 +113,7 @@ void TomatoBoss::CharactorInit(void)
 void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+	trans.AddAngleXDeg(-3.0f);
 }
 
 void TomatoBoss::CharactorDraw(void)
@@ -131,7 +141,7 @@ void TomatoBoss::UiDraw(void)
 		debugDrwStr("É{ÉXÅ`Å`Å`Å`Å`Å`Å`Å`Å`");
 		debugDrwStr("ç¿ïW" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
 		debugDrwStr("â¡ë¨ìx:" + std::to_string(accelSum.Length()));
-		debugDrwStr("Å`Å`Å`Å`Å`Å`Å`(:3[___]");
+		debugDrwStr("Å`Å`Å`Å`Å`Å`Å`(|3[___]");
 	}
 }
 

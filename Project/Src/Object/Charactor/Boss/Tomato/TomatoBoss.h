@@ -42,25 +42,39 @@ private:
 	const float LINE_COLLIDER_ENOUGH_DISTANCE = LINE_COLLIDER_END_POS.Length();
 
 	// カプセルコライダーの半径
-	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate");
-	// カプセルコライダーのローカル始点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_START_POS =
-		Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate")
+	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate");
+
+	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_START_POS_X =
+		Vector3::Xonly(
+			(MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
-	// カプセルコライダーのローカル終点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_END_POS =
-		-Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate")
+	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_END_POS_X =
+		-Vector3::Xonly(
+			(MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 			- GetParameter("ClimbOverHeight")
 		);
+	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_START_POS_Z =
+		Vector3::Zonly(
+			(MODEL_SIZE.z * 0.5f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+		);
+	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_END_POS_Z =
+		-Vector3::Zonly(
+			(MODEL_SIZE.z * 0.5f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+			- GetParameter("ClimbOverHeight")
+		);
+
 	// カプセルコライダーの絶対に当たらないおおよその距離
 	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE =
-		(CAPSULE_COLLIDER_START_POS - CAPSULE_COLLIDER_END_POS).Length()
+		(CAPSULE_COLLIDER_START_POS_X - CAPSULE_COLLIDER_END_POS_X).Length()
 		+ CAPSULE_COLLIDER_RADIUS;
-
 
 	// 押し出しを行う際の重さ
 	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("CollisionPushWeight");

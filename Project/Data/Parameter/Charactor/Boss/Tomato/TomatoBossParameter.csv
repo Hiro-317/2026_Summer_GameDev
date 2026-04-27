@@ -1,10 +1,11 @@
-ModelSize,3.436,3.934,3.436
-ModelScale,120,120,120
+ModelSize,3.436,2.8,3.436
+ModelScale,140,120,140
 ModelLocalRot,0,180,0
-ModelCenterDiff,0,-1.7145,0
+ModelCenterDiff,0,-1.4,0
 ClimbOverHeight,5
-ModelToColliderRate,1
+ModelToColliderRate,1.05
 CollisionPushWeight,100
+CollisionSphereRad,200
 InitPos,0,1000,300
 DashStaminaMax,250
 DashSpeedRate,1.5
