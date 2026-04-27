@@ -21,7 +21,9 @@ ActorBase::ActorBase() :
 	isDraw(true),
 	isAlphaDraw(false),
 
-	parameter(nullptr)
+	parameter(nullptr),
+
+	skillStats(nullptr)
 {
 }
 
@@ -44,7 +46,9 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 	isDraw(true),
 	isAlphaDraw(false),
 
-	parameter(new ParameterLoad(parameterPath))
+	parameter(new ParameterLoad(parameterPath)),
+
+	skillStats(nullptr)
 {
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 // コライダータグ列挙型定義
-enum class COLL_TAG
+enum class COLLIDER_TAG
 {
 	NON = -1,
 

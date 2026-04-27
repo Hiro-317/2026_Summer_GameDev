@@ -33,16 +33,16 @@ void TomatoBossStage::Load(void)
 void TomatoBossStage::ColliderLoad()
 {
 	// 地面の当たり判定
-	ColliderCreate(new BoxCollider(COLL_TAG::STAGE, GROUND_COLLISION_SIZE));
+	ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, GROUND_COLLISION_SIZE));
 
 	//// ステージの岩の当たり判定
 	for (const ColliderInfo& info : ROCK_COLLISION_INFO) {
-		ColliderCreate(new CapsuleCollider(COLL_TAG::STAGE, Vector3::Yonly(info.height), ROCK_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
+		ColliderCreate(new CapsuleCollider(COLLIDER_TAG::STAGE, Vector3::Yonly(info.height), ROCK_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
 	}
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		ColliderCreate(new CapsuleCollider(COLL_TAG::STAGE, Vector3::Yonly(info.height), WALL_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
+		ColliderCreate(new CapsuleCollider(COLLIDER_TAG::STAGE, Vector3::Yonly(info.height), WALL_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
 	}
 }
 

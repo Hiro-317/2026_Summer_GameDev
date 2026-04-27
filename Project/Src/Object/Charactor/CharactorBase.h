@@ -2,7 +2,6 @@
 #include "../ActorBase.h"
 #include "../Common/AnimationController/AnimationController.h"
 #include "CharactorStateBase.h"
-#include "CharacterStatsDefine.h"
 
 #include <map>
 
@@ -10,9 +9,20 @@ class CharactorBase : public ActorBase
 {
 public:
 	// デフォルトコンストラクタ
-	CharactorBase();
+	CharactorBase(
+		short HP_MAX,
+		short ATTACK_POWER,
+		short DEFENSE_POWER,
+		short SPEED_POWER
+	);
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
-	CharactorBase(const std::string& parameterPath);
+	CharactorBase(
+		short HP_MAX,
+		short ATTACK_POWER,
+		short DEFENSE_POWER,
+		short SPEED_POWER,
+		const std::string& parameterPath
+	);
 	virtual ~CharactorBase()override = default;
 
 	// ステートのゲット関数
@@ -47,8 +57,8 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharactorStateBase*> stateMap;
 
-	// パラメーター
-
+	// ステータス
+	CharacterStats characterStats;
 
 protected:
 	// ステート管理用変数

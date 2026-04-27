@@ -98,6 +98,9 @@ private:
 	// パラメーター外部ファイル管理クラス
 	ParameterLoad* parameter;
 
+	// スキル構造体
+	SkillStats* skillStats;
+
 protected:
 	// モデル制御情報構造体
 	Transform trans;
@@ -120,14 +123,14 @@ protected:
 	/// <param name="tag">タグ種類</param>
 	/// <returns></returns>
 	template<typename T = ColliderBase>
-	std::vector<T*> ColliderSerch(COLL_TAG tag = COLL_TAG::NON) {
+	std::vector<T*> ColliderSerch(COLLIDER_TAG tag = COLLIDER_TAG::NON) {
 		std::vector<T*> out;
 		out.reserve(collider.size());
 
 		for (auto c : collider) {
 			if (!c) continue;
 			if (auto* ptr = dynamic_cast<T*>(c)) {
-				if (c->GetTag() == tag || tag == COLL_TAG::NON) { out.push_back(ptr); }
+				if (c->GetTag() == tag || tag == COLLIDER_TAG::NON) { out.push_back(ptr); }
 			}
 		}
 		return out;
@@ -142,6 +145,7 @@ protected:
 		collider.back()->SetPushWeight(pushWeight);
 		collider.back()->SetOnCollisionFunc([this](const ColliderBase& collider) { this->OnCollision(collider); });
 		collider.back()->SetOnGroundedFunc([this](void) {this->OnGrounded(); });
+		if (skillStats != nullptr) { collider.back()->SetSkillStats(skillStats); }
 	}
 
 	/// <summary>
@@ -227,9 +231,14 @@ protected:
 
 		return Vector3(param[0], param[1], param[2]);
 	}
-#pragma endregion
+#pragma endregion パラメーター外部ファイル管理に関する関数
 
-#pragma endregion
+	// 攻撃スキル詳細生成
+	void CreateAttackSkill(short SKILL_POWER, const CharacterStats* characterStats) { skillStats = new SkillStats(SKILL_POWER, characterStats); }
+	// バフ/デバフスキル詳細生成
+	void CreateModifierSkill(short SKILL_POWER, short SKILL_TIME) { skillStats = new SkillStats(SKILL_POWER, SKILL_TIME); }
+
+#pragma endregion 初期設定
 
 	// 当たり判定の設定（true = 「判定する」、false = 「判定しない」）
 	void SetJudge(bool flg) {

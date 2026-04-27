@@ -2,8 +2,6 @@
 
 #include <functional>
 
-#include "ColliderTagDefine.h"
-
 #include "../Transform.h"
 
 #include "../../Charactor/CharacterStatsDefine.h"
@@ -30,7 +28,7 @@ public:
 	/// <param name="type">当たり判定タイプ</param>
 	/// <param name="enoughDistance">判定スキップに十分な距離　-1.0fで未設定とし、距離による判定スキップを行わない（引数省略で-1.0f）</param>
 	/// <param name="pos">相対座標（引数省略で{0.0f,0.0f,0.0f}）</param>
-	ColliderBase(COLL_TAG type, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
+	ColliderBase(COLLIDER_TAG type, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
 		trans(nullptr),
 		pos(pos),
 		enoughDistance(enoughDistance),
@@ -89,7 +87,7 @@ public:
 	unsigned char GetPushWeight(void)const { return pushWeight; }
 
 	// 当たり判定のタイプ
-	COLL_TAG GetTag(void)const { return type; }
+	COLLIDER_TAG GetTag(void)const { return type; }
 
 	// 当たり判定の形状
 	SHAPE GetShape(void)const { return shape; }
@@ -146,7 +144,7 @@ private:
 	
 
 	// 当たり判定タイプ（何と当たったかを見分ける用）
-	COLL_TAG type;
+	COLLIDER_TAG type;
 
 	// 当たり判定形状
 	SHAPE shape;

@@ -19,7 +19,7 @@ public:
 	/// <param name="playerAngle">プレイヤーの角度</param>
 	PlayerTripleAttackCollOperator(
 		float FIND_ATTACK_TARGET_RANGE,
-		const std::array<COLL_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
+		const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
 		const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
 
@@ -33,7 +33,7 @@ public:
 
 	// 攻撃対象を探索
 	void TargetSerch(void) {
-		ColliderSerch(COLL_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(true); 
+		ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(true); 
 	}
 
 	// 攻撃対象が見つかったかどうかを取得
@@ -67,7 +67,7 @@ private:
 	const float FIND_ATTACK_TARGET_RANGE;
 
 	// 攻撃の段階ごとのタグ
-	const std::array<COLL_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG;
+	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG;
 
 	// 攻撃の段階ごとの判定のサイズ（半径）
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE;

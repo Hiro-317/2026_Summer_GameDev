@@ -1,6 +1,13 @@
 #include"CharactorBase.h"
 
-CharactorBase::CharactorBase() :
+CharactorBase::CharactorBase(
+	short HP_MAX,
+	short ATTACK_POWER,
+	short DEFENSE_POWER,
+	short SPEED_POWER
+) :
+	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER),
+
 	ActorBase(),
 
 	state(0),
@@ -15,7 +22,13 @@ CharactorBase::CharactorBase() :
 {
 }
 
-CharactorBase::CharactorBase(const std::string& parameterPath) :
+CharactorBase::CharactorBase(
+	short HP_MAX,
+	short ATTACK_POWER,
+	short DEFENSE_POWER,
+	short SPEED_POWER,
+	const std::string& parameterPath
+) :
 	ActorBase(parameterPath),
 
 	state(0),
@@ -26,7 +39,9 @@ CharactorBase::CharactorBase(const std::string& parameterPath) :
 	anime(nullptr),
 
 	inviCounter(0),
-	isInviEffect(false)
+	isInviEffect(false),
+
+	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER)
 {
 }
 

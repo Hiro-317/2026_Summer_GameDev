@@ -17,7 +17,7 @@ public:
 	/// <param name="playerAngle">プレイヤーの向き</param>
 	PlayerSimpleAttackCollOperator(
 		float FIND_ATTACK_TARGET_RANGE,
-		COLL_TAG COLL_TAG, float COLL_SIZE,
+		COLLIDER_TAG COLL_TAG, float COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
 
 		const Vector3& playerPos,
@@ -31,7 +31,7 @@ public:
 
 	// 攻撃対象を探索
 	void TargetSerch(void) {
-		ColliderSerch(COLL_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(true);
+		ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(true);
 	}
 
 	// 攻撃対象が見つかったかどうかを取得
@@ -55,7 +55,7 @@ private:
 	const float FIND_ATTACK_TARGET_RANGE;
 
 	// 攻撃のタグ
-	const COLL_TAG COLL_TAG;
+	const COLLIDER_TAG COLL_TAG;
 
 	// 攻撃判定のサイズ（半径）
 	const float COLL_SIZE;

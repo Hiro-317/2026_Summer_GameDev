@@ -10,26 +10,26 @@ void CollisionManager::Add(ColliderBase* collider)
 	switch (collider->GetTag())
 	{
 		// 未設定（例外処理）
-	case COLL_TAG::NON:  break;
+	case COLLIDER_TAG::NON:  break;
 
 		//プレイヤー系
-	case COLL_TAG::PLAYER:
-	case COLL_TAG::PLAYER_PUNCH:
-	case COLL_TAG::PLAYER_GOUGE:
-	case COLL_TAG::PLAYER_THROWING:
+	case COLLIDER_TAG::PLAYER:
+	case COLLIDER_TAG::PLAYER_PUNCH:
+	case COLLIDER_TAG::PLAYER_GOUGE:
+	case COLLIDER_TAG::PLAYER_THROWING:
 		playerColliders.emplace_back(collider);
 		break;
 
 		// エネミー系
-	case COLL_TAG::BOSS:
+	case COLLIDER_TAG::BOSS:
 
-	case COLL_TAG::ENEMY:
+	case COLLIDER_TAG::ENEMY:
 
 		enemyColliders.emplace_back(collider);
 		break;
 
 		// ステージ系
-	case COLL_TAG::STAGE:
+	case COLLIDER_TAG::STAGE:
 		stageColliders.emplace_back(collider);
 		break;
 

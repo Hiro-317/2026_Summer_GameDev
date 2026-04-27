@@ -12,7 +12,7 @@ public:
 	~BoxDebugObject()override = default;
 
 	void Load(void)override {
-		ColliderCreate(new BoxCollider(COLL_TAG::SPHERE_DEBUG_OBJECT, size, size.Length() * 0.5f));
+		ColliderCreate(new BoxCollider(COLLIDER_TAG::SPHERE_DEBUG_OBJECT, size, size.Length() * 0.5f));
 	}
 
 private:
