@@ -42,6 +42,7 @@
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerUI\PlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
+    <ClInclude Include="Src\Object\UI\PlayerUI\PlayerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

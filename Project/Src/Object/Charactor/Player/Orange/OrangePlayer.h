@@ -6,6 +6,8 @@
 
 class PlayerTripleAttackCollOperator;
 
+class PlayerUI;
+
 class OrangePlayer : public CharactorBase
 {
 public:
@@ -14,9 +16,6 @@ public:
 
 	void Load(void)override;
 	void UiDraw(void)override;
-
-	// ダメージ状態に遷移する関数
-	void ToDamageState(const int damage, const Vector3& pos);
 
 	// 状態遷移後1度行う初期化処理
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -35,6 +34,8 @@ public:
 	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
 
 private:
+
+	std::vector<PlayerUI*> playerUi;
 
 #pragma region 定数定義
 

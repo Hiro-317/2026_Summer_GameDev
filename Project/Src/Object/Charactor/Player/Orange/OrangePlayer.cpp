@@ -12,6 +12,8 @@
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
 
+#include "../../../UI/PlayerUI/PlayerUI.h"
+
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 
@@ -275,6 +277,9 @@ void OrangePlayer::Load(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion
+
+	// UI‚Ì“o˜^
+	playerUi.push_back(new PlayerUI(Vector2(Application::SCREEN_SIZE_X - 256, Application::SCREEN_SIZE_Y - 256), 180));
 }
 
 void OrangePlayer::CharactorInit(void)
@@ -286,7 +291,6 @@ void OrangePlayer::CharactorInit(void)
 	state = (int)STATE::MOVE;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
-
 }
 
 void OrangePlayer::CharactorUpdate(void)
@@ -294,17 +298,28 @@ void OrangePlayer::CharactorUpdate(void)
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-		SetDynamicFlg(false);
+		// ”ñ“¹“IƒIƒuƒWƒFƒNƒg‚É‚·‚é
+		SetDynamicFlg(false); 
+		
+		// ƒJƒƒ‰‚ğŒÅ’è‚·‚é
 		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
+
+		// €–Só‘Ô‚É‘JˆÚ‚·‚é
 		ChangeState((int)STATE::DEATH);
 	}
 	interestPos = trans.pos + INTEREST_POS;
+
+	// UI‚ÌXVˆ—
+	for (PlayerUI*& UI : playerUi) {
+		UI->Update();
+	}
 }
 
 void OrangePlayer::CharactorDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
 
+	// ƒvƒŒƒCƒ„[‚Ì“ª(‰¼)
 	SetUseLighting(false);
 	DrawSphere3D(MV1GetFramePosition(trans.model, 14), 40, 200, 0xf79123, 0x000000, true);
 	SetUseLighting(true);
@@ -334,12 +349,11 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("‘§Ø‚ê:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("``````('#GƒÖ;`)");
 	}
-}
 
-void OrangePlayer::ToDamageState(const int damage, const Vector3& pos)
-{
-	state = (int)STATE::DAMAGE;
-	
+	// UI‚Ì•`‰æ
+	for (PlayerUI*& UI : playerUi) {
+		UI->Draw();
+	}
 }
 
 
@@ -353,4 +367,14 @@ void OrangePlayer::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
+
+	// UI‚ğ‰ğ•ú
+	for (PlayerUI*& UI : playerUi) {
+		if (UI) {
+			delete UI;
+			UI = nullptr;
+		}
+	}
+
+
 }
