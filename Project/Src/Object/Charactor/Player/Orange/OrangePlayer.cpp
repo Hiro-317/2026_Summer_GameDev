@@ -304,6 +304,10 @@ void OrangePlayer::CharactorUpdate(void)
 void OrangePlayer::CharactorDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
+
+	SetUseLighting(false);
+	DrawSphere3D(MV1GetFramePosition(trans.model, 14), 40, 200, 0xf79123, 0x000000, true);
+	SetUseLighting(true);
 }
 
 void OrangePlayer::CharactorAlphaDraw(void)
