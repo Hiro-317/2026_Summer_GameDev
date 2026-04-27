@@ -17,6 +17,9 @@ public:
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
 
+	// HPの値のゲット関数
+	unsigned short GetHP(void) { return hp; }
+
 private:
 	// 初期化
 	void SubInit(void)override;
@@ -50,7 +53,8 @@ private:
 	unsigned short hp;
 
 protected:
-
+	
+	// HPを減らす関数
 	void DecreaseHp(unsigned short dec) { hp -= (hp >= dec) ? dec : hp; }
 
 	// ステート管理用変数

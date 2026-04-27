@@ -3,6 +3,7 @@
 #include "../../../../Application/Application.h"
 
 #include "../../../../Manager/Font/FontManager.h"
+#include "../../../../Manager/Camera/Camera.h"
 
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
@@ -255,6 +256,8 @@ void OrangePlayer::Load(void)
 		new PlayerDeathState(
 			[&]() { state = (int)STATE::DEATH; },
 			[&]() { return state == (int)STATE::DEATH; },
+			trans.pos, trans.angle,
+			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			[&]() { state = (int)STATE::MOVE; }
 		)
@@ -291,6 +294,8 @@ void OrangePlayer::CharactorUpdate(void)
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		SetDynamicFlg(false);
+		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
 		ChangeState((int)STATE::DEATH);
 	}
 }
