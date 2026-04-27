@@ -207,6 +207,7 @@
     <ClInclude Include="Src\Object\Common\Collider\BoxCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ColliderBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\CapsuleCollider.h" />
+    <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
     <ClInclude Include="Src\Object\Common\Collider\LineCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ModelCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\SphereCollider.h" />

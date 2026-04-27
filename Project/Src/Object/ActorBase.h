@@ -120,14 +120,14 @@ protected:
 	/// <param name="tag">ƒ^ƒOŽí—Þ</param>
 	/// <returns></returns>
 	template<typename T = ColliderBase>
-	std::vector<T*> ColliderSerch(TAG tag = TAG::NON) {
+	std::vector<T*> ColliderSerch(COLL_TAG tag = COLL_TAG::NON) {
 		std::vector<T*> out;
 		out.reserve(collider.size());
 
 		for (auto c : collider) {
 			if (!c) continue;
 			if (auto* ptr = dynamic_cast<T*>(c)) {
-				if (c->GetTag() == tag || tag == TAG::NON) { out.push_back(ptr); }
+				if (c->GetTag() == tag || tag == COLL_TAG::NON) { out.push_back(ptr); }
 			}
 		}
 		return out;

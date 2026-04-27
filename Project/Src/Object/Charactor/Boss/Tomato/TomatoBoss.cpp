@@ -65,7 +65,7 @@ void TomatoBoss::Load(void)
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
 		new CapsuleCollider(
-			TAG::BOSS,
+			COLL_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE

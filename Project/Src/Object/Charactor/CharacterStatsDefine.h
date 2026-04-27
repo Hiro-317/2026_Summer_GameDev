@@ -4,6 +4,8 @@
 
 #include "../../Utility/Utility.h"
 
+#include "../Common/Collider/ColliderTagDefine.h"
+
 // ダメージ計算式（計算式忘れた、後で書く）
 static short CalculateDamage(short damage, short defense) { return Round((float)damage / (((float)defense + 100.0f) / 100.0f)); }
 
@@ -14,18 +16,12 @@ static constexpr char MODIFIER_MAX_NUM = 10;
 // デバフの数値上限
 static constexpr float DEBUFF_MAX = 0.01f;
 
-// バフ/デバフ タイプ（効果重複防止のため）
-enum class MODIFIER_TYPE
-{
-	TEST_1,
-	TEST_2,
-};
 
 // 補正倍率(バフ/デバフ)の構造体
 struct ModifierData
 {
 	// タイプ（同タイプの重複不可）
-	MODIFIER_TYPE type;
+	COLL_TAG type;
 	// 増減率(バフ/デバフ)の数値（0.0が基準値）（生成関数を通して基準値を補正 例:80->0.8 -80->-0.8）
 	float rate;
 	// 効果時間（フレーム数）
@@ -43,7 +39,7 @@ struct ModifierData
 	/// <param name="type">タイプ（同タイプの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(MODIFIER_TYPE type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
+	ModifierData(COLL_TAG type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
 };
 
 

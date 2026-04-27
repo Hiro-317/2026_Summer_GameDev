@@ -133,11 +133,11 @@ private:
 	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("Skill1TargetSerchRange");
 
 	// 当たり判定のタグテーブル
-	const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
+	const std::array<COLL_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
 	{
-		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1,
-		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2,
-		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3,
+		COLL_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1,
+		COLL_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2,
+		COLL_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3,
 	};
 
 	// 当たり判定のサイズテーブル（半径）
@@ -184,7 +184,7 @@ private:
 	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("Skill2TargetSerchRange");
 
 	// 当たり判定のタグ
-	const TAG SKILL_2_COLL_TAG = TAG::ORANGE_PLAYER_KICK_ATTACK;
+	const COLL_TAG SKILL_2_COLL_TAG = COLL_TAG::ORANGE_PLAYER_KICK_ATTACK;
 
 	// 当たり判定のサイズ（半径）
 	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("Skill2CollSize");

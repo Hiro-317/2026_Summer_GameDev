@@ -70,12 +70,12 @@ void OrangePlayer::Load(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	ColliderCreate(new LineCollider(COLL_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
 		new CapsuleCollider(
-			TAG::PLAYER,
+			COLL_TAG::PLAYER,
 			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE

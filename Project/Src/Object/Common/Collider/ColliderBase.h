@@ -2,37 +2,15 @@
 
 #include <functional>
 
+#include "ColliderTagDefine.h"
+
 #include "../Transform.h"
+
+#include "../../Charactor/CharacterStatsDefine.h"
 
 class ColliderBase
 {
 public:
-
-	// タイプ列挙型定義
-	enum class TAG
-	{
-		NON = -1,
-		
-		PLAYER,
-		PLAYER_PUNCH,
-		PLAYER_GOUGE,
-		PLAYER_THROWING,
-
-		PLAYER_TRIPLE_ATTACK_TARGET_SERCH,
-		ORANGE_PLAYER_TRIPLE_ATTACK_1,
-		ORANGE_PLAYER_TRIPLE_ATTACK_2,
-		ORANGE_PLAYER_TRIPLE_ATTACK_3,
-
-		ORANGE_PLAYER_KICK_ATTACK,
-
-		BOSS,
-
-		ENEMY,
-
-		STAGE,
-
-		SPHERE_DEBUG_OBJECT,
-	};
 
 	// 形状列挙型定義
 	enum class SHAPE
@@ -52,7 +30,7 @@ public:
 	/// <param name="type">当たり判定タイプ</param>
 	/// <param name="enoughDistance">判定スキップに十分な距離　-1.0fで未設定とし、距離による判定スキップを行わない（引数省略で-1.0f）</param>
 	/// <param name="pos">相対座標（引数省略で{0.0f,0.0f,0.0f}）</param>
-	ColliderBase(TAG type, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
+	ColliderBase(COLL_TAG type, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
 		trans(nullptr),
 		pos(pos),
 		enoughDistance(enoughDistance),
@@ -62,7 +40,8 @@ public:
 		pushWeight(0),
 		type(type),
 		shape(SHAPE::NON),
-		OnCollision(nullptr)
+		OnCollision(nullptr),
+		skillStats(nullptr)
 	{
 	}
 	virtual ~ColliderBase() = default;
@@ -79,6 +58,9 @@ public:
 
 	// 接地判定通知用関数セット
 	void SetOnGroundedFunc(std::function<void(void)>OnGroundedFunc) { OnGrounded = std::move(OnGroundedFunc); }
+
+	// スキル情報セット
+	void SetSkillStats(const SkillStats* ptr) { skillStats = ptr; }
 #pragma endregion
 
 #pragma region 各ゲット関数
@@ -107,7 +89,7 @@ public:
 	unsigned char GetPushWeight(void)const { return pushWeight; }
 
 	// 当たり判定のタイプ
-	TAG GetTag(void)const { return type; }
+	COLL_TAG GetTag(void)const { return type; }
 
 	// 当たり判定の形状
 	SHAPE GetShape(void)const { return shape; }
@@ -117,6 +99,9 @@ public:
 
 	// 接地判定の呼び出し
 	void CallOnGrounded(void) { OnGrounded(); }
+
+	// スキル情報参照
+	const SkillStats& GetSkillStats(void)const { return *skillStats; }
 #pragma endregion
 
 #pragma region 各セット関数
@@ -161,7 +146,7 @@ private:
 	
 
 	// 当たり判定タイプ（何と当たったかを見分ける用）
-	TAG type;
+	COLL_TAG type;
 
 	// 当たり判定形状
 	SHAPE shape;
@@ -172,9 +157,11 @@ private:
 	// 接地したときに呼び出す関数をポインタで受け取って保持
 	std::function<void(void)>OnGrounded;
 
+	// 必要に応じてスキル情報をポインタで受け取って保持
+	const SkillStats* skillStats;
+
 protected:
 	void SetShape(SHAPE s) { shape = s; }
 };
 
-using TAG = ColliderBase::TAG;
 using SHAPE = ColliderBase::SHAPE;

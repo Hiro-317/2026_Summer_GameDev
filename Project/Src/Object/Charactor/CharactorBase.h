@@ -2,6 +2,7 @@
 #include "../ActorBase.h"
 #include "../Common/AnimationController/AnimationController.h"
 #include "CharactorStateBase.h"
+#include "CharacterStatsDefine.h"
 
 #include <map>
 
@@ -45,6 +46,9 @@ private:
 
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharactorStateBase*> stateMap;
+
+	// パラメーター
+
 
 protected:
 	// ステート管理用変数
