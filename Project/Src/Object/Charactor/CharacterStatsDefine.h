@@ -5,7 +5,7 @@
 #include "../../Utility/Utility.h"
 
 // ダメージ計算式（計算式忘れた、後で書く）
-static short CalculateDamage(short damage, short defense) { return 0; }
+static short CalculateDamage(short damage, short defense) { return Round((float)damage / (((float)defense + 100.0f) / 100.0f)); }
 
 
 // バフ/デバフ の最大数
