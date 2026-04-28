@@ -183,6 +183,7 @@
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
+    <ClInclude Include="Src\Object\Charactor\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Src\Object\Common\Collider\BoxCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ColliderBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\CapsuleCollider.h" />
+    <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
     <ClInclude Include="Src\Object\Common\Collider\LineCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ModelCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\SphereCollider.h" />

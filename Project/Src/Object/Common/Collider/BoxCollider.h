@@ -5,7 +5,7 @@
 class BoxCollider : public ColliderBase
 {
 public:
-	BoxCollider(TAG type, Vector3 size, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
+	BoxCollider(COLLIDER_TAG type, Vector3 size, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
 		ColliderBase(type, enoughDistance, pos),
 		size(size)
 	{

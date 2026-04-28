@@ -9,16 +9,24 @@ class CharactorBase : public ActorBase
 {
 public:
 	// デフォルトコンストラクタ
-	CharactorBase();
+	CharactorBase(
+		short HP_MAX,
+		short ATTACK_POWER,
+		short DEFENSE_POWER,
+		short SPEED_POWER
+	);
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
-	CharactorBase(const std::string& parameterPath);
+	CharactorBase(
+		short HP_MAX,
+		short ATTACK_POWER,
+		short DEFENSE_POWER,
+		short SPEED_POWER,
+		const std::string& parameterPath
+	);
 	virtual ~CharactorBase()override = default;
 
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
-
-	// HPの値のゲット関数
-	unsigned short GetHP(void) { return hp; }
 
 private:
 	// 初期化
@@ -49,14 +57,10 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharactorStateBase*> stateMap;
 
-	// HP管理用変数
-	unsigned short hp;
+	// ステータス
+	CharacterStats characterStats;
 
 protected:
-	
-	// HPを減らす関数
-	void DecreaseHp(unsigned short dec) { hp -= (hp >= dec) ? dec : hp; }
-
 	// ステート管理用変数
 	int state;
 

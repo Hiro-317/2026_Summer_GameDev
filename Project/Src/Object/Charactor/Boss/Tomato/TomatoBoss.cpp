@@ -8,7 +8,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 TomatoBoss::TomatoBoss() :
-	CharactorBase("Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
+	CharactorBase(1,1,1,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray()
 {
 }
@@ -65,7 +65,7 @@ void TomatoBoss::Load(void)
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
 		new CapsuleCollider(
-			TAG::BOSS,
+			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE
