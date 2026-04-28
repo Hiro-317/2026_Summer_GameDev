@@ -217,6 +217,9 @@ public:
 		return ret;
 	}
 
+	// コライダータグ
+	const COLLIDER_TAG COLL_TAG;
+
 	/// <summary>
 	/// 攻撃/回復 スキル生成
 	/// </summary>
@@ -224,11 +227,13 @@ public:
 	/// <param name="characterStats">ステータスのポインタ（回復などの攻撃力や会心率ダメを参照しないスキルの場合は未設定でOK）</param>
 	SkillStats(
 		short SKILL_POWER,
-		const CharacterStats* characterStats = nullptr
+		const CharacterStats* characterStats = nullptr,
+		COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON
 	) :
 		SKILL_POWER(SKILL_POWER),
 		attackPower(characterStats ? &characterStats->attackPower : nullptr),
 		critical(characterStats ? &characterStats->critical : nullptr),
+		COLL_TAG(COLL_TAG),
 		SKILL_TIME(0)
 	{
 	}
@@ -238,8 +243,9 @@ public:
 	/// </summary>
 	/// <param name="SKILL_POWER">技威力</param>
 	/// <param name="SKILL_TIME">技効果時間</param>
-	SkillStats(short SKILL_POWER, short SKILL_TIME) :
+	SkillStats(short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
 		SKILL_POWER(SKILL_POWER), SKILL_TIME(SKILL_TIME),
+		COLL_TAG(COLL_TAG),
 		attackPower(nullptr), critical(nullptr)
 	{
 	}

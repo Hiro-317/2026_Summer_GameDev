@@ -23,7 +23,7 @@ ActorBase::ActorBase() :
 
 	parameter(nullptr),
 
-	skillStats(nullptr)
+	skillStats()
 {
 }
 
@@ -48,7 +48,7 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 
 	parameter(new ParameterLoad(parameterPath)),
 
-	skillStats(nullptr)
+	skillStats()
 {
 }
 
@@ -121,6 +121,13 @@ void ActorBase::Release(void)
 		parameter->Release();
 		delete parameter;
 		parameter = nullptr;
+	}
+
+	// ƒXƒLƒ‹î•ñ‚Ì‰ğ•ú
+	for (SkillStats*& s : skillStats) {
+		if (!s) { continue; }
+		delete s;
+		s = nullptr;
 	}
 
 	// “–‚½‚è”»’èî•ñ‚ğ‰ğ•ú

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include"Common/Collider/ColliderBase.h"
 #include"Common/DataLoad/ParameterLoad.h"
 
@@ -99,7 +101,7 @@ private:
 	ParameterLoad* parameter;
 
 	// スキル構造体
-	SkillStats* skillStats;
+	std::vector<SkillStats*> skillStats;
 
 protected:
 	// モデル制御情報構造体
@@ -145,7 +147,7 @@ protected:
 		collider.back()->SetPushWeight(pushWeight);
 		collider.back()->SetOnCollisionFunc([this](const ColliderBase& collider) { this->OnCollision(collider); });
 		collider.back()->SetOnGroundedFunc([this](void) {this->OnGrounded(); });
-		if (skillStats != nullptr) { collider.back()->SetSkillStats(skillStats); }
+		ColliderToSetSkill();
 	}
 
 	/// <summary>
@@ -234,10 +236,24 @@ protected:
 #pragma endregion パラメーター外部ファイル管理に関する関数
 
 	// 攻撃スキル詳細生成
-	void CreateAttackSkill(short SKILL_POWER, const CharacterStats* characterStats) { skillStats = new SkillStats(SKILL_POWER, characterStats); }
+	void CreateAttackSkill(short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+		skillStats.emplace_back(new SkillStats(SKILL_POWER, characterStats, tag));
+		ColliderToSetSkill();
+	}
 	// バフ/デバフスキル詳細生成
-	void CreateModifierSkill(short SKILL_POWER, short SKILL_TIME) { skillStats = new SkillStats(SKILL_POWER, SKILL_TIME); }
+	void CreateModifierSkill(short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+		skillStats.emplace_back(new SkillStats(SKILL_POWER, SKILL_TIME, tag));
+		ColliderToSetSkill();
+	}
 
+	// コライダーにスキル詳細を設定
+	void ColliderToSetSkill(void) {
+		for (SkillStats*& skill : skillStats) {
+			for (ColliderBase*& coll : collider) {
+				if (skill->COLL_TAG == coll->GetTag() || skill->COLL_TAG == COLLIDER_TAG::NON) { coll->SetSkillStats(skill); }
+			}
+		}
+	}
 #pragma endregion 初期設定
 
 	// 当たり判定の設定（true = 「判定する」、false = 「判定しない」）
