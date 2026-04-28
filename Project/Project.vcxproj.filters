@@ -33,6 +33,30 @@
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -173,27 +197,35 @@
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Stage\StageBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Stage\StageManager\StageManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
+    <ClInclude Include="Src\Object\Charactor\CharacterStatsDefine.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
+    <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
+    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">
@@ -328,25 +360,7 @@
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Stage\StageBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Stage\StageManager\StageManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

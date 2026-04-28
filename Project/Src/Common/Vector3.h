@@ -149,6 +149,21 @@ struct Vector3
 	// â‘Î’l‚ğæ“¾‚·‚é
 	Vector3 Abs(void)const { return Vector3(abs(x), abs(y), abs(z)); }
 
+	//// Vector2‚Ö‚Ì•ÏŠ·(X,Y)
+	//Vector2 ToVector2XY(void)const { return Vector2(x, y); }
+	//// Vector2‚Ö‚Ì•ÏŠ·(Y,X)
+	//Vector2 ToVector2YX(void)const { return Vector2(y, x); }
+
+	//// Vector2‚Ö‚Ì•ÏŠ·(X,Z)
+	//Vector2 ToVector2XZ(void)const { return Vector2(x, z); }
+	//// Vector2‚Ö‚Ì•ÏŠ·(Z,X)
+	//Vector2 ToVector2ZX(void)const { return Vector2(z, x); }
+	//
+	//// Vector2‚Ö‚Ì•ÏŠ·(Y,Z)
+	//Vector2 ToVector2YZ(void)const { return Vector2(y, z); }
+	//// Vector2‚Ö‚Ì•ÏŠ·(Z,Y)
+	//Vector2 ToVector2ZY(void)const { return Vector2(z, y); }
+
 	// ˆê”Ô‘å‚«‚¢—v‘f”‚ğæ“¾
 	float MaxElementF(void)const {
 		float max = x;

@@ -5,7 +5,7 @@
 class TomatoBoss : public CharactorBase
 {
 public:
-	TomatoBoss();
+	TomatoBoss(const Vector3& playerPos);
 	~TomatoBoss()override = default;
 
 	void Load(void)override;
@@ -42,25 +42,39 @@ private:
 	const float LINE_COLLIDER_ENOUGH_DISTANCE = LINE_COLLIDER_END_POS.Length();
 
 	// カプセルコライダーの半径
-	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate");
-	// カプセルコライダーのローカル始点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_START_POS =
-		Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate")
+	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate");
+
+	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_START_POS_X =
+		Vector3::Xonly(
+			(MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
-	// カプセルコライダーのローカル終点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_END_POS =
-		-Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate")
+	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_END_POS_X =
+		-Vector3::Xonly(
+			(MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 			- GetParameter("ClimbOverHeight")
 		);
+	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_START_POS_Z =
+		Vector3::Zonly(
+			(MODEL_SIZE.z * 0.5f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+		);
+	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_END_POS_Z =
+		-Vector3::Zonly(
+			(MODEL_SIZE.z * 0.5f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+			- GetParameter("ClimbOverHeight")
+		);
+
 	// カプセルコライダーの絶対に当たらないおおよその距離
 	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE =
-		(CAPSULE_COLLIDER_START_POS - CAPSULE_COLLIDER_END_POS).Length()
+		(CAPSULE_COLLIDER_START_POS_X - CAPSULE_COLLIDER_END_POS_X).Length()
 		+ CAPSULE_COLLIDER_RADIUS;
-
 
 	// 押し出しを行う際の重さ
 	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("CollisionPushWeight");
@@ -86,17 +100,11 @@ private:
 
 	// 移動状態～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-	// 加算移動量
+	// 移動量
 	const float MOVE_SPEED = GetParameter("MoveSpeed");
 
-	// 最大移動量
-	const float MOVE_SPEED_MAX = GetParameter("MoveSpeedMax");
-
-	// ダッシュの移動量倍率
-	const float DASH_SPEED_RATE = GetParameter("DashSpeedRate");
-
-	// ダッシュのスタミナの最大量（1フレームずつデクリメント）
-	const short DASH_STAMINA_MAX = (short)GetParameterToInt("DashStaminaMax");
+	// 回転量
+	const float ROTATION_POW = GetParameter("RotationPower");
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～移動状態
 
@@ -136,4 +144,10 @@ private:
 	void CharactorAlphaDraw(void)override;
 	void CharactorRelease(void)override;
 	// ～～～～～～～～～～～～～～メイン処理
+
+	// プレイヤーの座標の参照(読み取り専用)
+	const Vector3& playerPos;
+
+	// トマトの向いている向き
+	Vector3 moveDir;
 };

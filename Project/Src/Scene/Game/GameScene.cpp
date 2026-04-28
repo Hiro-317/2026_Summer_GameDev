@@ -74,7 +74,7 @@ void GameScene::Load(void)
 	//<ó·>ObjAdd(new Player());
 
 	ObjAdd(new OrangePlayer());
-	ObjAdd(new TomatoBoss());
+	ObjAdd(new TomatoBoss(ObjSerch<OrangePlayer>()->GetTrans().pos));
 	ObjAdd(new TomatoBossStage());
 
 }
@@ -118,7 +118,7 @@ void GameScene::Update(void)
 
 	// ÉQÅ[ÉÄÉNÉäÉAîªíË
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xffffff);
 		return;
 	}
 

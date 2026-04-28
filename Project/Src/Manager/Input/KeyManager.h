@@ -114,6 +114,9 @@ public:
 
 		// シーンの再ロード
 		DEBUG_RELOAD,
+
+		// ダメージ移行
+		TO_DAMAGE,
 #pragma endregion
 
 		MAX,

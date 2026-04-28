@@ -15,6 +15,10 @@ public:
 	void Load(void)override;
 	void UiDraw(void)override;
 
+	// ƒ_ƒ[ƒWó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
+	void ToDamageState(const int damage, const Vector3& pos);
+
+	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
 		std::vector<ColliderBase*> ret = {};
 		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
@@ -108,8 +112,8 @@ private:
 		SKILL_3,		// ƒXƒLƒ‹3iƒLƒƒƒ‰‚²‚Æ‚Ìu“Áê‹Zvj
 		SPECIAL_SKILL,	// ƒXƒyƒVƒƒƒ‹ƒXƒLƒ‹iƒLƒƒƒ‰‚²‚Æ‚Ìu•KE‹Zvj
 
-		DAMAGE,
-		DEAD,
+		DAMAGE,			// ƒ_ƒ[ƒW
+		DEATH,			// “|‚³‚ê‚é
 
 		MAX
 	};
@@ -137,11 +141,11 @@ private:
 	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("Skill1TargetSerchRange");
 
 	// “–‚½‚è”»’è‚Ìƒ^ƒOƒe[ƒuƒ‹
-	const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
+	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
 	{
-		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1,
-		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2,
-		TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3,
+		COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1,
+		COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2,
+		COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3,
 	};
 
 	// “–‚½‚è”»’è‚ÌƒTƒCƒYƒe[ƒuƒ‹i”¼Œaj
@@ -188,7 +192,7 @@ private:
 	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("Skill2TargetSerchRange");
 
 	// “–‚½‚è”»’è‚Ìƒ^ƒO
-	const TAG SKILL_2_COLL_TAG = TAG::ORANGE_PLAYER_KICK_ATTACK;
+	const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK;
 
 	// “–‚½‚è”»’è‚ÌƒTƒCƒYi”¼Œaj
 	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("Skill2CollSize");
@@ -226,6 +230,11 @@ private:
 
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
+	// ƒ_ƒ[ƒWó‘Ô`````````````````````````
+
+	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const unsigned char DAMAGE_INVI_TIME = (unsigned char)GetParameter("DamageInviTime");
+	// `````````````````````````ƒ_ƒ[ƒWó‘Ô
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
 
@@ -242,6 +251,8 @@ private:
 		PUNCH3,
 		KICK,
 		DODGE,
+		DAMAGE,
+		DEATH,
 
 		MAX
 	};
@@ -257,6 +268,8 @@ private:
 		GetParameter("Punch3AnimeSpeed"),	// PUNCH3
 		GetParameter("KickAnimeSpeed"),		// KICK
 		GetParameter("DodgeAnimeSpeed"),	// DODGE
+		GetParameter("DamageAnimeSpeed"),	// DAMAGE
+		GetParameter("DeathAnimeSpeed"),	// DEATH
 	};
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒHƒ‹ƒ_‚Ü‚Å‚ÌƒpƒX
@@ -272,7 +285,9 @@ private:
 		ANIME_FOLDER_PATH + "Punch2.mv1",	// PUNCH2
 		ANIME_FOLDER_PATH + "Punch3.mv1",	// PUNCH3
 		ANIME_FOLDER_PATH + "Kick.mv1",		// KICK
-		ANIME_FOLDER_PATH + "Dodge.mv1"		// DODGE
+		ANIME_FOLDER_PATH + "Dodge.mv1",	// DODGE
+		ANIME_FOLDER_PATH + "Hit.mv1",		// DAMAGE
+		ANIME_FOLDER_PATH + "Death.mv1"		// DEATH
 	};
 
 	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“

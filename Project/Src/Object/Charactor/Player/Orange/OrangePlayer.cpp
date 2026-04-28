@@ -3,17 +3,20 @@
 #include "../../../../Application/Application.h"
 
 #include "../../../../Manager/Font/FontManager.h"
+#include "../../../../Manager/Camera/Camera.h"
 
 #include "../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
 #include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
 #include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
+#include "../CommonPlayerState/Damage/PlayerDamageState.h"
+#include "../CommonPlayerState/Death/PlayerDeathState.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 OrangePlayer::OrangePlayer() :
-	CharactorBase("Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
+	CharactorBase(1,1,1,1,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
 	subObjArray()
 {
 }
@@ -64,18 +67,20 @@ void OrangePlayer::Load(void)
 	// 押し出す力の大きさを設定する
 	SetPushWeight(COLLISION_PUSH_WEIGHT);
 
+	SetInviEffectFlg(true);
+
 #pragma endregion
 
 
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
 		new CapsuleCollider(
-			TAG::PLAYER,
+			COLLIDER_TAG::PLAYER,
 			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE
@@ -202,7 +207,7 @@ void OrangePlayer::Load(void)
 			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
 			// 当たり判定のオペレーター
 			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
-			// 参照（座標 / 角度）
+			// 座標 / 角度
 			trans.pos, trans.angle,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
@@ -219,10 +224,11 @@ void OrangePlayer::Load(void)
 			// 自分の状態に関する関数
 			[&]() { state = (int)STATE::SKILL_3; },
 			// 自分の状態かどうかを返す関数
-			[&]() {return state == (int)STATE::SKILL_3; },
-			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合））
+			[&]() { return state == (int)STATE::SKILL_3; },
+			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
+			// 座標 / 角度
 			trans.pos,trans.angle,
 			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
 			[&]() { return GetAnimeRatio(); },
@@ -232,6 +238,30 @@ void OrangePlayer::Load(void)
 		)
 	);
 
+	AddState(
+		(int)STATE::DAMAGE,
+		new PlayerDamageState(
+			[&]() { state = (int)STATE::DAMAGE; },
+			[&]() { return state == (int)STATE::DAMAGE; },
+			DAMAGE_INVI_TIME,
+			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
+			[&]() { return IsAnimeEnd(); },
+			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
+			[&]() { state = (int)STATE::MOVE; }
+		)
+	);
+
+	AddState(
+		(int)STATE::DEATH,
+		new PlayerDeathState(
+			[&]() { state = (int)STATE::DEATH; },
+			[&]() { return state == (int)STATE::DEATH; },
+			trans.pos, trans.angle,
+			[&]() { return IsAnimeEnd(); },
+			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			[&]() { state = (int)STATE::MOVE; }
+		)
+	);
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
 		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
@@ -262,12 +292,22 @@ void OrangePlayer::CharactorInit(void)
 void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+
+	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		SetDynamicFlg(false);
+		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
+		ChangeState((int)STATE::DEATH);
+	}
 	interestPos = trans.pos + INTEREST_POS;
 }
 
 void OrangePlayer::CharactorDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
+
+	SetUseLighting(false);
+	DrawSphere3D(MV1GetFramePosition(trans.model, 14), 40, 200, 0xf79123, 0x000000, true);
+	SetUseLighting(true);
 }
 
 void OrangePlayer::CharactorAlphaDraw(void)
@@ -294,6 +334,12 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("～～～～～～('#；ω;`)");
 	}
+}
+
+void OrangePlayer::ToDamageState(const int damage, const Vector3& pos)
+{
+	state = (int)STATE::DAMAGE;
+	
 }
 
 

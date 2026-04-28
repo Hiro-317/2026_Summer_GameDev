@@ -167,6 +167,8 @@ void KeyManager::Init(void)
 
 	// シーンの再ロード
 	SET_KEYBOARD(KEY_TYPE::DEBUG_RELOAD, KEY_INPUT_MINUS);
+
+	SET_KEYBOARD(KEY_TYPE::TO_DAMAGE, KEY_INPUT_P);
 #pragma endregion
 
 	// キーボードによるテキスト入力管理クラスの生成

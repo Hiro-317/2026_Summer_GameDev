@@ -4,7 +4,7 @@
 
 PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 	float FIND_ATTACK_TARGET_RANGE,
-	const std::array<TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
+	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 	const Vector3& COLL_LOCAL_POS,
 
@@ -41,7 +41,7 @@ void PlayerTripleAttackCollOperator::Load(void)
 	for (int i = 0; i < (int)PLAYER_TRIPLE_ATTACK_STAGE::MAX; i++) {
 		ColliderCreate(new SphereCollider(COLL_TAG[i], COLL_SIZE[i], COLL_SIZE[i], COLL_LOCAL_POS));
 	}
-	ColliderCreate(new SphereCollider(TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 }
 
@@ -49,12 +49,12 @@ void PlayerTripleAttackCollOperator::OnCollision(const ColliderBase& other)
 {
 	switch (other.GetTag())
 	{
-	case ColliderBase::TAG::BOSS:
-	case ColliderBase::TAG::ENEMY:
-	case ColliderBase::TAG::SPHERE_DEBUG_OBJECT:
+	case COLLIDER_TAG::BOSS:
+	case COLLIDER_TAG::ENEMY:
+	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		isFindAttackTarget = true;
 		targetPos = &other.GetTransform().pos;
-		ColliderSerch(TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(false);
+		ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(false);
 		break;
 	default:break;
 	}
@@ -64,5 +64,5 @@ void PlayerTripleAttackCollOperator::SubUpdate(void)
 {
 	trans.pos = playerPos;
 	trans.angle = playerAngle;
-	ColliderSerch(TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(false);
+	ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(false);
 }

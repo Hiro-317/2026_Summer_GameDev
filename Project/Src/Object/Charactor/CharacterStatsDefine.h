@@ -4,6 +4,8 @@
 
 #include "../../Utility/Utility.h"
 
+#include "../Common/Collider/ColliderTagDefine.h"
+
 // ダメージ計算式（計算式忘れた、後で書く）
 static short CalculateDamage(short damage, short defense) { return Round((float)damage / (((float)defense + 100.0f) / 100.0f)); }
 
@@ -14,18 +16,12 @@ static constexpr char MODIFIER_MAX_NUM = 10;
 // デバフの数値上限
 static constexpr float DEBUFF_MAX = 0.01f;
 
-// バフ/デバフ タイプ（効果重複防止のため）
-enum class MODIFIER_TYPE
-{
-	TEST_1,
-	TEST_2,
-};
 
 // 補正倍率(バフ/デバフ)の構造体
 struct ModifierData
 {
 	// タイプ（同タイプの重複不可）
-	MODIFIER_TYPE type;
+	COLLIDER_TAG type;
 	// 増減率(バフ/デバフ)の数値（0.0が基準値）（生成関数を通して基準値を補正 例:80->0.8 -80->-0.8）
 	float rate;
 	// 効果時間（フレーム数）
@@ -43,7 +39,7 @@ struct ModifierData
 	/// <param name="type">タイプ（同タイプの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(MODIFIER_TYPE type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
+	ModifierData(COLLIDER_TAG type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
 };
 
 
@@ -221,6 +217,9 @@ public:
 		return ret;
 	}
 
+	// コライダータグ
+	const COLLIDER_TAG COLL_TAG;
+
 	/// <summary>
 	/// 攻撃/回復 スキル生成
 	/// </summary>
@@ -228,11 +227,13 @@ public:
 	/// <param name="characterStats">ステータスのポインタ（回復などの攻撃力や会心率ダメを参照しないスキルの場合は未設定でOK）</param>
 	SkillStats(
 		short SKILL_POWER,
-		const CharacterStats* characterStats = nullptr
+		const CharacterStats* characterStats = nullptr,
+		COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON
 	) :
 		SKILL_POWER(SKILL_POWER),
 		attackPower(characterStats ? &characterStats->attackPower : nullptr),
 		critical(characterStats ? &characterStats->critical : nullptr),
+		COLL_TAG(COLL_TAG),
 		SKILL_TIME(0)
 	{
 	}
@@ -242,8 +243,9 @@ public:
 	/// </summary>
 	/// <param name="SKILL_POWER">技威力</param>
 	/// <param name="SKILL_TIME">技効果時間</param>
-	SkillStats(short SKILL_POWER, short SKILL_TIME) :
+	SkillStats(short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
 		SKILL_POWER(SKILL_POWER), SKILL_TIME(SKILL_TIME),
+		COLL_TAG(COLL_TAG),
 		attackPower(nullptr), critical(nullptr)
 	{
 	}

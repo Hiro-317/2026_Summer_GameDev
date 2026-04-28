@@ -9,9 +9,20 @@ class CharactorBase : public ActorBase
 {
 public:
 	// デフォルトコンストラクタ
-	CharactorBase();
+	CharactorBase(
+		short HP_MAX,
+		short ATTACK_POWER,
+		short DEFENSE_POWER,
+		short SPEED_POWER
+	);
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
-	CharactorBase(const std::string& parameterPath);
+	CharactorBase(
+		short HP_MAX,
+		short ATTACK_POWER,
+		short DEFENSE_POWER,
+		short SPEED_POWER,
+		const std::string& parameterPath
+	);
 	virtual ~CharactorBase()override = default;
 
 	// ステートのゲット関数
@@ -46,6 +57,9 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharactorStateBase*> stateMap;
 
+	// ステータス
+	CharacterStats characterStats;
+
 protected:
 	// ステート管理用変数
 	int state;
@@ -58,6 +72,18 @@ protected:
 		auto it = stateMap.find(state);
 		if (it != stateMap.end()) { return *(it->second); }
 		else { throw std::runtime_error("指定のステートインスタンスが見つかりません"); }
+	}
+
+	// 指定のステートへ遷移
+	void ChangeState(int nextState) {
+		// 遷移前のステートの終了処理を呼び出す
+		stateMap.at(state)->Exit();
+
+		// 遷移
+		state = nextState;
+
+		// 遷移後のステートの初期化処理を呼び出す
+		stateMap.at(state)->Enter();
 	}
 
 	// キャラクター固有の処理をここに追加
@@ -101,7 +127,7 @@ protected:
 	// 無敵カウンターのゲット関数
 	unsigned char GetInviCounter(void)const { return inviCounter; }
 	// 無敵カウンターのセット関数
-	void SetInviCounter(unsigned char counter = 1) { inviCounter = (counter < 0) ? 0 : (counter > 255) ? 255 : counter; }
+	void SetInviCounter(unsigned char counter = 1);
 
 	// 無敵演出フラグのセット関数（true = 「する」、false = 「しない」）← デフォルトは「する」
 	void SetInviEffectFlg(bool flg = true) {
