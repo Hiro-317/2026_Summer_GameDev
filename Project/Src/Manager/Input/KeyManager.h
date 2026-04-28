@@ -131,7 +131,7 @@ public:
 	Vector2 GetRightStickVec(void) const;
 	Vector2 GetLeftStickVec(void) const;
 
-	struct MOUCE_INFO
+	struct MOUSE_INFO
 	{
 		Vector2I now = {};
 		Vector2I prev = {};
@@ -139,18 +139,16 @@ public:
 		Vector2I moveSize = {};
 	};
 
-	const MOUCE_INFO GetMouceInfo(void)const { return mouceInfo; }
-	const Vector2 GetMouceMoveNorm(void)const { return mouceInfo.moveNorm; }
-	const Vector2I GetMouceMoveSize(void)const { return mouceInfo.moveSize; }
-
-	const Vector2I GetMoucePoint(void)const { return mouceInfo.now; }
+	const MOUSE_INFO GetMouseInfo(void)const { return mouseInfo; }
+	const Vector2 GetMouseMoveNorm(void)const { return mouseInfo.moveNorm; }
+	const Vector2I GetMouseMoveSize(void)const { return mouseInfo.moveSize; }
 
 	/// <summary>
 	/// マウスカーソルを中心に固定する設定
 	/// (固定した場合GetMouceMove()にてマウスの単位ベクトルを受け取れる)
 	/// </summary>
 	/// <param name="fixed">true=固定する、false=固定しない</param>
-	void SetMouceFixed(bool fixed);
+	void SetMouseFixed(bool fixed);
 
 	// 最後の入力の種類(キーボード,マウスorコントローラー)を判別するフラグ（true = コントローラー、false = キーボード,マウス）
 	bool LastInputKinds(void)const { return lastInputKinds; }
@@ -173,7 +171,7 @@ private:
 
 	std::vector<int>keyboardFormat[(int)KEY_TYPE::MAX];
 	std::vector<int>controllerButtonFormat[(int)KEY_TYPE::MAX];
-	std::vector<int>mouceButtonFormat[(int)KEY_TYPE::MAX];
+	std::vector<int>mouseButtonFormat[(int)KEY_TYPE::MAX];
 	enum class CONTROLLER_OTHERS
 	{
 		LEFTSTICK_UP,
@@ -193,10 +191,10 @@ private:
 	bool ControllerOthersInput(const CONTROLLER_OTHERS& input);
 
 
-	void MouceUpdate(void);
-	MOUCE_INFO mouceInfo;
-	bool mouceFixed;
-	const float MOUCE_THRESHOLD = 1.0f;
+	void MouseUpdate(void);
+	MOUSE_INFO mouseInfo;
+	bool mouseFixed;
+	const float MOUSE_THRESHOLD = 1.0f;
 
 	// 最後の入力の種類(キーボード,マウスorコントローラー)を判別するフラグ（true = コントローラー、false = キーボード,マウス）
 	bool lastInputKinds;

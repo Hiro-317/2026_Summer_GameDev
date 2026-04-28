@@ -148,7 +148,7 @@ void Camera::FreeModeFunc(void)
 	Vector3 rot = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (rot == 0.0f) { rot = Key::GetIns().GetMouceMoveNorm().ToVector3YX(); }
+	if (rot == 0.0f) { rot = Key::GetIns().GetMouseMoveNorm().ToVector3YX(); }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (rot == 0.0f) {
@@ -240,7 +240,7 @@ void Camera::LookAtFreeModeFunc(void)
 	Vector3 vec = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (vec == 0.0f) { vec = Key::GetIns().GetMouceMoveNorm().ToVector3YX(); }
+	if (vec == 0.0f) { vec = Key::GetIns().GetMouseMoveNorm().ToVector3YX(); }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (vec == 0.0f) {
@@ -362,7 +362,7 @@ void Camera::FollowRemoteModeFunc(void)
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
 	if (vec == 0.0f) {
-		vec += Vector3::Yonly((float)Key::GetIns().GetMouceMoveSize().x / MOUSE_SENSI);
+		vec += Vector3::Yonly((float)Key::GetIns().GetMouseMoveSize().x / MOUSE_SENSI);
 		mouse = true;
 	}
 

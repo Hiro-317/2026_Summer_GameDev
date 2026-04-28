@@ -23,7 +23,7 @@ void BossSelect::Load(void)
 	// ‰¹º‚ÌƒV[ƒ“Ø‚è‘Ö‚¦
 	Snd::GetIns().ChangeScene("Title");
 
-	Key::GetIns().SetMouceFixed(false);
+	Key::GetIns().SetMouseFixed(false);
 }
 void BossSelect::Init(void)
 {

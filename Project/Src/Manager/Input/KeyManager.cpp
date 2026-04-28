@@ -8,9 +8,9 @@ KeyManager* KeyManager::ins = nullptr;
 KeyManager::KeyManager():
 	keyInfo(),
 	keyboardFormat(),
-	mouceButtonFormat(),
+	mouseButtonFormat(),
 	controllerButtonFormat(),
-	mouceFixed(false),
+	mouseFixed(false),
 
 	lastInputKinds(false),
 
@@ -28,7 +28,7 @@ void KeyManager::Init(void)
 #define SET_C_BUTTON(type,key)controllerButtonFormat[(int)type].emplace_back(key)
 
 	// マウスのボタンを割り振るとき
-#define SET_MOUCE_BUTTON(type,key)mouceButtonFormat[(int)type].emplace_back(key)
+#define SET_MOUSE_BUTTON(type,key)mouseButtonFormat[(int)type].emplace_back(key)
 
 	// コントローラーのボタン以外(スティックやトリガーなど)を割り振るとき
 #define SET_C_OTHERS(type,key)controllerOthersFormat[(int)type].emplace_back(key)
@@ -59,11 +59,11 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::PLAYER_SKILL_1, KEY_INPUT_RETURN);
 	SET_C_BUTTON(KEY_TYPE::PLAYER_SKILL_1, XINPUT_BUTTON_X);
 	SET_C_BUTTON(KEY_TYPE::PLAYER_SKILL_1, XINPUT_BUTTON_RIGHT_SHOULDER);
-	SET_MOUCE_BUTTON(KEY_TYPE::PLAYER_SKILL_1, MOUSE_INPUT_LEFT);
+	SET_MOUSE_BUTTON(KEY_TYPE::PLAYER_SKILL_1, MOUSE_INPUT_LEFT);
 
 	// スキル2（キャラごとの「特殊技」）
 	SET_KEYBOARD(KEY_TYPE::PLAYER_SKILL_2, KEY_INPUT_K);
-	SET_MOUCE_BUTTON(KEY_TYPE::PLAYER_SKILL_2, MOUSE_INPUT_RIGHT);
+	SET_MOUSE_BUTTON(KEY_TYPE::PLAYER_SKILL_2, MOUSE_INPUT_RIGHT);
 
 	// スキル3（キャラごとの「特殊技」）
 	SET_KEYBOARD(KEY_TYPE::PLAYER_SKILL_3, KEY_INPUT_L);
@@ -179,7 +179,7 @@ void KeyManager::Init(void)
 void KeyManager::Update(void)
 {
 	KeyUpdate();
-	MouceUpdate();
+	MouseUpdate();
 	if (isInputText) { inputTextManager->Update(); }
 }
 
@@ -193,7 +193,7 @@ void KeyManager::Release(void)
 
 	for (auto& input : keyboardFormat) { input.clear(); }			keyboardFormat->clear();
 	for (auto& input : controllerButtonFormat) { input.clear(); }	controllerButtonFormat->clear();
-	for (auto& input : mouceButtonFormat) { input.clear(); }		mouceButtonFormat->clear();
+	for (auto& input : mouseButtonFormat) { input.clear(); }		mouseButtonFormat->clear();
 	for (auto& input : controllerOthersFormat) { input.clear(); }	controllerOthersFormat->clear();
 }
 
@@ -217,7 +217,7 @@ void KeyManager::KeyUpdate(void)
 
 			if (state.Buttons[input] != 0) { b = true; lastInputKinds = true; }
 		}
-		for (auto& input : mouceButtonFormat[i]) {
+		for (auto& input : mouseButtonFormat[i]) {
 			if (b) { break; }
 			if (GetMouseInput() & input) { b = true; lastInputKinds = false; }
 		}
@@ -284,32 +284,32 @@ bool KeyManager::ControllerOthersInput(const CONTROLLER_OTHERS& input)
 	return false;
 }
 
-void KeyManager::MouceUpdate(void)
+void KeyManager::MouseUpdate(void)
 {
-	if (mouceFixed) {
+	if (mouseFixed) {
 
-		mouceInfo.prev = { Application::SCREEN_SIZE_X_HALF,Application::SCREEN_SIZE_Y_HALF };
+		mouseInfo.prev = { Application::SCREEN_SIZE_X_HALF,Application::SCREEN_SIZE_Y_HALF };
 
-		GetMousePoint(&mouceInfo.now.x, &mouceInfo.now.y);
+		GetMousePoint(&mouseInfo.now.x, &mouseInfo.now.y);
 
-		Vector2 move = mouceInfo.now.ToVector2() - mouceInfo.prev.ToVector2();
+		Vector2 move = mouseInfo.now.ToVector2() - mouseInfo.prev.ToVector2();
 
-		mouceInfo.moveNorm = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
-		mouceInfo.moveSize = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev) : Vector2I(0, 0);
+		mouseInfo.moveNorm = (move.Length() > MOUSE_THRESHOLD) ? (mouseInfo.now - mouseInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
+		mouseInfo.moveSize = (move.Length() > MOUSE_THRESHOLD) ? (mouseInfo.now - mouseInfo.prev) : Vector2I(0, 0);
 
 		SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
 
 	}
 	else {
 
-		mouceInfo.prev = mouceInfo.now;
+		mouseInfo.prev = mouseInfo.now;
 
-		GetMousePoint(&mouceInfo.now.x, &mouceInfo.now.y);
+		GetMousePoint(&mouseInfo.now.x, &mouseInfo.now.y);
 
-		Vector2 move = mouceInfo.now.ToVector2() - mouceInfo.prev.ToVector2();
+		Vector2 move = mouseInfo.now.ToVector2() - mouseInfo.prev.ToVector2();
 
-		mouceInfo.moveNorm = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
-		mouceInfo.moveSize = (move.Length() > MOUCE_THRESHOLD) ? (mouceInfo.now - mouceInfo.prev) : Vector2I(0, 0);
+		mouseInfo.moveNorm = (move.Length() > MOUSE_THRESHOLD) ? (mouseInfo.now - mouseInfo.prev).Normalized() : Vector2(0.0f, 0.0f);
+		mouseInfo.moveSize = (move.Length() > MOUSE_THRESHOLD) ? (mouseInfo.now - mouseInfo.prev) : Vector2I(0, 0);
 	}
 }
 
@@ -345,8 +345,8 @@ Vector2 KeyManager::GetLeftStickVec(void) const
 	return vec / sqrtf(vec.x * vec.x + vec.y * vec.y);
 }
 
-void KeyManager::SetMouceFixed(bool fixed)
+void KeyManager::SetMouseFixed(bool fixed)
 {
-	mouceFixed = fixed;
+	mouseFixed = fixed;
 	SetMouseDispFlag(!fixed);
 }

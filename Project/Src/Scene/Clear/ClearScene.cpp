@@ -22,7 +22,7 @@ void ClearScene::Load(void)
 {
 	Snd::GetIns().ChangeScene("Clear");
 
-	Key::GetIns().SetMouceFixed(false);
+	Key::GetIns().SetMouseFixed(false);
 }
 
 void ClearScene::Init(void)

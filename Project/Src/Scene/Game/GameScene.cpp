@@ -82,7 +82,7 @@ void GameScene::Load(void)
 void GameScene::Init(void)
 {
 	// マウスカーソル
-	Key::GetIns().SetMouceFixed(true);
+	Key::GetIns().SetMouseFixed(true);
 
 	// オブジェクト全ての初期化処理
 	for (ActorBase*& obj : objects) { obj->Init(); }

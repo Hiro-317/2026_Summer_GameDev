@@ -26,7 +26,7 @@ void CharaSelect::Load(void)
 	// 音声のシーン切り替え
 	Snd::GetIns().ChangeScene("Title");
 
-	Key::GetIns().SetMouceFixed(false);
+	Key::GetIns().SetMouseFixed(false);
 
 	// キャラクターのロード
 	objects.push_back(new OrangeSelect());
