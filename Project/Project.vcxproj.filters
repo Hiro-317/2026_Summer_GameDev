@@ -49,6 +49,14 @@
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -210,6 +218,14 @@
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
+    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
+    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

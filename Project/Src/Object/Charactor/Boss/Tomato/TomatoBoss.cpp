@@ -6,10 +6,14 @@
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
+#include "../../../Common/Collider/SphereCollider.h"
 
-TomatoBoss::TomatoBoss() :
+#include "State/Move/TomatoMove.h"
+
+TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharactorBase(1,1,1,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
-	subObjArray()
+	subObjArray(),
+	playerPos(playerPos)
 {
 }
 
@@ -66,7 +70,15 @@ void TomatoBoss::Load(void)
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
-			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
+			CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS,
+			CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE
 		)
@@ -85,6 +97,19 @@ void TomatoBoss::Load(void)
 
 #pragma region èÛë‘ê›íË
 
+	AddState(
+		static_cast<int>(STATE::MOVE),
+		new TomatoMove(
+			// é©ï™ÇÃèÛë‘Ç…ëJà⁄Ç∑ÇÈä÷êî
+			[&]() { state = static_cast<int>(STATE::MOVE); },
+			// é©ï™ÇÃèÛë‘Ç©Ç«Ç§Ç©Çï‘Ç∑ä÷êî
+			[&]() { return state == static_cast<int>(STATE::MOVE); },
+			// à⁄ìÆó Ç∆âÒì]ó 
+			MOVE_SPEED, ROTATION_POW,
+			// é©ï™ÇÃç¿ïWÇ∆äpìxÅAÉvÉåÉCÉÑÅ[ÇÃç¿ïWÇÃì«Ç›éÊÇË
+			trans.pos, trans.angle, playerPos
+			)
+	);
 
 #pragma endregion
 }
@@ -131,7 +156,7 @@ void TomatoBoss::UiDraw(void)
 		debugDrwStr("É{ÉXÅ`Å`Å`Å`Å`Å`Å`Å`Å`");
 		debugDrwStr("ç¿ïW" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
 		debugDrwStr("â¡ë¨ìx:" + std::to_string(accelSum.Length()));
-		debugDrwStr("Å`Å`Å`Å`Å`Å`Å`(:3[___]");
+		debugDrwStr("Å`Å`Å`Å`Å`Å`Å`(|3[___]");
 	}
 }
 

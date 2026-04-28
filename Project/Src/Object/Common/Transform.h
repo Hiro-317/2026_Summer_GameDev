@@ -73,7 +73,7 @@ struct Transform
 	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); }
 
 	// 制御情報をモデルに適用
-	void Attach(void) { MV1ModelMatrix(model, scale, pos + centerDiff, { localAngle,angle }); }
+	void Attach(void) { MV1ModelMatrix(model, scale, pos + centerDiff.TransMat(MatrixAllMultZXY({ angle })), { localAngle,angle }); }
 
 	// モデルを描画（変数情報をモデルに適用してから
 	void Draw(void) {
