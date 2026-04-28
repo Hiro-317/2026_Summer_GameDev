@@ -26,6 +26,9 @@ OrangePlayer::OrangePlayer() :
 
 void OrangePlayer::Load(void)
 {
+	// UIの登録
+	playerUi.emplace_back(new PlayerUI(Vector2(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF)));
+
 #pragma region モデル
 
 	// モデルを読み込む
@@ -211,7 +214,9 @@ void OrangePlayer::Load(void)
 			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
 			// 座標 / 角度
 			trans.pos, trans.angle,
-			// アニメーションの再生関数のポインタ
+			std::bind(&PlayerUI::SetCoolTime, playerUi.at(0), std::placeholders::_1),
+			[&]() { playerUi.at(0)->StartCoolTime(); },
+ 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
@@ -278,8 +283,7 @@ void OrangePlayer::Load(void)
 
 #pragma endregion
 
-	// UIの登録
-	playerUi.push_back(new PlayerUI(Vector2(Application::SCREEN_SIZE_X - 256, Application::SCREEN_SIZE_Y - 256), 180));
+
 }
 
 void OrangePlayer::CharactorInit(void)
@@ -297,21 +301,25 @@ void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-		// 非道的オブジェクトにする
-		SetDynamicFlg(false); 
-		
-		// カメラを固定する
-		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
+	//if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+	//	// 不動オブジェクトにする
+	//	SetDynamicFlg(false); 
+	//	
+	//	// カメラを固定する
+	//	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
 
-		// 死亡状態に遷移する
-		ChangeState((int)STATE::DEATH);
-	}
+	//	// 死亡状態に遷移する
+	//	ChangeState((int)STATE::DEATH);
+	//}
 	interestPos = trans.pos + INTEREST_POS;
 
 	// UIの更新処理
-	for (PlayerUI*& UI : playerUi) {
-		UI->Update();
+	for (PlayerUI*& ui : playerUi) {
+		ui->Update();
+	}
+
+	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		playerUi.at(0)->SetCoolTime(120);
 	}
 }
 
@@ -351,8 +359,8 @@ void OrangePlayer::UiDraw(void)
 	}
 
 	// UIの描画
-	for (PlayerUI*& UI : playerUi) {
-		UI->Draw();
+	for (PlayerUI*& ui : playerUi) {
+		ui->Draw();
 	}
 }
 
@@ -369,10 +377,11 @@ void OrangePlayer::CharactorRelease(void)
 	subObjArray.clear();
 
 	// UIを解放
-	for (PlayerUI*& UI : playerUi) {
-		if (UI) {
-			delete UI;
-			UI = nullptr;
+	for (PlayerUI*& ui : playerUi) {
+
+		if (ui) {
+			delete ui;
+			ui = nullptr;
 		}
 	}
 

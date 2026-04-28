@@ -11,26 +11,37 @@ class PlayerUI
 private:
 
 	static constexpr int IMAGE_SIZE = 256;
-	const int COOL_TIME;
 
 public:
-	PlayerUI(Vector2 pos, int COOL_TIME);
+	PlayerUI(Vector2 pos);
 	~PlayerUI();
 
 	void Update(void);
 	void Draw(void);
 
-	const bool GetIsCoolTimeNow(void) { return (coolTimeCounter > 0); }
+	const bool GetIsCoolTimeNow(int STATE_TAG) { return (ui_info.coolTimeCounter > 0); }
+	void SetCoolTime(int COOL_TIME) { ui_info.COOL_TIME = COOL_TIME; }
+	void StartCoolTime(void) { ui_info.coolTimeCounter = ui_info.COOL_TIME; }
 
 private:
 
-	// 描画位置
-	Vector2 pos;
+	struct UI_INFO
+	{
+		// 描画位置
+		Vector2 pos = Vector2(0, 0);
 
-	float coolTimeCounter;	// クールタイムカウンター用変数
-	float coolTimeRatio;	// クールタイム割合変数
-	float offset;			// 描画するときのずれを修正するためのオフセット変数
+		float coolTimeCounter = 0.0f;	// クールタイムカウンター用変数
+		float coolTimeRatio = 1.0f;	// クールタイム割合変数
+		float offset = 0.0f;			// 描画するときのずれを修正するためのオフセット変数
+
+		int COOL_TIME = 0;
+
+		std::vector<int> images;	// 画像を読み込むためのハンドル
+	};
+
+	
+
+	UI_INFO ui_info;
 		
-	std::vector<int> images;	// 画像を読み込むためのハンドル
 };
 

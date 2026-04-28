@@ -35,7 +35,6 @@ public:
 
 private:
 
-	std::vector<PlayerUI*> playerUi;
 
 #pragma region ’è”’è‹`
 
@@ -317,4 +316,7 @@ private:
 	void CharactorAlphaDraw(void)override;
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
+
+	std::vector<PlayerUI*> playerUi;
+
 };
