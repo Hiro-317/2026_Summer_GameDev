@@ -15,7 +15,8 @@ public:
 		playerColliders(),
 		enemyColliders(),
 		stageColliders(),
-		otherColliders()
+		otherColliders(),
+		enemyPlayerOnlyColliders()
 	{
 	}
 	~CollisionManager() = default;
@@ -34,6 +35,7 @@ public:
 		enemyColliders.clear();
 		stageColliders.clear();
 		otherColliders.clear();
+		enemyPlayerOnlyColliders.clear();
 	}
 
 
@@ -61,6 +63,13 @@ private:
 	* 
 	* ‡F‚»‚êˆÈŠO~‚»‚êˆÈŠO
 	*/
+
+	// “Áê`````````````````````````
+
+	// ƒvƒŒƒCƒ„[‚É‚¾‚¯“–‚½‚éƒGƒlƒ~[
+	std::vector<ColliderBase*> enemyPlayerOnlyColliders;
+	
+	// `````````````````````````“Áê
 #pragma endregion
 
 #pragma region “–‚½‚è”»’è—p

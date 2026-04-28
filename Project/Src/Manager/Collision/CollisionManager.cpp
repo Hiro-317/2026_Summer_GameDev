@@ -22,7 +22,6 @@ void CollisionManager::Add(ColliderBase* collider)
 
 		// エネミー系
 	case COLLIDER_TAG::BOSS:
-
 	case COLLIDER_TAG::ENEMY:
 
 		enemyColliders.emplace_back(collider);
@@ -31,6 +30,10 @@ void CollisionManager::Add(ColliderBase* collider)
 		// ステージ系
 	case COLLIDER_TAG::STAGE:
 		stageColliders.emplace_back(collider);
+		break;
+
+	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+		enemyPlayerOnlyColliders.emplace_back(collider);
 		break;
 
 		// それ以外
@@ -62,6 +65,9 @@ void CollisionManager::Check(void)
 
 	// それ以外×それ以外
 	Matching(otherColliders);
+
+	// プレイヤー系×プレイヤーにだけ当たるエネミー
+	Matching(playerColliders, enemyPlayerOnlyColliders);
 }
 
 void CollisionManager::Matching(std::vector<ColliderBase*>& as, std::vector<ColliderBase*>& bs)
