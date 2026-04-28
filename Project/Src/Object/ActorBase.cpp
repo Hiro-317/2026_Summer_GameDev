@@ -129,6 +129,7 @@ void ActorBase::Release(void)
 		delete s;
 		s = nullptr;
 	}
+	skillStats.clear();
 
 	// “–‚½‚è”»’èî•ñ‚ğ‰ğ•ú
 	for (ColliderBase*& c : collider) {
