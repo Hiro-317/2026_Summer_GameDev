@@ -4,7 +4,7 @@
 
 #include "../Transform.h"
 
-#include "../../Charactor/CharacterStatsDefine.h"
+#include "../../Character/CharacterStatsDefine.h"
 
 class ColliderBase
 {

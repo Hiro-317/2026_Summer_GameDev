@@ -19,8 +19,8 @@
 
 #include "../Common/GameDebugScene.h"
 
-#include "../../Object/Charactor/Player/Orange/OrangePlayer.h"
-#include "../../Object/Charactor/Boss/Tomato/TomatoBoss.h"
+#include "../../Object/Character/Player/Orange/OrangePlayer.h"
+#include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
