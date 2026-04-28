@@ -8,9 +8,12 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/SphereCollider.h"
 
-TomatoBoss::TomatoBoss() :
+#include "State/Move/TomatoMove.h"
+
+TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharactorBase("Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
-	subObjArray()
+	subObjArray(),
+	playerPos(playerPos)
 {
 }
 
@@ -94,6 +97,19 @@ void TomatoBoss::Load(void)
 
 #pragma region 状態設定
 
+	AddState(
+		static_cast<int>(STATE::MOVE),
+		new TomatoMove(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::MOVE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::MOVE); },
+			// 移動量と回転量
+			MOVE_SPEED, ROTATION_POW,
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos, trans.angle, playerPos
+			)
+	);
 
 #pragma endregion
 }
@@ -113,7 +129,6 @@ void TomatoBoss::CharactorInit(void)
 void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
-	trans.AddAngleXDeg(-3.0f);
 }
 
 void TomatoBoss::CharactorDraw(void)

@@ -7,7 +7,5 @@ ModelToColliderRate,1.05
 CollisionPushWeight,100
 CollisionSphereRad,200
 InitPos,0,1000,300
-DashStaminaMax,250
-DashSpeedRate,1.5
-MoveSpeed,4
-MoveSpeedMax,10
+MoveSpeed,8
+RotationPower,0.0523599

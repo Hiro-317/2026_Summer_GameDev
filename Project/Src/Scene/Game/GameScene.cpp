@@ -74,7 +74,7 @@ void GameScene::Load(void)
 	//<—á>ObjAdd(new Player());
 
 	ObjAdd(new OrangePlayer());
-	ObjAdd(new TomatoBoss());
+	ObjAdd(new TomatoBoss(ObjSerch<OrangePlayer>()->GetTrans().pos));
 	ObjAdd(new TomatoBossStage());
 
 }

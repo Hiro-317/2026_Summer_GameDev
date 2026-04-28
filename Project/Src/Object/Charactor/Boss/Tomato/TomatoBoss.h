@@ -5,7 +5,7 @@
 class TomatoBoss : public CharactorBase
 {
 public:
-	TomatoBoss();
+	TomatoBoss(const Vector3& playerPos);
 	~TomatoBoss()override = default;
 
 	void Load(void)override;
@@ -100,17 +100,11 @@ private:
 
 	// ˆÚ“®ó‘Ô`````````````````````````````
 
-	// ‰ÁZˆÚ“®—Ê
+	// ˆÚ“®—Ê
 	const float MOVE_SPEED = GetParameter("MoveSpeed");
 
-	// Å‘åˆÚ“®—Ê
-	const float MOVE_SPEED_MAX = GetParameter("MoveSpeedMax");
-
-	// ƒ_ƒbƒVƒ…‚ÌˆÚ“®—Ê”{—¦
-	const float DASH_SPEED_RATE = GetParameter("DashSpeedRate");
-
-	// ƒ_ƒbƒVƒ…‚ÌƒXƒ^ƒ~ƒi‚ÌÅ‘å—Êi1ƒtƒŒ[ƒ€‚¸‚ÂƒfƒNƒŠƒƒ“ƒgj
-	const short DASH_STAMINA_MAX = (short)GetParameterToInt("DashStaminaMax");
+	// ‰ñ“]—Ê
+	const float ROTATION_POW = GetParameter("RotationPower");
 
 	// `````````````````````````````ˆÚ“®ó‘Ô
 
@@ -150,4 +144,10 @@ private:
 	void CharactorAlphaDraw(void)override;
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
+
+	// ƒvƒŒƒCƒ„[‚ÌÀ•W‚ÌQÆ(“Ç‚İæ‚èê—p)
+	const Vector3& playerPos;
+
+	// ƒgƒ}ƒg‚ÌŒü‚¢‚Ä‚¢‚éŒü‚«
+	Vector3 moveDir;
 };

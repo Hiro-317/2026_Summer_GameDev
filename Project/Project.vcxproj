@@ -139,6 +139,7 @@
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
+    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.h" />
     <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
