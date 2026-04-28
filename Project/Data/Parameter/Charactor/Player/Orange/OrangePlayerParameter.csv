@@ -36,7 +36,6 @@ Skill3CoolTime,60
 Skill3DodgeMoveSpeed,20
 Skill3InviStartTime,0.1
 Skill3InviEndTime,0.7
-DamageInviTime,60
 IdleAnimeSpeed,1
 WalkAnimeSpeed,1
 RunAnimeSpeed,1
@@ -47,3 +46,4 @@ KickAnimeSpeed,1.5
 DodgeAnimeSpeed,2
 DamageAnimeSpeed,1.5
 DeathAnimeSpeed,1
+DamageInviTime,60
