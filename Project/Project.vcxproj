@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
+    <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="Src\Object\Common\Collider\LineCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ModelCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\SphereCollider.h" />
+    <ClInclude Include="Src\Object\Common\Collider\XZCircleCollider.h" />
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />

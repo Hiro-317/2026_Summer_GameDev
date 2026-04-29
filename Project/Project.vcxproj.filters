@@ -7,11 +7,6 @@
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\Orange\OrangePlayer.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
@@ -20,7 +15,6 @@
     <ClCompile Include="Src\Manager\Loading\Loading.cpp" />
     <ClCompile Include="Src\Manager\Sound\SoundManager.cpp" />
     <ClCompile Include="Src\Object\ActorBase.cpp" />
-    <ClCompile Include="Src\Object\Charactor\CharactorBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
@@ -33,9 +27,6 @@
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
@@ -47,8 +38,6 @@
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
@@ -56,7 +45,19 @@
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMove.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\Orange\OrangePlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
+    <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
+    <ClCompile Include="Src\Common\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -65,13 +66,6 @@
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
-    <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\Orange\OrangePlayer.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.h" />
-    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />
@@ -80,7 +74,6 @@
     <ClInclude Include="Src\Manager\Loading\Loading.h" />
     <ClInclude Include="Src\Manager\Sound\SoundManager.h" />
     <ClInclude Include="Src\Object\ActorBase.h" />
-    <ClInclude Include="Src\Object\Charactor\CharactorBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\BoxCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ColliderBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\CapsuleCollider.h" />
@@ -200,11 +193,7 @@
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\Charactor\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
     <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
@@ -216,8 +205,6 @@
     <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
     <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
@@ -225,7 +212,22 @@
     <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
-    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\State\Move\TomatoMove.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMove.h" />
+    <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
+    <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
+    <ClInclude Include="Src\Object\Character\Player\Orange\OrangePlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
+    <ClInclude Include="Src\Object\Character\CharacterBase.h" />
+    <ClInclude Include="Src\Object\Common\Collider\XZCircleCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

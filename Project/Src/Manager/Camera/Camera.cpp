@@ -1,5 +1,8 @@
 #include "Camera.h"
 
+#include <cmath>
+#include <algorithm>
+
 #include "../../Utility/Utility.h"
 #include "../../Application/Application.h"
 #include "../input/KeyManager.h"

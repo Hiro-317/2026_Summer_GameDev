@@ -1,6 +1,7 @@
 #include"CollisionManager.h"
 
 #include<cmath>
+#include <algorithm>
 
 void CollisionManager::Add(ColliderBase* collider)
 {
@@ -128,7 +129,7 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 
 #pragma region Œ`ó‚ğ”»•Ê‚µ‚Ä“KØ‚ÈŠÖ”‚É‚Ä”»’è‚ğs‚¤
 
-	// “¯Œ`ó“¯m-------------------------------
+	// “¯Œ`ó“¯m`````````````````````````````````````````````````````````````````````````
 	
 	// ü•ª“¯m
 	if (aShape == SHAPE::LINE && bShape == SHAPE::LINE) { return LineToLine(dynamic_cast<LineCollider*>(a), dynamic_cast<LineCollider*>(b)); }
@@ -145,9 +146,12 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 	// ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ““¯m
 	if (aShape == SHAPE::MODEL && bShape == SHAPE::MODEL) { return ModelToModel(dynamic_cast<ModelCollider*>(a), dynamic_cast<ModelCollider*>(b)); }
 
-	// -----------------------------------------
+	// XZ•½–Êã‚Ì‰~“¯m
+	if (aShape == SHAPE::XZ_CIRCLE && bShape == SHAPE::XZ_CIRCLE) { return XZCircleToXZCircle(dynamic_cast<XZCircleCollider*>(a), dynamic_cast<XZCircleCollider*>(b)); }
+
+	// `````````````````````````````````````````````````````````````````````````“¯Œ`ó“¯m
 	
-	// •ÊŒ`ó“¯m-------------------------------
+	// •ÊŒ`ó“¯m`````````````````````````````````````````````````````````````````````````
 
 	// ü•ª~‹…‘Ì
 	if (aShape == SHAPE::LINE && bShape == SHAPE::SPHERE) { return LineToSphere(dynamic_cast<LineCollider*>(a), dynamic_cast<SphereCollider*>(b)); }
@@ -177,6 +181,10 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 	if (aShape == SHAPE::SPHERE && bShape == SHAPE::MODEL) { return SphereToModel(dynamic_cast<SphereCollider*>(a), dynamic_cast<ModelCollider*>(b)); }
 	if (aShape == SHAPE::MODEL && bShape == SHAPE::SPHERE) { return SphereToModel(dynamic_cast<SphereCollider*>(b), dynamic_cast<ModelCollider*>(a)); }
 
+	// ‹…‘Ì~XZ•½–Êã‚Ì‰~
+	if (aShape == SHAPE::SPHERE && bShape == SHAPE::XZ_CIRCLE) { return SphereToXZCircle(dynamic_cast<SphereCollider*>(a), dynamic_cast<XZCircleCollider*>(b)); }
+	if (aShape == SHAPE::XZ_CIRCLE && bShape == SHAPE::SPHERE) { return SphereToXZCircle(dynamic_cast<SphereCollider*>(b), dynamic_cast<XZCircleCollider*>(a)); }
+
 	// ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
 	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::BOX) { return CapsuleToBox(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<BoxCollider*>(b)); }
 	if (aShape == SHAPE::BOX && bShape == SHAPE::CAPSULE) { return CapsuleToBox(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<BoxCollider*>(a)); }
@@ -185,11 +193,15 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::MODEL) { return SphereToModel(dynamic_cast<SphereCollider*>(a), dynamic_cast<ModelCollider*>(b)); }
 	if (aShape == SHAPE::MODEL && bShape == SHAPE::CAPSULE) { return SphereToModel(dynamic_cast<SphereCollider*>(b), dynamic_cast<ModelCollider*>(a)); }
 
+	// ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~
+	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::XZ_CIRCLE) { return CapsuleToXZCircle(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<XZCircleCollider*>(b)); }
+	if (aShape == SHAPE::XZ_CIRCLE && bShape == SHAPE::CAPSULE) { return CapsuleToXZCircle(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<XZCircleCollider*>(a)); }
+
 	// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ“
 	if (aShape == SHAPE::BOX && bShape == SHAPE::MODEL) { return BoxToModel(dynamic_cast<BoxCollider*>(a), dynamic_cast<ModelCollider*>(b)); }
 	if (aShape == SHAPE::MODEL && bShape == SHAPE::BOX) { return BoxToModel(dynamic_cast<BoxCollider*>(b), dynamic_cast<ModelCollider*>(a)); }
 
-	// -----------------------------------------
+	// `````````````````````````````````````````````````````````````````````````•ÊŒ`ó“¯m
 
 #pragma endregion
 	
@@ -351,6 +363,34 @@ bool CollisionManager::ModelToModel(ModelCollider* a, ModelCollider* b)
 	return false;
 }
 
+bool CollisionManager::XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b)
+{
+#pragma region •K—vî•ñ‚ğæ“¾
+	// XZ•½–Êã‚ÌƒxƒNƒgƒ‹‚ğæ“¾
+	Vector2 vec = a->GetPos().ToVector2XZ() - b->GetPos().ToVector2XZ();
+	// ”¼Œa‚Ì‡Œv
+	float radius = a->GetRadius() + b->GetRadius();
+#pragma endregion
+
+	// Õ“Ë”»’è
+	if (vec.LengthSq() > radius * radius) { return false; }
+
+#pragma region Õ“ËŠm’èF•K—v‚È‚ç‰Ÿ‚µo‚µ
+	if (NeedPush(a, b)) {
+		// ‚ß‚è‚İ—Ê
+		float overlap = radius - vec.Length();
+
+		// ƒxƒNƒgƒ‹‚ğ³‹K‰»
+		vec.Normalize();
+		
+		// ‰Ÿ‚µo‚µ
+		ApplyPush(a, b, Vector3::XZonly(vec.x, vec.y), overlap);
+	}
+#pragma endregion
+
+	return true;
+}
+
 bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
@@ -453,23 +493,17 @@ bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsul
 
 bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box)
 {
-	// -----------------------------
 	// ‰Ÿ‚µo‚µ•ûŒüiŒÅ’èj
-	// -----------------------------
 	Vector3 pushDir = line->GetDirection().Normalized();
 
-	// -----------------------------
 	// Box î•ñ
-	// -----------------------------
 	Vector3 boxPos = box->GetPos();
 	Vector3 half = box->GetSize() * 0.5f;
 
 	Vector3 bmin = boxPos - half;
 	Vector3 bmax = boxPos + half;
 
-	// -----------------------------
 	// Rough ”»’è
-	// -----------------------------
 	Vector3 cp = line->ClosestPoint(boxPos);
 
 	if (cp.x < bmin.x || cp.x > bmax.x ||
@@ -479,9 +513,7 @@ bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box)
 		return false;
 	}
 
-	// -----------------------------
 	// Ú×”»’è + Å[“_Œˆ’è
-	// -----------------------------
 	Vector3 hitPoint = cp;
 	Vector3 local = hitPoint - boxPos;
 
@@ -494,9 +526,7 @@ bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box)
 	if (overlap.x <= 0 || overlap.y <= 0 || overlap.z <= 0)
 		return false;
 
-	// -----------------------------
 	// ‰Ÿ‚µo‚µ
-	// -----------------------------
 	if (NeedPush(line, box))
 	{
 		// ‰Ÿ‚µo‚µ‹——£‚ğ‰Ÿ‚µo‚µ•ûŒü¬•ª‚ÅŒˆ’è
@@ -666,6 +696,34 @@ bool CollisionManager::SphereToModel(SphereCollider* sphere, ModelCollider* mode
 	return false;
 }
 
+bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle)
+{
+#pragma region •K—vî•ñ‚ğæ“¾
+	// XZ•½–Êã‚ÌƒxƒNƒgƒ‹‚ğæ“¾
+	Vector2 vec = sphere->GetPos().ToVector2XZ() - xzcircle->GetPos().ToVector2XZ();
+	// ”¼Œa‚Ì‡Œv
+	float radius = sphere->GetRadius() + xzcircle->GetRadius();
+#pragma endregion
+
+	// Õ“Ë”»’è
+	if (vec.LengthSq() > radius * radius) { return false; }
+
+#pragma region Õ“ËŠm’èF•K—v‚È‚ç‰Ÿ‚µo‚µ
+	if (NeedPush(sphere, xzcircle)) {
+		// ‚ß‚è‚İ—Ê
+		float overlap = radius - vec.Length();
+
+		// ƒxƒNƒgƒ‹‚ğ³‹K‰»
+		vec.Normalize();
+
+		// ‰Ÿ‚µo‚µ
+		ApplyPush(sphere, xzcircle, Vector3::XZonly(vec.x, vec.y), overlap);
+	}
+#pragma endregion
+
+	return true;
+}
+
 bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box)
 {
 #pragma region •K—vî•ñ‚Ìæ“¾
@@ -736,9 +794,67 @@ bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box)
 	return true;
 }
 
-bool CollisionManager::CasuleToModel(CapsuleCollider* capsule, ModelCollider* model)
+bool CollisionManager::CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model)
 {
 	return false;
+}
+
+bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle)
+{
+#pragma region •K—vî•ñ
+	Vector3 start = capsule->GetStartPos();
+	Vector3 end = capsule->GetEndPos();
+	Vector3 circlePos = xzcircle->GetPos();
+
+	float radiusSum = capsule->GetRadius() + xzcircle->GetRadius();
+#pragma endregion
+
+#pragma region XZ—pƒxƒNƒgƒ‹iƒRƒs[j
+	Vector3 startXZ = start; startXZ.y = 0.0f;
+	Vector3 endXZ = end;   endXZ.y = 0.0f;
+	Vector3 circleXZ = circlePos; circleXZ.y = 0.0f;
+#pragma endregion
+
+#pragma region Å‹ß“_iXZj
+	Vector3 seg = endXZ - startXZ;
+	Vector3 toCircle = circleXZ - startXZ;
+
+	float segLenSq = seg.LengthSq();
+
+	float t = 0.0f;
+	if (segLenSq > 1e-6f) {
+		t = std::clamp(seg.Dot(toCircle) / segLenSq, 0.0f, 1.0f);
+	}
+
+	Vector3 closestXZ = startXZ + seg * t;
+#pragma endregion
+
+#pragma region ”»’è
+	Vector3 diffXZ = closestXZ - circleXZ;
+	float distSq = diffXZ.LengthSq();
+
+	if (distSq > radiusSum * radiusSum) return false;
+#pragma endregion
+
+#pragma region ‰Ÿ‚µo‚µi‚±‚±‚ªd—vj
+	if (NeedPush(capsule, xzcircle))
+	{
+		float dist = std::sqrt(distSq);
+
+		Vector3 normalXZ;
+		if (dist < 1e-6f) {
+			normalXZ = Vector3::XZonly(1.0f, 0.0f);
+			dist = 0.0f;
+		}
+		else {
+			normalXZ = diffXZ / dist;
+		}
+
+		ApplyPush(capsule, xzcircle, Vector3::XZonly(normalXZ.x, normalXZ.z), radiusSum - dist);
+	}
+#pragma endregion
+
+	return true;
 }
 
 bool CollisionManager::BoxToModel(BoxCollider* box, ModelCollider* model)

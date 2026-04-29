@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <functional>
 
 #include "../Transform.h"
@@ -19,7 +20,7 @@ public:
 		CAPSULE,
 		BOX,
 		MODEL,
-		VOXEL,
+		XZ_CIRCLE,
 	};
 
 	/// <summary>
