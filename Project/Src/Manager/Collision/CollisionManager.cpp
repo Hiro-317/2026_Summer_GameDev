@@ -629,12 +629,15 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 
 bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box)
 {
+#pragma region 必要情報を取得
 	Vector3 c = sphere->GetPos();
 	float r = sphere->GetRadius();
 
 	Vector3 boxPos = box->GetPos();
 	Vector3 half = box->GetSize() * 0.5f;
+#pragma endregion
 
+#pragma region 衝突判定
 	// 最近点
 	Vector3 nearest;
 	nearest.x = std::clamp(c.x, boxPos.x - half.x, boxPos.x + half.x);
@@ -645,22 +648,16 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box)
 	float distSq = normal.LengthSq();
 
 	if (distSq > r * r) { return false; }
+#pragma endregion
 
-	//------------------------------------------
-	// 押し出し
-	//------------------------------------------
-	if (NeedPush(sphere, box))
-	{
+#pragma region 衝突確定：必要に応じて押し出し
+	if (NeedPush(sphere, box)) {
 		float dist = sqrtf(distSq);
 
 		Vector3 pushNormal;
 
-		if (dist > 0.0001f)
-		{
-			pushNormal = normal / dist;
-		}
-		else
-		{
+		if (dist > 0.0001f) { pushNormal = normal / dist; }
+		else {
 			// 一致 → 球がちょうど面に乗っている
 			// 面法線を計算する
 			Vector3 diff = c - boxPos;
@@ -670,23 +667,17 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box)
 			float dz = fabs(diff.z) - half.z;
 
 			// 1番めり込んでいる方向＝面法線
-			if (dx >= dy && dx >= dz)
-				pushNormal = Vector3((diff.x > 0 ? 1 : -1), 0, 0);
-			else if (dy >= dx && dy >= dz)
-				pushNormal = Vector3(0, (diff.y > 0 ? 1 : -1), 0);
-			else
-				pushNormal = Vector3(0, 0, (diff.z > 0 ? 1 : -1));
+			if (dx >= dy && dx >= dz) { pushNormal = Vector3((diff.x > 0 ? 1 : -1), 0, 0); }
+			else if (dy >= dx && dy >= dz) { pushNormal = Vector3(0, (diff.y > 0 ? 1 : -1), 0); }
+			else { pushNormal = Vector3(0, 0, (diff.z > 0 ? 1 : -1)); }
 		}
 
 		float overlap = r - dist;
-		if (overlap < 0) overlap = 0;
+		if (overlap < 0) { overlap = 0; }
 
 		ApplyPush(sphere, box, pushNormal, overlap);
-
-		// 床接地判定
-		if (pushNormal.y > 0.5f)
-			sphere->CallOnGrounded();
 	}
+#pragma endregion
 
 	return true;
 }
@@ -801,21 +792,21 @@ bool CollisionManager::CapsuleToModel(CapsuleCollider* capsule, ModelCollider* m
 
 bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle)
 {
-#pragma region 必要情報
+#pragma region 必要情報を取得
 	Vector3 start = capsule->GetStartPos();
 	Vector3 end = capsule->GetEndPos();
 	Vector3 circlePos = xzcircle->GetPos();
 
 	float radiusSum = capsule->GetRadius() + xzcircle->GetRadius();
-#pragma endregion
 
-#pragma region XZ用ベクトル（コピー）
 	Vector3 startXZ = start; startXZ.y = 0.0f;
 	Vector3 endXZ = end;   endXZ.y = 0.0f;
 	Vector3 circleXZ = circlePos; circleXZ.y = 0.0f;
 #pragma endregion
 
-#pragma region 最近点（XZ）
+#pragma region 衝突判定
+
+	// 最近点
 	Vector3 seg = endXZ - startXZ;
 	Vector3 toCircle = circleXZ - startXZ;
 
@@ -827,18 +818,15 @@ bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleColli
 	}
 
 	Vector3 closestXZ = startXZ + seg * t;
-#pragma endregion
 
-#pragma region 判定
 	Vector3 diffXZ = closestXZ - circleXZ;
 	float distSq = diffXZ.LengthSq();
 
-	if (distSq > radiusSum * radiusSum) return false;
+	if (distSq > radiusSum * radiusSum) { return false; }
 #pragma endregion
 
-#pragma region 押し出し（ここが重要）
-	if (NeedPush(capsule, xzcircle))
-	{
+#pragma region 衝突確定：押し出しが必要か->必要なら押し出し
+	if (NeedPush(capsule, xzcircle)) {
 		float dist = std::sqrt(distSq);
 
 		Vector3 normalXZ;
@@ -846,9 +834,7 @@ bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleColli
 			normalXZ = Vector3::XZonly(1.0f, 0.0f);
 			dist = 0.0f;
 		}
-		else {
-			normalXZ = diffXZ / dist;
-		}
+		else { normalXZ = diffXZ / dist; }
 
 		ApplyPush(capsule, xzcircle, Vector3::XZonly(normalXZ.x, normalXZ.z), radiusSum - dist);
 	}
