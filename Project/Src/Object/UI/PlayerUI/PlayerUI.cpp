@@ -1,7 +1,8 @@
 #include "PlayerUI.h"
 
-PlayerUI::PlayerUI(Vector2 pos) :
-	ui_info()
+PlayerUI::PlayerUI(Vector2I pos) :
+	ui_info(),
+	pos(Vector2(0,0))
 {
 	ui_info.pos = pos;
 
@@ -31,6 +32,8 @@ void PlayerUI::Draw(void)
 {
 	ui_info.coolTimeRatio = (float)ui_info.coolTimeCounter / (float)ui_info.COOL_TIME;
 	ui_info.offset = IMAGE_SIZE * (1.0f - ui_info.coolTimeRatio);
+
+	int offset_I = (int)ui_info.offset;
 	
 	DrawGraph(
 		ui_info.pos.x - (IMAGE_SIZE / 2),
@@ -41,12 +44,13 @@ void PlayerUI::Draw(void)
 	
 	DrawRectGraph(
 		ui_info.pos.x - (IMAGE_SIZE / 2),
-		(ui_info.pos.y + IMAGE_SIZE / 2) - ui_info.offset,
-		0, IMAGE_SIZE - ui_info.offset,
-		IMAGE_SIZE, ui_info.offset,
+		(ui_info.pos.y + IMAGE_SIZE / 2) - offset_I,
+		0, IMAGE_SIZE - offset_I,
+		IMAGE_SIZE, offset_I,
 		ui_info.images.at(1),
 		true,
 		false
 	);
 }
+
 

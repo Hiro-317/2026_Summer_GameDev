@@ -89,11 +89,11 @@ public:
 		// 追従状態のときは処理をしない
 		if (mode == MODE::FOLLOW_REMOTE || mode == MODE::FOLLOW_AUTO) { return; }
 		// 指定の座標を代入
-		this->pos = pos;
+		this->pos = pos; 
 	}
 
 	// 角度を設定（追従(自動操作)モード時を除く。追従(自動操作)モード = FOLLOW_AUTO）
-	void SetAngle(const Vector3& angle) {
+	void SetAngle(const Vector3& angle) { 
 		// 追従（自動操作）のときは処理をしない
 		if (mode == MODE::FOLLOW_AUTO) { return; }
 		// 指定の角度を代入

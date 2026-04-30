@@ -36,7 +36,7 @@ struct PlayerTripleAttackStateContext
 	int ATTACK_NEXT_STAGE_CONTINUE_TIME;
 
 	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
-	std::array<float,(size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_START_TIME;
+	std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_START_TIME;
 	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
 	std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_END_TIME;
 
