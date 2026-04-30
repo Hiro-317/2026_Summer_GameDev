@@ -6,6 +6,8 @@
 
 class PlayerTripleAttackCollOperator;
 
+class PlayerUI;
+
 class OrangePlayer : public CharacterBase
 {
 public:
@@ -14,9 +16,6 @@ public:
 
 	void Load(void)override;
 	void UiDraw(void)override;
-
-	// ƒ_ƒ[ƒWó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
-	void ToDamageState(const int damage, const Vector3& pos);
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -35,6 +34,7 @@ public:
 	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
 
 private:
+
 
 #pragma region ’è”’è‹`
 
@@ -316,4 +316,7 @@ private:
 	void CharactorAlphaDraw(void)override;
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
+
+	std::vector<PlayerUI*> playerUi;
+
 };

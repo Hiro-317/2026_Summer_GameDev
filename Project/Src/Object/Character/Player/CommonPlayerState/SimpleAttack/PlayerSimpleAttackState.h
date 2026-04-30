@@ -40,6 +40,9 @@ public:
 		PlayerSimpleAttackCollOperator& collOperator,
 		Vector3& pos, Vector3& angle,
 
+		const std::function<void(int)> CoolTimeInit,
+		const std::function<void(void)> StartCoolTime,
+
 		const std::function<void(void)> PlayAttackAnime,
 		const std::function<float(void)> GetAnimePlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
@@ -90,6 +93,9 @@ private:
 	Vector3& pos;
 	// 角度の参照
 	Vector3& angle;
+
+	const std::function<void(int)> CoolTimeInit;
+	const std::function<void(void)> StartCoolTime;
 
 	// 攻撃アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayAttackAnime;

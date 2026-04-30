@@ -11,6 +11,8 @@ PlayerSimpleAttackState::PlayerSimpleAttackState(
 	PlayerSimpleAttackCollOperator& collOperator,
 	Vector3& pos, Vector3& angle,
 
+	const std::function<void(int)> CoolTimeInit,
+	const std::function<void(void)> StartCoolTime,
 	const std::function<void(void)> PlayAttackAnime,
 	const std::function<float(void)> GetAnimePlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
@@ -25,6 +27,9 @@ PlayerSimpleAttackState::PlayerSimpleAttackState(
 	collOperator(collOperator),
 
 	pos(pos),angle(angle),
+
+	CoolTimeInit(CoolTimeInit),
+	StartCoolTime(StartCoolTime),
 
 	PlayAttackAnime(PlayAttackAnime),
 	GetAnimePlayRatio(GetAnimePlayRatio),
@@ -57,6 +62,9 @@ void PlayerSimpleAttackState::Enter(void)
 
 	// çUåÇëŒè€ÇÃíTçıÇäJénÇ∑ÇÈ
 	collOperator.TargetSerch();
+
+	CoolTimeInit(COOL_TIME);
+	StartCoolTime();
 }
 
 void PlayerSimpleAttackState::Update(void)

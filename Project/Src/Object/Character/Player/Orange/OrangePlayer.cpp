@@ -12,6 +12,8 @@
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
 
+#include "../../../UI/PlayerUI/PlayerUI.h"
+
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 
@@ -24,6 +26,9 @@ OrangePlayer::OrangePlayer() :
 
 void OrangePlayer::Load(void)
 {
+	// UIの登録
+	playerUi.emplace_back(new PlayerUI(Vector2(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF)));
+
 #pragma region モデル
 
 	// モデルを読み込む
@@ -209,7 +214,9 @@ void OrangePlayer::Load(void)
 			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
 			// 座標 / 角度
 			trans.pos, trans.angle,
-			// アニメーションの再生関数のポインタ
+			std::bind(&PlayerUI::SetCoolTime, playerUi.at(0), std::placeholders::_1),
+			[&]() { playerUi.at(0)->StartCoolTime(); },
+ 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
@@ -275,6 +282,8 @@ void OrangePlayer::Load(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion
+
+
 }
 
 void OrangePlayer::CharactorInit(void)
@@ -286,25 +295,39 @@ void OrangePlayer::CharactorInit(void)
 	state = (int)STATE::MOVE;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
-
 }
 
 void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-		SetDynamicFlg(false);
-		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
-		ChangeState((int)STATE::DEATH);
-	}
+	//if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+	//	// 不動オブジェクトにする
+	//	SetDynamicFlg(false); 
+	//	
+	//	// カメラを固定する
+	//	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
+
+	//	// 死亡状態に遷移する
+	//	ChangeState((int)STATE::DEATH);
+	//}
 	interestPos = trans.pos + INTEREST_POS;
+
+	// UIの更新処理
+	for (PlayerUI*& ui : playerUi) {
+		ui->Update();
+	}
+
+	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		playerUi.at(0)->SetCoolTime(120);
+	}
 }
 
 void OrangePlayer::CharactorDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
 
+	// プレイヤーの頭(仮)
 	SetUseLighting(false);
 	DrawSphere3D(MV1GetFramePosition(trans.model, 14), 40, 200, 0xf79123, 0x000000, true);
 	SetUseLighting(true);
@@ -334,12 +357,11 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("～～～～～～('#；ω;`)");
 	}
-}
 
-void OrangePlayer::ToDamageState(const int damage, const Vector3& pos)
-{
-	state = (int)STATE::DAMAGE;
-	
+	// UIの描画
+	for (PlayerUI*& ui : playerUi) {
+		ui->Draw();
+	}
 }
 
 
@@ -353,4 +375,15 @@ void OrangePlayer::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
+
+	// UIを解放
+	for (PlayerUI*& ui : playerUi) {
+
+		if (ui) {
+			delete ui;
+			ui = nullptr;
+		}
+	}
+
+
 }

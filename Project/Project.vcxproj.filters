@@ -58,6 +58,9 @@
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerUI\PlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -228,6 +231,9 @@
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\XZCircleCollider.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
+    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Death\PlayerDeathState.h" />
+    <ClInclude Include="Src\Object\UI\PlayerUI\PlayerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

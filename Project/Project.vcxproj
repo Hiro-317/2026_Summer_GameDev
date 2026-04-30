@@ -166,6 +166,7 @@
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerUI\PlayerUI.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeOutScene.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
+    <ClInclude Include="Src\Object\UI\PlayerUI\PlayerUI.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeOutScene.h" />
