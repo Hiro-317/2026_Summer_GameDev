@@ -27,7 +27,7 @@ OrangePlayer::OrangePlayer() :
 void OrangePlayer::Load(void)
 {
 	// UI‚Ì“o˜^
-	playerUi.emplace_back(new PlayerUI(Vector2(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF)));
+	playerUi.emplace_back(new PlayerUI(Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250)));
 
 #pragma region ƒ‚ƒfƒ‹
 
