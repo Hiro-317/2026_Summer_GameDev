@@ -76,6 +76,9 @@ private:
 		(CAPSULE_COLLIDER_START_POS_X - CAPSULE_COLLIDER_END_POS_X).Length()
 		+ CAPSULE_COLLIDER_RADIUS;
 
+	// ƒvƒŒƒCƒ„[‚É‚¾‚¯s‚¤(XZ•½–Ê‚Ì‚Ý‚ðŽQÆ‚·‚é)‰Ÿ‚µo‚µ‚Ì‹——£
+	const float TO_PLAYER_DISTANCE = 250.0f;
+
 	// ‰Ÿ‚µo‚µ‚ðs‚¤Û‚Ìd‚³
 	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("CollisionPushWeight");
 	// ````````````````````````````````````````````````

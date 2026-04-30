@@ -33,7 +33,7 @@ void CollisionManager::Add(ColliderBase* collider)
 		stageColliders.emplace_back(collider);
 		break;
 
-	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 		enemyPlayerOnlyColliders.emplace_back(collider);
 		break;
 

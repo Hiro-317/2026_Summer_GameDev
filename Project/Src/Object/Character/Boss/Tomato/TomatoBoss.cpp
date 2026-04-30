@@ -6,7 +6,7 @@
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
-#include "../../../Common/Collider/SphereCollider.h"
+#include "../../../Common/Collider/XZCircleCollider.h"
 
 #include "State/Move/TomatoMove.h"
 
@@ -63,8 +63,9 @@ void TomatoBoss::Load(void)
 
 #pragma region 当たり判定情報設定
 
-	//// 当たり判定を生成する（線分コライダー）
-	//ColliderCreate(new LineCollider(TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	// 当たり判定を生成する（XZ平面上円コライダー）
+	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::TOMATO_BOSS_DISTANCE, TO_PLAYER_DISTANCE));
+	
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
