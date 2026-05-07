@@ -62,7 +62,10 @@ enum class MSG_DATA_SYSTEM_INFORM
 // ヘッダー（全ての構造体の先頭に配置する）
 struct MsgDataHeader
 {
+    // データの種類
     MSG_DATA_TYPE dataType;
+
+    // 送信者
     MSG_SENDER_ID senderId;
 
     MsgDataHeader(MSG_DATA_TYPE dataType) :
@@ -78,7 +81,10 @@ struct MsgDataSenderId
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::SenderId;
 
+    // ヘッダー
     MsgDataHeader header;
+
+    // 送信者ID
     MSG_SENDER_ID senderId;
 
     MsgDataSenderId(MSG_SENDER_ID senderId) :
@@ -99,7 +105,10 @@ struct MsgDataConnectNum
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::ConnectNum;
 
+    // ヘッダー
     MsgDataHeader header;
+
+    // 接続人数
     int connectNum;
 
     MsgDataConnectNum(int connectNum) :
@@ -120,7 +129,10 @@ struct MsgDataSystemInform
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::SystemInform;
 
+    // ヘッダー
     MsgDataHeader header;
+
+    // イベント種類
     MSG_DATA_SYSTEM_INFORM inform;
 
     MsgDataSystemInform(MSG_DATA_SYSTEM_INFORM inform) :
@@ -141,8 +153,13 @@ struct MsgDataPlayerTrans
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerTrans;
 
+    // ヘッダー
     MsgDataHeader header;
+
+    // 座標
     Vector3 pos;
+
+    // 角度
     Vector3 angle;
 
     MsgDataPlayerTrans(const Vector3& pos, const Vector3& angle) :
@@ -165,20 +182,25 @@ struct MsgDataPlayerInput
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerInput;
 
+    // ヘッダー
     MsgDataHeader header;
-    KEY_TYPE type;
-    Key::KEY_INFO key;
 
-    MsgDataPlayerInput(KEY_TYPE type, const Key::KEY_INFO& key) :
+    // キーの種類
+    KEY_TYPE type;
+
+    // キーの入力詳細
+    Key::KEY_INFO keyInfo;
+
+    MsgDataPlayerInput(KEY_TYPE type, const Key::KEY_INFO& keyInfo) :
         header(MSG_DATA_TYPE::PlayerInput),
         type(type),
-        key(key)
+        keyInfo(keyInfo)
     {
     }
     MsgDataPlayerInput() :
         header(MSG_DATA_TYPE::PlayerInput),
         type(),
-        key()
+        keyInfo()
     {
     }
 };
@@ -189,8 +211,13 @@ struct MsgDataPlayerDamage
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerDamage;
 
+    // ヘッダー
     MsgDataHeader header;
+
+    // ダメージ量
     int damage;
+
+    // 攻撃元の座標（ノックバックに使用）
     Vector3 pos;
 
     MsgDataPlayerDamage(int damage, const Vector3& pos) :
