@@ -2,6 +2,7 @@
 #include "../ActorBase.h"
 #include "../Common/AnimationController/AnimationController.h"
 #include "CharacterStateBase.h"
+#include "../../Manager/Net/NetWorkDefine.h"
 
 #include <map>
 
@@ -155,5 +156,8 @@ protected:
 		// 「しない」に変わったときは必要ないので情報を破棄する
 		if (!isInviEffect) { DEFAULT_COLOR.clear(); }
 	}
+
+	MSG_SENDER_ID operatorSenderId;
+	bool isOwnOperator;
 
 };

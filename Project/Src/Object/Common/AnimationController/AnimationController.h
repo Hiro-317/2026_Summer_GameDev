@@ -36,11 +36,16 @@ public:
 	void Update(void);
 	void Release(void);
 
-	const bool IsEnd(void)const;
-	const int GetPlayType(void)const { return playType; }
-	const bool GetAnimEnd(void)const { return playAnim.step >= playAnim.totalTime; }
+	bool IsEnd(void)const;
+	int GetPlayType(void)const { return playType; }
+	bool GetAnimEnd(void)const { return playAnim.step >= playAnim.totalTime; }
 
-	const float GetAnimeRatio(void)const { return (playAnim.step / playAnim.totalTime); }
+	float GetAnimeRatio(void)const { return (playAnim.step / playAnim.totalTime); }
+
+	// 再生ステップを取得
+	float GetStep(void)const { return playAnim.step; }
+	// 再生ステップを設定
+	void SetStep(float step);
 
 private:
 	// アニメーションするモデルのハンドルID

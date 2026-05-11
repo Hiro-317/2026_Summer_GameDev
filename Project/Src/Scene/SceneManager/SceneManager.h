@@ -3,6 +3,10 @@
 #include<memory>
 #include<list>
 
+#include "../../Object/CharaTypeDefine.h"
+
+#include "../../Manager/Net/NetWorkDefine.h"
+
 class SceneBase;
 
 class SceneManager
@@ -10,7 +14,8 @@ class SceneManager
 private:
 	// コンストラクタ / デストラクタ
 	SceneManager(void) :
-		scenes()
+		scenes(),
+		selectCharaType(CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None)
 	{
 	}
 	~SceneManager(void) = default;
@@ -83,6 +88,20 @@ public:
 	// 指定した数の分シーンを吐き出して指定のシーンを上塗りする
 	void AnyPopAndChangeScene(char popNum, std::shared_ptr<SceneBase>scene);
 
+
+	// 選択キャラを保存
+	void SetSelectCharaType(MSG_SENDER_ID operatorSenderId, CHARA_TYPE selectCharaType) {
+		if (operatorSenderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= operatorSenderId) { return; }
+		this->selectCharaType[(int)operatorSenderId] = selectCharaType; 
+	}
+	// 保存した選択キャラを取得
+	CHARA_TYPE GetSelectCharaType(MSG_SENDER_ID operatorSenderId) {
+		if (operatorSenderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= operatorSenderId) { return CHARA_TYPE::None; }
+		return selectCharaType[(int)operatorSenderId];
+	}
+	// 選択キャラリセット
+	void ResetSelectCharaType(void) { for (CHARA_TYPE& type : selectCharaType) { type = CHARA_TYPE::None; } }
+
 private:
 
 	// 初期化処理
@@ -96,6 +115,9 @@ private:
 
 	// ３Ｄの初期設定
 	void Init3D(void);
+
+	// 選択キャラの保存配列
+	CHARA_TYPE selectCharaType[(int)MSG_SENDER_ID::Max];
 };
 
 using SCENE_ID = SceneManager::SCENE_ID;

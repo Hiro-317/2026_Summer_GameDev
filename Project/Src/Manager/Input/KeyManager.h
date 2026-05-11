@@ -117,6 +117,9 @@ public:
 
 		// ダメージ移行
 		TO_DAMAGE,
+
+		DEBUG_HOST_START,
+		DEBUG_CLIENT_START,
 #pragma endregion
 
 		MAX,

@@ -73,7 +73,14 @@ private:
 		}
 		return nullptr;
 	}
-
+	template<typename T = ActorBase>
+	std::vector<T*> ObjArraySerch(void) {
+		std::vector<T*> objArray;
+		for (auto* obj : objects) {
+			if (dynamic_cast<T*>(obj)) { objArray.emplace_back(dynamic_cast<T*>(obj)); }
+		}
+		return objArray;
+	}
 #pragma region 画面演出用
 	// ヒットストップカウンター
 	static int hitStop;

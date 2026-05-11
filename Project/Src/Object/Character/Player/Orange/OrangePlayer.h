@@ -11,11 +11,14 @@ class PlayerUI;
 class OrangePlayer : public CharacterBase
 {
 public:
-	OrangePlayer();
+	OrangePlayer(MSG_SENDER_ID operatorSenderId);
 	~OrangePlayer()override = default;
 
 	void Load(void)override;
 	void UiDraw(void)override;
+
+	void ReceptionUpdate(void)override;
+	void SendUpdate(void)override;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -34,7 +37,6 @@ public:
 	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
 
 private:
-
 
 #pragma region ’è”’è‹`
 

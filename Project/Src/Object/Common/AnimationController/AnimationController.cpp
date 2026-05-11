@@ -108,7 +108,7 @@ void AnimationController::Release(void)
 	animations.clear();
 }
 
-const bool AnimationController::IsEnd(void) const
+bool AnimationController::IsEnd(void) const
 {
 	bool ret = false;
 
@@ -118,6 +118,19 @@ const bool AnimationController::IsEnd(void) const
 
 
 	return ret;
+}
+
+void AnimationController::SetStep(float step)
+{
+	playAnim.step = step;
+	if (loopflg) {
+		if (playAnim.step >= playAnim.totalTime)playAnim.step = 0.0f;
+	}
+	else {
+		if (playAnim.step >= playAnim.totalTime)playAnim.step = playAnim.totalTime;
+
+	}
+	MV1SetAttachAnimTime(modelId, playAnim.attachNo, playAnim.step);
 }
 
 void AnimationController::Add(int type, float speed, Animation animation)

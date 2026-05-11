@@ -31,17 +31,6 @@
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMove.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
@@ -57,6 +46,9 @@
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerUI\PlayerUI.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
+    <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -174,19 +166,8 @@
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
     <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
@@ -209,6 +190,11 @@
     <ClInclude Include="Src\Object\UI\PlayerUI\PlayerUI.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
+    <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectOperator.h" />
+    <ClInclude Include="Src\Object\CharaTypeDefine.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">
