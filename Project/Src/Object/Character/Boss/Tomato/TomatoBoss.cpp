@@ -8,7 +8,8 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
-#include "State/Move/TomatoMove.h"
+#include "State/Move/TomatoMoveState.h"
+#include "State/Stamp/TomatoStampState.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharacterBase(1,1,1,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
@@ -79,7 +80,23 @@ void TomatoBoss::Load(void)
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
+			CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS,
+			CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE
 		)
@@ -100,7 +117,7 @@ void TomatoBoss::Load(void)
 
 	AddState(
 		static_cast<int>(STATE::MOVE),
-		new TomatoMove(
+		new TomatoMoveState(
 			// 自分の状態に遷移する関数
 			[&]() { state = static_cast<int>(STATE::MOVE); },
 			// 自分の状態かどうかを返す関数
@@ -110,6 +127,19 @@ void TomatoBoss::Load(void)
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos
 			)
+	);
+	AddState(
+		static_cast<int>(STATE::STAMP),
+		new TomatoStampState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::MOVE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::MOVE); },
+			// 移動量と攻撃半径
+			MOVE_SPEED, STAMP_RADIUS,
+			// 自分の座標
+			trans.pos
+		)
 	);
 
 #pragma endregion
@@ -121,7 +151,7 @@ void TomatoBoss::CharactorInit(void)
 	trans.pos = INIT_POS;
 
 	// 初期状態を移動状態にする
-	state = (int)STATE::MOVE;
+	state = (int)STATE::STAMP;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 

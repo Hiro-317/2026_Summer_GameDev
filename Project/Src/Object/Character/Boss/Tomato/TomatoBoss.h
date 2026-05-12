@@ -55,20 +55,53 @@ private:
 		-Vector3::Xonly(
 			(MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
-			- GetParameter("ClimbOverHeight")
 		);
-	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
+
+	// カプセルコライダーのローカルXZ始点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_START_POS_XZ =
+		Vector3::XZonly(
+			(MODEL_SIZE.x * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS,
+			(MODEL_SIZE.z * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+		);
+	// カプセルコライダーのローカルXZ終点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_END_POS_XZ =
+		-Vector3::XZonly(
+			(MODEL_SIZE.x * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS,
+			(MODEL_SIZE.z * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+		);
+
+	// カプセルコライダーのローカルZ始点座標（モデルの中心点からのオフセット）
 	const Vector3 CAPSULE_COLLIDER_START_POS_Z =
 		Vector3::Zonly(
 			(MODEL_SIZE.z * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
-	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
+	// カプセルコライダーのローカルZ終点座標（モデルの中心点からのオフセット）
 	const Vector3 CAPSULE_COLLIDER_END_POS_Z =
 		-Vector3::Zonly(
 			(MODEL_SIZE.z * 0.5f) * GetParameter("ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
-			- GetParameter("ClimbOverHeight")
+		);
+
+	// カプセルコライダーのローカルZX始点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_START_POS_ZX =
+		Vector3::XZonly(
+			-((MODEL_SIZE.x * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS),
+			(MODEL_SIZE.z * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
+		);
+	// カプセルコライダーのローカルZX終点座標（モデルの中心点からのオフセット）
+	const Vector3 CAPSULE_COLLIDER_END_POS_ZX =
+		-Vector3::XZonly(
+			-((MODEL_SIZE.x * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS),
+			(MODEL_SIZE.z * 0.45f) * GetParameter("ModelToColliderRate")
+			- CAPSULE_COLLIDER_RADIUS
 		);
 
 	// カプセルコライダーの絶対に当たらないおおよその距離
@@ -97,6 +130,7 @@ private:
 		NONE = -1,
 		
 		MOVE,
+		STAMP,
 
 		MAX
 	};
@@ -125,6 +159,13 @@ private:
 	const std::string ANIME_FOLDER_PATH = "Data/Model/Charactor/Tomato/Anime/";
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～アニメーション
+
+	// 攻撃～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+	// スタンプ範囲
+	const float STAMP_RADIUS = GetParameter("StampRad");
+
+	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 #pragma endregion 定数定義
 
