@@ -26,9 +26,6 @@ PlayerSimpleAttackState::PlayerSimpleAttackState(
 
 	pos(pos),angle(angle),
 
-	CoolTimeInit(CoolTimeInit),
-	StartCoolTime(StartCoolTime),
-
 	PlayAttackAnime(PlayAttackAnime),
 	GetAnimePlayRatio(GetAnimePlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
@@ -60,9 +57,6 @@ void PlayerSimpleAttackState::Enter(void)
 
 	// UŒ‚‘ÎÛ‚Ì’Tõ‚ğŠJn‚·‚é
 	collOperator.TargetSerch();
-
-	CoolTimeInit(COOL_TIME);
-	StartCoolTime();
 }
 
 void PlayerSimpleAttackState::Update(void)

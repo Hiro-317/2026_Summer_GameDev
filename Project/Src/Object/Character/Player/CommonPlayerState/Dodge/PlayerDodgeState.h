@@ -29,6 +29,8 @@ public:
 	void Exit(void)override;
 	void AlwaysUpdate(void)override;
 
+	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
+
 private:
 
 #pragma region ’è”

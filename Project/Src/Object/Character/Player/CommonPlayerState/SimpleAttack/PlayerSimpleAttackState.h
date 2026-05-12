@@ -60,6 +60,8 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
+	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
+
 private:
 
 #pragma region 定数
@@ -90,9 +92,6 @@ private:
 	Vector3& pos;
 	// 角度の参照
 	Vector3& angle;
-
-	const std::function<void(int)> CoolTimeInit;
-	const std::function<void(void)> StartCoolTime;
 
 	// 攻撃アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayAttackAnime;

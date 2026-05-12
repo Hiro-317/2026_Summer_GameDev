@@ -43,6 +43,8 @@ public:
 	// ó‘ÔŠÖŒW‚È‚­ŒÄ‚Ño‚·ˆ—
 	void AlwaysUpdate(void)override;
 
+	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
+
 private:
 
 #pragma region ’è”

@@ -120,8 +120,7 @@ void OrangePlayer::Load(void)
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
 
-	// UIの登録
-	playerUi.emplace_back(new PlayerUI(Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250), 0, 0));
+
 #pragma endregion
 
 
@@ -201,29 +200,27 @@ void OrangePlayer::Load(void)
 		)
 	);
 
-	PlayerSimpleAttackState* Instance = new PlayerSimpleAttackState(
-		// 自分の状態に遷移する関数
-		[&]() { state = (int)STATE::SKILL_2; },
-		// 自分の状態かどうかを返す関数
-		[&]() { return state == (int)STATE::SKILL_2; },
-		// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
-		KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
-		// 当たり判定のオペレーター
-		*SubObjSerch<PlayerSimpleAttackCollOperator>(),
-		// 座標 / 角度
-		trans.pos, trans.angle,
-		// アニメーションの再生関数のポインタ
-		[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
-		// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
-		[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
-		// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-		[&]() { state = (int)STATE::MOVE; }
-	);
-
 	// 攻撃状態を追加する (キック)
 	AddState(
 		(int)STATE::SKILL_2,
-		Instance
+		new PlayerSimpleAttackState(
+			// 自分の状態に遷移する関数
+			[&]() { state = (int)STATE::SKILL_2; },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_2; },
+			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
+			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
+			// 当たり判定のオペレーター
+			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
+			// 座標 / 角度
+			trans.pos, trans.angle,
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
+			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; }
+		)
 	);
 
 	AddState(
@@ -284,7 +281,35 @@ void OrangePlayer::Load(void)
 
 #pragma endregion
 
+#pragma region UIの登録と設定
 
+	// スキル1のUI
+	playerUi.emplace_back(
+		new PlayerUI(
+			SKILL1_UI_DRAW_POS,
+			dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+			SKILL_1_COOL_TIME,
+			PlayerUI::SKILL_UI_COLOR::GREEN)
+	);
+
+	// スキル2のUI
+	playerUi.emplace_back(
+		new PlayerUI(
+			SKILL2_UI_DRAW_POS,
+			dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+			SKILL_2_COOL_TIME,
+			PlayerUI::SKILL_UI_COLOR::GREEN)
+	);
+
+	// スキル3のUI
+	playerUi.emplace_back(
+		new PlayerUI(
+			SKILL3_UI_DRAW_POS,
+			dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+			SKILL_3_COOL_TIME, 
+			PlayerUI::SKILL_UI_COLOR::GREEN)
+	);
+#pragma endregion 
 }
 
 void OrangePlayer::CharactorInit(void)
