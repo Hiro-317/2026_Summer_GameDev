@@ -57,7 +57,14 @@ private:
 	// 再生中のアニメーション
 	int playType;
 	Animation playAnim;
+	Animation prevAnim;
 	bool loopflg;
+
+	//アニメーションブレンドの割合
+	float blendRate;
+
+	//デタッチできているか
+	int isDetach;
 
 	void Add(int type, float speed, Animation animation);
 };

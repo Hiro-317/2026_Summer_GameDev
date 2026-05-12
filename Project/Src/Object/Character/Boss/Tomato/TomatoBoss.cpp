@@ -8,7 +8,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
-#include "State/Move/TomatoMove.h"
+#include "State/Move/TomatoMoveState.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharacterBase(1,1,1,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
@@ -100,7 +100,7 @@ void TomatoBoss::Load(void)
 
 	AddState(
 		static_cast<int>(STATE::MOVE),
-		new TomatoMove(
+		new TomatoMoveState(
 			// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
 			[&]() { state = static_cast<int>(STATE::MOVE); },
 			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
