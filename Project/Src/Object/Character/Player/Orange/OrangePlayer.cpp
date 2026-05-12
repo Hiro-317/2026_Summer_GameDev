@@ -26,8 +26,6 @@ OrangePlayer::OrangePlayer() :
 
 void OrangePlayer::Load(void)
 {
-	// UIの登録
-	playerUi.emplace_back(new PlayerUI(Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250)));
 
 #pragma region モデル
 
@@ -121,6 +119,9 @@ void OrangePlayer::Load(void)
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
+
+	// UIの登録
+	playerUi.emplace_back(new PlayerUI(Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250), 0, 0));
 #pragma endregion
 
 
@@ -200,29 +201,29 @@ void OrangePlayer::Load(void)
 		)
 	);
 
+	PlayerSimpleAttackState* Instance = new PlayerSimpleAttackState(
+		// 自分の状態に遷移する関数
+		[&]() { state = (int)STATE::SKILL_2; },
+		// 自分の状態かどうかを返す関数
+		[&]() { return state == (int)STATE::SKILL_2; },
+		// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
+		KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
+		// 当たり判定のオペレーター
+		*SubObjSerch<PlayerSimpleAttackCollOperator>(),
+		// 座標 / 角度
+		trans.pos, trans.angle,
+		// アニメーションの再生関数のポインタ
+		[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
+		// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
+		[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+		// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+		[&]() { state = (int)STATE::MOVE; }
+	);
+
 	// 攻撃状態を追加する (キック)
 	AddState(
 		(int)STATE::SKILL_2,
-		new PlayerSimpleAttackState(
-			// 自分の状態に遷移する関数
-			[&]() { state = (int)STATE::SKILL_2; },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_2; },
-			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
-			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
-			// 当たり判定のオペレーター
-			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
-			// 座標 / 角度
-			trans.pos, trans.angle,
-			std::bind(&PlayerUI::SetCoolTime, playerUi.at(0), std::placeholders::_1),
-			[&]() { playerUi.at(0)->StartCoolTime(); },
- 			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
-			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
-			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; }
-		)
+		Instance
 	);
 
 	AddState(
@@ -317,10 +318,11 @@ void OrangePlayer::CharactorUpdate(void)
 	for (PlayerUI*& ui : playerUi) {
 		ui->Update();
 	}
-
+	
+#ifdef _DEBUG		// クールタイム用
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-		playerUi.at(0)->SetCoolTime(120);
 	}
+#endif // _DEBUG
 }
 
 void OrangePlayer::CharactorDraw(void)

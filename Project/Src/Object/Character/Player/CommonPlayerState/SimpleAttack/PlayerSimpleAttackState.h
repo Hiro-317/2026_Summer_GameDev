@@ -40,9 +40,6 @@ public:
 		PlayerSimpleAttackCollOperator& collOperator,
 		Vector3& pos, Vector3& angle,
 
-		const std::function<void(int)> CoolTimeInit,
-		const std::function<void(void)> StartCoolTime,
-
 		const std::function<void(void)> PlayAttackAnime,
 		const std::function<float(void)> GetAnimePlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,

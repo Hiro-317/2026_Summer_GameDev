@@ -1,53 +1,55 @@
 #include "PlayerUI.h"
 
-PlayerUI::PlayerUI(Vector2I pos) :
-	ui_info(),
-	pos(Vector2(0,0))
+PlayerUI::PlayerUI(Vector2I pos, const int& coolTimeCounter, int COOL_TIME) :
+	coolTimeCounter(coolTimeCounter),
+	coolTimeRatio(0.0f),
+	offset(0.0f),
+	COOL_TIME(COOL_TIME),
+	pos(pos)
 {
-	ui_info.pos = pos;
 
 	// 画像の読み込み
-	ui_info.images.reserve(10);
-	ui_info.images.push_back(LoadGraph("Data/Image/UI/Player/Skill_Image_1.png"));
-	ui_info.images.push_back(LoadGraph("Data/Image/UI/Player/Skill_Image_2.png"));
+	images.reserve(10);
+	images.push_back(LoadGraph("Data/Image/UI/Player/Skill_Image_1.png"));
+	images.push_back(LoadGraph("Data/Image/UI/Player/Skill_Image_2.png"));
 }
 
 PlayerUI::~PlayerUI()
 {
 	// 画像の解放
-	for (int& image : ui_info.images) {
+	for (int& image : images) {
 		DeleteGraph(image);
 	}
 }
 
 void PlayerUI::Update()
 {
-	ui_info.coolTimeCounter--;
-	if (ui_info.coolTimeCounter < 0) {
-		ui_info.coolTimeCounter = 0;
-	}
+	//coolTimeCounter--;
+	//if (coolTimeCounter < 0) {
+	//	coolTimeCounter = 0;
+	//}
 }
 
 void PlayerUI::Draw(void)
 {
-	ui_info.coolTimeRatio = (float)ui_info.coolTimeCounter / (float)ui_info.COOL_TIME;
-	ui_info.offset = IMAGE_SIZE * (1.0f - ui_info.coolTimeRatio);
+	coolTimeRatio = (float)coolTimeCounter / (float)COOL_TIME;
+	offset = IMAGE_SIZE * (1.0f - coolTimeRatio);
 
-	int offset_I = (int)ui_info.offset;
+	int offset_I = (int)offset;
 	
 	DrawGraph(
-		ui_info.pos.x - (IMAGE_SIZE / 2),
-		ui_info.pos.y - (IMAGE_SIZE / 2),
-		ui_info.images.at(0),
+		pos.x - (IMAGE_SIZE / 2),
+		pos.y - (IMAGE_SIZE / 2),
+		images.at(0),
 		true
 	);
 	
 	DrawRectGraph(
-		ui_info.pos.x - (IMAGE_SIZE / 2),
-		(ui_info.pos.y + IMAGE_SIZE / 2) - offset_I,
+		pos.x - (IMAGE_SIZE / 2),
+		(pos.y + IMAGE_SIZE / 2) - offset_I,
 		0, IMAGE_SIZE - offset_I,
 		IMAGE_SIZE, offset_I,
-		ui_info.images.at(1),
+		images.at(1),
 		true,
 		false
 	);
