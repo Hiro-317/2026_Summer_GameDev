@@ -5,6 +5,7 @@
 
 #include"../../Application/Application.h"
 
+#include"../../Manager/Net/NetWorkManager.h"
 #include"../../Manager/Input/KeyManager.h"
 #include"../../Manager/Camera/Camera.h"
 #include"../../Manager/Sound/SoundManager.h"
@@ -29,6 +30,8 @@ void TitleScene::Init(void)
 {
 	// ƒJƒƒ‰‚Ì‰Šú‰»
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
+
+	Net::GetIns().Disconnected();
 }
 void TitleScene::Update(void)
 {

@@ -57,6 +57,8 @@ void CharaSelectPreviewBase::ReceptionUpdate(void)
 			}
 			// ‘¼l‚ÌƒLƒƒƒ‰‚È‚çA‚»‚Ì‚Ü‚Ü“¯Šú
 			else { anime->SetStep(dataPtr->animeStep); }
+
+			delete dataPtr;
 		}
 	}
 }
