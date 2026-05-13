@@ -43,8 +43,6 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
-	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
-
 private:
 
 #pragma region 定数
@@ -93,8 +91,6 @@ private:
 	// 現状の攻撃の段階
 	PLAYER_TRIPLE_ATTACK_STAGE attackStage;
 
-	// 攻撃そのものクールタイムのカウンター
-	int coolTimeCounter;
 
 	// 攻撃が次段に繋がるかの猶予時間のカウンター
 	int attackNextStageContinueTimeCounter;

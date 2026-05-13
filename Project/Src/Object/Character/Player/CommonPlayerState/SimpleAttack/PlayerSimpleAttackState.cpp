@@ -29,9 +29,7 @@ PlayerSimpleAttackState::PlayerSimpleAttackState(
 	PlayAttackAnime(PlayAttackAnime),
 	GetAnimePlayRatio(GetAnimePlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState),
-
-	coolTimeCounter(0)
+	DefaultChangeState(DefaultChangeState)
 {
 }
 

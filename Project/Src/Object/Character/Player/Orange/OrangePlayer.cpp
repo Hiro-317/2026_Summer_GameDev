@@ -12,7 +12,7 @@
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
 
-#include "../../../UI/PlayerUI/PlayerUI.h"
+#include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -284,31 +284,38 @@ void OrangePlayer::Load(void)
 #pragma region UIの登録と設定
 
 	// スキル1のUI
-	playerUi.emplace_back(
-		new PlayerUI(
+	playerSkillUi.emplace_back(
+		new PlayerSkillUI(
 			SKILL1_UI_DRAW_POS,
 			dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
 			SKILL_1_COOL_TIME,
-			PlayerUI::SKILL_UI_COLOR::GREEN)
+			PlayerSkillUI::SKILL_UI_COLOR::RED,
+			"SkillSlotTripleAttack"
+		)
 	);
 
 	// スキル2のUI
-	playerUi.emplace_back(
-		new PlayerUI(
+	playerSkillUi.emplace_back(
+		new PlayerSkillUI(
 			SKILL2_UI_DRAW_POS,
 			dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
 			SKILL_2_COOL_TIME,
-			PlayerUI::SKILL_UI_COLOR::GREEN)
+			PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+			"SkillSlotSimpleAttack"
+		)
 	);
 
 	// スキル3のUI
-	playerUi.emplace_back(
-		new PlayerUI(
+	playerSkillUi.emplace_back(
+		new PlayerSkillUI(
 			SKILL3_UI_DRAW_POS,
 			dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
 			SKILL_3_COOL_TIME, 
-			PlayerUI::SKILL_UI_COLOR::GREEN)
+			PlayerSkillUI::SKILL_UI_COLOR::GREEN,
+			"SkillSlotDodge"
+		)
 	);
+
 #pragma endregion 
 }
 
@@ -340,7 +347,7 @@ void OrangePlayer::CharactorUpdate(void)
 	interestPos = trans.pos + INTEREST_POS;
 
 	// UIの更新処理
-	for (PlayerUI*& ui : playerUi) {
+	for (PlayerSkillUI*& ui : playerSkillUi) {
 		ui->Update();
 	}
 	
@@ -386,7 +393,7 @@ void OrangePlayer::UiDraw(void)
 	}
 
 	// UIの描画
-	for (PlayerUI*& ui : playerUi) {
+	for (PlayerSkillUI*& ui : playerSkillUi) {
 		ui->Draw();
 	}
 }
@@ -404,7 +411,7 @@ void OrangePlayer::CharactorRelease(void)
 	subObjArray.clear();
 
 	// UIを解放
-	for (PlayerUI*& ui : playerUi) {
+	for (PlayerSkillUI*& ui : playerSkillUi) {
 
 		if (ui) {
 			delete ui;

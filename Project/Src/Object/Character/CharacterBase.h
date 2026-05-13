@@ -11,8 +11,8 @@ class CharacterBase : public ActorBase
 {
 protected:
 	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 450, Application::SCREEN_SIZE_Y_HALF + 250);
-	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250);
-	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 300, Application::SCREEN_SIZE_Y_HALF + 100);
+	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 300, Application::SCREEN_SIZE_Y_HALF + 100);
+	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250);
 public:
 	// デフォルトコンストラクタ
 	CharacterBase(

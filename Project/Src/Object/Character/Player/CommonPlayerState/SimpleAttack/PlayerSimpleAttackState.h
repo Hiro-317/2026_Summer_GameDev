@@ -60,7 +60,6 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
-	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
 
 private:
 
@@ -104,6 +103,5 @@ private:
 	const std::function<void(void)> DefaultChangeState;
 #pragma endregion
 
-	// 攻撃そのものクールタイムのカウンター
-	int coolTimeCounter;
+
 };

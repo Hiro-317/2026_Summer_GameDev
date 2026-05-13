@@ -6,7 +6,7 @@
 
 class PlayerTripleAttackCollOperator;
 
-class PlayerUI;
+class PlayerSkillUI;
 
 class OrangePlayer : public CharacterBase
 {
@@ -317,6 +317,6 @@ private:
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
-	std::vector<PlayerUI*> playerUi;
+	std::vector<PlayerSkillUI*> playerSkillUi;
 
 };

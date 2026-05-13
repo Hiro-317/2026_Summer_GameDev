@@ -26,7 +26,6 @@ PlayerTripleAttackState::PlayerTripleAttackState(
 	DefaultChangeState(stateContext.DefaultChangeState),
 
 	attackStage(PLAYER_TRIPLE_ATTACK_STAGE::NON),
-	coolTimeCounter(0),
 	attackNextStageContinueTimeCounter(0)
 {
 }
