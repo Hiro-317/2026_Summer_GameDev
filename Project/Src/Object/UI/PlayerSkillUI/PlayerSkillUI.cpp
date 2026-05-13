@@ -33,6 +33,9 @@ PlayerSkillUI::~PlayerSkillUI()
 
 void PlayerSkillUI::Update()
 {
+	// クールタイムの量に応じて増減する
+	coolTimeRatio = (float)coolTimeCounter / (float)COOL_TIME;
+	offset = IMAGE_SIZE.y * (1.0f - coolTimeRatio);
 }
 
 void PlayerSkillUI::Draw(void)
@@ -45,9 +48,6 @@ void PlayerSkillUI::Draw(void)
 		true
 	);
 
-	// クールタイムの量に応じて増減する
-	coolTimeRatio = (float)coolTimeCounter / (float)COOL_TIME;
-	offset = IMAGE_SIZE.y * (1.0f - coolTimeRatio);
 	int offset_I = (int)offset;
 	
 	// スキルのUI
