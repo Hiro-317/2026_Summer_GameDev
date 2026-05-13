@@ -29,8 +29,6 @@ public:
 	void Exit(void)override;
 	void AlwaysUpdate(void)override;
 
-	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
-
 private:
 
 #pragma region 定数
@@ -72,6 +70,4 @@ private:
 	const std::function<void(unsigned char)> SetInviCounter;
 #pragma endregion
 
-	// クールタイムカウンター
-	int coolTimeCounter;
 };

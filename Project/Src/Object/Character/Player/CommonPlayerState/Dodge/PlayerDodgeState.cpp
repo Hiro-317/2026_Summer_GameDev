@@ -23,8 +23,7 @@ PlayerDodgeState::PlayerDodgeState(
 	GetAnimePlayRatio(GetAnimePlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
-	SetInviCounter(SetInviCounter),
-	coolTimeCounter(0)
+	SetInviCounter(SetInviCounter)
 {
 }
 
