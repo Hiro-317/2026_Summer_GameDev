@@ -11,16 +11,10 @@
 class PlayerSkillUI
 {
 private:
-
-	const Vector2I IMAGE_SIZE = Vector2I(150, 258 / 2);
+	const Vector2I IMAGE_SIZE = Vector2I(150, 129);
 public:
 
-	enum class UI_TYPE
-	{
-		SKILL,
-		HP,
-	};
-
+	// UIの色
 	enum class SKILL_UI_COLOR
 	{
 		GREEN,
@@ -47,42 +41,53 @@ public:
 		std::string skillImagePath
 	);
 
-	// デストラクタ
-	~PlayerSkillUI();
+
+	~PlayerSkillUI();	// デストラクタ
 
 	void Update(void);	// 更新処理
 	void Draw(void);	// 描画処理
+	void Release(void);	// 解放処理
 	
 	// クールタイムのゲッター関数
 	const bool GetIsCoolTimeNow(int STATE_TAG) { return (coolTimeCounter > 0); }
 
 private:
+	// 画像をタイプ別に分ける
+	enum class IMAGE_TYPE
+	{
+		FRAME,
+		SKILL,
+		COLOR_IMAGE1,
+		COLOR_IMAGE2,
 
-#pragma region スキルUI関係
+		MAX
+	};
 
+	// チャージ中の色別に分けた画像
 	std::map<SKILL_UI_COLOR, std::string> chargingImagePath =
 	{
-		{ SKILL_UI_COLOR::GREEN, "Data/Image/UI/Player/SkillSlotGreenCharging.png" },
-		{ SKILL_UI_COLOR::BLUE, "Data/Image/UI/Player/SkillSlotBlueCharging.png" },
-		{ SKILL_UI_COLOR::RED, "Data/Image/UI/Player/SkillSlotRedCharging.png" }
+		{ SKILL_UI_COLOR::GREEN, "Data/Image/UI/Player/Skill/SkillSlotGreenCharging.png" },
+		{ SKILL_UI_COLOR::BLUE, "Data/Image/UI/Player/Skill/SkillSlotBlueCharging.png" },
+		{ SKILL_UI_COLOR::RED, "Data/Image/UI/Player/Skill/SkillSlotRedCharging.png" }
 	};
+
+	// チャージしていない時の色別の画像
 	std::map<SKILL_UI_COLOR, std::string> chargeImagePath =
 	{
-		{ SKILL_UI_COLOR::GREEN, "Data/Image/UI/Player/SkillSlotGreenCharge.png" },
-		{ SKILL_UI_COLOR::BLUE, "Data/Image/UI/Player/SkillSlotBlueCharge.png" },
-		{ SKILL_UI_COLOR::RED, "Data/Image/UI/Player/SkillSlotRedCharge.png" }
+		{ SKILL_UI_COLOR::GREEN, "Data/Image/UI/Player/Skill/SkillSlotGreenCharge.png" },
+		{ SKILL_UI_COLOR::BLUE, "Data/Image/UI/Player/Skill/SkillSlotBlueCharge.png" },
+		{ SKILL_UI_COLOR::RED, "Data/Image/UI/Player/Skill/SkillSlotRedCharge.png" }
 	};
 
-	// 描画位置
-	Vector2I pos = Vector2I(0);
 
-	float coolTimeRatio = 0.0f;		// クールタイム割合変数
-	float offset = 0.0f;				// 描画するときのずれを修正するためのオフセット変数
+	Vector2I pos;		// 描画位置
+
+	float coolTimeRatio;		// クールタイム割合変数
+	float offset;				// 描画するときのずれを修正するためのオフセット変数
 
 	const int COOL_TIME;		// クールタイムの最大値
 	const int& coolTimeCounter;	// クールタイムカウンター用変数
 
-#pragma endregion
-	std::vector<int> images;	// 画像を読み込むためのハンドル
+	int images[(int)IMAGE_TYPE::MAX];	// 画像を読み込むためのハンドル
 };
 

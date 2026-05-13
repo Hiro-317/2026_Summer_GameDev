@@ -13,6 +13,7 @@
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
 
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -316,6 +317,13 @@ void OrangePlayer::Load(void)
 		)
 	);
 
+	// スタミナUI
+	playerStaminaUi = new PlayerStaminaUI(
+		dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
+		DASH_STAMINA_MAX
+	);
+	playerStaminaUi->Load();
+
 #pragma endregion 
 }
 
@@ -334,16 +342,7 @@ void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	//if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-	//	// 不動オブジェクトにする
-	//	SetDynamicFlg(false); 
-	//	
-	//	// カメラを固定する
-	//	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
 
-	//	// 死亡状態に遷移する
-	//	ChangeState((int)STATE::DEATH);
-	//}
 	interestPos = trans.pos + INTEREST_POS;
 
 	// UIの更新処理
@@ -353,6 +352,14 @@ void OrangePlayer::CharactorUpdate(void)
 	
 #ifdef _DEBUG		// クールタイム用
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		// 不動オブジェクトにする
+		SetDynamicFlg(false); 
+		
+		// カメラを固定する
+		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
+	
+		// 死亡状態に遷移する
+		ChangeState((int)STATE::DEATH);
 	}
 #endif // _DEBUG
 }
@@ -396,6 +403,8 @@ void OrangePlayer::UiDraw(void)
 	for (PlayerSkillUI*& ui : playerSkillUi) {
 		ui->Draw();
 	}
+
+	playerStaminaUi->Draw();
 }
 
 
@@ -419,5 +428,8 @@ void OrangePlayer::CharactorRelease(void)
 		}
 	}
 
-
+	for (PlayerSkillUI*& ui : playerSkillUi) {
+		ui->Release();
+	}
+	playerStaminaUi->Release();
 }

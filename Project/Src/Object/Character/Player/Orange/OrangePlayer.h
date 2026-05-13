@@ -7,6 +7,7 @@
 class PlayerTripleAttackCollOperator;
 
 class PlayerSkillUI;
+class PlayerStaminaUI;
 
 class OrangePlayer : public CharacterBase
 {
@@ -292,8 +293,13 @@ private:
 
 	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
 
-#pragma endregion ’è”’è‹`
+	// UI@````````````````````````````````
+	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 600, Application::SCREEN_SIZE_Y_HALF + 300);
+	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 120, SKILL1_UI_DRAW_POS.y - 100);
+	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 240, SKILL1_UI_DRAW_POS.y);
+	// ````````````````````````````````@UI@
 
+#pragma endregion ’è”’è‹`
 
 	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ
 	std::vector<ActorBase*> subObjArray;
@@ -318,5 +324,5 @@ private:
 	// ``````````````ƒƒCƒ“ˆ—
 
 	std::vector<PlayerSkillUI*> playerSkillUi;
-
+	PlayerStaminaUI* playerStaminaUi;
 };

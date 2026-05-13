@@ -14,21 +14,17 @@ PlayerSkillUI::PlayerSkillUI(
 	coolTimeCounter(coolTimeCounter)
 {
 	// 画像の読み込み
-	images.reserve(10);
-	images.push_back(LoadGraph("Data/Image/UI/Player/SkillSlotFrame.png"));
-	images.push_back(LoadGraph(("Data/Image/UI/Player/" + skillImagePath + ".png").c_str()));
-	images.push_back(LoadGraph(chargingImagePath.find(color)->second.c_str()));
-	images.push_back(LoadGraph(chargeImagePath.find(color)->second.c_str()));
+	images[(int)IMAGE_TYPE::FRAME] = LoadGraph("Data/Image/UI/Player/Skill/SkillSlotFrame.png");
+	images[(int)IMAGE_TYPE::SKILL] = LoadGraph(("Data/Image/UI/Player/Skill/" + skillImagePath + ".png").c_str());
+	images[(int)IMAGE_TYPE::COLOR_IMAGE1] = LoadGraph(chargeImagePath.find(color)->second.c_str());
+	images[(int)IMAGE_TYPE::COLOR_IMAGE2] = LoadGraph(chargingImagePath.find(color)->second.c_str());
 }
 
 
 
 PlayerSkillUI::~PlayerSkillUI()
 {
-	// 画像の解放
-	for (int& image : images) {
-		DeleteGraph(image);
-	}
+
 }
 
 void PlayerSkillUI::Update()
@@ -44,7 +40,7 @@ void PlayerSkillUI::Draw(void)
 	DrawGraph(
 		pos.x - (IMAGE_SIZE.x / 2),
 		pos.y - (IMAGE_SIZE.y / 2),
-		images.at(0),
+		images[(int)IMAGE_TYPE::FRAME],
 		true
 	);
 
@@ -56,7 +52,7 @@ void PlayerSkillUI::Draw(void)
 		(pos.y + IMAGE_SIZE.y / 2) - offset_I,
 		0, IMAGE_SIZE.y - offset_I,
 		IMAGE_SIZE.x, offset_I,
-		images.at(2),
+		images[(int)IMAGE_TYPE::COLOR_IMAGE1],
 		true,
 		false
 	);
@@ -68,7 +64,7 @@ void PlayerSkillUI::Draw(void)
 			pos.y,
 			1.0f,
 			0.0f,
-			images.at(3),
+			images[(int)IMAGE_TYPE::COLOR_IMAGE2],
 			true
 		);
 	}
@@ -79,9 +75,15 @@ void PlayerSkillUI::Draw(void)
 		pos.y,
 		1.0f,
 		0.0f,
-		images.at(1),
+		images[(int)IMAGE_TYPE::SKILL],
 		true
 	);
 }
 
-
+void PlayerSkillUI::Release(void)
+{ 
+	// 画像の解放
+	for (int& image : images) {
+		DeleteGraph(image);
+	}
+}
