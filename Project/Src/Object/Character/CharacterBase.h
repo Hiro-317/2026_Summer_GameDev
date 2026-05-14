@@ -9,10 +9,6 @@
 
 class CharacterBase : public ActorBase
 {
-protected:
-	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 450, Application::SCREEN_SIZE_Y_HALF + 250);
-	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 300, Application::SCREEN_SIZE_Y_HALF + 100);
-	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250);
 public:
 	// デフォルトコンストラクタ
 	CharacterBase(
@@ -33,6 +29,8 @@ public:
 
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
+
+	const CharacterStats& GetCharacterStats(void)const { return characterStats; }
 
 private:
 	// 初期化
@@ -63,8 +61,6 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
 
-	// ステータス
-	CharacterStats characterStats;
 
 protected:
 	// ステート管理用変数
@@ -162,4 +158,6 @@ protected:
 		if (!isInviEffect) { DEFAULT_COLOR.clear(); }
 	}
 
+	// ステータス
+	CharacterStats characterStats;
 };

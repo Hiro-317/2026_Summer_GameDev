@@ -50,11 +50,15 @@ void PlayerTripleAttackState::Enter(void)
 	// 攻撃段数に応じた攻撃アニメーションを再生する
 	PlayAttackAnimes[(int)attackStage]();
 
-	// 最終段なら、攻撃のクールタイムをセットする
-	if (attackStage == PLAYER_TRIPLE_ATTACK_STAGE::THIRD) { coolTimeCounter = COOL_TIME; }
-
 	// 次段に繋がるまでのカウンターをセットする
 	attackNextStageContinueTimeCounter = ATTACK_NEXT_STAGE_CONTINUE_TIME;
+
+	if (attackStage == PLAYER_TRIPLE_ATTACK_STAGE::THIRD) { 
+		// 最終段なら、攻撃のクールタイムをセットする
+		coolTimeCounter = COOL_TIME;
+		// 次段に繋がるまでのカウンターをセットする
+		attackNextStageContinueTimeCounter = 0;
+	}
 
 	// 攻撃対象の探索を開始する
 	collOperator.TargetSerch();

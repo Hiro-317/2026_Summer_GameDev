@@ -1,3 +1,4 @@
+
 #include"CharacterBase.h"
 
 CharacterBase::CharacterBase(

@@ -207,7 +207,7 @@ private:
 
 public:
 	// 威力（攻撃力を参照しない バフ/デバフ や 回復 などのスキルはそのまま技威力が実数値として返される）
-	short Power(void) {
+	short Power(void)const {
 		short ret = 0;
 		if (attackPower == nullptr || critical == nullptr) { ret = SKILL_POWER; }
 		else {
