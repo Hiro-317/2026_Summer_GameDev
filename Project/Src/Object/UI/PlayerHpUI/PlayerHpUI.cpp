@@ -6,44 +6,44 @@ PlayerHpUI::PlayerHpUI(const CharacterStats& stats) :
 	PLAYER_HP_MAX(stats.hpMax.Value()),
 	hpRatio(0.0f),
 	hpBarOffset(0.0f),
-	damageBarOffset(0.0f),
-	hpImages(),
-	hpFrameImage(-1)
-{
-}
-
-PlayerHpUI::~PlayerHpUI()
+	damageBarOffset(0.0f)
 {
 }
 
 void PlayerHpUI::Load(void)
 {
-	hpImages.reserve(2);
-	// 画像の読み込み
-	hpImages.emplace_back(LoadGraph("Data/Image/UI/Player/HP/PlayerHpFrame.png"));
-	hpImages.emplace_back(LoadGraph("Data/Image/UI/Player/HP/PlayerHp.png"));
-	hpImages.emplace_back(LoadGraph("Data/Image/UI/Player/HP/PlayerHpLost.png"));
+	LoadUIImage("PlayerHpFrame", (int)IMAGE_KINDS::FRAME,			FILE_PATH_TYPE::HP);
+	LoadUIImage("PlayerHp",		 (int)IMAGE_KINDS::HP_GAUGE,		FILE_PATH_TYPE::HP);
+	LoadUIImage("PlayerHpLost",  (int)IMAGE_KINDS::DAMAGE_GAUGE,	FILE_PATH_TYPE::HP);
 }
 
-void PlayerHpUI::Update()
+void PlayerHpUI::SubUpdate()
 {
 	// HPの割合によるHPバーの増減のための計算
 	hpRatio = (float)playerhp / (float)PLAYER_HP_MAX;
 	hpBarOffset = HP_IMAGE_SIZE.x * (1.0f - hpRatio);
+
+	if (damageBarOffset < hpBarOffset) {
+		damageBarOffset += 0.1f;
+		if (damageBarOffset > hpBarOffset) {
+			damageBarOffset = hpBarOffset;
+		}
+	}
 }
 
-void PlayerHpUI::Draw()
+void PlayerHpUI::SubDraw()
 {
 	// HPのフレーム画像描画
-	DrawGraph(HP_UI_POS.x, HP_UI_POS.y, hpImages.at(0), true);
+	DrawGraph(HP_UI_POS.x, HP_UI_POS.y, uiImages.at((int)IMAGE_KINDS::FRAME), true);
 
-	// HPバーの描画
+	// ダメージを受けたときの赤いゲージ
 	DrawRectGraph(
-		HP_UI_POS.x + HP_UI_POS_OFFSET, 
+		HP_UI_POS.x + HP_UI_POS_OFFSET,
 		HP_UI_POS.y,
 		0, 0,
-		HP_IMAGE_SIZE.x - hpBarOffset, HP_IMAGE_SIZE.y,
-		hpImages.at(2),
+		HP_IMAGE_SIZE.x - damageBarOffset,
+		HP_IMAGE_SIZE.y,
+		uiImages.at((int)IMAGE_KINDS::DAMAGE_GAUGE),
 		true
 	);
 
@@ -53,17 +53,11 @@ void PlayerHpUI::Draw()
 		HP_UI_POS.y,
 		0, 0,
 		HP_IMAGE_SIZE.x - hpBarOffset, HP_IMAGE_SIZE.y,
-		hpImages.at(1),
+		uiImages.at((int)IMAGE_KINDS::HP_GAUGE),
 		true
 	);
 }
 
-void PlayerHpUI::Release()
+void PlayerHpUI::SubRelease()
 {
-	// 画像の解放
-	for (int& image : hpImages) {
-		DeleteGraph(image);
-	}
-
-	DeleteGraph(hpFrameImage);
 }

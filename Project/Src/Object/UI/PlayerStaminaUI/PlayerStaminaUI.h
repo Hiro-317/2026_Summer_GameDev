@@ -2,10 +2,12 @@
 #include <DxLib.h>
 #include <algorithm>
 
+#include "../UI_Base.h"
+
 #include "../../../Common/Vector2.h"
 #include "../../../Application/Application.h"
 
-class PlayerStaminaUI
+class PlayerStaminaUI : public UI_Base
 {
 private:
 
@@ -25,8 +27,10 @@ public:
 	~PlayerStaminaUI();
 
 	void Load(void);	// ƒ[ƒh
-	void Draw(void);	// •`‰æ
-	void Release(void);	// ‰ğ•ú
+	void SubInit(void)override {}
+	void SubUpdate(void)override {}
+	void SubDraw(void)override;	// •`‰æ
+	void SubRelease(void)override;	// ‰ğ•ú
 
 private:
 

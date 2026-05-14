@@ -1,7 +1,6 @@
 #include "PlayerStaminaUI.h"
 
-PlayerStaminaUI::PlayerStaminaUI(const short& stamina, const short STAMINA_MAX):
-	images(),
+PlayerStaminaUI::PlayerStaminaUI(const short& stamina, const short STAMINA_MAX) :
 	stamina(stamina),
 	STAMINA_MAX(STAMINA_MAX)
 {
@@ -24,7 +23,7 @@ void PlayerStaminaUI::Load()
 	pos = DEFAULT_POS;
 }
 
-void PlayerStaminaUI::Draw()
+void PlayerStaminaUI::SubDraw()
 {
 	// スタミナの割合で配列を動かす
 	int index = 0;
@@ -34,7 +33,7 @@ void PlayerStaminaUI::Draw()
 	}
 }
 
-void PlayerStaminaUI::Release()
+void PlayerStaminaUI::SubRelease()
 {
 	for (int i = 0; i < IMAGE_MAX; i++) {
 		DeleteGraph(images[i]);	// 画像の解放
