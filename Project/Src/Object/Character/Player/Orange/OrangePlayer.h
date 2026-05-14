@@ -324,5 +324,6 @@ private:
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
+	// UIŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX
 	std::vector<UI_Base*> ui_ArrayIns;
 };

@@ -24,11 +24,10 @@ void UI_Base::Release(void)
 	SubRelease();
 
 	// 画像の解放
-	for (const auto& image : uiImages)
+	for (int handle : uiImages)
 	{
-		if (image.second == -1) continue;
-
-		DeleteGraph(image.second);
+		if (handle == -1) continue;
+		DeleteGraph(handle);
 	}
 	uiImages.clear();
 }
