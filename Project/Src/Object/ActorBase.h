@@ -146,7 +146,7 @@ protected:
 		collider.back()->SetPushFlg(pushFlg);
 		collider.back()->SetPushWeight(pushWeight);
 		collider.back()->SetOnCollisionFunc([this](const ColliderBase& collider) { this->OnCollision(collider); });
-		collider.back()->SetOnGroundedFunc([this](void) {this->OnGrounded(); });
+		collider.back()->SetOnGroundedFunc([this](void) { this->OnGrounded(); });
 		ColliderToSetSkill();
 	}
 

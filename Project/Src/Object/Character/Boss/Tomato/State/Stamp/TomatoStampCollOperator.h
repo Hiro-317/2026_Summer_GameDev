@@ -1,0 +1,73 @@
+#pragma once
+
+#include "../../../../../ActorBase.h"
+
+class TomatoStampCollOperator : public ActorBase
+{
+public:
+
+	/// <summary>
+	/// コンストラクト
+	/// </summary>
+	/// <param name="ATTACK_RADIUS">攻撃範囲</param>
+	/// <param name="ATTACK_DURATION">攻撃判定の持続時間</param>
+	TomatoStampCollOperator(
+		float ATTACK_RADIUS,
+		int ATTACK_DURATION,
+		const bool& isGournd,
+		const Vector3& playerPos
+	);
+	~TomatoStampCollOperator()override = default;
+
+	void Load(void)override;
+
+	void Draw(void)override;
+
+	void OnCollision(const ColliderBase& other)override;
+
+	// 攻撃の中心座標の取得
+	Vector3 GetAttackPos(void) { return trans.pos; }
+
+	// 攻撃範囲の描画設定
+	void SetDrawArea(bool flg) { isDrawArea = flg; }
+
+	// 攻撃終了
+	bool End(void) { return end; }
+
+private:
+
+#pragma region 定数
+
+	// 攻撃範囲の半径
+	const float ATTACK_RADIUS;
+
+	// 攻撃の発生持続時間
+	const int ATTACK_DURATION;
+
+#pragma endregion
+
+#pragma region 受け取る参照変数
+
+	const bool& ground;
+
+	const Vector3& playerPos;
+
+#pragma endregion
+
+#pragma region 変数
+
+	// 攻撃終了
+	bool end;
+
+	// 攻撃カウント
+	int attackCnt;
+
+	// 攻撃範囲描画フラグ
+	bool isDrawArea;
+
+#pragma endregion
+
+	// 更新処理
+	void SubUpdate(void)override;
+
+};

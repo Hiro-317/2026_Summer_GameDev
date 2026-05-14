@@ -10,12 +10,14 @@
 
 #include "State/Move/TomatoMoveState.h"
 #include "State/Stamp/TomatoStampState.h"
+#include "State/Stamp/TomatoStampCollOperator.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharacterBase(1,1,1,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray(),
 	playerPos(playerPos)
 {
+	state = (int)STATE::STAMP;
 }
 
 
@@ -107,10 +109,11 @@ void TomatoBoss::Load(void)
 
 #pragma region ƒvƒŒƒCƒ„[‚ª•ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğ¶¬‚·‚é
 
+	subObjArray.push_back(new TomatoStampCollOperator(350.0f, 5, isGround, playerPos));
+
 	// ‚Ü‚Æ‚ß‚Ä“Ç‚İ‚İˆ—
 	for (ActorBase*& c : subObjArray) { c->Load(); }
 #pragma endregion
-
 
 
 #pragma region ó‘Ôİ’è
@@ -132,13 +135,22 @@ void TomatoBoss::Load(void)
 		static_cast<int>(STATE::STAMP),
 		new TomatoStampState(
 			// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
-			[&]() { state = static_cast<int>(STATE::MOVE); },
+			[&]() { state = static_cast<int>(STATE::STAMP); },
 			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
-			[&]() { return state == static_cast<int>(STATE::MOVE); },
-			// ˆÚ“®—Ê‚ÆUŒ‚”¼Œa
-			MOVE_SPEED, STAMP_RADIUS,
-			// ©•ª‚ÌÀ•W
-			trans.pos
+			[&]() { return state == static_cast<int>(STATE::STAMP); },
+			// ƒRƒŠƒWƒ‡ƒ“ƒIƒyƒŒ[ƒ^[‚ÌQÆ„
+			SubObjSerch<TomatoStampCollOperator>(),
+			// ©•ª‚ÌÀ•W‚Ì“Ç‚İæ‚è
+			trans.pos, isGround,
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚ÍˆÚ“®ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
+			[&]() { state = (int)STATE::MOVE; },
+			// UŒ‚‚É“–‚½‚è”»’è‚ğÁ‚·‚æ‚¤‚É
+			[&]() { SetJudge(false); },
+			// —‰º’†‚Í“–‚½‚è”»’è‚ğÄ¶‚³‚¹‚é
+			[&]() { SetJudge(true); },
+			// Šp“x‚ğ–ß‚·
+			[&]() { trans.angle.x = 0; }
+
 		)
 	);
 
@@ -151,7 +163,7 @@ void TomatoBoss::CharactorInit(void)
 	trans.pos = INIT_POS;
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
-	state = (int)STATE::STAMP;
+	ChangeState(state);
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 
@@ -160,6 +172,16 @@ void TomatoBoss::CharactorInit(void)
 void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+	if (state == (int)STATE::MOVE) {
+
+		static int i = 0;
+		i++;
+		if (i > 5) {
+			ChangeState((int)STATE::STAMP);
+			state = (int)STATE::STAMP;
+
+		}
+	}
 }
 
 void TomatoBoss::CharactorDraw(void)
@@ -187,6 +209,7 @@ void TomatoBoss::UiDraw(void)
 		debugDrwStr("ƒ{ƒX`````````");
 		debugDrwStr("À•W" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
 		debugDrwStr("‰Á‘¬“x:" + std::to_string(accelSum.Length()));
+		debugDrwStr("’n–Ê‚©:" + std::to_string(isGround));
 		debugDrwStr("```````(|3[___]");
 	}
 }

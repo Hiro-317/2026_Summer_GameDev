@@ -70,6 +70,9 @@ private:
 	// ƒvƒŒƒCƒ„[‚É‚¾‚¯“–‚½‚éƒGƒlƒ~[
 	std::vector<ColliderBase*> enemyPlayerOnlyColliders;
 	
+	// ƒXƒe[ƒW‚É‚¾‚¯“–‚½‚éƒGƒlƒ~[
+	std::vector<ColliderBase*> enemyAttackAreaColliders;
+	
 	// `````````````````````````“Áê
 #pragma endregion
 

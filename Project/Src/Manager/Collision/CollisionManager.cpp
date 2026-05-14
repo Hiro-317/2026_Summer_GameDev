@@ -18,6 +18,7 @@ void CollisionManager::Add(ColliderBase* collider)
 	case COLLIDER_TAG::PLAYER_PUNCH:
 	case COLLIDER_TAG::PLAYER_GOUGE:
 	case COLLIDER_TAG::PLAYER_THROWING:
+
 		playerColliders.emplace_back(collider);
 		break;
 
@@ -34,7 +35,14 @@ void CollisionManager::Add(ColliderBase* collider)
 		break;
 
 	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+	case COLLIDER_TAG::BOSS_ATTACK_1:
+
 		enemyPlayerOnlyColliders.emplace_back(collider);
+		break;
+
+	case COLLIDER_TAG::BOSS_ATTACK_AREA:
+
+		enemyAttackAreaColliders.emplace_back(collider);
 		break;
 
 		// それ以外
@@ -69,6 +77,9 @@ void CollisionManager::Check(void)
 
 	// プレイヤー系×プレイヤーにだけ当たるエネミー
 	Matching(playerColliders, enemyPlayerOnlyColliders);
+
+	// ステージ系×ステージにだけ当たるエネミー
+	Matching(stageColliders, enemyAttackAreaColliders);
 }
 
 void CollisionManager::Matching(std::vector<ColliderBase*>& as, std::vector<ColliderBase*>& bs)

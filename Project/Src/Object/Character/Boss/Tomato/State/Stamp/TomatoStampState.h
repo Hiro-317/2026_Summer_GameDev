@@ -2,7 +2,10 @@
 
 #include "../../../../CharacterStateBase.h"
 
+#include "TomatoStampCollOperator.h"
+
 #include "../../../../../../Common/Vector3.h"
+#include "../../../../../Common/Collider/ColliderBase.h"
 
 class TomatoStampState : public CharacterStateBase
 {
@@ -12,15 +15,21 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="ATTACK_RADIUS">攻撃範囲</param>
+	/// <param name="MOVE_SPEED">自分の状態かどうかを返す関数</param>
 	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="DefaultChangeState">攻撃後の遷移先</param>
+	/// <param name="offCollider">攻撃時のエネミー自体の当たり判定を消すように</param>
+	/// <param name="onCollider">攻撃時のエネミー自体の当たり判定をつけるように</param>
+	/// <param name="resetAngle">角度を戻す</param>
 	TomatoStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		float MOVE_SPEED, float ATTACK_RADIUS,
-		Vector3& pos, const Vector3& playerPos
+		TomatoStampCollOperator* collOperator,
+		Vector3& pos, const bool& isGround,
+		const std::function<void(void)> DefaultChangeState,
+		const std::function<void(void)> offCollider,
+		const std::function<void(void)> onCollider,
+		const std::function<void(void)> resetAngle
 	);
 
 	~TomatoStampState()override = default;
@@ -42,17 +51,11 @@ private:
 
 #pragma region 定数
 
-	// 移動量
-	const float MOVE_SPEED;
-
-	// 回転量
-	const float ATTACK_RADIUS;
-
-	// 攻撃持続
-	const float ATTACK_DURATION = 5.0f;
-
 	// 飛ぶ強さ
 	static constexpr float JUMP_POW = 29.0f;
+
+	// 目標までの到達時間(割合)
+	static constexpr float TIME_RATE = 10.0f;
 
 #pragma endregion
 
@@ -64,11 +67,38 @@ private:
 	// 直前の座標
 	float prevPos;
 
-	// プレイヤーの座標の読み取り
-	const Vector3 playerPos;
+	// 設置判定の読み取り
+	const bool& isGround;
+
+	// コリジョンオペレーター
+	TomatoStampCollOperator* collOperator;
+
+	// 攻撃終了後の状態遷移関数のポインタ
+	const std::function<void(void)> DefaultChangeState;
+
+	// 攻撃時のエネミー自体のコライダーを消すようにのポインター
+	const std::function<void(void)> offCollider;
+
+	// 攻撃時のエネミー自体のコライダーをつけるようにのポインター
+	const std::function<void(void)> onCollider;
+
+	// 角度を戻すポインター
+	const std::function<void(void)> resetAngle;
 
 #pragma endregion
 
+	// 攻撃座標
 	Vector3 attackPos;
 
+	// 攻撃する距離
+	Vector3 attackDistRate;
+
+	// 今の攻撃タイム
+	int nowAttackTime;
+
+	// 攻撃発生中フレーム
+	int attackCnt;
+
+	// 攻撃中かフラグ
+	bool isAttack;
 };

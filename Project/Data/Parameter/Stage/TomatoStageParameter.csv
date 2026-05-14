@@ -86,8 +86,6 @@ RockCollisionHeight29,200
 RockCollisionPos29,-1380,0,770
 RockCollisionRadius29,100
 RockCollisionHeight30,200
-RockCollisionPos30,0,0,0
-RockCollisionRadius30,0
 WallCollisionHeight1,1000
 WallCollisionPos1,1400,100,2650
 WallCollisionRadius1,900

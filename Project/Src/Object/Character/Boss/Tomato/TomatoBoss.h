@@ -11,6 +11,20 @@ public:
 	void Load(void)override;
 	void UiDraw(void)override;
 
+	// 状態遷移後1度行う初期化処理
+	std::vector<ColliderBase*> GetCollider(void)const override {
+		std::vector<ColliderBase*> ret = {};
+		// 自身のコライダーを返却用一時変数に格納
+		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
+
+		// 抱える下位クラスの返却用一時変数に格納
+		for (ActorBase* const& subObj : subObjArray) {
+			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
+		}
+		// 最終的な返却用一時変数を返却
+		return ret;
+	}
+
 private:
 
 #pragma region 定数定義
@@ -33,13 +47,6 @@ private:
 
 
 	// 当たり判定情報～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-
-	// 主に接地判定に使用する線分コライダーのローカル始点座標（モデルの中心点からのオフセット）
-	const Vector3 LINE_COLLIDER_START_POS = Vector3();
-	// 主に接地判定に使用する線分コライダーのローカル終点座標（モデルの中心点からのオフセット）
-	const Vector3 LINE_COLLIDER_END_POS = -Vector3::Yonly(MODEL_SIZE.y * 0.5f);
-	// 主に接地判定に使用する線分コライダーの絶対に当たらないおおよその距離
-	const float LINE_COLLIDER_ENOUGH_DISTANCE = LINE_COLLIDER_END_POS.Length();
 
 	// カプセルコライダーの半径
 	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate");

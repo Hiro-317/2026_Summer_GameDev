@@ -75,7 +75,7 @@ protected:
 	}
 
 	// 指定のステートへ遷移
-	void ChangeState(int nextState) {
+	void  ChangeState(int nextState) {
 		// 遷移前のステートの終了処理を呼び出す
 		stateMap.at(state)->Exit();
 
