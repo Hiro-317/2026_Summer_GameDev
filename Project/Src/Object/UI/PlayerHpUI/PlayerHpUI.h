@@ -1,5 +1,7 @@
 #pragma once
+#include <DxLib.h>
 #include <vector>
+#include <algorithm> 
 
 #include "../../../Application/Application.h"
 
@@ -36,7 +38,9 @@ private:
 	const short& playerhp;	// プレイヤーのHP
 
 	float hpRatio;	// HP割合
-	float offset;	// HPの割合に応じてHP描画を調整するためのオフセット
+	float hpBarOffset;	// HPの割合に応じてHP描画を調整するためのオフセット
+
+	float damageBarOffset;
 
 	std::vector<int> hpImages;	// HPの画像
 
