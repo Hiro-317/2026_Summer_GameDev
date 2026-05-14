@@ -14,12 +14,13 @@
 
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
+#include "../../../UI/PlayerHpUI/PlayerHpUI.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 OrangePlayer::OrangePlayer() :
-	CharacterBase(1,1,1,1,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
+	CharacterBase(100,1,1,1,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
 	subObjArray()
 {
 }
@@ -324,6 +325,9 @@ void OrangePlayer::Load(void)
 	);
 	playerStaminaUi->Load();
 
+	playerHpUi = new PlayerHpUI(GetCharacterStats());
+	playerHpUi->Load();
+
 #pragma endregion 
 }
 
@@ -345,11 +349,14 @@ void OrangePlayer::CharactorUpdate(void)
 
 	interestPos = trans.pos + INTEREST_POS;
 
-	// UIの更新処理
+	// UIの更新処理--------------------------------
 	for (PlayerSkillUI*& ui : playerSkillUi) {
 		ui->Update();
 	}
-	
+
+	playerHpUi->Update();
+	// UIの更新処理--------------------------------
+
 #ifdef _DEBUG		// クールタイム用
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
 		// 不動オブジェクトにする
@@ -405,8 +412,8 @@ void OrangePlayer::UiDraw(void)
 	}
 
 	playerStaminaUi->Draw();
+	playerHpUi->Draw();
 }
-
 
 void OrangePlayer::CharactorRelease(void)
 {
@@ -423,13 +430,36 @@ void OrangePlayer::CharactorRelease(void)
 	for (PlayerSkillUI*& ui : playerSkillUi) {
 
 		if (ui) {
+			ui->Release();
 			delete ui;
 			ui = nullptr;
 		}
 	}
+	playerSkillUi.clear();
 
-	for (PlayerSkillUI*& ui : playerSkillUi) {
-		ui->Release();
+	// スタミナUI
+	if (playerStaminaUi) {
+		playerStaminaUi->Release();
+		delete playerStaminaUi;
+		playerStaminaUi = nullptr;
 	}
-	playerStaminaUi->Release();
+
+	// HPのUI
+	if (playerHpUi) {
+		playerHpUi->Release();
+		delete playerHpUi;
+		playerHpUi = nullptr;
+	}
+}
+
+void OrangePlayer::OnCollision(const ColliderBase& collider)
+{
+	//if (state == (int)STATE::DAMAGE) { return; }
+	//if (state == (int)STATE::SKILL_3) { return; }
+
+	////characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
+	//if (collider.GetTag() == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
+	//	if (--characterStats.hp <= 0) { characterStats.hp = 0; }
+	//	ChangeState((int)STATE::DAMAGE);
+	//}
 }

@@ -30,6 +30,8 @@ public:
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
 
+	const CharacterStats& GetCharacterStats(void)const { return characterStats; }
+
 private:
 	// 初期化
 	void SubInit(void)override;
@@ -59,8 +61,6 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
 
-	// ステータス
-	CharacterStats characterStats;
 
 protected:
 	// ステート管理用変数
@@ -158,4 +158,6 @@ protected:
 		if (!isInviEffect) { DEFAULT_COLOR.clear(); }
 	}
 
+	// ステータス
+	CharacterStats characterStats;
 };

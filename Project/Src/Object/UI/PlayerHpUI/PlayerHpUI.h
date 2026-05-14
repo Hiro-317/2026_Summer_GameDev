@@ -1,44 +1,46 @@
 #pragma once
 #include <vector>
 
+#include "../../../Application/Application.h"
+
 #include "../../../Common/Vector2.h"
+#include "../../Character/CharacterStatsDefine.h"
 
 class PlayerHpUI
 {
+private:
+
+#pragma region 定数定義
+	const Vector2I HP_IMAGE_SIZE = Vector2I(354.0f, 50.0f);		// HPバーの画像サイズ
+
+	const Vector2I HP_UI_POS = Vector2I(0, App::SCREEN_SIZE_Y_HALF);	// 画像の座標
+	const int HP_UI_POS_OFFSET = 10;	// フレーム画像とHPバー画像の微妙なズレのオフセット
+
+	const short PLAYER_HP_MAX;	// HPの最大値
+#pragma endregion 定数定義
+
 public:
-	PlayerHpUI(
-		const short& player1hp,	const short PLAYER1_HP_MAX,
-		const short& player2hp,	const short PLAYER2_HP_MAX,
-		const short& player3hp,	const short PLAYER3_HP_MAX,
-		const short& player4hp,	const short PLAYER4_HP_MAX
-		);
 
-	~PlayerHpUI();
+	PlayerHpUI(const CharacterStats& stats);	// コンストラクタ
+	~PlayerHpUI();	//デストラクタ
 
-	void Update(void);	// 更新
-	void Draw(void);	// 描画
-	void Release(void);	// 解放
+	void Load(void);		// 読み込み
+	void Init(void);
+	void Update(void);		// 更新
+	void Draw(void);		// 描画
+	void Release(void);		// 解放
 
 private:
 
-	// HP画像の枚数
-	const int HP_IMAGE_MAX = 1;
+#pragma region 変数定義
+	const short& playerhp;	// プレイヤーのHP
 
-	// HPの最大値
-	const int PLAYER1_HP_MAX;
-	const int PLAYER2_HP_MAX;
-	const int PLAYER3_HP_MAX;
-	const int PLAYER4_HP_MAX;
+	float hpRatio;	// HP割合
+	float offset;	// HPの割合に応じてHP描画を調整するためのオフセット
 
-	// プレイヤーのHP
-	const int& player1hp;
-	const int& player2hp;
-	const int& player3hp;
-	const int& player4hp;
+	std::vector<int> hpImages;	// HPの画像
 
-	// HPの画像
-	std::vector<int> hpImages;
+	int hpFrameImage;	// HPの枠
+#pragma endregion 変数定義
 
-	// HPの枠
-	int hpFrameImage;
-};	
+};

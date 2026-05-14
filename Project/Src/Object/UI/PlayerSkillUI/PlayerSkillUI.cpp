@@ -46,15 +46,14 @@ void PlayerSkillUI::Draw(void)
 
 	int offset_I = (int)offset;
 	
-	// スキルのUI
+	// クールタイムが動いているときこの画像を描画する
 	DrawRectGraph(
 		pos.x - (IMAGE_SIZE.x / 2),
 		(pos.y + IMAGE_SIZE.y / 2) - offset_I,
 		0, IMAGE_SIZE.y - offset_I,
 		IMAGE_SIZE.x, offset_I,
 		images[(int)IMAGE_TYPE::COLOR_IMAGE1],
-		true,
-		false
+		true
 	);
 
 	// クールタイムがないときこの画像を描画する

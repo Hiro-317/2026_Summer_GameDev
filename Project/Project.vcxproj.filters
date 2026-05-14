@@ -35,9 +35,6 @@
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
@@ -56,6 +53,9 @@
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerHpUI\PlayerHpUI.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
+    <ClCompile Include="Src\Object\UI\UI_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -183,9 +183,6 @@
     <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
     <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
     <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
@@ -206,6 +203,10 @@
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\XZCircleCollider.h" />
     <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
+    <ClInclude Include="Src\Object\UI\PlayerHpUI\PlayerHpUI.h" />
+    <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
+    <ClInclude Include="Src\Object\UI\UI_Manager.h" />
+    <ClInclude Include="Src\Object\UI\UI_Base.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

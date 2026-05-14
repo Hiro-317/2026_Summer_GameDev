@@ -8,6 +8,7 @@ class PlayerTripleAttackCollOperator;
 
 class PlayerSkillUI;
 class PlayerStaminaUI;
+class PlayerHpUI;
 
 class OrangePlayer : public CharacterBase
 {
@@ -33,6 +34,8 @@ public:
 	}
 
 	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
+
+	void OnCollision(const ColliderBase& collider)override;
 
 private:
 
@@ -325,4 +328,5 @@ private:
 
 	std::vector<PlayerSkillUI*> playerSkillUi;
 	PlayerStaminaUI* playerStaminaUi;
+	PlayerHpUI* playerHpUi;
 };
