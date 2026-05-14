@@ -91,8 +91,6 @@ private:
 	// 現状の攻撃の段階
 	PLAYER_TRIPLE_ATTACK_STAGE attackStage;
 
-	// 攻撃そのものクールタイムのカウンター
-	int coolTimeCounter;
 
 	// 攻撃が次段に繋がるかの猶予時間のカウンター
 	int attackNextStageContinueTimeCounter;

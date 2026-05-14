@@ -56,6 +56,7 @@
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
+    <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

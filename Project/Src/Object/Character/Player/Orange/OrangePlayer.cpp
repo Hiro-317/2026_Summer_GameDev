@@ -12,7 +12,7 @@
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
 
-#include "../../../UI/PlayerUI/PlayerUI.h"
+#include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -26,8 +26,6 @@ OrangePlayer::OrangePlayer() :
 
 void OrangePlayer::Load(void)
 {
-	// UIの登録
-	playerUi.emplace_back(new PlayerUI(Vector2I(Application::SCREEN_SIZE_X_HALF + 150, Application::SCREEN_SIZE_Y_HALF + 250)));
 
 #pragma region モデル
 
@@ -121,6 +119,8 @@ void OrangePlayer::Load(void)
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
+
+
 #pragma endregion
 
 
@@ -214,9 +214,7 @@ void OrangePlayer::Load(void)
 			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
 			// 座標 / 角度
 			trans.pos, trans.angle,
-			std::bind(&PlayerUI::SetCoolTime, playerUi.at(0), std::placeholders::_1),
-			[&]() { playerUi.at(0)->StartCoolTime(); },
- 			// アニメーションの再生関数のポインタ
+			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
@@ -283,7 +281,42 @@ void OrangePlayer::Load(void)
 
 #pragma endregion
 
+#pragma region UIの登録と設定
 
+	// スキル1のUI
+	playerSkillUi.emplace_back(
+		new PlayerSkillUI(
+			SKILL1_UI_DRAW_POS,
+			dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+			SKILL_1_COOL_TIME,
+			PlayerSkillUI::SKILL_UI_COLOR::RED,
+			"SkillSlotTripleAttack"
+		)
+	);
+
+	// スキル2のUI
+	playerSkillUi.emplace_back(
+		new PlayerSkillUI(
+			SKILL2_UI_DRAW_POS,
+			dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+			SKILL_2_COOL_TIME,
+			PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+			"SkillSlotSimpleAttack"
+		)
+	);
+
+	// スキル3のUI
+	playerSkillUi.emplace_back(
+		new PlayerSkillUI(
+			SKILL3_UI_DRAW_POS,
+			dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+			SKILL_3_COOL_TIME, 
+			PlayerSkillUI::SKILL_UI_COLOR::GREEN,
+			"SkillSlotDodge"
+		)
+	);
+
+#pragma endregion 
 }
 
 void OrangePlayer::CharactorInit(void)
@@ -314,13 +347,14 @@ void OrangePlayer::CharactorUpdate(void)
 	interestPos = trans.pos + INTEREST_POS;
 
 	// UIの更新処理
-	for (PlayerUI*& ui : playerUi) {
+	for (PlayerSkillUI*& ui : playerSkillUi) {
 		ui->Update();
 	}
-
+	
+#ifdef _DEBUG		// クールタイム用
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
-		playerUi.at(0)->SetCoolTime(120);
 	}
+#endif // _DEBUG
 }
 
 void OrangePlayer::CharactorDraw(void)
@@ -359,7 +393,7 @@ void OrangePlayer::UiDraw(void)
 	}
 
 	// UIの描画
-	for (PlayerUI*& ui : playerUi) {
+	for (PlayerSkillUI*& ui : playerSkillUi) {
 		ui->Draw();
 	}
 }
@@ -377,7 +411,7 @@ void OrangePlayer::CharactorRelease(void)
 	subObjArray.clear();
 
 	// UIを解放
-	for (PlayerUI*& ui : playerUi) {
+	for (PlayerSkillUI*& ui : playerSkillUi) {
 
 		if (ui) {
 			delete ui;

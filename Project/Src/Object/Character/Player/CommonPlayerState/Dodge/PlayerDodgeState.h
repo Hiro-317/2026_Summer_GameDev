@@ -70,6 +70,4 @@ private:
 	const std::function<void(unsigned char)> SetInviCounter;
 #pragma endregion
 
-	// クールタイムカウンター
-	int coolTimeCounter;
 };

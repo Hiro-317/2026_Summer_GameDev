@@ -11,7 +11,8 @@ public:
 		const std::function<bool(void)>& isOwnState
 	) :
 		OwnChangeState(ownChangeState),
-		IsOwnState(isOwnState)
+		IsOwnState(isOwnState),
+		coolTimeCounter(0)
 	{
 	}
 	virtual ~CharacterStateBase() = default;
@@ -40,12 +41,18 @@ public:
 	// 状態関係なく呼び出す処理
 	virtual void AlwaysUpdate(void) {}
 
+	const int& GetCoolTimeCounter(void) { return coolTimeCounter; }
+
+
 protected:
 	// 自分の状態に遷移させる関数のポインタ
 	const std::function<void(void)> OwnChangeState;
 
 	// 現在自分の状態かどうかを返す関数のポインタ
 	const std::function<bool(void)> IsOwnState;
+
+	// スキルそのものクールタイムのカウンター
+	int coolTimeCounter;
 private:
 
 	// 他の状態に遷移する条件関数のポインタを格納するベクター

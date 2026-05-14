@@ -40,9 +40,6 @@ public:
 		PlayerSimpleAttackCollOperator& collOperator,
 		Vector3& pos, Vector3& angle,
 
-		const std::function<void(int)> CoolTimeInit,
-		const std::function<void(void)> StartCoolTime,
-
 		const std::function<void(void)> PlayAttackAnime,
 		const std::function<float(void)> GetAnimePlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
@@ -62,6 +59,7 @@ public:
 
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
+
 
 private:
 
@@ -94,9 +92,6 @@ private:
 	// 角度の参照
 	Vector3& angle;
 
-	const std::function<void(int)> CoolTimeInit;
-	const std::function<void(void)> StartCoolTime;
-
 	// 攻撃アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayAttackAnime;
 	// アニメーションの再生割合を取得する関数のポインタ
@@ -108,6 +103,5 @@ private:
 	const std::function<void(void)> DefaultChangeState;
 #pragma endregion
 
-	// 攻撃そのものクールタイムのカウンター
-	int coolTimeCounter;
+
 };
