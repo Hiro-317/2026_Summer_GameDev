@@ -5,7 +5,7 @@
 #include"../../Common/Collider/SphereCollider.h"
 
 TomatoBossStage::TomatoBossStage() :
-	ActorBase("Data/Parameter/Stage/TomatoStageParameter.csv")
+	ActorBase("Data/Parameter/Stage/TomatoStageParameter.csv"), sky(Vector3())
 {
 }
 
@@ -13,8 +13,12 @@ void TomatoBossStage::Load(void)
 {
 	trans.Load("Stage/TomatoBoss/TomatoBossStage");
 
+	sky.Load("Stage/Sky");
+
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;
+
+	sky.scale = Vector3(4.0f);
 
 #pragma region 基底クラスにある機能の挙動設定
 
@@ -28,6 +32,13 @@ void TomatoBossStage::Load(void)
 	
 	// 衝突判定の情報読み込み
 	ColliderLoad();
+}
+
+void TomatoBossStage::SubDraw(void)
+{
+	SetUseLighting(false);
+	sky.Draw();
+	SetUseLighting(true);
 }
 
 void TomatoBossStage::ColliderLoad()
