@@ -4,8 +4,8 @@
 
 TomatoStampCollOperator::TomatoStampCollOperator
 (
-	float ATTACK_RADIUS, int ATTACK_DURATION, const bool& isGround, const Vector3& playerPos
-)	: ATTACK_RADIUS(ATTACK_RADIUS), ATTACK_DURATION(ATTACK_DURATION), ground(isGround), playerPos(playerPos)
+	float ATTACK_RADIUS, int ATTACK_DURATION, const bool& isGround, const Vector3& playerPos, const CharacterStats stats
+)	: ATTACK_RADIUS(ATTACK_RADIUS), ATTACK_DURATION(ATTACK_DURATION), ground(isGround), playerPos(playerPos), stats(stats)
 {
 	isDrawArea = false;
 	end = false;
@@ -37,6 +37,8 @@ void TomatoStampCollOperator::Load(void)
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
+
+	CreateAttackSkill(100, &stats, COLLIDER_TAG::BOSS_ATTACK_1);
 }
 
 void TomatoStampCollOperator::Draw(void)
@@ -66,14 +68,11 @@ void TomatoStampCollOperator::SubUpdate(void)
 		trans.pos.y = 0.0f;
 		end = false;
 		attackCnt = 0;
-
-		// UŒ‚”ÍˆÍ‚Ì“–‚½‚è”»’è
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 	}
 	else {
 		if (ground) {
+			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_1).back()->SetJudgeFlg(true);
+
 			if (attackCnt < ATTACK_DURATION) {
 				attackCnt++;
 			}

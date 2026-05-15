@@ -13,7 +13,7 @@
 #include "State/Stamp/TomatoStampCollOperator.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1,1,1,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
+	CharacterBase(1000,1000,1000,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray(),
 	playerPos(playerPos)
 {
@@ -109,7 +109,7 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoStampCollOperator(350.0f, 5, isGround, playerPos));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
