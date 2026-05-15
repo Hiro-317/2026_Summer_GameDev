@@ -15,7 +15,8 @@ public:
 		float ATTACK_RADIUS,
 		int ATTACK_DURATION,
 		const bool& isGournd,
-		const Vector3& playerPos
+		const Vector3& playerPos,
+		const CharacterStats stats
 	);
 	~TomatoStampCollOperator()override = default;
 
@@ -51,6 +52,8 @@ private:
 	const bool& ground;
 
 	const Vector3& playerPos;
+
+	const CharacterStats stats;
 
 #pragma endregion
 
