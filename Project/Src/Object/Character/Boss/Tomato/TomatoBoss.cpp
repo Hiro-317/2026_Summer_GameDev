@@ -13,7 +13,7 @@
 #include "State/Stamp/TomatoStampCollOperator.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1000,1000,1000,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
+	CharacterBase(1000,500,500,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray(),
 	playerPos(playerPos)
 {
