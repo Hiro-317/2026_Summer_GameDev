@@ -50,22 +50,10 @@ void PlayerDodgeState::Enter(void)
 
 void PlayerDodgeState::Update(void)
 {
-	// アニメーションの再生割合を取得する
-	float animePlayRate = GetAnimePlayRatio();
-
 	// 無敵判定終了前移動させる
-	if (animePlayRate <= INVI_END_TIME) {
+	if (GetAnimePlayRatio() <= INVI_END_TIME) {
 		// 回避の移動処理
 		pos += Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized() * DODGE_MOVE_SPEED;
-	}
-
-	// アニメーションの再生割合に応じて処理を分ける
-	if (
-		INVI_START_TIME <= animePlayRate &&
-		animePlayRate <= INVI_END_TIME
-		)
-	{
-		SetInviCounter(1);
 	}
 
 	// アニメーションが終了していたら入力関係なく指定の通常状態に遷移させる
@@ -74,6 +62,7 @@ void PlayerDodgeState::Update(void)
 
 void PlayerDodgeState::Exit(void)
 {
+
 }
 
 void PlayerDodgeState::AlwaysUpdate(void)

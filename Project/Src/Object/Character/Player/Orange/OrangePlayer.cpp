@@ -20,7 +20,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 OrangePlayer::OrangePlayer() :
-	CharacterBase(300,200,200,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
+	CharacterBase(600,200,10000,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
 	subObjArray()
 {
 }
@@ -420,18 +420,25 @@ void OrangePlayer::CharactorRelease(void)
 
 void OrangePlayer::OnCollision(const ColliderBase& collider)
 {
+	if (GetInviCounter() > 0) { return; }
+
+	// ‰ñ”ğ’†‚Ì–³“Gˆ—
+	if(state == (int)STATE::SKILL_3){
+		switch (collider.GetTag()) {
+		case COLLIDER_TAG::BOSS_ATTACK_1:
+			SetInviCounter(150);
+			// ƒ~ƒX‚Ì•\¦
+			break;
+		}
+		return;
+	}
+
 	if (state == (int)STATE::DEATH) { return; }
-	if (state == (int)STATE::DAMAGE) { return; }
-	if (state == (int)STATE::SKILL_3) { return; }
 
 	switch (collider.GetTag()){
 	case COLLIDER_TAG::BOSS_ATTACK_1:
-		break;
-	}
-
-	if (collider.GetTag() == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
-		if ((characterStats.hp -= 10) <= 0) { characterStats.hp = 0; }
-		//characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
+		characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
 		ChangeState((int)STATE::DAMAGE);
+		break;
 	}
 }
