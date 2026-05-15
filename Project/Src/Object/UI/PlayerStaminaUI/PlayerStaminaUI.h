@@ -2,10 +2,12 @@
 #include <DxLib.h>
 #include <algorithm>
 
+#include "../UI_Base.h"
+
 #include "../../../Common/Vector2.h"
 #include "../../../Application/Application.h"
 
-class PlayerStaminaUI
+class PlayerStaminaUI : public UI_Base
 {
 private:
 
@@ -21,12 +23,20 @@ private:
 
 public:
 
+	/// <summary>
+	/// スタミナのUIのコンストラクタ
+	/// </summary>
+	/// <param name="stamina">スタミナの現在地</param>
+	/// <param name="STAMINA_MAX">スタミナの最大値</param>
 	PlayerStaminaUI(const short& stamina, const short STAMINA_MAX);
+	// デストラクタ
 	~PlayerStaminaUI();
 
-	void Load(void);	// ロード
-	void Draw(void);	// 描画
-	void Release(void);	// 解放
+	void Load(void) override;	// ロード
+	void SubInit(void)override {}
+	void SubUpdate(void)override {}
+	void SubDraw(void)override;	// 描画
+	void SubRelease(void)override;	// 解放
 
 private:
 

@@ -14,7 +14,7 @@
 
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../UI/PlayerHpUI/PlayerHpUI.h"
+#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -26,7 +26,7 @@ OrangePlayer::OrangePlayer() :
 }
 
 
-void OrangePlayer::Load(void)
+void OrangePlayer::CharacterLoad(void)
 {
 
 #pragma region モデル
@@ -121,7 +121,6 @@ void OrangePlayer::Load(void)
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
-
 
 #pragma endregion
 
@@ -285,8 +284,24 @@ void OrangePlayer::Load(void)
 
 #pragma region UIの登録と設定
 
+	// HPの登録
+	ui_ArrayIns.emplace_back(
+		new CharacterHpUI(
+			GetCharacterStats() , 
+			CharacterHpUI::CHARACTER_KINDS::PLAYER
+		)
+	);
+
+	// スタミナのUI登録
+	ui_ArrayIns.emplace_back(
+		new PlayerStaminaUI(
+			dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
+			DASH_STAMINA_MAX
+		)
+	);
+
 	// スキル1のUI
-	playerSkillUi.emplace_back(
+	ui_ArrayIns.emplace_back(
 		new PlayerSkillUI(
 			SKILL1_UI_DRAW_POS,
 			dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
@@ -297,7 +312,7 @@ void OrangePlayer::Load(void)
 	);
 
 	// スキル2のUI
-	playerSkillUi.emplace_back(
+	ui_ArrayIns.emplace_back(
 		new PlayerSkillUI(
 			SKILL2_UI_DRAW_POS,
 			dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
@@ -308,7 +323,7 @@ void OrangePlayer::Load(void)
 	);
 
 	// スキル3のUI
-	playerSkillUi.emplace_back(
+	ui_ArrayIns.emplace_back(
 		new PlayerSkillUI(
 			SKILL3_UI_DRAW_POS,
 			dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
@@ -318,15 +333,6 @@ void OrangePlayer::Load(void)
 		)
 	);
 
-	// スタミナUI
-	playerStaminaUi = new PlayerStaminaUI(
-		dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
-		DASH_STAMINA_MAX
-	);
-	playerStaminaUi->Load();
-
-	playerHpUi = new PlayerHpUI(GetCharacterStats());
-	playerHpUi->Load();
 
 #pragma endregion 
 }
@@ -348,14 +354,6 @@ void OrangePlayer::CharactorUpdate(void)
 
 
 	interestPos = trans.pos + INTEREST_POS;
-
-	// UIの更新処理--------------------------------
-	for (PlayerSkillUI*& ui : playerSkillUi) {
-		ui->Update();
-	}
-
-	playerHpUi->Update();
-	// UIの更新処理--------------------------------
 
 #ifdef _DEBUG		// クールタイム用
 	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
@@ -386,7 +384,7 @@ void OrangePlayer::CharactorAlphaDraw(void)
 	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
 
-void OrangePlayer::UiDraw(void)
+void OrangePlayer::CharacterUiDraw(void)
 {
 	if (App::GetIns().IsDrawDebug()) {
 
@@ -405,14 +403,6 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("～～～～～～('#；ω;`)");
 	}
-
-	// UIの描画
-	for (PlayerSkillUI*& ui : playerSkillUi) {
-		ui->Draw();
-	}
-
-	playerStaminaUi->Draw();
-	playerHpUi->Draw();
 }
 
 void OrangePlayer::CharactorRelease(void)
@@ -425,41 +415,22 @@ void OrangePlayer::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
-
-	// UIを解放
-	for (PlayerSkillUI*& ui : playerSkillUi) {
-
-		if (ui) {
-			ui->Release();
-			delete ui;
-			ui = nullptr;
-		}
-	}
-	playerSkillUi.clear();
-
-	// スタミナUI
-	if (playerStaminaUi) {
-		playerStaminaUi->Release();
-		delete playerStaminaUi;
-		playerStaminaUi = nullptr;
-	}
-
-	// HPのUI
-	if (playerHpUi) {
-		playerHpUi->Release();
-		delete playerHpUi;
-		playerHpUi = nullptr;
-	}
 }
 
 void OrangePlayer::OnCollision(const ColliderBase& collider)
 {
-	//if (state == (int)STATE::DAMAGE) { return; }
-	//if (state == (int)STATE::SKILL_3) { return; }
+	if (state == (int)STATE::DEATH) { return; }
+	if (state == (int)STATE::DAMAGE) { return; }
+	if (state == (int)STATE::SKILL_3) { return; }
 
-	////characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
-	//if (collider.GetTag() == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
-	//	if (--characterStats.hp <= 0) { characterStats.hp = 0; }
-	//	ChangeState((int)STATE::DAMAGE);
-	//}
+	switch (collider.GetTag()){
+	case COLLIDER_TAG::BOSS_ATTACK_1:
+		break;
+	}
+
+	if (collider.GetTag() == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
+		if ((characterStats.hp -= 10) <= 0) { characterStats.hp = 0; }
+		//characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
+		ChangeState((int)STATE::DAMAGE);
+	}
 }

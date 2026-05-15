@@ -169,10 +169,10 @@
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
-    <ClCompile Include="Src\Object\UI\PlayerHpUI\PlayerHpUI.cpp" />
+    <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
-    <ClCompile Include="Src\Object\UI\UI_Manager.cpp" />
+    <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeOutScene.cpp" />
@@ -234,11 +234,10 @@
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
-    <ClInclude Include="Src\Object\UI\PlayerHpUI\PlayerHpUI.h" />
+    <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
-    <ClInclude Include="Src\Object\UI\UI_Manager.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeOutScene.h" />

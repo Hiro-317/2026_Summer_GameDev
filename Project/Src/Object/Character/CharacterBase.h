@@ -7,6 +7,8 @@
 
 #include <map>
 
+class UI_Base;
+
 class CharacterBase : public ActorBase
 {
 public:
@@ -32,7 +34,10 @@ public:
 
 	const CharacterStats& GetCharacterStats(void)const { return characterStats; }
 
+	void Load(void)override;
+
 private:
+
 	// 初期化
 	void SubInit(void)override;
 	// 更新
@@ -40,6 +45,7 @@ private:
 	// 描画
 	void SubDraw(void)override;
 	void SubAlphaDraw(void)override;
+	void UiDraw(void)override;
 	// 解放
 	void SubRelease(void)override;
 
@@ -63,6 +69,10 @@ private:
 
 
 protected:
+
+	// UI管理用インスタンス
+	std::vector<UI_Base*> ui_ArrayIns;
+
 	// ステート管理用変数
 	int state;
 
@@ -89,10 +99,12 @@ protected:
 	}
 
 	// キャラクター固有の処理をここに追加
+	virtual void CharacterLoad(void) = 0;
 	virtual void CharactorInit(void) = 0;
 	virtual void CharactorUpdate(void) = 0;
 	virtual void CharactorDraw(void) = 0;
 	virtual void CharactorAlphaDraw(void) = 0;
+	virtual void CharacterUiDraw(void) = 0;
 	virtual void CharactorRelease(void) = 0;
 
 #pragma region アニメーションコントローラー

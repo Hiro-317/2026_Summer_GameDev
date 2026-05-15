@@ -1,5 +1,6 @@
 
 #include"CharacterBase.h"
+#include "../UI/UI_Base.h"
 
 CharacterBase::CharacterBase(
 	short HP_MAX,
@@ -46,6 +47,13 @@ CharacterBase::CharacterBase(
 {
 }
 
+void CharacterBase::Load(void)
+{
+	CharacterLoad();
+
+	for (UI_Base*& ui : ui_ArrayIns) { ui->Load(); }
+}
+
 void CharacterBase::SubInit(void)
 {
 	// モデルのカラーの初期化
@@ -53,6 +61,8 @@ void CharacterBase::SubInit(void)
 
 	// キャラクター固有の初期化
 	CharactorInit();
+
+	for (UI_Base*& ui : ui_ArrayIns) { ui->Init(); }
 }
 
 void CharacterBase::SubUpdate(void)
@@ -62,6 +72,8 @@ void CharacterBase::SubUpdate(void)
 
 	// キャラクター固有の更新
 	CharactorUpdate();
+
+	for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
 
 	// ステートの更新
 	if (stateMap.size() > 0) {
@@ -86,6 +98,13 @@ void CharacterBase::SubAlphaDraw(void)
 	CharactorAlphaDraw();
 }
 
+void CharacterBase::UiDraw(void)
+{
+	CharacterUiDraw();
+
+	for (UI_Base*& ui : ui_ArrayIns) { ui->Draw(); }
+}
+
 void CharacterBase::SubRelease(void)
 {
 	// キャラクター固有の解放
@@ -108,6 +127,16 @@ void CharacterBase::SubRelease(void)
 		delete anime;
 		anime = nullptr;
 	}
+
+	// UIの解放
+	for (UI_Base*& ui : ui_ArrayIns) {
+		if (ui) {
+			ui->Release();
+			delete ui;
+			ui = nullptr;
+		}
+	}
+	ui_ArrayIns.clear();
 }
 
 void CharacterBase::SetInviCounter(unsigned char counter)

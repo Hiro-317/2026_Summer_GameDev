@@ -51,15 +51,14 @@
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
-    <ClCompile Include="Src\Object\UI\PlayerUI\PlayerUI.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
-    <ClCompile Include="Src\Object\UI\PlayerHpUI\PlayerHpUI.cpp" />
+    <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
-    <ClCompile Include="Src\Object\UI\UI_Manager.cpp" />
+    <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -205,16 +204,14 @@
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\XZCircleCollider.h" />
-    <ClInclude Include="Src\Object\UI\PlayerUI\PlayerUI.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
     <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
-    <ClInclude Include="Src\Object\UI\PlayerHpUI\PlayerHpUI.h" />
+    <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
-    <ClInclude Include="Src\Object\UI\UI_Manager.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
   </ItemGroup>
   <ItemGroup>

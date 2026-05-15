@@ -5,10 +5,12 @@
 #include <map>
 #include <string>
 
+#include "../UI_Base.h"
+
 #include "../../../Common/Vector2.h"
 
 
-class PlayerSkillUI
+class PlayerSkillUI : public UI_Base
 {
 private:
 	const Vector2I IMAGE_SIZE = Vector2I(150, 129);
@@ -44,9 +46,11 @@ public:
 
 	~PlayerSkillUI();	// デストラクタ
 
-	void Update(void);	// 更新処理
-	void Draw(void);	// 描画処理
-	void Release(void);	// 解放処理
+	void Load(void)override {}
+	void SubInit(void) override {}
+	void SubUpdate(void) override;	// 更新処理
+	void SubDraw(void) override;	// 描画処理
+	void SubRelease(void) override;	// 解放処理
 	
 	// クールタイムのゲッター関数
 	const bool GetIsCoolTimeNow(int STATE_TAG) { return (coolTimeCounter > 0); }
@@ -66,17 +70,17 @@ private:
 	// チャージ中の色別に分けた画像
 	std::map<SKILL_UI_COLOR, std::string> chargingImagePath =
 	{
-		{ SKILL_UI_COLOR::GREEN, "Data/Image/UI/Player/Skill/SkillSlotGreenCharging.png" },
-		{ SKILL_UI_COLOR::BLUE, "Data/Image/UI/Player/Skill/SkillSlotBlueCharging.png" },
-		{ SKILL_UI_COLOR::RED, "Data/Image/UI/Player/Skill/SkillSlotRedCharging.png" }
+		{ SKILL_UI_COLOR::GREEN, "SkillSlotGreenCharging" },
+		{ SKILL_UI_COLOR::BLUE, "SkillSlotBlueCharging" },
+		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharging" }
 	};
 
 	// チャージしていない時の色別の画像
 	std::map<SKILL_UI_COLOR, std::string> chargeImagePath =
 	{
-		{ SKILL_UI_COLOR::GREEN, "Data/Image/UI/Player/Skill/SkillSlotGreenCharge.png" },
-		{ SKILL_UI_COLOR::BLUE, "Data/Image/UI/Player/Skill/SkillSlotBlueCharge.png" },
-		{ SKILL_UI_COLOR::RED, "Data/Image/UI/Player/Skill/SkillSlotRedCharge.png" }
+		{ SKILL_UI_COLOR::GREEN, "SkillSlotGreenCharge" },
+		{ SKILL_UI_COLOR::BLUE, "SkillSlotBlueCharge" },
+		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharge" }
 	};
 
 
@@ -87,7 +91,5 @@ private:
 
 	const int COOL_TIME;		// クールタイムの最大値
 	const int& coolTimeCounter;	// クールタイムカウンター用変数
-
-	int images[(int)IMAGE_TYPE::MAX];	// 画像を読み込むためのハンドル
 };
 
