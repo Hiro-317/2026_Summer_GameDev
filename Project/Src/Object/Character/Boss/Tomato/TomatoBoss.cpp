@@ -21,7 +21,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 }
 
 
-void TomatoBoss::Load(void)
+void TomatoBoss::CharacterLoad(void)
 {
 #pragma region ƒ‚ƒfƒ‹
 
@@ -194,7 +194,7 @@ void TomatoBoss::CharactorAlphaDraw(void)
 	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
 
-void TomatoBoss::UiDraw(void)
+void TomatoBoss::CharacterUiDraw(void)
 {
 	if (App::GetIns().IsDrawDebug()) {
 

@@ -1,44 +1,48 @@
-#include "PlayerHpUI.h"
+#include "CharacterHpUI.h"
 
-
-PlayerHpUI::PlayerHpUI(const CharacterStats& stats) :
+CharacterHpUI::CharacterHpUI(const CharacterStats& stats, const CHARACTER_KINDS characterKinds) :
 	playerhp(stats.hp),
 	PLAYER_HP_MAX(stats.hpMax.Value()),
+	CHARA_KINDS(characterKinds), // ここで初期化
 	hpRatio(0.0f),
 	hpBarOffset(0.0f),
 	damageBarOffset(0.0f)
 {
+
 }
 
-void PlayerHpUI::Load(void)
+void CharacterHpUI::Load(void)
 {
-	LoadUIImage("PlayerHpFrame", (int)IMAGE_KINDS::FRAME,			FILE_PATH_TYPE::HP);
-	LoadUIImage("PlayerHp",		 (int)IMAGE_KINDS::HP_GAUGE,		FILE_PATH_TYPE::HP);
-	LoadUIImage("PlayerHpLost",  (int)IMAGE_KINDS::DAMAGE_GAUGE,	FILE_PATH_TYPE::HP);
+	// 画像のロード
+	UILoadImage("PlayerHpFrame", (int)IMAGE_KINDS::FRAME,			FILE_PATH_TYPE::HP);
+	UILoadImage("PlayerHp",		 (int)IMAGE_KINDS::HP_GAUGE,		FILE_PATH_TYPE::HP);
+	UILoadImage("PlayerHpLost",  (int)IMAGE_KINDS::DAMAGE_GAUGE,	FILE_PATH_TYPE::HP);
 }
 
-void PlayerHpUI::SubUpdate()
+void CharacterHpUI::SubUpdate()
 {
 	// HPの割合によるHPバーの増減のための計算
 	hpRatio = (float)playerhp / (float)PLAYER_HP_MAX;
 	hpBarOffset = HP_IMAGE_SIZE.x * (1.0f - hpRatio);
 
 	if (damageBarOffset < hpBarOffset) {
-		damageBarOffset += 0.1f;
+		// ダメージを受けたので赤いゲージを後から減少
+		damageBarOffset += DAMAGE_GAUGE_DEC;
+		// HPを上回って減らないようにする
 		if (damageBarOffset > hpBarOffset) {
 			damageBarOffset = hpBarOffset;
 		}
 	}
 }
 
-void PlayerHpUI::SubDraw()
+void CharacterHpUI::SubDraw()
 {
 	// HPのフレーム画像描画
 	DrawGraph(HP_UI_POS.x, HP_UI_POS.y, uiImages.at((int)IMAGE_KINDS::FRAME), true);
 
 	// ダメージを受けたときの赤いゲージ
 	DrawRectGraph(
-		HP_UI_POS.x + HP_UI_POS_OFFSET,
+		HP_UI_POS.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
 		HP_UI_POS.y,
 		0, 0,
 		HP_IMAGE_SIZE.x - damageBarOffset,
@@ -49,7 +53,7 @@ void PlayerHpUI::SubDraw()
 
 	// HPバーの描画
 	DrawRectGraph(
-		HP_UI_POS.x + HP_UI_POS_OFFSET,
+		HP_UI_POS.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
 		HP_UI_POS.y,
 		0, 0,
 		HP_IMAGE_SIZE.x - hpBarOffset, HP_IMAGE_SIZE.y,
@@ -58,6 +62,6 @@ void PlayerHpUI::SubDraw()
 	);
 }
 
-void PlayerHpUI::SubRelease()
+void CharacterHpUI::SubRelease()
 {
 }

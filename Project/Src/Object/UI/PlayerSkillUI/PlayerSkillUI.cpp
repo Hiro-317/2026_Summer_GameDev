@@ -14,10 +14,10 @@ PlayerSkillUI::PlayerSkillUI(
 	coolTimeCounter(coolTimeCounter)
 {
 	// 画像の読み込み
-	LoadUIImage("SkillSlotFrame", (int)IMAGE_TYPE::FRAME, FILE_PATH_TYPE::SKILL);
-	LoadUIImage(skillImagePath, (int)IMAGE_TYPE::SKILL, FILE_PATH_TYPE::SKILL);
-	LoadUIImage(chargeImagePath.find(color)->second.c_str(), (int)IMAGE_TYPE::COLOR_IMAGE1, FILE_PATH_TYPE::SKILL);
-	LoadUIImage(chargingImagePath.find(color)->second.c_str(), (int)IMAGE_TYPE::COLOR_IMAGE2, FILE_PATH_TYPE::SKILL);
+	UILoadImage("SkillSlotFrame", (int)IMAGE_TYPE::FRAME, FILE_PATH_TYPE::SKILL);
+	UILoadImage(skillImagePath, (int)IMAGE_TYPE::SKILL, FILE_PATH_TYPE::SKILL);
+	UILoadImage(chargeImagePath.find(color)->second.c_str(), (int)IMAGE_TYPE::COLOR_IMAGE1, FILE_PATH_TYPE::SKILL);
+	UILoadImage(chargingImagePath.find(color)->second.c_str(), (int)IMAGE_TYPE::COLOR_IMAGE2, FILE_PATH_TYPE::SKILL);
 }
 
 

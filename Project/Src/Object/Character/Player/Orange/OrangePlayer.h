@@ -6,7 +6,6 @@
 
 class PlayerTripleAttackCollOperator;
 
-class UI_Base;
 
 class OrangePlayer : public CharacterBase
 {
@@ -14,8 +13,8 @@ public:
 	OrangePlayer();
 	~OrangePlayer()override = default;
 
-	void Load(void)override;
-	void UiDraw(void)override;
+	void CharacterLoad(void)override;
+	void CharacterUiDraw(void)override;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -324,6 +323,4 @@ private:
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
-	// UIŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX
-	std::vector<UI_Base*> ui_ArrayIns;
 };

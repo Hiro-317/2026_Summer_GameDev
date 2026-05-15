@@ -43,7 +43,7 @@ protected:
 	/// <param name="path">画像のパス(".png"は除く)</param>
 	/// <param name="kinds">画像をロードする配列を指定</param>
 	/// <param name="pathType">HP or スタミナ or スキル</param>
-	void LoadUIImage(const std::string& path, int kinds,  FILE_PATH_TYPE pathType)
+	void UILoadImage(const std::string& path, int kinds,  FILE_PATH_TYPE pathType)
 	{
 		int pathIndex = (int)pathType;
 		if (pathIndex < 0 || pathIndex >= (int)uiKindsPath.size()) { return; }

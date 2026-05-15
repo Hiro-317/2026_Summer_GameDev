@@ -8,8 +8,8 @@ public:
 	TomatoBoss(const Vector3& playerPos);
 	~TomatoBoss()override = default;
 
-	void Load(void)override;
-	void UiDraw(void)override;
+	void CharacterLoad(void)override;
+	void CharacterUiDraw(void)override;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {

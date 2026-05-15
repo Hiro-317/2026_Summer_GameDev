@@ -14,8 +14,7 @@
 
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../UI/PlayerHpUI/PlayerHpUI.h"
-#include "../../../UI/UI_Base.h"
+#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -27,7 +26,7 @@ OrangePlayer::OrangePlayer() :
 }
 
 
-void OrangePlayer::Load(void)
+void OrangePlayer::CharacterLoad(void)
 {
 
 #pragma region ÉÇÉfÉã
@@ -286,7 +285,12 @@ void OrangePlayer::Load(void)
 #pragma region UIÇÃìoò^Ç∆ê›íË
 
 	// HPÇÃìoò^
-	ui_ArrayIns.emplace_back(new PlayerHpUI(GetCharacterStats()));
+	ui_ArrayIns.emplace_back(
+		new CharacterHpUI(
+			GetCharacterStats() , 
+			CharacterHpUI::CHARACTER_KINDS::PLAYER
+		)
+	);
 
 	// ÉXÉ^É~ÉiÇÃUIìoò^
 	ui_ArrayIns.emplace_back(
@@ -329,7 +333,6 @@ void OrangePlayer::Load(void)
 		)
 	);
 
-	for (UI_Base*& ui : ui_ArrayIns) { ui->Load(); }
 
 #pragma endregion 
 }
@@ -343,13 +346,11 @@ void OrangePlayer::CharactorInit(void)
 	state = (int)STATE::MOVE;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
-	for (UI_Base*& ui : ui_ArrayIns) { ui->Init(); }
 }
 
 void OrangePlayer::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
-	for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
 
 
 	interestPos = trans.pos + INTEREST_POS;
@@ -383,7 +384,7 @@ void OrangePlayer::CharactorAlphaDraw(void)
 	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
 
-void OrangePlayer::UiDraw(void)
+void OrangePlayer::CharacterUiDraw(void)
 {
 	if (App::GetIns().IsDrawDebug()) {
 
@@ -402,10 +403,6 @@ void OrangePlayer::UiDraw(void)
 		debugDrwStr("ëßêÿÇÍ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("Å`Å`Å`Å`Å`Å`('#ÅGÉ÷;`)");
 	}
-
-
-	for (UI_Base*& ui : ui_ArrayIns) { ui->Draw(); }
-
 }
 
 void OrangePlayer::CharactorRelease(void)
@@ -418,27 +415,22 @@ void OrangePlayer::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
-
-	// UIÇÃâï˙
-	for (UI_Base*& ui : ui_ArrayIns) { 
-		if (ui) {
-			ui->Release();
-			delete ui;
-			ui = nullptr;
-		}
-	}
-	ui_ArrayIns.clear();
-
 }
 
 void OrangePlayer::OnCollision(const ColliderBase& collider)
 {
+	if (state == (int)STATE::DEATH) { return; }
 	if (state == (int)STATE::DAMAGE) { return; }
 	if (state == (int)STATE::SKILL_3) { return; }
 
-	//characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
+	switch (collider.GetTag()){
+	case COLLIDER_TAG::BOSS_ATTACK_1:
+		break;
+	}
+
 	if (collider.GetTag() == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
-		if (--characterStats.hp <= 0) { characterStats.hp = 0; }
+		if ((characterStats.hp -= 10) <= 0) { characterStats.hp = 0; }
+		//characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
 		ChangeState((int)STATE::DAMAGE);
 	}
 }

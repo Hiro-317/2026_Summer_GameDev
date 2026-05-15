@@ -2,7 +2,8 @@
 
 PlayerStaminaUI::PlayerStaminaUI(const short& stamina, const short STAMINA_MAX) :
 	stamina(stamina),
-	STAMINA_MAX(STAMINA_MAX)
+	STAMINA_MAX(STAMINA_MAX),
+	images()
 {
 }
 
@@ -12,6 +13,7 @@ PlayerStaminaUI::~PlayerStaminaUI()
 
 void PlayerStaminaUI::Load()
 {
+	// ‰æ‘œ‚Ìƒ[ƒh
 	LoadDivGraph(
 		"Data/Image/UI/Player/Stamina/PlayerStamina.png",
 		IMAGE_MAX,
@@ -20,6 +22,7 @@ void PlayerStaminaUI::Load()
 		images
 	);
 
+	// •`‰æˆÊ’u‚Ì‰Šú‰»
 	pos = DEFAULT_POS;
 }
 
@@ -35,6 +38,7 @@ void PlayerStaminaUI::SubDraw()
 
 void PlayerStaminaUI::SubRelease()
 {
+	// ‰æ‘œ‚Ì‰ğ•ú
 	for (int i = 0; i < IMAGE_MAX; i++) {
 		DeleteGraph(images[i]);	// ‰æ‘œ‚Ì‰ğ•ú
 	}

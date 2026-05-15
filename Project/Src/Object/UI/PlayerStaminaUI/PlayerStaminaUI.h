@@ -23,10 +23,16 @@ private:
 
 public:
 
+	/// <summary>
+	/// スタミナのUIのコンストラクタ
+	/// </summary>
+	/// <param name="stamina">スタミナの現在地</param>
+	/// <param name="STAMINA_MAX">スタミナの最大値</param>
 	PlayerStaminaUI(const short& stamina, const short STAMINA_MAX);
+	// デストラクタ
 	~PlayerStaminaUI();
 
-	void Load(void);	// ロード
+	void Load(void) override;	// ロード
 	void SubInit(void)override {}
 	void SubUpdate(void)override {}
 	void SubDraw(void)override;	// 描画
