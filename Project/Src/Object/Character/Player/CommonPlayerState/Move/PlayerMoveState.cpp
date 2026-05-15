@@ -2,20 +2,20 @@
 
 #include "../../../../../Manager/Input/KeyManager.h"
 #include "../../../../../Manager/Camera/Camera.h"
+#include "../../../../Character/CharacterStatsDefine.h"
 
 PlayerMoveState::PlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
+	float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
+	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats,
 	const std::function<void(void)>& PlayIdleAnime,
 	const std::function<void(void)>& PlayWalkAnime,
 	const std::function<void(void)>& PlayRunAnime
 ) :
 	CharacterStateBase(ownChangeState, isOwnState),
-	MOVE_SPEED(MOVE_SPEED), MOVE_SPEED_MAX(MOVE_SPEED_MAX),
 	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX), ATTENUATION(ATTENUATION),
-	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle),
+	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle), playerStats(playerStats),
 	PlayIdleAnime(PlayIdleAnime),
 	PlayWalkAnime(PlayWalkAnime),
 	PlayRunAnime(PlayRunAnime),
@@ -60,7 +60,7 @@ void PlayerMoveState::Update(void)
 	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now;
 
 	// 移動量の最大値を更新する
-	ACCEL_MAX = MOVE_SPEED_MAX * (isDash ? DASH_SPEED_RATE : 1.0f);
+	ACCEL_MAX = MOVE_SPEED_MAX(isDash);
 	// もし加速度の合計が最大値を超えていたら、その値から1フレーム分減衰した値を最大値にする
 	if (ACCEL_MAX < accelSum.Length()) { ACCEL_MAX = accelSum.Length() - ATTENUATION; }
 
@@ -74,7 +74,7 @@ void PlayerMoveState::Update(void)
 		vec.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
 
 		// 移動量を加算
-		accelSum += vec * (MOVE_SPEED * (isDash ? DASH_SPEED_RATE : 1.0f));
+		accelSum += vec * MOVE_SPEED(isDash);
 
 		// ダッシュスタミナを更新 / アニメーションを更新
 		if (isDash) {

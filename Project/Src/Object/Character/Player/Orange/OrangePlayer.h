@@ -184,6 +184,9 @@ private:
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
 	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("Skill1AttackMoveSpeed");
 
+	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
+	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameter("Skill2AttackRatePercent");
+
 	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
 
 

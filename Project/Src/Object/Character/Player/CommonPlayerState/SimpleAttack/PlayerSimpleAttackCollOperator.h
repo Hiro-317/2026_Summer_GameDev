@@ -21,7 +21,10 @@ public:
 		const Vector3& COLL_LOCAL_POS,
 
 		const Vector3& playerPos,
-		const Vector3& playerAngle
+		const Vector3& playerAngle,
+
+		const short ATTACK_RATE_PERCENT,
+		const CharacterStats& playerStats
 	);
 	~PlayerSimpleAttackCollOperator()override = default;
 
@@ -63,6 +66,8 @@ private:
 	// 攻撃判定のローカル座標
 	const Vector3 COLL_LOCAL_POS;
 
+	const short ATTACK_RATE_PERCENT;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数
@@ -71,6 +76,8 @@ private:
 	const Vector3& playerPos;
 	// プレイヤーの向き
 	const Vector3& playerAngle;
+
+	const CharacterStats& playerStats;
 
 #pragma endregion
 

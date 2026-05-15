@@ -12,8 +12,6 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="MOVE_SPEED">加算移動量</param>
-	/// <param name="MOVE_SPEED_MAX">移動量の最大値</param>
 	/// <param name="DASH_SPEED_RATE">ダッシュの移動量倍率</param>
 	/// <param name="DASH_STAMINA_MAX">ダッシュのスタミナの最大量（1フレームずつデクリメント）</param>
 	/// <param name="accelSum">移動量の参照</param>
@@ -25,8 +23,8 @@ public:
 	PlayerMoveState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		float MOVE_SPEED, float MOVE_SPEED_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle,
+		float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
+		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats,
 		const std::function<void(void)>& PlayIdleAnime,
 		const std::function<void(void)>& PlayWalkAnime,
 		const std::function<void(void)>& PlayRunAnime
@@ -56,11 +54,14 @@ private:
 
 #pragma region 定数
 
-	// 加算移動量
-	const float MOVE_SPEED;
+	const float MOVE_SPEED(bool isDash)const {
+		return (playerStats.speedPower.Value() * 0.5f) * (isDash ? DASH_SPEED_RATE : 1.0f);
+	}
 
 	// 最大移動量
-	const float MOVE_SPEED_MAX;
+	const float MOVE_SPEED_MAX(bool isDash) const {
+		return playerStats.speedPower.Value() * (isDash ? DASH_SPEED_RATE : 1.0f);
+	}
 
 	// ダッシュの移動量倍率
 	const float DASH_SPEED_RATE;
@@ -83,6 +84,8 @@ private:
 
 	// 角度の参照
 	Vector3& angle;
+
+	const CharacterStats& playerStats;
 
 	// 待機アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayIdleAnime;

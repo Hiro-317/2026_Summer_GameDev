@@ -20,7 +20,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 OrangePlayer::OrangePlayer() :
-	CharacterBase(100,1,1,1,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
+	CharacterBase(300,200,200,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
 	subObjArray()
 {
 }
@@ -115,7 +115,9 @@ void OrangePlayer::CharacterLoad(void)
 			SKILL_2_COLL_TAG,
 			SKILL_2_COLL_SIZE_TABLE,
 			SKILL_2_COLL_LOCAL_POS,
-			trans.pos, trans.angle
+			trans.pos, trans.angle,
+			SKILL_2_ATTACK_RATE_PERCENT,
+			characterStats
 		)
 	);
 
@@ -123,7 +125,6 @@ void OrangePlayer::CharacterLoad(void)
 	for (ActorBase*& c : subObjArray) { c->Load(); }
 
 #pragma endregion
-
 
 
 #pragma region 状態設定
@@ -137,9 +138,9 @@ void OrangePlayer::CharacterLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::MOVE; },
 			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
-			MOVE_SPEED, MOVE_SPEED_MAX, DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
+			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
 			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX, trans.angle,
+			accelSum, ACCEL_MAX, trans.angle, characterStats,
 			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },

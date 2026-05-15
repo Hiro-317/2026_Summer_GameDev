@@ -3,6 +3,8 @@
 #include <vector>
 #include <functional>
 
+#include "CharacterStatsDefine.h"
+
 class CharacterStateBase
 {
 public:

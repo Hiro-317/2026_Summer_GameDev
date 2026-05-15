@@ -8,7 +8,10 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 	const Vector3& COLL_LOCAL_POS,
 
 	const Vector3& playerPos,
-	const Vector3& playerAngle
+	const Vector3& playerAngle,
+
+	const short ATTACK_RATE_PERCENT,
+	const CharacterStats& playerStats
 ) :
 	ActorBase(),
 	FIND_ATTACK_TARGET_RANGE(FIND_ATTACK_TARGET_RANGE),
@@ -18,7 +21,11 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 	playerPos(playerPos), playerAngle(playerAngle),
 
 	isFindAttackTarget(false),
-	targetPos(nullptr)
+	targetPos(nullptr),
+
+	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+
+	playerStats(playerStats)
 {
 }
 
@@ -41,6 +48,8 @@ void PlayerSimpleAttackCollOperator::Load(void)
 	ColliderCreate(new SphereCollider(COLL_TAG, COLL_SIZE, COLL_SIZE, COLL_LOCAL_POS));
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
+
+	CreateAttackSkill(ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK);
 }
 
 void PlayerSimpleAttackCollOperator::OnCollision(const ColliderBase& other)
