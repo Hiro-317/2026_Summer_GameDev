@@ -1,6 +1,6 @@
 #include "Application.h"
 
-#include <DxLib.h>
+#include "../pch.h"
 
 #include "../Manager/FPS/FPS.h"
 #include "../Manager/Net/NetWorkManager.h"

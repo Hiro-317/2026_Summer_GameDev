@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DxLib.h>
+#include "../pch.h"
 
 struct Vector2;
 

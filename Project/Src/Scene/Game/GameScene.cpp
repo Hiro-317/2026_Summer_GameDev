@@ -1,7 +1,7 @@
 #include "GameScene.h"
 
-#include <DxLib.h>
 #include <cmath>
+#include "../../Utility/Utility.h"
 
 #include "../../Application/Application.h"
 
@@ -12,8 +12,6 @@
 #include "../../Manager/Font/FontManager.h"
 
 #include "../../scene/SceneManager/SceneManager.h"
-
-#include "../../Utility/Utility.h"
 
 #include "Pause/GamePauseh.h"
 

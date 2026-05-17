@@ -1,6 +1,6 @@
-#include "TomatoMove.h"
+#include "TomatoBossMoveState.h"
 
-TomatoMove::TomatoMove(
+TomatoBossMoveState::TomatoBossMoveState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
@@ -12,11 +12,11 @@ TomatoMove::TomatoMove(
 	
 }
 
-void TomatoMove::Enter(void)
+void TomatoBossMoveState::Enter(void)
 {
 }
 
-void TomatoMove::Update(void)
+void TomatoBossMoveState::Update(void)
 {
 	// âÒì]ÇÃçXêV
 	moveDir = (playerPos - pos).Normalized();
@@ -27,10 +27,10 @@ void TomatoMove::Update(void)
 	pos += moveDir * MOVE_SPEED;
 }
 
-void TomatoMove::Exit(void)
+void TomatoBossMoveState::Exit(void)
 {
 }
 
-void TomatoMove::AlwaysUpdate(void)
+void TomatoBossMoveState::AlwaysUpdate(void)
 {
 }

@@ -1,8 +1,8 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 
+#include "pch.h"
 
-#include<DxLib.h>
 #include"Application/Application.h"
 
 // NVIDIA Optimus / AMD Dual Graphics ‘Î‰ž—p

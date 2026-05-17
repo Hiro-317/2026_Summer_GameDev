@@ -1,8 +1,6 @@
 #pragma once
 #include"../SceneBase.h"
 
-#include"../../Common/Vector3.h"
-
 
 class BossSelect : public SceneBase
 {

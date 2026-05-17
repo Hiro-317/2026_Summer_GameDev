@@ -28,6 +28,7 @@
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMove.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
@@ -46,6 +47,14 @@
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
+    <ClCompile Include="Src\Manager\Net\Enet\callbacks.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\compress.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\host.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\list.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\packet.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\peer.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\protocol.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\win32.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -165,6 +174,7 @@
     </ClCompile>
     <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMove.h" />
     <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
     <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
@@ -189,6 +199,7 @@
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
+    <ClInclude Include="Src\pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

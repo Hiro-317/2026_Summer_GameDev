@@ -1,8 +1,6 @@
 #pragma once
 #include"../SceneBase.h"
 
-#include"../../Common/Vector3.h"
-
 #include "../../Manager/Net/NetWorkDefine.h"
 
 class CharaSelectOperator;

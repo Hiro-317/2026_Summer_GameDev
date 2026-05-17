@@ -1,6 +1,6 @@
 #include"FontManager.h"
 
-#include<DxLib.h>
+#include "../../pch.h"
 
 FontManager* FontManager::ins = nullptr;
 

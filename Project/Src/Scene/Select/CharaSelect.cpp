@@ -1,6 +1,5 @@
 #include "CharaSelect.h"
 		 
-#include <DxLib.h>
 #include "../../Utility/Utility.h"
 		 
 #include "../../Application/Application.h"
@@ -41,7 +40,7 @@ void CharaSelect::Init(void)
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(0, 150, -350), Vector3());
 
 	// Ú‘±ó‘Ô‰Šú‰»
-	Net::GetIns().Disconnected();
+	Net::GetIns().Disconnection();
 
 	// ƒLƒƒƒ‰‘I‘ğ‘€ìŠÇ—ƒNƒ‰ƒX‚Ì‰Šú‰»
 	for (CharaSelectOperator* ptr : charaSelectOperator) { ptr->Init(); }
@@ -77,7 +76,7 @@ void CharaSelect::Update(void)
 	// ƒzƒXƒg````````````````````````````````````````````````
 	if (Net::GetIns().IsHost()) {
 		// ƒLƒƒƒ“ƒZƒ‹
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) { Net::GetIns().CloseReceptionToCancel(); clsDx(); return; }
+		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) { Net::GetIns().Disconnection(); return; }
 
 		// ƒV[ƒ“isˆ—
 		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
@@ -93,7 +92,7 @@ void CharaSelect::Update(void)
 	// ƒNƒ‰ƒCƒAƒ“ƒg`````````````````````````````````````````````
 	else {
 		// ƒLƒƒƒ“ƒZƒ‹
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) { Net::GetIns().ConnectClientCancel(); clsDx(); return; }
+		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) { Net::GetIns().Disconnection(); return; }
 
 		// ƒVƒXƒeƒ€’Ê’m‚ğóM
 		while (MsgDataSystemInform* dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
