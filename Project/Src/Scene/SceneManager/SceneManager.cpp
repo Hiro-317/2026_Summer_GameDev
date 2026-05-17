@@ -1,7 +1,5 @@
 ﻿#include "SceneManager.h"
 
-#include <DxLib.h>
-
 #include "../../Manager/Loading/Loading.h"
 
 #include"../Title/TitleScene.h"

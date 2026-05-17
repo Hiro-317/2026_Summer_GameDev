@@ -1,6 +1,6 @@
 #include "SoundManager.h"
 
-#include<DxLib.h>
+#include "../../pch.h"
 
 #include<sstream>
 #include<fstream>

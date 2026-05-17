@@ -86,8 +86,8 @@ void Camera::ChangeModeFixedPoint(const Vector3& pos, const Vector3& angle, floa
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
 
 	// 状態遷移
 	mode = MODE::FIXED_POINT;
@@ -119,8 +119,8 @@ void Camera::ChangeModeFree(float ROT_POWER, float MOVE_POWER, const Vector3& po
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(true);
 
 	// 状態遷移
 	mode = MODE::FREE;
@@ -143,9 +143,6 @@ void Camera::ChangeModeFree(float ROT_POWER, float MOVE_POWER, const Vector3& po
 
 void Camera::FreeModeFunc(void)
 {
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
-
 #pragma region 角度 (コントローラースティック -> マウス -> ボタン の順に確認して入力があったもので回転させる)
 	// コントローラーの右スティックベクトルを代入
 	Vector3 rot = Key::GetIns().GetRightStickVec().ToVector3YX();
@@ -213,8 +210,8 @@ void Camera::ChangeModeLookAtFree(const Vector3& fixedLookAtPos, const Vector3& 
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(true);
 
 	// 状態遷移
 	mode = MODE::LOOK_AT_FREE;
@@ -324,8 +321,8 @@ void Camera::ChangeModeFollowRemote(const Vector3* folowAt, const Vector3& lookA
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(true);
 
 	// 状態遷移
 	mode = MODE::FOLLOW_REMOTE;
@@ -405,6 +402,9 @@ void Camera::ChangeModeFollowAuto(const Transform& folowAt, const Vector3* lookT
 	// 現在の情報を破棄
 	Release();
 
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
+
 	// 状態遷移
 	mode = MODE::FOLLOW_AUTO;
 
@@ -448,6 +448,9 @@ void Camera::ChangeModeFollowAuto(const Vector3* folowAt, const float* lookAtYan
 {
 	// 現在の情報を破棄
 	Release();
+
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
 
 	// 状態遷移
 	mode = MODE::FOLLOW_AUTO;

@@ -1,5 +1,6 @@
 #include "AnimationController.h"
-#include <DxLib.h>
+
+#include "../../../pch.h"
 
 AnimationController::AnimationController(int modelId) : 
 	modelId(modelId),
@@ -26,9 +27,7 @@ void AnimationController::Add(int type, float speed, const std::string path)
 void AnimationController::AddInFbx(int type, float speed, int animIndex)
 {
 	Animation animation;
-
 	animation.model = -1;
-
 	animation.animIndex = animIndex;
 
 	Add(type, speed, animation);
@@ -41,13 +40,31 @@ void AnimationController::Play(int type,bool loop)
 		return;
 	}
 	if (playType != -1) {
+		if (isDetach == -1) {
+
+			MV1DetachAnim(modelId, prevAnim.attachNo);
+		}
 		// モデルからアニメーションを外す
 		MV1DetachAnim(modelId, playAnim.attachNo);
 	}
 
 	// アニメーション種別を変更
+	prevAnim = playAnim;
 	playType = type;
 	playAnim = animations[type];
+
+	if (prevAnim.speed != 0) {
+		if (playAnim.model == -1) {
+			// モデルと同じファイルからアニメーションをアタッチする
+			prevAnim.attachNo = MV1AttachAnim(modelId, prevAnim.animIndex);
+		}
+		else {
+			int animIndex = 0;
+			prevAnim.attachNo = MV1AttachAnim(modelId, animIndex, prevAnim.model);
+		}
+		MV1SetAttachAnimTime(modelId, prevAnim.attachNo, prevAnim.step);
+	}
+
 
 	// 初期化
 	loopflg = loop;
@@ -62,10 +79,18 @@ void AnimationController::Play(int type,bool loop)
 		playAnim.attachNo = MV1AttachAnim(modelId, animIndex, playAnim.model);
 	}
 
-
 	// アニメーション総時間の取得
 	playAnim.totalTime = MV1GetAttachAnimTotalTime(modelId, playAnim.attachNo);
 
+	// ブレンド用
+	blendRate = 0.1f;
+	isDetach = -1;
+
+	if (prevAnim.speed != 0) {
+
+		MV1SetAttachAnimBlendRate(modelId, prevAnim.attachNo, 1.0f - blendRate);
+		MV1SetAttachAnimBlendRate(modelId, playAnim.attachNo, blendRate);
+	}
 }
 
 void AnimationController::Stop(void)
@@ -80,6 +105,22 @@ void AnimationController::Update(void)
 	// 再生
 	playAnim.step += playAnim.speed;
 
+	if (prevAnim.speed != 0) {
+		while (blendRate <= 1.0f) {
+			if (blendRate >= 0.9f) {
+
+				MV1SetAttachAnimBlendRate(modelId, playAnim.attachNo, 1.0f);
+				isDetach = MV1DetachAnim(modelId, prevAnim.attachNo);
+
+				break;
+			}
+			MV1SetAttachAnimBlendRate(modelId, prevAnim.attachNo, 1.0f - blendRate);
+			MV1SetAttachAnimBlendRate(modelId, playAnim.attachNo, blendRate);
+
+			break;
+		}
+		blendRate += 0.1f;
+	}
 	if (loopflg) {
 		if (playAnim.step >= playAnim.totalTime)playAnim.step = 0.0f;
 	}
@@ -108,7 +149,7 @@ void AnimationController::Release(void)
 	animations.clear();
 }
 
-const bool AnimationController::IsEnd(void) const
+bool AnimationController::IsEnd(void) const
 {
 	bool ret = false;
 
@@ -118,6 +159,19 @@ const bool AnimationController::IsEnd(void) const
 
 
 	return ret;
+}
+
+void AnimationController::SetStep(float step)
+{
+	playAnim.step = step;
+	if (loopflg) {
+		if (playAnim.step >= playAnim.totalTime)playAnim.step = 0.0f;
+	}
+	else {
+		if (playAnim.step >= playAnim.totalTime)playAnim.step = playAnim.totalTime;
+
+	}
+	MV1SetAttachAnimTime(modelId, playAnim.attachNo, playAnim.step);
 }
 
 void AnimationController::Add(int type, float speed, Animation animation)

@@ -2,6 +2,7 @@
 #include "../ActorBase.h"
 #include "../Common/AnimationController/AnimationController.h"
 #include "CharacterStateBase.h"
+#include "../../Manager/Net/NetWorkDefine.h"
 
 #include "../../Application/Application.h"
 
@@ -172,4 +173,7 @@ protected:
 
 	// ステータス
 	CharacterStats characterStats;
+	MSG_SENDER_ID operatorSenderId;
+	bool isOwnOperator;
+
 };

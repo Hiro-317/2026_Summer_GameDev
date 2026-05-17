@@ -4,7 +4,7 @@
 
 #include "../../../../../../Common/Vector3.h"
 
-class TomatoMoveState : public CharacterStateBase
+class TomatoBossMoveState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -16,14 +16,13 @@ public:
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
-	TomatoMoveState(
+	TomatoBossMoveState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Vector3& angle, const Vector3& playerPos
 	);
-
-	~TomatoMoveState()override = default;
+	~TomatoBossMoveState()override = default;
 
 	//// 自分の状態に遷移する条件関数
 	//void OwnStateConditionUpdate(void);

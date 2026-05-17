@@ -108,7 +108,7 @@ void ActorBase::AlphaDraw(void)
 	// 当たり判定のデバッグ描画
 	if (App::GetIns().IsDrawDebug()) {
 		for (ColliderBase*& c : collider) { if (c->GetJudge()) c->DrawDebug(); }
-	}
+	}	
 }
 
 void ActorBase::Release(void)

@@ -1,17 +1,17 @@
 #include "GameScene.h"
 
-#include <DxLib.h>
 #include <cmath>
+#include "../../Utility/Utility.h"
 
 #include "../../Application/Application.h"
-#include "../../scene/SceneManager/SceneManager.h"
 
+#include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Camera/Camera.h"
 #include "../../Manager/Input/KeyManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 
-#include "../../Utility/Utility.h"
+#include "../../scene/SceneManager/SceneManager.h"
 
 #include "Pause/GamePauseh.h"
 
@@ -73,7 +73,10 @@ void GameScene::Load(void)
 	// オブジェクト生成（生成の順番がそのまま(更新/描画)順）
 	//<例>ObjAdd(new Player());
 
-	ObjAdd(new OrangePlayer());
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		ObjAdd(new OrangePlayer((MSG_SENDER_ID)id));
+	}
 	ObjAdd(new TomatoBoss(ObjSerch<OrangePlayer>()->GetTrans().pos));
 	ObjAdd(new TomatoBossStage());
 
@@ -85,15 +88,22 @@ void GameScene::Init(void)
 	Key::GetIns().SetMouseFixed(true);
 
 	// オブジェクト全ての初期化処理
-	for (ActorBase*& obj : objects) { obj->Init(); }
+	for (ActorBase* obj : objects) { obj->Init(); }
 
 	// カメラ設定
-	Camera::GetIns().ChangeModeFollowRemote(&ObjSerch<OrangePlayer>()->GetTrans().pos, ObjSerch<OrangePlayer>()->GetInterestPos(), Vector3::YZonly(250,-550), Deg2Rad(4.0f));
+	Camera::GetIns().ChangeModeFollowRemote(
+		&ObjArraySerch<OrangePlayer>().at((int)Net::GetIns().GetSenderId())->GetTrans().pos,
+		ObjArraySerch<OrangePlayer>().at((int)Net::GetIns().GetSenderId())->GetInterestPos(),
+		Vector3::YZonly(250, -550), Deg2Rad(4.0f)
+	);
 	//Camera::GetIns().ChangeModeFree(Deg2Rad(5.0f), 10.0f);
 }
 
 void GameScene::Update(void)
 {
+	// オブジェクト全ての受信処理
+	for (ActorBase* obj : objects) { obj->ReceptionUpdate(); }
+
 #pragma region 画面演出
 	if (hitStop > 0) { hitStop--; return; }
 	if (shake > 0) { shake--; }
@@ -104,10 +114,13 @@ void GameScene::Update(void)
 #pragma endregion
 
 	// オブジェクト全ての更新処理
-	for (ActorBase*& obj : objects) { obj->Update(); }
+	for (ActorBase* obj : objects) { obj->Update(); }
 
 	// 当たり判定
 	collision->Check();
+
+	// オブジェクト全ての送信処理
+	for (ActorBase* obj : objects) { obj->SendUpdate(); }
 
 #pragma region 遷移判定（ポーズも含む）
 	// ポーズ判定
@@ -150,9 +163,9 @@ void GameScene::Draw(void)
 
 #pragma region 描画処理（メイン）
 	// オブジェクト全ての描画処理
-	for (ActorBase*& obj : objects) { obj->Draw(); }
+	for (ActorBase* obj : objects) { obj->Draw(); }
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	for (ActorBase*& obj : objects) { obj->AlphaDraw(); }
+	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "ゲームシーン");
@@ -173,7 +186,7 @@ void GameScene::Draw(void)
 
 #pragma region UI描画（画面演出をかけないもの）
 	// オブジェクト全てのUI描画処理
-	for (ActorBase*& obj : objects) { obj->UiDraw(); }
+	for (ActorBase* obj : objects) { obj->UiDraw(); }
 #pragma endregion
 }
 
@@ -189,7 +202,7 @@ void GameScene::Release(void)
 	}
 
 	// オブジェクト全ての解放処理
-	for (ActorBase*& obj : objects) {
+	for (ActorBase* obj : objects) {
 		if (!obj) { continue; }
 		obj->Release();
 		delete obj;

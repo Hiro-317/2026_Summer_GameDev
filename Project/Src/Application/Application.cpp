@@ -1,13 +1,14 @@
 #include "Application.h"
 
-#include <DxLib.h>
+#include "../pch.h"
 
-#include"../Manager/FPS/FPS.h"
-#include"../Manager/Camera/Camera.h"
-#include"../Manager/Input/KeyManager.h"
-#include"../Manager/Sound/SoundManager.h"
-#include"../Manager/Font/FontManager.h"
-#include"../Scene/SceneManager/SceneManager.h"
+#include "../Manager/FPS/FPS.h"
+#include "../Manager/Net/NetWorkManager.h"
+#include "../Manager/Input/KeyManager.h"
+#include "../Manager/Camera/Camera.h"
+#include "../Manager/Sound/SoundManager.h"
+#include "../Manager/Font/FontManager.h"
+#include "../Scene/SceneManager/SceneManager.h"
 
 
 Application* Application::ins = nullptr;
@@ -43,6 +44,11 @@ void Application::Init(void)
 	ChangeWindowMode(true);
 #endif // _DEBUG
 
+	// ネットワーク動作テストの為、多重起動を可能な仕様に設定しておく
+	SetDoubleStartValidFlag(true);
+
+	SetAlwaysRunFlag(true);
+
 	// DxLibの初期化
 	isInitFail = false;
 	if (DxLib_Init() == -1) { isInitFail = true; return; }
@@ -53,12 +59,15 @@ void Application::Init(void)
 	// キー制御初期化
 	SetUseDirectInputFlag(true);
 
-	// 入力管理クラスの生成 / 初期化処理
-	Key::CreateIns();
-
 	// FPS初期化
 	fps = new FPS;
 	fps->Init();
+
+	// 通信管理クラスの生成 / 初期化処理
+	Net::CreateIns();
+
+	// 入力管理クラスの生成 / 初期化処理
+	Key::CreateIns();
 
 	// カメラ
 	Camera::CreateIns();
@@ -82,8 +91,11 @@ void Application::Run(void)
 		// フレームレート上限まで経過していないなら再ループさせる
 		if (!fps->UpdateFrameRate()) { continue; }
 
+		// 通信管理クラスの更新
+		Net::GetIns().Update();
+
 		// 入力管理クラスの更新
-		KeyManager::GetIns().Update();
+		if (GetWindowActiveFlag()) { KeyManager::GetIns().Update(); }
 
 		// シーン管理更新
 		SceneManager::GetIns().Update();
@@ -134,11 +146,14 @@ void Application::Release(void)
 	// カメラ
 	Camera::DeleteIns();
 
-	// フレームレート解放
-	delete fps;
-
 	// 入力制御削除
 	Key::DeleteIns();
+
+	// 通信管理削除
+	Net::DeleteIns();
+
+	// フレームレート解放
+	delete fps;
 
 	// DxLib終了
 	if (DxLib_End() == -1) { isReleaseFail = true; }

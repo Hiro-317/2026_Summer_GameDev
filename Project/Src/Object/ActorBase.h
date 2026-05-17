@@ -16,7 +16,9 @@ public:
 
 	virtual void Load(void) = 0;
 	virtual void Init(void);
+	virtual void ReceptionUpdate(void) {}
 	virtual void Update(void);
+	virtual void SendUpdate(void) {}
 	virtual void Draw(void);
 	virtual void AlphaDraw(void);
 	virtual void UiDraw(void) {}

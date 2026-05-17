@@ -1,5 +1,7 @@
 #pragma once
-#include <DxLib.h>
+
+#include "../../../pch.h"
+
 #include <vector>
 #include <algorithm> 
 
