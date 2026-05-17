@@ -1,7 +1,5 @@
 #pragma once
 
-#include<vector>
-
 #include"../SceneBase.h"
 
 class ClearScene : public SceneBase

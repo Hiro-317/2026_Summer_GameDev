@@ -1,5 +1,5 @@
 #pragma once
-#include <DxLib.h>
+#include "../../../pch.h"
 #include <algorithm>
 
 #include "../UI_Base.h"

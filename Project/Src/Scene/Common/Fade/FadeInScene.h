@@ -1,10 +1,11 @@
 #pragma once
 
+#include"../../../Utility/Utility.h"
+
 #include<memory>
 
 #include"../../SceneBase.h"
 
-#include"../../../Utility/Utility.h"
 
 class FadeInScene : public SceneBase
 {

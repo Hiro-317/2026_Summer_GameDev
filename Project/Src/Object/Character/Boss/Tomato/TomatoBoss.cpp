@@ -8,7 +8,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
-#include "State/Move/TomatoMoveState.h"
+#include "State/Move/TomatoBossMoveState.h"
 #include "State/Stamp/TomatoStampState.h"
 #include "State/Stamp/TomatoStampCollOperator.h"
 
@@ -120,7 +120,7 @@ void TomatoBoss::CharacterLoad(void)
 
 	AddState(
 		static_cast<int>(STATE::MOVE),
-		new TomatoMoveState(
+		new TomatoBossMoveState(
 			// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
 			[&]() { state = static_cast<int>(STATE::MOVE); },
 			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”

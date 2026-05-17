@@ -1,11 +1,13 @@
 #pragma once
+#include "../pch.h"
+
 #include <string>
 #include <vector>
 
 #include <fstream>
 #include <sstream>
 
-#include <DxLib.h>
+
 #include "../Common/Vector2.h"
 #include "../Common/Vector3.h"
 

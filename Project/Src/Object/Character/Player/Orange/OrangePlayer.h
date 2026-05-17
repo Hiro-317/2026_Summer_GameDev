@@ -10,11 +10,14 @@ class PlayerTripleAttackCollOperator;
 class OrangePlayer : public CharacterBase
 {
 public:
-	OrangePlayer();
+	OrangePlayer(MSG_SENDER_ID operatorSenderId);
 	~OrangePlayer()override = default;
 
 	void CharacterLoad(void)override;
 	void CharacterUiDraw(void)override;
+
+	void ReceptionUpdate(void)override;
+	void SendUpdate(void)override;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -35,7 +38,6 @@ public:
 	void OnCollision(const ColliderBase& collider)override;
 
 private:
-
 
 #pragma region ’è”’è‹`
 

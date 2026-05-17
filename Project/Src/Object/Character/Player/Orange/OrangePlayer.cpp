@@ -2,6 +2,7 @@
 
 #include "../../../../Application/Application.h"
 
+#include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../Manager/Font/FontManager.h"
 #include "../../../../Manager/Camera/Camera.h"
 
@@ -19,10 +20,12 @@
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 
-OrangePlayer::OrangePlayer() :
+OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 	CharacterBase(300,200,200,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
 	subObjArray()
 {
+	this->operatorSenderId = operatorSenderId;
+	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
 }
 
 
@@ -428,10 +431,41 @@ void OrangePlayer::OnCollision(const ColliderBase& collider)
 	case COLLIDER_TAG::BOSS_ATTACK_1:
 		break;
 	}
-
 	if (collider.GetTag() == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		if ((characterStats.hp -= 10) <= 0) { characterStats.hp = 0; }
 		//characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
 		ChangeState((int)STATE::DAMAGE);
+	}
+
+}
+
+void OrangePlayer::ReceptionUpdate(void)
+{
+	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
+		MsgDataPlayerTrans* playerTransDataPtr = dynamic_cast<MsgDataPlayerTrans*>(dataPtr);
+		// 自分のキャラ（操作対象）の場合
+		if (isOwnOperator) {
+			// ホストから送られた座標と今の自分の座標の距離を測る
+			float diff = (trans.pos, playerTransDataPtr->pos).Length();
+
+			// 誤差が小さいなら無視
+			if (diff > 0.5f) {
+				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
+				trans.pos = trans.pos * 0.9f + playerTransDataPtr->pos * 0.1f;
+			}
+		}
+		// 他人のキャラなら、そのまま同期
+		else { trans.pos = playerTransDataPtr->pos; }
+
+		// 角度を同期
+		trans.angle = playerTransDataPtr->angle;
+		delete dataPtr;
+	}
+}
+
+void OrangePlayer::SendUpdate(void)
+{
+	if (Net::GetIns().IsHost() || isOwnOperator) {
+		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
 	}
 }

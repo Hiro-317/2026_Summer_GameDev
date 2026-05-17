@@ -1,7 +1,7 @@
 ﻿#include"KeyManager.h"
 
-#include"../../Application/Application.h"
 #include"../../Utility/Utility.h"
+#include"../../Application/Application.h"
 
 KeyManager* KeyManager::ins = nullptr;
 
@@ -169,6 +169,10 @@ void KeyManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::DEBUG_RELOAD, KEY_INPUT_MINUS);
 
 	SET_KEYBOARD(KEY_TYPE::TO_DAMAGE, KEY_INPUT_P);
+
+	SET_KEYBOARD(KEY_TYPE::DEBUG_HOST_START, KEY_INPUT_1);
+
+	SET_KEYBOARD(KEY_TYPE::DEBUG_CLIENT_START, KEY_INPUT_2);
 #pragma endregion
 
 	// キーボードによるテキスト入力管理クラスの生成
@@ -349,4 +353,5 @@ void KeyManager::SetMouseFixed(bool fixed)
 {
 	mouseFixed = fixed;
 	SetMouseDispFlag(!fixed);
+	if (mouseFixed) { mouseInfo.prev = mouseInfo.now = { Application::SCREEN_SIZE_X_HALF,Application::SCREEN_SIZE_Y_HALF }; }
 }

@@ -20,7 +20,10 @@ CharacterBase::CharacterBase(
 	anime(nullptr),
 
 	inviCounter(0),
-	isInviEffect(false)
+	isInviEffect(false),
+
+	operatorSenderId(MSG_SENDER_ID::None),
+	isOwnOperator(false)
 {
 }
 
@@ -43,7 +46,10 @@ CharacterBase::CharacterBase(
 	inviCounter(0),
 	isInviEffect(false),
 
-	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER)
+	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER),
+
+	operatorSenderId(MSG_SENDER_ID::None),
+	isOwnOperator(false)
 {
 }
 
@@ -67,6 +73,8 @@ void CharacterBase::SubInit(void)
 
 void CharacterBase::SubUpdate(void)
 {
+	if (!isOwnOperator) { return; }
+
 	// 無敵カウンターの更新
 	Invi();
 
