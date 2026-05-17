@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../pch.h"
+
 #include "../../Common/Vector3.h"
 
 #include "../Input/KeyManager.h"
@@ -9,6 +11,9 @@ enum class MSG_DATA_TYPE
 {
 	// 未設定
 	None = -1,
+
+	// <ホスト/クライアント>接続に関するシステムイベント（接続完了、切断など）
+	ConnectInform,
 
 	// <ホスト>ID
 	SenderId,
@@ -31,13 +36,29 @@ enum class MSG_DATA_TYPE
 	Max
 };
 
+// 送信チャンネル
+enum class MSG_DATA_CHANNEL {
+	None = -1,  // 未設定
+
+	Reliable,   // 確実に届ける（順番も保証）
+	Unreliable, // 届けることを保証しない（順番も保証しない）
+
+    Max
+};
+
+// 送信チャンネルごとの送信保証フラグ
+static constexpr enet_uint8 CHANNEL_PACKET_FLAG[(int)MSG_DATA_CHANNEL::Max] = {
+    ENET_PACKET_FLAG_RELIABLE,
+    0,
+};
+
 // ID
 enum class MSG_SENDER_ID { None = -1, P1, P2, P3, P4, Max };
 
 // 接続情報構造体
-struct ConnectInfo { int handle; MSG_SENDER_ID senderId; };
+struct ConnectInfo { ENetPeer* peer; MSG_SENDER_ID senderId; };
 
-// 接続状況構造体
+// 接続状況
 struct ConnectStatus {
 
 private:
@@ -110,13 +131,22 @@ public:
         aliveMask &= ~(1 << (int)id);
     }
 
-    // 復帰（参加状態はそのまま、生存をON）
-    bool RecoverMember(MSG_SENDER_ID id) {
-        if (id <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= id) { return false; }
+    // <復帰>「参加状態がON」「生存状態がOFF」の枠を探して、あれば復帰させる（どのIDとして復帰したかを返す）
+    MSG_SENDER_ID RecoverMember(void) {
+		// 参加状態がONで、生存状態がOFFの最初の枠を探す（P1から順番に）
+        for (int i = 0; i < (int)MSG_SENDER_ID::Max; i++) {
+            // 参加状態を見る
+            if (!IsEntry((MSG_SENDER_ID)i)) { continue; }
+            // 生存状態を見る
+            if (IsAlive((MSG_SENDER_ID)i)) { continue; }
 
-        // entryMaskが立っている場合のみ復帰を許可する安全策
-        if (entryMask & (1 << (int)id)) { aliveMask |= (1 << (int)id); return true; }
-        return false;
+            // 条件を満たす最初の枠が見つかったら、そのIDを復帰させる
+            AddMember((MSG_SENDER_ID)i);
+            // 復帰させたIDを返す
+            return (MSG_SENDER_ID)i;
+        }
+		// 条件を満たす枠がない場合
+        return MSG_SENDER_ID::None;
     }
 
     // リセット（ホストだけの状態にする）
@@ -139,22 +169,59 @@ struct MsgDataHeader
     }
 };
 
+// <ホスト/クライアント>接続に関するシステムイベント送信構造体
+struct MsgDataConnectInform
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::ConnectInform;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // 接続イベント列挙型定義
+    enum class INFORM_TYPE
+    {
+        None = -1,
+        CloseReceptionToConnected,      // <ホスト>接続待ち終了（接続人数確定）
+    };
+
+	// 接続イベントの内容
+    INFORM_TYPE inform;
+
+    MsgDataConnectInform(INFORM_TYPE inform) :
+        header(DATA_TYPE),
+        inform(inform)
+    {
+    }
+    MsgDataConnectInform(void) :
+        header(DATA_TYPE),
+        inform(INFORM_TYPE::None)
+    {
+    }
+};
+
 // <ホスト>ID送信構造体
 struct MsgDataSenderId
 {
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::SenderId;
 
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
     MsgDataHeader header;
     MSG_SENDER_ID senderId;
 
     MsgDataSenderId(MSG_SENDER_ID senderId) :
-        header(MSG_DATA_TYPE::SenderId),
+        header(DATA_TYPE),
         senderId(senderId)
     {
     }
     MsgDataSenderId(void) :
-        header(MSG_DATA_TYPE::SenderId),
+        header(DATA_TYPE),
         senderId(MSG_SENDER_ID::None)
     {
     }
@@ -166,17 +233,21 @@ struct MsgDataConnectStatus
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::ConnectStatus;
 
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
 
     ConnectStatus connectStatus;
 
     MsgDataConnectStatus(ConnectStatus connectStatus) :
-        header(MSG_DATA_TYPE::ConnectStatus),
+        header(DATA_TYPE),
         connectStatus(connectStatus)
     {
     }
     MsgDataConnectStatus(void) :
-        header(MSG_DATA_TYPE::ConnectStatus),
+        header(DATA_TYPE),
         connectStatus()
     {
     }
@@ -188,7 +259,10 @@ struct MsgDataSystemInform
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::SystemInform;
 
-    // ヘッダー
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
 
     // システムイベント列挙型定義
@@ -196,18 +270,19 @@ struct MsgDataSystemInform
     {
         None = -1,
 
+		// 接続完了（ホストが接続待ちを終了して、接続人数が確定した）
+		ConnectComplete,
+
         // タイトルシーンへ遷移
         ChangeSceneTitle,
         // ゲームシーンへ遷移
         ChangeSceneGame,
-
         // ゲームポーズ
         GamePause,
         // ゲームポーズからゲームへ戻す
         GamePauseEnd,
         // ゲームポーズ中の操作、選択肢の切り替え
         GamePauseChoicesSwitch,
-
         // クリアシーンへ遷移
         ChangeSceneClear,
 
@@ -216,12 +291,12 @@ struct MsgDataSystemInform
     INFORM_TYPE inform;
 
     MsgDataSystemInform(INFORM_TYPE inform) :
-        header(MSG_DATA_TYPE::SystemInform),
+        header(DATA_TYPE),
         inform(inform)
     {
     }
     MsgDataSystemInform(void) :
-        header(MSG_DATA_TYPE::SystemInform),
+        header(DATA_TYPE),
         inform(INFORM_TYPE::None)
     {
     }
@@ -233,22 +308,22 @@ struct MsgDataPlayerTrans
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerTrans;
 
-    // ヘッダー
-    MsgDataHeader header;
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
 
-    // 座標
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
     Vector3 pos;
-    // 角度
     Vector3 angle;
 
     MsgDataPlayerTrans(const Vector3& pos, const Vector3& angle) :
-        header(MSG_DATA_TYPE::PlayerTrans),
+        header(DATA_TYPE),
         pos(pos),
         angle(angle)
     {
     }
     MsgDataPlayerTrans(void) :
-        header(MSG_DATA_TYPE::PlayerTrans),
+        header(DATA_TYPE),
         pos(),
         angle()
     {
@@ -260,6 +335,9 @@ struct MsgDataPlayerAnimeStep
 {
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerAnimeStep;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
 
     // ヘッダー
     MsgDataHeader header;
@@ -285,19 +363,22 @@ struct MsgDataPlayerInput
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerInput;
 
-    // ヘッダー
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
     KEY_TYPE type;
     Key::KEY_INFO key;
 
     MsgDataPlayerInput(KEY_TYPE type, const Key::KEY_INFO& key) :
-        header(MSG_DATA_TYPE::PlayerInput),
+        header(DATA_TYPE),
         type(type),
         key(key)
     {
     }
     MsgDataPlayerInput(void) :
-        header(MSG_DATA_TYPE::PlayerInput),
+        header(DATA_TYPE),
         type(),
         key()
     {
@@ -310,19 +391,22 @@ struct MsgDataPlayerDamage
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerDamage;
 
-    // ヘッダー
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
     int damage;
     Vector3 pos;
 
     MsgDataPlayerDamage(int damage, const Vector3& pos) :
-        header(MSG_DATA_TYPE::PlayerDamage),
+        header(DATA_TYPE),
         damage(damage),
         pos(pos)
     {
     }
     MsgDataPlayerDamage(void) :
-        header(MSG_DATA_TYPE::PlayerDamage),
+        header(DATA_TYPE),
         damage(),
         pos()
     {

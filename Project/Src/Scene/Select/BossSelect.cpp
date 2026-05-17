@@ -1,6 +1,5 @@
 #include"BossSelect.h"
 
-#include<DxLib.h>
 #include"../../Utility/Utility.h"
 
 #include"../../Application/Application.h"

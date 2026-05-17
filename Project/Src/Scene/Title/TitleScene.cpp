@@ -1,6 +1,5 @@
 #include"TitleScene.h"
 
-#include<DxLib.h>
 #include"../../Utility/Utility.h"
 
 #include"../../Application/Application.h"
@@ -31,7 +30,7 @@ void TitleScene::Init(void)
 	// ƒJƒƒ‰‚Ì‰Šú‰»
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
 
-	Net::GetIns().Disconnected();
+	Net::GetIns().Disconnection();
 }
 void TitleScene::Update(void)
 {

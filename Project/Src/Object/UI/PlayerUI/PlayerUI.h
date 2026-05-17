@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DxLib.h>
+#include "../../../pch.h"
 #include <vector>
 
 #include "../../../Common/Vector2.h"

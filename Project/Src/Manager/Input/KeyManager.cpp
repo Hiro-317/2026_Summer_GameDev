@@ -1,7 +1,7 @@
 ﻿#include"KeyManager.h"
 
-#include"../../Application/Application.h"
 #include"../../Utility/Utility.h"
+#include"../../Application/Application.h"
 
 KeyManager* KeyManager::ins = nullptr;
 

@@ -1,5 +1,6 @@
 #include "AnimationController.h"
-#include <DxLib.h>
+
+#include "../../../pch.h"
 
 AnimationController::AnimationController(int modelId) : 
 	modelId(modelId),

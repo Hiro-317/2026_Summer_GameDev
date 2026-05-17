@@ -52,7 +52,7 @@ void CharaSelectPreviewBase::ReceptionUpdate(void)
 				// 誤差が小さいなら無視
 				if (diff > 0.5f) {
 					// 誤差が大きい場合、少しずつホストから送られた数値に寄せる（補間）
-					anime->SetStep(anime->GetStep() * 0.99999f + dataPtr->animeStep * 0.00001f);
+					anime->SetStep(anime->GetStep() * 0.9f + dataPtr->animeStep * 0.1f);
 				}
 			}
 			// 他人のキャラなら、そのまま同期
