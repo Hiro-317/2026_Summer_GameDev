@@ -134,6 +134,7 @@ private:
 		NONE = -1,
 		
 		MOVE,
+		TACKLE,
 		STAMP,
 
 		MAX

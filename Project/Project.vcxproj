@@ -157,6 +157,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
@@ -208,6 +209,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.h" />
     <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
     <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />

@@ -9,15 +9,16 @@
 #include "../../../Common/Collider/XZCircleCollider.h"
 
 #include "State/Move/TomatoBossMoveState.h"
+#include "State/Tackle/TomatoBossTackleState.h"
 #include "State/Stamp/TomatoStampState.h"
 #include "State/Stamp/TomatoStampCollOperator.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1000,1000,1000,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
+	CharacterBase(1000,500,500,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray(),
 	playerPos(playerPos)
 {
-	state = (int)STATE::STAMP;
+	state = (int)STATE::TACKLE;
 	
 	isOwnOperator = true;
 }
@@ -134,6 +135,19 @@ void TomatoBoss::CharacterLoad(void)
 			)
 	);
 	AddState(
+		static_cast<int>(STATE::TACKLE),
+		new TomatoBossTackleState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::TACKLE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::TACKLE); },
+			// 移動量と回転量
+			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos, trans.angle, playerPos
+			)
+	);
+	AddState(
 		static_cast<int>(STATE::STAMP),
 		new TomatoStampState(
 			// 自分の状態に遷移する関数
@@ -174,16 +188,6 @@ void TomatoBoss::CharactorInit(void)
 void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
-	if (state == (int)STATE::MOVE) {
-
-		static int i = 0;
-		i++;
-		if (i > 5) {
-			ChangeState((int)STATE::STAMP);
-			state = (int)STATE::STAMP;
-
-		}
-	}
 }
 
 void TomatoBoss::CharactorDraw(void)
