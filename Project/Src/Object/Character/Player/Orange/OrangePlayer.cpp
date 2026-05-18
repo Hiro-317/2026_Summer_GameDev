@@ -21,8 +21,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
-	CharacterBase(600,200,10000,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv"),
-	subObjArray()
+	PlayerBase(600,200,10000,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv")
 {
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
@@ -75,7 +74,8 @@ void OrangePlayer::CharacterLoad(void)
 	// 押し出す力の大きさを設定する
 	SetPushWeight(COLLISION_PUSH_WEIGHT);
 
-	SetInviEffectFlg(true);
+	// 無敵中に赤点滅を表示しない
+	SetInviEffectFlg(false);
 
 #pragma endregion
 
@@ -341,6 +341,11 @@ void OrangePlayer::CharacterLoad(void)
 #pragma endregion 
 }
 
+
+void OrangePlayer::PlayerLoad(void)
+{
+}
+
 void OrangePlayer::CharactorInit(void)
 {
 	// 位置を初期位置にする
@@ -359,8 +364,12 @@ void OrangePlayer::CharactorUpdate(void)
 
 	interestPos = trans.pos + INTEREST_POS;
 
+	if (characterStats.hp <= 0) {
+		//ChangeState((int)STATE::DEATH);
+	}
+
 #ifdef _DEBUG		// クールタイム用
-	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+	if (state == (int)STATE::DEATH) {
 		// 不動オブジェクトにする
 		SetDynamicFlg(false); 
 		
@@ -383,42 +392,10 @@ void OrangePlayer::CharactorDraw(void)
 	SetUseLighting(true);
 }
 
-void OrangePlayer::CharactorAlphaDraw(void)
+
+void OrangePlayer::PlayerUiDraw()
 {
-	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
-}
 
-void OrangePlayer::CharacterUiDraw(void)
-{
-	if (App::GetIns().IsDrawDebug()) {
-
-		// 1行ずつ描画するためのラムダ式（デバッグ用）
-		int yPos = 150; const int FONT_SIZE = 20;
-		auto debugDrwStr = [&](std::string str)->void {
-			DrawStringToHandle(0, yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
-			yPos += FONT_SIZE;
-			};
-
-		// 加速度をデバッグ表示
-		debugDrwStr("プレイヤー～～～～～～");
-		debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));	
-		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
-		debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
-		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
-		debugDrwStr("～～～～～～('#；ω;`)");
-	}
-}
-
-void OrangePlayer::CharactorRelease(void)
-{
-	for (ActorBase*& c : subObjArray) {
-		if (c) {
-			c->Release();
-			delete c;
-			c = nullptr;
-		}
-	}
-	subObjArray.clear();
 }
 
 void OrangePlayer::OnCollision(const ColliderBase& collider)
@@ -450,23 +427,22 @@ void OrangePlayer::OnCollision(const ColliderBase& collider)
 void OrangePlayer::ReceptionUpdate(void)
 {
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
-		MsgDataPlayerTrans* playerTransDataPtr = dynamic_cast<MsgDataPlayerTrans*>(dataPtr);
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
 			// ホストから送られた座標と今の自分の座標の距離を測る
-			float diff = (trans.pos, playerTransDataPtr->pos).Length();
+			float diff = (trans.pos, dataPtr->pos).Length();
 
 			// 誤差が小さいなら無視
 			if (diff > 0.5f) {
 				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
-				trans.pos = trans.pos * 0.9f + playerTransDataPtr->pos * 0.1f;
+				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
 			}
 		}
 		// 他人のキャラなら、そのまま同期
-		else { trans.pos = playerTransDataPtr->pos; }
+		else { trans.pos = dataPtr->pos; }
 
 		// 角度を同期
-		trans.angle = playerTransDataPtr->angle;
+		trans.angle = dataPtr->angle;
 		delete dataPtr;
 	}
 }
