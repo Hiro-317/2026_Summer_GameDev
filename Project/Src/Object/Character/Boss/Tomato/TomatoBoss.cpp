@@ -169,7 +169,7 @@ void TomatoBoss::CharacterLoad(void)
 
 		)
 	);
-
+	
 #pragma endregion
 }
 
