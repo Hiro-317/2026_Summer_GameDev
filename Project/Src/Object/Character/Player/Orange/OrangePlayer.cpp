@@ -17,33 +17,20 @@
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
-#include "../../../Common/Collider/LineCollider.h"
-#include "../../../Common/Collider/CapsuleCollider.h"
+
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(600,200,10000,10,"Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv")
+	PlayerBase(600, 200, 10000, 10, "Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv", "Orange/OrangeModel")
 {
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
 }
 
 
-void OrangePlayer::CharacterLoad(void)
+void OrangePlayer::PlayerLoad(void)
 {
 
 #pragma region モデル
-
-	// モデルを読み込む
-	trans.Load("Charactor/Orange/OrangePlayer");
-
-	// モデルのスケールを設定
-	trans.scale = MODEL_SCALE;
-
-	// モデルの中心点のズレ
-	trans.centerDiff = MODEL_CENTER_DIFF;
-
-	// 角度のズレ(ローカル回転)
-	trans.localAngle = MODEL_LOCAL_ROT;
 
 	// アニメーション～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
@@ -58,45 +45,6 @@ void OrangePlayer::CharacterLoad(void)
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 #pragma endregion
-
-
-#pragma region 基底クラスにある機能の挙動設定
-
-	// 動的オブジェクトとしての挙動を有効にする
-	SetDynamicFlg(true);
-
-	// 重力を有効にする
-	SetGravityFlg(true);
-
-	// 衝突時の押し出しを有効にする
-	SetPushFlg(true);
-
-	// 押し出す力の大きさを設定する
-	SetPushWeight(COLLISION_PUSH_WEIGHT);
-
-	// 無敵中に赤点滅を表示しない
-	SetInviEffectFlg(false);
-
-#pragma endregion
-
-
-#pragma region 当たり判定情報設定
-
-	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
-
-	// 当たり判定を生成する（カプセルコライダー）
-	ColliderCreate(
-		new CapsuleCollider(
-			COLLIDER_TAG::PLAYER,
-			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
-		)
-	);
-
-#pragma endregion
-
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
@@ -124,9 +72,6 @@ void OrangePlayer::CharacterLoad(void)
 		)
 	);
 
-	// まとめて読み込み処理
-	for (ActorBase*& c : subObjArray) { c->Load(); }
-
 #pragma endregion
 
 
@@ -150,7 +95,6 @@ void OrangePlayer::CharacterLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
 		)
 	);
-
 
 	// 三弾攻撃状態用のコンテキスト構造体を定義して設定～～～～～～～～～～～
 	PlayerTripleAttackStateContext stateSkill1Context;
@@ -240,32 +184,46 @@ void OrangePlayer::CharacterLoad(void)
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
 			// 座標 / 角度
 			trans.pos,trans.angle,
+			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
-			[&]() { return GetAnimeRatio(); },
-			[&]() { return IsAnimeEnd(); },
-			[&]() { state = (int)STATE::MOVE; },
-			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1)
+			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+			// 無敵時間のセット関数
+			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; }
 		)
 	);
 
 	AddState(
 		(int)STATE::DAMAGE,
 		new PlayerDamageState(
+			// 自分の状態に関する関数
 			[&]() { state = (int)STATE::DAMAGE; },
+			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DAMAGE; },
+			// 定数（ダメージを受けた時の無敵時間）
 			DAMAGE_INVI_TIME,
+			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
+			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
+			// 無敵時間のセット関数
 			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { state = (int)STATE::MOVE; }
 		)
 	);
 
+	// 死亡状態を追加する
 	AddState(
 		(int)STATE::DEATH,
 		new PlayerDeathState(
+			// 自分の状態に関数関数
 			[&]() { state = (int)STATE::DEATH; },
+			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DEATH; },
+			// 座標 / 角度
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
@@ -341,88 +299,6 @@ void OrangePlayer::CharacterLoad(void)
 #pragma endregion 
 }
 
-
-void OrangePlayer::PlayerLoad(void)
-{
-}
-
-void OrangePlayer::CharactorInit(void)
-{
-	// 位置を初期位置にする
-	trans.pos = INIT_POS;
-
-	// 初期状態を移動状態にする
-	state = (int)STATE::MOVE;
-
-	for (ActorBase*& c : subObjArray) { c->Init(); }
-}
-
-void OrangePlayer::CharactorUpdate(void)
-{
-	for (ActorBase*& c : subObjArray) { c->Update(); }
-
-
-	interestPos = trans.pos + INTEREST_POS;
-
-	if (characterStats.hp <= 0) {
-		//ChangeState((int)STATE::DEATH);
-	}
-
-#ifdef _DEBUG		// クールタイム用
-	if (state == (int)STATE::DEATH) {
-		// 不動オブジェクトにする
-		SetDynamicFlg(false); 
-		
-		// カメラを固定する
-		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250,-550), Deg2Rad(30));
-	
-		// 死亡状態に遷移する
-		ChangeState((int)STATE::DEATH);
-	}
-#endif // _DEBUG
-}
-
-void OrangePlayer::CharactorDraw(void)
-{
-	for (ActorBase*& c : subObjArray) { c->Draw(); }
-
-	// プレイヤーの頭(仮)
-	SetUseLighting(false);
-	DrawSphere3D(MV1GetFramePosition(trans.model, 14), 40, 200, 0xf79123, 0x000000, true);
-	SetUseLighting(true);
-}
-
-
-void OrangePlayer::PlayerUiDraw()
-{
-
-}
-
-void OrangePlayer::OnCollision(const ColliderBase& collider)
-{
-	if (GetInviCounter() > 0) { return; }
-
-	// 回避中の無敵処理
-	if(state == (int)STATE::SKILL_3){
-		switch (collider.GetTag()) {
-		case COLLIDER_TAG::BOSS_ATTACK_1:
-			SetInviCounter(150);
-			// ミスの表示
-			break;
-		}
-		return;
-	}
-
-	if (state == (int)STATE::DEATH) { return; }
-
-	switch (collider.GetTag()){
-	case COLLIDER_TAG::BOSS_ATTACK_1:
-		characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
-		ChangeState((int)STATE::DAMAGE);
-		break;
-	}
-
-}
 
 void OrangePlayer::ReceptionUpdate(void)
 {

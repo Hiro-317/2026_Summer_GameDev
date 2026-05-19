@@ -16,7 +16,7 @@ void CharacterHpUI::Load(void)
 	// 画像のロード
 	UILoadImage("PlayerHpFrame", (int)IMAGE_KINDS::FRAME,			FILE_PATH_TYPE::HP);
 	UILoadImage("PlayerHp",		 (int)IMAGE_KINDS::HP_GAUGE,		FILE_PATH_TYPE::HP);
-	UILoadImage("PlayerHpLost",  (int)IMAGE_KINDS::DAMAGE_GAUGE,	FILE_PATH_TYPE::HP);
+	UILoadImage("PlayerHpBar",   (int)IMAGE_KINDS::DAMAGE_GAUGE,	FILE_PATH_TYPE::HP);
 }
 
 void CharacterHpUI::SubUpdate()
@@ -37,13 +37,15 @@ void CharacterHpUI::SubUpdate()
 
 void CharacterHpUI::SubDraw()
 {
+	Vector2I uiPos = DEFAULT_UI_POS[(int)CHARA_KINDS];
+
 	// HPのフレーム画像描画
-	DrawGraph(HP_UI_POS.x, HP_UI_POS.y, uiImages.at((int)IMAGE_KINDS::FRAME), true);
+	DrawGraph(uiPos.x, uiPos.y, uiImages.at((int)IMAGE_KINDS::FRAME), true);
 
 	// ダメージを受けたときの赤いゲージ
 	DrawRectGraph(
-		HP_UI_POS.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
-		HP_UI_POS.y,
+		uiPos.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
+		uiPos.y,
 		0, 0,
 		HP_IMAGE_SIZE.x - damageBarOffset,
 		HP_IMAGE_SIZE.y,
@@ -53,10 +55,11 @@ void CharacterHpUI::SubDraw()
 
 	// HPバーの描画
 	DrawRectGraph(
-		HP_UI_POS.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
-		HP_UI_POS.y,
+		uiPos.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
+		uiPos.y,
 		0, 0,
-		HP_IMAGE_SIZE.x - hpBarOffset, HP_IMAGE_SIZE.y,
+		HP_IMAGE_SIZE.x - hpBarOffset, 
+		HP_IMAGE_SIZE.y,
 		uiImages.at((int)IMAGE_KINDS::HP_GAUGE),
 		true
 	);

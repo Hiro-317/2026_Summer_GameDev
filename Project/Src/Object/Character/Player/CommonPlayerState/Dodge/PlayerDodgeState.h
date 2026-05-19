@@ -19,8 +19,8 @@ public:
 		const std::function<void(void)> PlayDodgeAnime,
 		const std::function<float(void)> GetAnimePlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(void)> DefaultChangeState,
-		const std::function<void(unsigned char)> SetInviCounter
+		const std::function<void(unsigned char)> SetInviCounter,
+		const std::function<void(void)> DefaultChangeState
 	);
 	~PlayerDodgeState()override = default;
 	void OwnStateConditionUpdate(void)override;
