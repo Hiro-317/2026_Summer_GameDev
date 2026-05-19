@@ -23,6 +23,15 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	isOwnOperator = true;
 }
 
+void TomatoBoss::OnCollision(const ColliderBase& other)
+{
+	if (other.GetShape() == ColliderBase::SHAPE::CAPSULE) {
+		if (other.GetTag() == COLLIDER_TAG::STAGE) {
+
+			rockHit = true;
+		}
+	}
+}
 
 void TomatoBoss::CharacterLoad(void)
 {
@@ -144,7 +153,13 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos
+			trans.pos, trans.angle, playerPos,
+			// ステージの岩か端に当たったか
+			[&]() { return rockHit; },
+			// 当たり判定を戻す
+			[&]() { rockHit = false; },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; }
 			)
 	);
 	AddState(

@@ -4,10 +4,17 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Vector3& angle, const Vector3& playerPos
-) :CharacterStateBase(ownChangeState, isOwnState),
-MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
-pos(pos), angle(angle), playerPos(playerPos)
+	Vector3& pos, Vector3& angle, const Vector3& playerPos,
+	const std::function<bool(void)> CollisionStage,
+	const std::function<void(void)> Reset,
+	const std::function<void(void)> DefaultChangeState
+) 
+	:CharacterStateBase(ownChangeState, isOwnState),
+	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
+	pos(pos), angle(angle), playerPos(playerPos),
+	CollisionStage(CollisionStage),
+	Reset(Reset),
+	DefaultChangeState(DefaultChangeState)
 {
 	rotPow = ROTATION_POW;
 }
@@ -32,12 +39,18 @@ void TomatoBossTackleState::Update(void)
 	else {
 		// à íuÇÃçXêV
 		pos += moveDir * MOVE_SPEED;
+
+		if (CollisionStage()) {
+			Exit();
+			DefaultChangeState();
+		}
 	}
 	angle.x += rotPow;
 }
 
 void TomatoBossTackleState::Exit(void)
 {
+	Reset();
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

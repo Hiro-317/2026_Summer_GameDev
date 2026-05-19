@@ -77,6 +77,7 @@ void TomatoStampCollOperator::SubUpdate(void)
 				attackCnt++;
 			}
 			else {
+				ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_1).back()->SetJudgeFlg(false);
 				end = true;
 			}
 		}

@@ -5,7 +5,7 @@ ModelCenterDiff,0,-1.4,0
 ModelToColliderRate,1.05
 CollisionPushWeight,255
 CollisionSphereRad,200
-InitPos,0,245,800
+InitPos,200,245,800
 MoveSpeed,8
 RotationPower,0.0523599
 StampRad,225
