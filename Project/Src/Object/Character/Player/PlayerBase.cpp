@@ -136,7 +136,6 @@ void PlayerBase::CharactorUpdate(void)
 	}
 #endif // _DEBUG
 
-	PlayerUpdate();
 }
 
 void PlayerBase::CharactorDraw(void)

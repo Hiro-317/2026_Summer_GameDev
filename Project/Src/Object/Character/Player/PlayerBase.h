@@ -47,7 +47,6 @@ public:
 	}
 
 	virtual void PlayerLoad(void) = 0;
-	virtual void PlayerUpdate(void) = 0;
 
 	void OnCollision(const ColliderBase& collider)override;
 
