@@ -8,6 +8,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
+#include "State/Headbutt/TomatoBossHeadbuttState.h"
 #include "State/Move/TomatoBossMoveState.h"
 #include "State/Tackle/TomatoBossTackleState.h"
 #include "State/Stamp/TomatoStampState.h"
@@ -18,7 +19,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	subObjArray(),
 	playerPos(playerPos)
 {
-	state = (int)STATE::TACKLE;
+	state = (int)STATE::HEADBUTT;
 	
 	isOwnOperator = true;
 }
@@ -130,6 +131,23 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region 状態設定
 
+	AddState(
+		static_cast<int>(STATE::HEADBUTT),
+		new TomatoBossHeadbuttState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::HEADBUTT); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::HEADBUTT); },
+			// 移動量と攻撃時間
+			MOVE_SPEED, 20.0f,
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos, trans.angle, playerPos,
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; },
+			// 角度を戻す
+			[&]() { trans.angle.x = 0; }
+			)
+	);
 	AddState(
 		static_cast<int>(STATE::MOVE),
 		new TomatoBossMoveState(

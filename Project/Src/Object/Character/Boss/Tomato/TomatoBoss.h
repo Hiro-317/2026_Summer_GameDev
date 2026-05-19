@@ -135,6 +135,7 @@ private:
 	{
 		NONE = -1,
 		
+		HEADBUTT,
 		MOVE,
 		TACKLE,
 		STAMP,
