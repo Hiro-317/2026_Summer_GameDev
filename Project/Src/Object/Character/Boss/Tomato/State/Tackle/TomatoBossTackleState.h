@@ -2,6 +2,8 @@
 
 #include "../../../../CharacterStateBase.h"
 
+#include "TomatoTackleCollOperator.h"
+
 #include "../../../../../../Common/Vector3.h"
 
 class TomatoBossTackleState : public CharacterStateBase
@@ -24,6 +26,7 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Vector3& angle, const Vector3& playerPos,
+		TomatoTackleCollOperator* collOperator,
 		const std::function<bool(void)> CollisionStage,
 		const std::function<void(void)> Reset,
 		const std::function<void(void)> DefaultChangeState
@@ -65,6 +68,9 @@ private:
 
 	// プレイヤーの座標の読み取り
 	const Vector3& playerPos;
+
+	// コリジョンオペレーター
+	TomatoTackleCollOperator* collOperator;
 
 	// ステージの岩か端に当たったか
 	const std::function<bool(void)> CollisionStage;

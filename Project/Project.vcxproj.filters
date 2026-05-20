@@ -27,10 +27,6 @@
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
@@ -65,6 +61,8 @@
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -216,6 +214,8 @@
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

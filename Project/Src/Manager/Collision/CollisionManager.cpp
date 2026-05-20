@@ -35,7 +35,7 @@ void CollisionManager::Add(ColliderBase* collider)
 		break;
 
 	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
-	case COLLIDER_TAG::BOSS_ATTACK_1:
+	case COLLIDER_TAG::BOSS_ATTACK:
 
 		enemyPlayerOnlyColliders.emplace_back(collider);
 		break;

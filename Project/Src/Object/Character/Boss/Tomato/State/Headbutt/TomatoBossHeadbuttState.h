@@ -2,6 +2,7 @@
 
 #include "../../../../CharacterStateBase.h"
 
+#include "TomatoHeadbuttCollOperator.h"
 #include "../../../../../../Common/Vector3.h"
 
 class TomatoBossHeadbuttState : public CharacterStateBase
@@ -22,6 +23,7 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		const float MOVE_SPEED, const float ATTACK_TIME,
 		Vector3& pos, Vector3& angle, const Vector3& playerPos,
+		TomatoHeadbuttCollOperator* collOperator,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> resetAngle
 	);
@@ -60,6 +62,9 @@ private:
 
 	// プレイヤーの座標の読み取り
 	const Vector3& playerPos;
+
+	// コリジョンオペレーターのポインタ
+	TomatoHeadbuttCollOperator* collOperator;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

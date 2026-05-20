@@ -9,8 +9,10 @@
 #include "../../../Common/Collider/XZCircleCollider.h"
 
 #include "State/Headbutt/TomatoBossHeadbuttState.h"
+#include "State/Headbutt/TomatoHeadbuttCollOperator.h"
 #include "State/Move/TomatoBossMoveState.h"
 #include "State/Tackle/TomatoBossTackleState.h"
+#include "State/Tackle/TomatoTackleCollOperator.h"
 #include "State/Stamp/TomatoStampState.h"
 #include "State/Stamp/TomatoStampCollOperator.h"
 
@@ -19,7 +21,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	subObjArray(),
 	playerPos(playerPos)
 {
-	state = (int)STATE::HEADBUTT;
+	state = (int)STATE::TACKLE;
 	
 	isOwnOperator = true;
 }
@@ -81,7 +83,6 @@ void TomatoBoss::CharacterLoad(void)
 
 	// 当たり判定を生成する（XZ平面上円コライダー）
 	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::TOMATO_BOSS_DISTANCE, TO_PLAYER_DISTANCE));
-	
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
@@ -123,6 +124,26 @@ void TomatoBoss::CharacterLoad(void)
 #pragma region プレイヤーが抱える下位クラスを生成する
 
 	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats));
+	subObjArray.push_back(new TomatoTackleCollOperator(
+		characterStats,
+		CAPSULE_COLLIDER_RADIUS,
+		CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+		CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ, 
+		CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
+		CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
+		CAPSULE_COLLIDER_ENOUGH_DISTANCE,
+		trans.pos, trans.angle
+	));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(
+		characterStats,
+		CAPSULE_COLLIDER_RADIUS,
+		CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+		CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ, 
+		CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
+		CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
+		CAPSULE_COLLIDER_ENOUGH_DISTANCE,
+		trans.pos, trans.angle
+	));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
@@ -142,6 +163,8 @@ void TomatoBoss::CharacterLoad(void)
 			MOVE_SPEED, 20.0f,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
+			// コリジョンオペレーターの参照私
+			SubObjSerch<TomatoHeadbuttCollOperator>(),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { state = (int)STATE::MOVE; },
 			// 角度を戻す
@@ -172,6 +195,8 @@ void TomatoBoss::CharacterLoad(void)
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
+			// コリジョンオペレーターの参照私
+			SubObjSerch<TomatoTackleCollOperator>(),
 			// ステージの岩か端に当たったか
 			[&]() { return rockHit; },
 			// 当たり判定を戻す
