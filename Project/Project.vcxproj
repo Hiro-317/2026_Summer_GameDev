@@ -156,6 +156,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Idle\TomatoBossIdleState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
@@ -213,6 +214,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Idle\TomatoBossIdleState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />

@@ -20,7 +20,6 @@ public:
 	/// <param name="DefaultChangeState">攻撃後の遷移先</param>
 	/// <param name="offCollider">攻撃時のエネミー自体の当たり判定を消すように</param>
 	/// <param name="onCollider">攻撃時のエネミー自体の当たり判定をつけるように</param>
-	/// <param name="resetAngle">角度を戻す</param>
 	TomatoStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
@@ -28,8 +27,7 @@ public:
 		Vector3& pos, const bool& isGround,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
-		const std::function<void(void)> onCollider,
-		const std::function<void(void)> resetAngle
+		const std::function<void(void)> onCollider
 	);
 
 	~TomatoStampState()override = default;
@@ -81,9 +79,6 @@ private:
 
 	// 攻撃時のエネミー自体のコライダーをつけるようにのポインター
 	const std::function<void(void)> onCollider;
-
-	// 角度を戻すポインター
-	const std::function<void(void)> resetAngle;
 
 #pragma endregion
 

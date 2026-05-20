@@ -24,8 +24,7 @@ public:
 		const float MOVE_SPEED, const float ATTACK_TIME,
 		Vector3& pos, Vector3& angle, const Vector3& playerPos,
 		TomatoHeadbuttCollOperator* collOperator,
-		const std::function<void(void)> DefaultChangeState,
-		const std::function<void(void)> resetAngle
+		const std::function<void(void)> DefaultChangeState
 	);
 	~TomatoBossHeadbuttState()override = default;
 
@@ -68,9 +67,6 @@ private:
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
-
-	// 角度を戻すポインター
-	const std::function<void(void)> resetAngle;
 
 #pragma endregion
 

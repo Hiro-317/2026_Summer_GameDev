@@ -6,16 +6,18 @@ TomatoBossTackleState::TomatoBossTackleState(
 	float MOVE_SPEED, float ROTATION_POW,
 	Vector3& pos, Vector3& angle, const Vector3& playerPos,
 	TomatoTackleCollOperator* collOperator,
-	const std::function<bool(void)> CollisionStage,
-	const std::function<void(void)> Reset,
+	const std::function<bool(void)> collisionStage,
+	const std::function<void(void)> reset,
+	const std::function<void(void)> resetAngle,
 	const std::function<void(void)> DefaultChangeState
 ) 
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
-	CollisionStage(CollisionStage),
-	Reset(Reset),
+	collisionStage(collisionStage),
+	reset(reset),
+	resetAngle(resetAngle),
 	DefaultChangeState(DefaultChangeState)
 {
 	rotPow = ROTATION_POW;
@@ -24,10 +26,13 @@ TomatoBossTackleState::TomatoBossTackleState(
 void TomatoBossTackleState::Enter(void)
 {
 	time = 0;
+	rotPow = ROTATION_POW;
 }
 
 void TomatoBossTackleState::Update(void)
 {
+	angle.x += rotPow;
+
 	// ˆê•b‚Ì—­‚ß
 	if (time < 180) {
 		
@@ -43,17 +48,16 @@ void TomatoBossTackleState::Update(void)
 		pos += moveDir * MOVE_SPEED;
 		collOperator->CollSet(true);
 
-		if (CollisionStage()) {
-			Exit();
+		if (collisionStage()) {
 			DefaultChangeState();
 		}
 	}
-	angle.x += rotPow;
 }
 
 void TomatoBossTackleState::Exit(void)
 {
-	Reset();
+	resetAngle();
+	reset();
 	collOperator->CollSet(false);
 }
 

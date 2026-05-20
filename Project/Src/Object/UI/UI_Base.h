@@ -22,9 +22,11 @@ protected:
 
 	enum class FILE_PATH_TYPE
 	{
-		HP,
-		STAMINA,
-		SKILL,
+		PLAYER_HP,
+		PLAYER_STAMINA,
+		PLAYER_SKILL,
+
+		BOSS_HP,
 
 		MAX
 	};
@@ -34,7 +36,9 @@ protected:
 	std::vector<std::string> uiKindsPath = {
 		"Data/Image/UI/Player/HP/",
 		"Data/Image/UI/Player/Stamina/",
-		"Data/Image/UI/Player/Skill/"
+		"Data/Image/UI/Player/Skill/",
+
+		"Data/Image/UI/Boss/HP/",
 	};
 
 	/// <summary>

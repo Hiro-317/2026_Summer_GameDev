@@ -44,7 +44,30 @@ private:
 	};
 
 #pragma region 定数定義
-	const Vector2I HP_IMAGE_SIZE = Vector2I(354.0f, 50.0f);		// HPバーの画像サイズ
+	// 画像の名前
+	const char* HP_FRAME_IMAGE_NAME[(int)CHARACTER_KINDS::MAX] = {
+		"PlayerHpFrame",
+		"BossHpFrame",
+	};
+	const char* HP_IMAGE_NAME[(int)CHARACTER_KINDS::MAX] = {
+		"PlayerHp",
+		"BossHp",
+	};
+	const char* HP_LOST_IMAGE_NAME[(int)CHARACTER_KINDS::MAX] = {
+		"PlayerHpLost",
+		"BossHpLost",
+	};
+	// 画像のファイルパスタイプ
+	FILE_PATH_TYPE HP_IMAGE_FILE_PATH_TYPE[(int)CHARACTER_KINDS::MAX] = {
+		FILE_PATH_TYPE::PLAYER_HP,
+		FILE_PATH_TYPE::BOSS_HP,
+	};
+
+	// HPバーの画像サイズ
+	const Vector2I HP_IMAGE_SIZE[(int)CHARACTER_KINDS::MAX] = {
+		Vector2I(354, 50),
+		Vector2I(629, 50),
+	};
 
 	const short PLAYER_HP_MAX;	// HPの最大値
 
@@ -52,12 +75,12 @@ private:
 
 	const short HP_GAUGE_OFFSET[(int)CHARACTER_KINDS::MAX] = {
 		10,
-		10
+		18,
 	};
 
 	const Vector2I DEFAULT_UI_POS[(int)CHARACTER_KINDS::MAX] = {
 		Vector2I(0, App::SCREEN_SIZE_Y_HALF),
-		Vector2I(0,0)
+		Vector2I(App::SCREEN_SIZE_X_HALF-314,0),
 	};
 
 	const CHARACTER_KINDS CHARA_KINDS;

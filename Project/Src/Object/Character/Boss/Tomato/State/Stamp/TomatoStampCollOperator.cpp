@@ -71,9 +71,10 @@ void TomatoStampCollOperator::SubUpdate(void)
 	}
 	else {
 		if (ground) {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
-
-			if (attackCnt < ATTACK_DURATION) {
+			if (attackCnt <= ATTACK_DURATION) {
+				if (attackCnt != 0) {
+					ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
+				}
 				attackCnt++;
 			}
 			else {

@@ -9,14 +9,12 @@ TomatoStampState::TomatoStampState(
 	Vector3& pos, const bool& isGround,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> offCollider,
-	const std::function<void(void)> onCollider,
-	const std::function<void(void)> resetAngle
+	const std::function<void(void)> onCollider
 ) :CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), collOperator(collOperator), isGround(isGround),
 	DefaultChangeState(DefaultChangeState),
 	offCollider(offCollider),
-	onCollider(onCollider),
-	resetAngle(resetAngle)
+	onCollider(onCollider)
 {
 	prevPos = pos.y;
 	nowAttackTime = 0;
@@ -33,7 +31,6 @@ void TomatoStampState::Enter(void)
 	prevPos = pos.y - 0.5f;
 	attackCnt = 0;
 	isAttack = true;
-	resetAngle();
 }
 
 void TomatoStampState::Update(void)

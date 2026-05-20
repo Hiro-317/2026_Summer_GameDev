@@ -6,22 +6,19 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 	const float MOVE_SPEED, const float ATTACK_TIME,
 	Vector3& pos, Vector3& angle, const Vector3& playerPos,
 	TomatoHeadbuttCollOperator* collOperator,
-	const std::function<void(void)> DefaultChangeState,
-	const std::function<void(void)> resetAngle
+	const std::function<void(void)> DefaultChangeState
 ) 
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ATTACK_TIME(ATTACK_TIME),
 	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
-	DefaultChangeState(DefaultChangeState),
-	resetAngle(resetAngle)
+	DefaultChangeState(DefaultChangeState)
 {
 }
 
 void TomatoBossHeadbuttState::Enter(void)
 {
 	moveDir = (playerPos - pos).Normalized();
-	resetAngle();
 	time = 0;
 	collOperator->CollSet(true);
 }
@@ -30,7 +27,6 @@ void TomatoBossHeadbuttState::Update(void)
 {
 	time++;
 	if (time > ATTACK_TIME) {
-		Exit();
 		DefaultChangeState();
 	}
 	else {

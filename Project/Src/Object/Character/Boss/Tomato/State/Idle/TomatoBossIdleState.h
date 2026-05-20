@@ -4,7 +4,7 @@
 
 #include "../../../../../../Common/Vector3.h"
 
-class TomatoBossMoveState : public CharacterStateBase
+class TomatoBossIdleState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -16,15 +16,17 @@ public:
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
-	TomatoBossMoveState(
+	TomatoBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Vector3& angle, const Vector3& playerPos,
-		const std::function<void(void)> resetAngle,
-		const std::function<void(void)> headbuttChangeState
+		const int COOL_TIME,
+		Vector3& pos, const Vector3& playerPos,
+		const std::function<void(void)> headbuttChangeState,
+		const std::function<void(void)> moveChangeState,
+		const std::function<void(void)> stampChangeState,
+		const std::function<void(void)> tackleChangeState
 	);
-	~TomatoBossMoveState()override = default;
+	~TomatoBossIdleState()override = default;
 
 	//// 自分の状態に遷移する条件関数
 	//void OwnStateConditionUpdate(void);
@@ -42,12 +44,8 @@ public:
 private:
 
 #pragma region 定数
-
-	// 移動量
-	const float MOVE_SPEED;
-
-	// 回転量
-	const float ROTATION_POW;
+	
+	const int COOL_TIME;
 
 #pragma endregion
 
@@ -56,20 +54,19 @@ private:
 	// 座標の参照
 	Vector3& pos;
 
-	// 角度の参照
-	Vector3& angle;
-
 	// プレイヤーの座標の読み取り
 	const Vector3& playerPos;
 
-	// 角度を戻すポインタ
-	const std::function<void(void)> resetAngle;
-
-	// 頭突きに移行するポインタ
+	// 頭突きへ
 	const std::function<void(void)> headbuttChangeState;
+	// 移動へ
+	const std::function<void(void)> moveChangeState;
+	// スタンプへ
+	const std::function<void(void)> stampChangeState;
+	// 突進へ
+	const std::function<void(void)> tackleChangeState;
 
 #pragma endregion
 
-	Vector3 moveDir;
-
+	int cnt;
 };

@@ -8,6 +8,7 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
+#include "State/Idle/TomatoBossIdleState.h"
 #include "State/Headbutt/TomatoBossHeadbuttState.h"
 #include "State/Headbutt/TomatoHeadbuttCollOperator.h"
 #include "State/Move/TomatoBossMoveState.h"
@@ -16,24 +17,16 @@
 #include "State/Stamp/TomatoStampState.h"
 #include "State/Stamp/TomatoStampCollOperator.h"
 
+#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
+
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharacterBase(1000,500,500,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray(),
 	playerPos(playerPos)
 {
-	state = (int)STATE::TACKLE;
+	state = (int)STATE::MOVE;
 	
 	isOwnOperator = true;
-}
-
-void TomatoBoss::OnCollision(const ColliderBase& other)
-{
-	if (other.GetShape() == ColliderBase::SHAPE::CAPSULE) {
-		if (other.GetTag() == COLLIDER_TAG::STAGE) {
-
-			rockHit = true;
-		}
-	}
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -153,6 +146,27 @@ void TomatoBoss::CharacterLoad(void)
 #pragma region 状態設定
 
 	AddState(
+		static_cast<int>(STATE::IDLE),
+		new TomatoBossIdleState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::IDLE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::IDLE); },
+			// クールタイム
+			45,
+			// 自分の座標、プレイヤーの座標の読み取り
+			trans.pos, playerPos,
+			// 頭突きへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::HEADBUTT); },
+			// 移動への状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::MOVE); },
+			// スタンプへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::STAMP); },
+			// 突進への状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::TACKLE); }
+			)
+	);
+	AddState(
 		static_cast<int>(STATE::HEADBUTT),
 		new TomatoBossHeadbuttState(
 			// 自分の状態に遷移する関数
@@ -165,10 +179,8 @@ void TomatoBoss::CharacterLoad(void)
 			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoHeadbuttCollOperator>(),
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; },
-			// 角度を戻す
-			[&]() { trans.angle.x = 0; }
+			// 攻撃終了後の状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::IDLE); }
 			)
 	);
 	AddState(
@@ -181,7 +193,11 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos
+			trans.pos, trans.angle, playerPos,
+			// 角度を戻す
+			[&]() { trans.angle.x = 0; },
+			// 移動後攻撃に状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::HEADBUTT); }
 			)
 	);
 	AddState(
@@ -201,8 +217,10 @@ void TomatoBoss::CharacterLoad(void)
 			[&]() { return rockHit; },
 			// 当たり判定を戻す
 			[&]() { rockHit = false; },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; }
+			// 角度を戻す
+			[&]() { trans.angle.x = 0; },
+			// 攻撃終了後の状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::IDLE); }
 			)
 	);
 	AddState(
@@ -216,28 +234,30 @@ void TomatoBoss::CharacterLoad(void)
 			SubObjSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り
 			trans.pos, isGround,
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; },
+			// 攻撃終了後の状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::IDLE); },
 			// 攻撃時に当たり判定を消すように
 			[&]() { SetJudge(false); },
 			// 落下中は当たり判定を再生させる
-			[&]() { SetJudge(true); },
-			// 角度を戻す
-			[&]() { trans.angle.x = 0; }
+			[&]() { SetJudge(true); }
 
 		)
 	);
 	
 #pragma endregion
+
+
+#pragma region UI生成
+	// HPバー生成
+	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS));
+#pragma endregion
+
 }
 
 void TomatoBoss::CharactorInit(void)
 {
 	// 位置を初期位置にする
 	trans.pos = INIT_POS;
-
-	// 初期状態を移動状態にする
-	ChangeState(state);
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 
@@ -289,4 +309,25 @@ void TomatoBoss::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
+}
+
+
+void TomatoBoss::OnCollision(const ColliderBase& other)
+{
+	if (other.GetShape() == ColliderBase::SHAPE::CAPSULE) {
+		if (other.GetTag() == COLLIDER_TAG::STAGE) {
+
+			rockHit = true;
+		}
+	}
+
+	if (GetInviCounter() > 0) { return; }
+
+	switch (other.GetTag()) {
+	case COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK: {
+		characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		SetInviCounter(150);
+		break;
+	}
+	}
 }

@@ -14,16 +14,16 @@ CharacterHpUI::CharacterHpUI(const CharacterStats& stats, const CHARACTER_KINDS 
 void CharacterHpUI::Load(void)
 {
 	// 画像のロード
-	UILoadImage("PlayerHpFrame", (int)IMAGE_KINDS::FRAME,			FILE_PATH_TYPE::HP);
-	UILoadImage("PlayerHp",		 (int)IMAGE_KINDS::HP_GAUGE,		FILE_PATH_TYPE::HP);
-	UILoadImage("PlayerHpBar",   (int)IMAGE_KINDS::DAMAGE_GAUGE,	FILE_PATH_TYPE::HP);
+	UILoadImage(HP_FRAME_IMAGE_NAME[(int)CHARA_KINDS], (int)IMAGE_KINDS::FRAME, HP_IMAGE_FILE_PATH_TYPE[(int)CHARA_KINDS]);
+	UILoadImage(HP_IMAGE_NAME[(int)CHARA_KINDS], (int)IMAGE_KINDS::HP_GAUGE, HP_IMAGE_FILE_PATH_TYPE[(int)CHARA_KINDS]);
+	UILoadImage(HP_LOST_IMAGE_NAME[(int)CHARA_KINDS], (int)IMAGE_KINDS::DAMAGE_GAUGE, HP_IMAGE_FILE_PATH_TYPE[(int)CHARA_KINDS]);
 }
 
 void CharacterHpUI::SubUpdate()
 {
 	// HPの割合によるHPバーの増減のための計算
 	hpRatio = (float)playerhp / (float)PLAYER_HP_MAX;
-	hpBarOffset = HP_IMAGE_SIZE.x * (1.0f - hpRatio);
+	hpBarOffset = HP_IMAGE_SIZE[(int)CHARA_KINDS].x * (1.0f - hpRatio);
 
 	if (damageBarOffset < hpBarOffset) {
 		// ダメージを受けたので赤いゲージを後から減少
@@ -47,8 +47,8 @@ void CharacterHpUI::SubDraw()
 		uiPos.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
 		uiPos.y,
 		0, 0,
-		HP_IMAGE_SIZE.x - damageBarOffset,
-		HP_IMAGE_SIZE.y,
+		HP_IMAGE_SIZE[(int)CHARA_KINDS].x - damageBarOffset,
+		HP_IMAGE_SIZE[(int)CHARA_KINDS].y,
 		uiImages.at((int)IMAGE_KINDS::DAMAGE_GAUGE),
 		true
 	);
@@ -58,8 +58,8 @@ void CharacterHpUI::SubDraw()
 		uiPos.x + HP_GAUGE_OFFSET[(int)CHARA_KINDS],
 		uiPos.y,
 		0, 0,
-		HP_IMAGE_SIZE.x - hpBarOffset, 
-		HP_IMAGE_SIZE.y,
+		HP_IMAGE_SIZE[(int)CHARA_KINDS].x - hpBarOffset, 
+		HP_IMAGE_SIZE[(int)CHARA_KINDS].y,
 		uiImages.at((int)IMAGE_KINDS::HP_GAUGE),
 		true
 	);
