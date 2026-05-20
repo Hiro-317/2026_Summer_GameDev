@@ -46,15 +46,18 @@ private:
 #pragma region 定数定義
 	const Vector2I HP_IMAGE_SIZE = Vector2I(354.0f, 50.0f);		// HPバーの画像サイズ
 
-	const Vector2I HP_UI_POS = Vector2I(0, App::SCREEN_SIZE_Y_HALF);	// 画像の座標
-
 	const short PLAYER_HP_MAX;	// HPの最大値
 
 	const float DAMAGE_GAUGE_DEC = 0.5f;	// ダメージを受けた時の赤いゲージの減少量
 
 	const short HP_GAUGE_OFFSET[(int)CHARACTER_KINDS::MAX] = {
 		10,
-		0
+		10
+	};
+
+	const Vector2I DEFAULT_UI_POS[(int)CHARACTER_KINDS::MAX] = {
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF),
+		Vector2I(0,0)
 	};
 
 	const CHARACTER_KINDS CHARA_KINDS;

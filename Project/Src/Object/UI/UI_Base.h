@@ -48,15 +48,14 @@ protected:
 		int pathIndex = (int)pathType;
 		if (pathIndex < 0 || pathIndex >= (int)uiKindsPath.size()) { return; }
 
-		// 必要サイズ確保
-		if (kinds >= static_cast<int>(uiImages.size()))	{
-			uiImages.resize(kinds + 1, -1);
-		}
-
 		// パス作成
 		std::string fullPath = uiKindsPath[pathIndex] + path + ".png";
-		// 指定された画像をロード
-		uiImages[kinds] = LoadGraph(fullPath.c_str());
+
+		// 必要サイズ確保
+		if (kinds >= static_cast<int>(uiImages.size()))	{
+			// 指定された画像をロード
+			uiImages.resize(kinds + 1, LoadGraph(fullPath.c_str()));
+		}
 	}
 
 	virtual void SubInit(void) {}

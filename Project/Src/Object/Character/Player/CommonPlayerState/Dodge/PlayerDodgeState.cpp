@@ -10,8 +10,8 @@ PlayerDodgeState::PlayerDodgeState(
 	const std::function<void(void)> PlayDodgeAnime,
 	const std::function<float(void)> GetAnimePlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> DefaultChangeState,
-	const std::function<void(unsigned char)> SetInviCounter
+	const std::function<void(unsigned char)> SetInviCounter,
+	const std::function<void(void)> DefaultChangeState
 ) :
 	CharacterStateBase(ownChangeState, isOwnState),
 	DODGE_KEY(DODGE_KEY),

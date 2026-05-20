@@ -171,6 +171,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
@@ -229,6 +231,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectOperator.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
