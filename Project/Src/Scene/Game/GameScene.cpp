@@ -1,5 +1,6 @@
 #include "GameScene.h"
 
+#include <EffekseerForDXLib.h>
 #include <cmath>
 #include "../../Utility/Utility.h"
 
@@ -182,6 +183,12 @@ void GameScene::Draw(void)
 
 	// 揺れの数値分座標をずらして描画
 	DrawGraph(s.x, s.y, mainScreen, true);
+#pragma endregion
+
+#pragma region エフェクト描画
+
+	DrawEffekseer3D();
+
 #pragma endregion
 
 #pragma region UI描画（画面演出をかけないもの）

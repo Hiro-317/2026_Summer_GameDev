@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include <EffekseerForDXLib.h>
 #include "../pch.h"
 
 #include "../Manager/FPS/FPS.h"
@@ -52,6 +53,7 @@ void Application::Init(void)
 	// DxLibの初期化
 	isInitFail = false;
 	if (DxLib_Init() == -1) { isInitFail = true; return; }
+	if (Effekseer_Init(EFFECT_MAX_NUM) == -1) { isInitFail = true; return; }
 
 	// 描画先画面を裏にする
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -155,6 +157,8 @@ void Application::Release(void)
 	// フレームレート解放
 	delete fps;
 
+	// エフェクト終了
+	Effkseer_End();
 	// DxLib終了
 	if (DxLib_End() == -1) { isReleaseFail = true; }
 }
