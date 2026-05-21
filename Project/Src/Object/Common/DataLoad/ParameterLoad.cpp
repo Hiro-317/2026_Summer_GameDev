@@ -1,44 +1,88 @@
-#include"ParameterLoad.h"
+#include "ParameterLoad.h"
 
-#include<sstream>
-#include<fstream>
-#include<iostream>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
-#include"../../../Utility/Utility.h"
+#include "../../../Utility/Utility.h"
 
-ParameterLoad::ParameterLoad(std::string filePath) :
-	parameterMap()
+namespace fs = std::filesystem;
+
+ParameterLoad::ParameterLoad(const std::string& directoryPath)
 {
-	// 指定のファイルを開く
-	std::ifstream ifs = std::ifstream(filePath.c_str());
+    // フォルダ内を走査
+    for (const auto& entry : fs::directory_iterator(directoryPath)) {
+        // ファイルじゃなければスキップ
+        if (!entry.is_regular_file()) { continue; }
 
-	// 例外処理 : ファイルが開けなかった場合
-	if (!ifs) { std::cerr << "ParameterLoad::LoadParameter : ファイルが開けませんでした。" << std::endl; return; }
+        // 拡張子取得
+        const fs::path& path = entry.path();
 
-	// 1行の代入先
-	std::string line;
+        // .csvじゃなければスキップ
+        if (path.extension() != ".csv") { continue; }
 
-	// 1行ずつカンマ区切りにされた状態で読み込む
-	while (getline(ifs, line)) {
-		// カンマごとに分けて文字列として配列に格納
-		std::vector<std::string> prameterStringArray = Split(line, ',');
+        // ファイル名のみ取得（拡張子なし）
+        std::string fileName = path.stem().string();
 
-		// 一旦一時変数にデータを取りまとめる
-		std::pair<std::string, std::vector<float>> parameterPair;
-		for (size_t i = 0; i < prameterStringArray.size(); i++) {
-			// 名前は添字
-			if (i == PARAMETER_NAME_INDEX) { parameterPair.first = prameterStringArray[i]; }
-			// それ以外は数値としてベクターに格納
-			else { parameterPair.second.emplace_back(std::stof(prameterStringArray[i])); }
-		}
-
-		// 1行分のデータをマップに格納
-		parameterMap.insert(parameterPair);
-	}
+        // CSV読み込み
+        LoadCsvFile(path.string(), fileName);
+    }
 }
 
-const float ParameterLoad::GetParameter(std::string parameterName, int index) const { return parameterMap.at(parameterName).at(index); }
+void ParameterLoad::LoadCsvFile(const std::string& filePath, const std::string& fileName)
+{
+    std::ifstream ifs(filePath);
 
-const std::vector<float>& ParameterLoad::GetParameterArray(std::string parameterName) const { return parameterMap.at(parameterName); }
+    if (!ifs) {
+        std::cerr << "CSVファイルを開けませんでした : " << filePath << std::endl;
+        return;
+    }
+
+    std::string line;
+
+    while (getline(ifs, line)) {
+        // カンマ区切り
+        std::vector<std::string> parameterStringArray = Split(line, ',');
+
+        // データ不足ならスキップ
+        if (parameterStringArray.empty()) { continue; }
+
+        std::string parameterName;
+        std::vector<float> values;
+
+        for (size_t i = 0; i < parameterStringArray.size(); i++) {
+            if (i == PARAMETER_NAME_INDEX) { parameterName = parameterStringArray[i]; }
+            else { values.emplace_back(std::stof(parameterStringArray[i])); }
+        }
+
+        // 保存
+        parameterMap[fileName][parameterName] = values;
+    }
+}
+
+const std::vector<float>& ParameterLoad::GetParameterArray(const std::string& fileName, const std::string& parameterName) const
+{
+    return parameterMap.at(fileName).at(parameterName);
+}
+
+float ParameterLoad::GetParameter(const std::string& fileName, const std::string& parameterName, int index) const
+{
+    return parameterMap.at(fileName).at(parameterName).at(index);
+}
+
+int ParameterLoad::GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index) const
+{
+    return static_cast<int>(GetParameter(fileName, parameterName, index));
+}
+
+Vector3 ParameterLoad::GetParameterToVector3(const std::string& fileName, const std::string& parameterName) const 
+{
+    const std::vector<float>& param = GetParameterArray(fileName, parameterName);
+
+    // 要素数不一致
+    if (param.size() != 3) { return Vector3(); }
+
+    return Vector3(param[0], param[1], param[2]);
+}
 
 void ParameterLoad::Release(void) { parameterMap.clear(); }
