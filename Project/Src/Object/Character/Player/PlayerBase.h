@@ -29,8 +29,6 @@ public:
 
 	~PlayerBase()override = default;
 
-	void CharacterLoad(void)override;
-	void CharacterUiDraw(void)override;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -48,15 +46,19 @@ public:
 
 	virtual void PlayerLoad(void) = 0;
 
+	const Vector3& GetInterestPos(void)const { return INTEREST_POS; }
+
 	void OnCollision(const ColliderBase& collider)override;
 
 private:
 
 	// ƒƒCƒ“ˆ—``````````````
+	void CharacterLoad(void)override;
 	void CharactorInit(void)override;
 	void CharactorUpdate(void)override;
 	void CharactorDraw(void)override;
 	void CharactorAlphaDraw(void)override;
+	void CharacterUiDraw(void)override;
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 

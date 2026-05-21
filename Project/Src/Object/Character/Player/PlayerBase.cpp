@@ -176,7 +176,7 @@ void PlayerBase::OnCollision(const ColliderBase& collider)
 	// âÒîíÜÇÃñ≥ìGèàóù
 	if (state == (int)STATE::SKILL_3) {
 		switch (collider.GetTag()) {
-		case COLLIDER_TAG::BOSS_ATTACK_1:
+		case COLLIDER_TAG::BOSS_ATTACK:
 			SetInviCounter(150);
 			// É~ÉXÇÃï\é¶
 			break;
@@ -187,7 +187,7 @@ void PlayerBase::OnCollision(const ColliderBase& collider)
 	if (state == (int)STATE::DEATH) { return; }
 
 	switch (collider.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK_1:
+	case COLLIDER_TAG::BOSS_ATTACK:
 		characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
 		ChangeState((int)STATE::DAMAGE);
 		break;

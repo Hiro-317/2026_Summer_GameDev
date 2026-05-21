@@ -82,8 +82,15 @@ void CharaSelect::Update(void)
 		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 			// 効果音
 			Snd::GetIns().Play("SystemButton");
+
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				SceneManager::GetIns().SetSelectCharaType((MSG_SENDER_ID)id, charaSelectOperator[id]->GetCharaType());
+			}
+
 			// シーン遷移
 			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame);
+
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 
 			return;
@@ -100,6 +107,12 @@ void CharaSelect::Update(void)
 			if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
 				// 効果音
 				Snd::GetIns().Play("SystemButton");
+
+				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+					if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+					SceneManager::GetIns().SetSelectCharaType((MSG_SENDER_ID)id, charaSelectOperator[id]->GetCharaType());
+				}
+
 				// シーン遷移
 				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 			}

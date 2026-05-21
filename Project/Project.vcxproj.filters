@@ -31,10 +31,6 @@
     <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
@@ -49,7 +45,6 @@
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
     <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
@@ -68,7 +63,12 @@
     <ClCompile Include="Src\Manager\Net\Enet\protocol.c" />
     <ClCompile Include="Src\Manager\Net\Enet\win32.c" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -188,10 +188,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
     <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
     <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
@@ -210,7 +206,6 @@
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
     <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
     <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
@@ -224,8 +219,14 @@
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

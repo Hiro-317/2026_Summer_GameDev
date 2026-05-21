@@ -1,0 +1,85 @@
+#include "TomatoTackleCollOperator.h"
+
+#include "../../../../../Common/Collider/CapsuleCollider.h"
+
+TomatoTackleCollOperator::TomatoTackleCollOperator(
+	const CharacterStats stats,
+	const float CAPSULE_COLLIDER_RADIUS,
+	const Vector3 CAPSULE_COLLIDER_START_POS_X,
+	const Vector3 CAPSULE_COLLIDER_END_POS_X,
+	const Vector3 CAPSULE_COLLIDER_START_POS_XZ,
+	const Vector3 CAPSULE_COLLIDER_END_POS_XZ,
+	const Vector3 CAPSULE_COLLIDER_START_POS_Z,
+	const Vector3 CAPSULE_COLLIDER_END_POS_Z,
+	const Vector3 CAPSULE_COLLIDER_START_POS_ZX,
+	const Vector3 CAPSULE_COLLIDER_END_POS_ZX,
+	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE,
+	const Vector3& pos, const Vector3& angle
+)
+	: stats(stats),
+	CAPSULE_COLLIDER_RADIUS(CAPSULE_COLLIDER_RADIUS),
+	CAPSULE_COLLIDER_START_POS_X(CAPSULE_COLLIDER_START_POS_X),
+	CAPSULE_COLLIDER_END_POS_X(CAPSULE_COLLIDER_END_POS_X),
+	CAPSULE_COLLIDER_START_POS_XZ(CAPSULE_COLLIDER_START_POS_XZ),
+	CAPSULE_COLLIDER_END_POS_XZ(CAPSULE_COLLIDER_END_POS_XZ),
+	CAPSULE_COLLIDER_START_POS_Z(CAPSULE_COLLIDER_START_POS_Z),
+	CAPSULE_COLLIDER_END_POS_Z(CAPSULE_COLLIDER_END_POS_Z),
+	CAPSULE_COLLIDER_START_POS_ZX(CAPSULE_COLLIDER_START_POS_ZX),
+	CAPSULE_COLLIDER_END_POS_ZX(CAPSULE_COLLIDER_END_POS_ZX),
+	CAPSULE_COLLIDER_ENOUGH_DISTANCE(CAPSULE_COLLIDER_ENOUGH_DISTANCE),
+	pos(pos), angle(angle)
+{
+	trans.pos = pos;
+	trans.angle = angle;
+}
+
+void TomatoTackleCollOperator::Load(void)
+{
+	// 当たり判定を生成する（カプセルコライダー）
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS_ATTACK,
+			CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS_ATTACK,
+			CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS_ATTACK,
+			CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+	ColliderCreate(
+		new CapsuleCollider(
+			COLLIDER_TAG::BOSS_ATTACK,
+			CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
+			CAPSULE_COLLIDER_RADIUS,
+			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+		)
+	);
+
+	CreateAttackSkill(150, &stats, COLLIDER_TAG::BOSS_ATTACK);
+
+	SetJudge(false);
+}
+
+void TomatoTackleCollOperator::OnCollision(const ColliderBase& other)
+{
+}
+
+void TomatoTackleCollOperator::SubUpdate(void)
+{
+	trans.pos = pos;
+	trans.angle = angle;
+}

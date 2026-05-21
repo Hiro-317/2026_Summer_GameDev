@@ -16,7 +16,6 @@ public:
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
 
-	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
 
 private:
 
@@ -71,7 +70,7 @@ private:
 	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("Skill1AttackMoveSpeed");
 
 	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
-	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameter("Skill2AttackRatePercent");
+	const short SKILL_1_ATTACK_RATE_PERCENT = GetParameter("Skill1AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
 
@@ -101,6 +100,9 @@ private:
 
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
 	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("Skill2AttackMoveSpeed");
+
+	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
+	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameter("Skill2AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 

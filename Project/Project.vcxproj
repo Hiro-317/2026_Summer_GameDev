@@ -154,9 +154,13 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Manager\Net\Enet\win32.c" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
@@ -168,7 +172,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
@@ -207,9 +211,13 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.h" />
     <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
     <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
@@ -224,7 +232,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectOperator.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />

@@ -36,6 +36,7 @@ public:
 	const CharacterStats& GetCharacterStats(void)const { return characterStats; }
 
 	void Load(void)override;
+	void UiDraw(void)override;
 
 private:
 
@@ -46,7 +47,6 @@ private:
 	// •`‰æ
 	void SubDraw(void)override;
 	void SubAlphaDraw(void)override;
-	void UiDraw(void)override;
 	// ‰ð•ú
 	void SubRelease(void)override;
 

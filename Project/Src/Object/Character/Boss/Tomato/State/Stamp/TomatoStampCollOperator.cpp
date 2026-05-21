@@ -30,7 +30,7 @@ void TomatoStampCollOperator::Load(void)
 
 	// “–‚½‚è”»’èî•ñ‚ð¶¬‚·‚é
 	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS));
-	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_1, ATTACK_RADIUS));
+	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS));
 	SetJudge(false);
 
 	// UŒ‚”ÍˆÍ‚Ì“–‚½‚è”»’è
@@ -38,7 +38,7 @@ void TomatoStampCollOperator::Load(void)
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 
-	CreateAttackSkill(100, &stats, COLLIDER_TAG::BOSS_ATTACK_1);
+	CreateAttackSkill(100, &stats, COLLIDER_TAG::BOSS_ATTACK);
 }
 
 void TomatoStampCollOperator::Draw(void)
@@ -71,234 +71,15 @@ void TomatoStampCollOperator::SubUpdate(void)
 	}
 	else {
 		if (ground) {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_1).back()->SetJudgeFlg(true);
+			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
 
 			if (attackCnt < ATTACK_DURATION) {
 				attackCnt++;
 			}
 			else {
+				ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 				end = true;
 			}
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ‚¿‚ñ‚±

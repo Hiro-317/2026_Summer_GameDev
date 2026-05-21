@@ -22,6 +22,8 @@ public:
 		return ret;
 	}
 
+	void OnCollision(const ColliderBase& other)override;
+
 private:
 
 #pragma region 定数定義
@@ -133,7 +135,9 @@ private:
 	{
 		NONE = -1,
 		
+		HEADBUTT,
 		MOVE,
+		TACKLE,
 		STAMP,
 
 		MAX
@@ -200,4 +204,7 @@ private:
 
 	// トマトの向いている向き
 	Vector3 moveDir;
+
+	// 岩に当たったか
+	bool rockHit;
 };

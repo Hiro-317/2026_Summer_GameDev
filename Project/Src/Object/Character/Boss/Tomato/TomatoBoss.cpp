@@ -8,20 +8,33 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
+#include "State/Headbutt/TomatoBossHeadbuttState.h"
+#include "State/Headbutt/TomatoHeadbuttCollOperator.h"
 #include "State/Move/TomatoBossMoveState.h"
+#include "State/Tackle/TomatoBossTackleState.h"
+#include "State/Tackle/TomatoTackleCollOperator.h"
 #include "State/Stamp/TomatoStampState.h"
 #include "State/Stamp/TomatoStampCollOperator.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1000,1000,1000,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
+	CharacterBase(1000,500,500,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
 	subObjArray(),
 	playerPos(playerPos)
 {
-	state = (int)STATE::STAMP;
+	state = (int)STATE::TACKLE;
 	
 	isOwnOperator = true;
 }
 
+void TomatoBoss::OnCollision(const ColliderBase& other)
+{
+	if (other.GetShape() == ColliderBase::SHAPE::CAPSULE) {
+		if (other.GetTag() == COLLIDER_TAG::STAGE) {
+
+			rockHit = true;
+		}
+	}
+}
 
 void TomatoBoss::CharacterLoad(void)
 {
@@ -70,7 +83,6 @@ void TomatoBoss::CharacterLoad(void)
 
 	// 当たり判定を生成する（XZ平面上円コライダー）
 	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::TOMATO_BOSS_DISTANCE, TO_PLAYER_DISTANCE));
-	
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
@@ -112,6 +124,26 @@ void TomatoBoss::CharacterLoad(void)
 #pragma region プレイヤーが抱える下位クラスを生成する
 
 	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats));
+	subObjArray.push_back(new TomatoTackleCollOperator(
+		characterStats,
+		CAPSULE_COLLIDER_RADIUS,
+		CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+		CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ, 
+		CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
+		CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
+		CAPSULE_COLLIDER_ENOUGH_DISTANCE,
+		trans.pos, trans.angle
+	));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(
+		characterStats,
+		CAPSULE_COLLIDER_RADIUS,
+		CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+		CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ, 
+		CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
+		CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
+		CAPSULE_COLLIDER_ENOUGH_DISTANCE,
+		trans.pos, trans.angle
+	));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
@@ -120,6 +152,25 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region 状態設定
 
+	AddState(
+		static_cast<int>(STATE::HEADBUTT),
+		new TomatoBossHeadbuttState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::HEADBUTT); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::HEADBUTT); },
+			// 移動量と攻撃時間
+			MOVE_SPEED, 20.0f,
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos, trans.angle, playerPos,
+			// コリジョンオペレーターの参照私
+			SubObjSerch<TomatoHeadbuttCollOperator>(),
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; },
+			// 角度を戻す
+			[&]() { trans.angle.x = 0; }
+			)
+	);
 	AddState(
 		static_cast<int>(STATE::MOVE),
 		new TomatoBossMoveState(
@@ -131,6 +182,27 @@ void TomatoBoss::CharacterLoad(void)
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos
+			)
+	);
+	AddState(
+		static_cast<int>(STATE::TACKLE),
+		new TomatoBossTackleState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::TACKLE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::TACKLE); },
+			// 移動量と回転量
+			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos, trans.angle, playerPos,
+			// コリジョンオペレーターの参照私
+			SubObjSerch<TomatoTackleCollOperator>(),
+			// ステージの岩か端に当たったか
+			[&]() { return rockHit; },
+			// 当たり判定を戻す
+			[&]() { rockHit = false; },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { state = (int)STATE::MOVE; }
 			)
 	);
 	AddState(
@@ -155,7 +227,7 @@ void TomatoBoss::CharacterLoad(void)
 
 		)
 	);
-
+	
 #pragma endregion
 }
 
@@ -174,16 +246,6 @@ void TomatoBoss::CharactorInit(void)
 void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
-	if (state == (int)STATE::MOVE) {
-
-		static int i = 0;
-		i++;
-		if (i > 5) {
-			ChangeState((int)STATE::STAMP);
-			state = (int)STATE::STAMP;
-
-		}
-	}
 }
 
 void TomatoBoss::CharactorDraw(void)
