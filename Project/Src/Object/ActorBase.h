@@ -194,9 +194,9 @@ protected:
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <param name="index">配列番号（指定なしで0）</param>
 	/// <returns></returns>
-	float GetParameter(const std::string& parameterName, int index = 0)const {
+	float GetParameter(const std::string& fileName, const std::string& parameterName, int index = 0)const {
 		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->GetParameter(parameterName, index);
+		return parameter->GetParameter(fileName, parameterName, index);
 	}
 
 
@@ -205,9 +205,9 @@ protected:
 	/// </summary>
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <returns></returns>
-	const std::vector<float>& GetParameterArray(const std::string& parameterName)const {
+	const std::vector<float>& GetParameterArray(const std::string& fileName, const std::string& parameterName)const {
 		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->GetParameterArray(parameterName);
+		return parameter->GetParameterArray(fileName, parameterName);
 	}
 
 	/// <summary>
@@ -216,9 +216,9 @@ protected:
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <param name="index">配列番号（指定なしで0）</param>
 	/// <returns></returns>
-	int GetParameterToInt(const std::string& parameterName, int index = 0)const {
+	int GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index = 0)const {
 		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return (int)GetParameter(parameterName, index);
+		return parameter->GetParameterToInt(fileName, parameterName, index);
 	}
 
 	/// <summary>
@@ -226,14 +226,9 @@ protected:
 	/// </summary>
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <returns></returns>
-	Vector3 GetParameterToVector3(const std::string& parameterName) {
+	Vector3 GetParameterToVector3(const std::string& fileName, const std::string& parameterName) {
 		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		const std::vector<float>& param = parameter->GetParameterArray(parameterName);
-
-		// 要素数がちょうどVector3構造体と合致していなければ0を返す
-		if (param.size() != 3) { return Vector3(); }
-
-		return Vector3(param[0], param[1], param[2]);
+		return parameter->GetParameterToVector3(fileName, parameterName);
 	}
 #pragma endregion パラメーター外部ファイル管理に関する関数
 

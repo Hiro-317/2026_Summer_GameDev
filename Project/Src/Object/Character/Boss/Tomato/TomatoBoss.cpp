@@ -20,7 +20,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1000,500,500,1,"Data/Parameter/Charactor/Boss/Tomato/TomatoBossParameter.csv"),
+	CharacterBase(1000,500,500,1,"Data/Parameter/Character/Boss/Tomato/"),
 	subObjArray(),
 	playerPos(playerPos)
 {
@@ -337,7 +337,7 @@ void TomatoBoss::CharactorRelease(void)
 
 void TomatoBoss::OnCollision(const ColliderBase& other)
 {
-	if (other.GetShape() == ColliderBase::SHAPE::CAPSULE) {
+	if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 		if (other.GetTag() == COLLIDER_TAG::STAGE) {
 
 			rockHit = true;

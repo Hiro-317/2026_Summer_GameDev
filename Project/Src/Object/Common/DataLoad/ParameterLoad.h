@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+struct Vector3;
+
 class ParameterLoad
 {
 public:

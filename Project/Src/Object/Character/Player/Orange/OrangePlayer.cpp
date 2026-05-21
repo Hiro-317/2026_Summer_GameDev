@@ -20,7 +20,7 @@
 
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(600, 200, 10000, 10, "Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv", "Orange/OrangeModel")
+	PlayerBase(600, 200, 10000, 10, "Data/Parameter/Character/Player/Orange/", "Orange/OrangeModel")
 {
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
