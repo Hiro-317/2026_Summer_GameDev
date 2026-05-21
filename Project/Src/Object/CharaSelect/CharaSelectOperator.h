@@ -23,6 +23,7 @@ public:
 	void UiDraw(void)override;
 	void Release(void)override;
 
+	const CHARA_TYPE GetCharaType(void) { return selectCharaType; }
 private:
 	// ©g‚Ì‘€ìŒ ‚ğ‚Â‘—MÒID
 	const MSG_SENDER_ID operatorSenderId;

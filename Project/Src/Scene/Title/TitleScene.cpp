@@ -54,6 +54,7 @@ void TitleScene::Update(void)
 	if (Key::GetIns().GetInfo(KEY_TYPE::TEXT_INPUT_LANGUAGE_SWITCH).down) {
 		Snd::GetIns().Play("SystemButton");
 		Net::GetIns().StartHost();
+		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 		return;
 	}

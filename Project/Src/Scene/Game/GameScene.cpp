@@ -19,7 +19,8 @@
 
 #include "../Common/GameDebugScene.h"
 
-#include "../../Object/Character/Player/Orange/OrangePlayer.h"
+#include "../../Object/Character/Player/PlayerManager/PlayerManager.h"
+
 #include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
@@ -59,7 +60,7 @@ void GameScene::Load(void)
 
 	// 当たり判定管理クラスを生成
 	collision = new CollisionManager();
-
+	
 	// 初期化も含めたオブジェクト生成のラムダ関数
 	auto ObjAdd = [&](ActorBase* newClass)->void {
 		// 配列の末尾に追加
@@ -73,13 +74,12 @@ void GameScene::Load(void)
 	// オブジェクト生成（生成の順番がそのまま(更新/描画)順）
 	//<例>ObjAdd(new Player());
 
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		ObjAdd(new OrangePlayer((MSG_SENDER_ID)id));
-	}
-	ObjAdd(new TomatoBoss(ObjSerch<OrangePlayer>()->GetTrans().pos));
-	ObjAdd(new TomatoBossStage());
 
+	ObjAdd(new PlayerManager());
+
+	ObjAdd(new TomatoBoss(ObjSerch<PlayerManager>()->GetPlayerIns(MSG_SENDER_ID::P1)->GetTrans().pos));
+
+	ObjAdd(new TomatoBossStage());
 }
 
 void GameScene::Init(void)
@@ -92,8 +92,8 @@ void GameScene::Init(void)
 
 	// カメラ設定
 	Camera::GetIns().ChangeModeFollowRemote(
-		&ObjArraySerch<OrangePlayer>().at((int)Net::GetIns().GetSenderId())->GetTrans().pos,
-		ObjArraySerch<OrangePlayer>().at((int)Net::GetIns().GetSenderId())->GetInterestPos(),
+		&ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+		ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
 		Vector3::YZonly(250, -550), Deg2Rad(4.0f)
 	);
 	//Camera::GetIns().ChangeModeFree(Deg2Rad(5.0f), 10.0f);

@@ -52,6 +52,7 @@ void TomatoBossTackleState::Update(void)
 			DefaultChangeState();
 		}
 	}
+	angle.x += rotPow;
 }
 
 void TomatoBossTackleState::Exit(void)

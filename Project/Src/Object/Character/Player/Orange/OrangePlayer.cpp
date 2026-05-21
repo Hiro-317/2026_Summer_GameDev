@@ -55,7 +55,9 @@ void OrangePlayer::PlayerLoad(void)
 			SKILL_1_COLL_TAG_TABLE,
 			SKILL_1_COLL_SIZE_TABLE,
 			SKILL_1_COLL_LOCAL_POS,
-			trans.pos, trans.angle
+			SKILL_1_ATTACK_RATE_PERCENT,
+			trans.pos, trans.angle,
+			characterStats
 		)
 	);
 
