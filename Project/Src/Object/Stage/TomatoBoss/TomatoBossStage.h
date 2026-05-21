@@ -56,7 +56,6 @@ private:
         { GetParameterToVector3("RockCollisionPos27") + MODEL_CENTER_DIFF,  GetParameter("RockCollisionRadius27"),  GetParameter("RockCollisionHeight27")   },
         { GetParameterToVector3("RockCollisionPos28") + MODEL_CENTER_DIFF,  GetParameter("RockCollisionRadius28"),  GetParameter("RockCollisionHeight28")   },
         { GetParameterToVector3("RockCollisionPos29") + MODEL_CENTER_DIFF,  GetParameter("RockCollisionRadius29"),  GetParameter("RockCollisionHeight29")   },
-        { GetParameterToVector3("RockCollisionPos30") + MODEL_CENTER_DIFF,  GetParameter("RockCollisionRadius30"),  GetParameter("RockCollisionHeight30")   },
     };
 
     const std::vector<ColliderInfo> WALL_COLLISION_INFO = 
@@ -88,8 +87,13 @@ public:
 
     void Load(void)override;    // 読み込み
 
+protected:
+
+    void SubDraw(void)override;
+
 private:
 
     void ColliderLoad();    // 当たり判定の読み込み
 
+    Transform sky;      // スカイドーム用
 };

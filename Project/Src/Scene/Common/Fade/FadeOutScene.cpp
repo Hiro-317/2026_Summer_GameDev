@@ -1,6 +1,6 @@
 #include "FadeOutScene.h"
 
-#include<DxLib.h>
+#include "../../../pch.h"
 
 #include"../../../Application/Application.h"
 

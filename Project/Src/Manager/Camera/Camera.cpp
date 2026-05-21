@@ -1,5 +1,8 @@
 #include "Camera.h"
 
+#include <cmath>
+#include <algorithm>
+
 #include "../../Utility/Utility.h"
 #include "../../Application/Application.h"
 #include "../input/KeyManager.h"
@@ -83,8 +86,8 @@ void Camera::ChangeModeFixedPoint(const Vector3& pos, const Vector3& angle, floa
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
 
 	// 状態遷移
 	mode = MODE::FIXED_POINT;
@@ -116,8 +119,8 @@ void Camera::ChangeModeFree(float ROT_POWER, float MOVE_POWER, const Vector3& po
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(true);
 
 	// 状態遷移
 	mode = MODE::FREE;
@@ -140,15 +143,12 @@ void Camera::ChangeModeFree(float ROT_POWER, float MOVE_POWER, const Vector3& po
 
 void Camera::FreeModeFunc(void)
 {
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
-
 #pragma region 角度 (コントローラースティック -> マウス -> ボタン の順に確認して入力があったもので回転させる)
 	// コントローラーの右スティックベクトルを代入
 	Vector3 rot = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (rot == 0.0f) { rot = Key::GetIns().GetMouceMoveNorm().ToVector3YX(); }
+	if (rot == 0.0f) { rot = Key::GetIns().GetMouseMoveNorm().ToVector3YX(); }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (rot == 0.0f) {
@@ -210,8 +210,8 @@ void Camera::ChangeModeLookAtFree(const Vector3& fixedLookAtPos, const Vector3& 
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(true);
 
 	// 状態遷移
 	mode = MODE::LOOK_AT_FREE;
@@ -240,7 +240,7 @@ void Camera::LookAtFreeModeFunc(void)
 	Vector3 vec = Key::GetIns().GetRightStickVec().ToVector3YX();
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
-	if (vec == 0.0f) { vec = Key::GetIns().GetMouceMoveNorm().ToVector3YX(); }
+	if (vec == 0.0f) { vec = Key::GetIns().GetMouseMoveNorm().ToVector3YX(); }
 
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (vec == 0.0f) {
@@ -321,8 +321,8 @@ void Camera::ChangeModeFollowRemote(const Vector3* folowAt, const Vector3& lookA
 	// 現在の情報を破棄
 	Release();
 
-	// マウスを真ん中に
-	SetMousePoint(Application::SCREEN_SIZE_X_HALF, Application::SCREEN_SIZE_Y_HALF);
+	// マウス設定
+	Key::GetIns().SetMouseFixed(true);
 
 	// 状態遷移
 	mode = MODE::FOLLOW_REMOTE;
@@ -362,7 +362,7 @@ void Camera::FollowRemoteModeFunc(void)
 
 	// コントローラーの右スティックが入力なしならマウスの移動ベクトルを代入
 	if (vec == 0.0f) {
-		vec += Vector3::Yonly((float)Key::GetIns().GetMouceMoveSize().x / MOUSE_SENSI);
+		vec += Vector3::Yonly((float)Key::GetIns().GetMouseMoveSize().x / MOUSE_SENSI);
 		mouse = true;
 	}
 
@@ -401,6 +401,9 @@ void Camera::ChangeModeFollowAuto(const Transform& folowAt, const Vector3* lookT
 {
 	// 現在の情報を破棄
 	Release();
+
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
 
 	// 状態遷移
 	mode = MODE::FOLLOW_AUTO;
@@ -445,6 +448,9 @@ void Camera::ChangeModeFollowAuto(const Vector3* folowAt, const float* lookAtYan
 {
 	// 現在の情報を破棄
 	Release();
+
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
 
 	// 状態遷移
 	mode = MODE::FOLLOW_AUTO;

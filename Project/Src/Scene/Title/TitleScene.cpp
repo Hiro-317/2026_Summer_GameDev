@@ -1,10 +1,10 @@
 #include"TitleScene.h"
 
-#include<DxLib.h>
 #include"../../Utility/Utility.h"
 
 #include"../../Application/Application.h"
 
+#include"../../Manager/Net/NetWorkManager.h"
 #include"../../Manager/Input/KeyManager.h"
 #include"../../Manager/Camera/Camera.h"
 #include"../../Manager/Sound/SoundManager.h"
@@ -23,12 +23,14 @@ void TitleScene::Load(void)
 	// 音声のシーン切り替え
 	Snd::GetIns().ChangeScene("Title");
 
-	Key::GetIns().SetMouceFixed(false);
+	Key::GetIns().SetMouseFixed(false);
 }
 void TitleScene::Init(void)
 {
 	// カメラの初期化
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
+
+	Net::GetIns().Disconnection();
 }
 void TitleScene::Update(void)
 {
@@ -51,6 +53,7 @@ void TitleScene::Update(void)
 	// シーン進行処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::TEXT_INPUT_LANGUAGE_SWITCH).down) {
 		Snd::GetIns().Play("SystemButton");
+		Net::GetIns().StartHost();
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 		return;
 	}

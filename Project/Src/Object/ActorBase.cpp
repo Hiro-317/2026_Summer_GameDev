@@ -21,7 +21,9 @@ ActorBase::ActorBase() :
 	isDraw(true),
 	isAlphaDraw(false),
 
-	parameter(nullptr)
+	parameter(nullptr),
+
+	skillStats()
 {
 }
 
@@ -44,7 +46,9 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 	isDraw(true),
 	isAlphaDraw(false),
 
-	parameter(new ParameterLoad(parameterPath))
+	parameter(new ParameterLoad(parameterPath)),
+
+	skillStats()
 {
 }
 
@@ -104,7 +108,7 @@ void ActorBase::AlphaDraw(void)
 	// 当たり判定のデバッグ描画
 	if (App::GetIns().IsDrawDebug()) {
 		for (ColliderBase*& c : collider) { if (c->GetJudge()) c->DrawDebug(); }
-	}
+	}	
 }
 
 void ActorBase::Release(void)
@@ -118,6 +122,14 @@ void ActorBase::Release(void)
 		delete parameter;
 		parameter = nullptr;
 	}
+
+	// スキル情報の解放
+	for (SkillStats*& s : skillStats) {
+		if (!s) { continue; }
+		delete s;
+		s = nullptr;
+	}
+	skillStats.clear();
 
 	// 当たり判定情報を解放
 	for (ColliderBase*& c : collider) {

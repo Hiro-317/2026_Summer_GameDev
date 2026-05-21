@@ -5,7 +5,7 @@
 #include"../../Common/Collider/SphereCollider.h"
 
 TomatoBossStage::TomatoBossStage() :
-	ActorBase("Data/Parameter/Stage/TomatoStageParameter.csv")
+	ActorBase("Data/Parameter/Stage/TomatoStageParameter.csv"), sky(Vector3())
 {
 }
 
@@ -13,8 +13,12 @@ void TomatoBossStage::Load(void)
 {
 	trans.Load("Stage/TomatoBoss/TomatoBossStage");
 
+	sky.Load("Stage/Sky");
+
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;
+
+	sky.scale = Vector3(4.0f);
 
 #pragma region 基底クラスにある機能の挙動設定
 
@@ -30,19 +34,26 @@ void TomatoBossStage::Load(void)
 	ColliderLoad();
 }
 
+void TomatoBossStage::SubDraw(void)
+{
+	SetUseLighting(false);
+	sky.Draw();
+	SetUseLighting(true);
+}
+
 void TomatoBossStage::ColliderLoad()
 {
 	// 地面の当たり判定
-	ColliderCreate(new BoxCollider(TAG::STAGE, GROUND_COLLISION_SIZE));
+	ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, GROUND_COLLISION_SIZE));
 
 	//// ステージの岩の当たり判定
 	for (const ColliderInfo& info : ROCK_COLLISION_INFO) {
-		ColliderCreate(new CapsuleCollider(TAG::STAGE, Vector3::Yonly(info.height), ROCK_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
+		ColliderCreate(new CapsuleCollider(COLLIDER_TAG::STAGE, Vector3::Yonly(info.height), ROCK_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
 	}
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		ColliderCreate(new CapsuleCollider(TAG::STAGE, Vector3::Yonly(info.height), WALL_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
+		ColliderCreate(new CapsuleCollider(COLLIDER_TAG::STAGE, Vector3::Yonly(info.height), WALL_LOCAL_ENDPOS, info.radius, -1.0f, info.pos));
 	}
 }
 

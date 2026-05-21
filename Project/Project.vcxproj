@@ -100,9 +100,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINSOCK_DEPRECATED_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ENET_DIR);$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -111,6 +111,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;
+winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -119,9 +121,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINSOCK_DEPRECATED_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ENET_DIR);$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -130,27 +132,49 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;
+winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
+    <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\Orange\OrangePlayer.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
-    <ClCompile Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectObj.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Orange\OrangeSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\Tomato\TomatoSelect.cpp" />
+    <ClCompile Include="Src\Manager\Net\Enet\callbacks.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\compress.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\host.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\list.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\packet.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\peer.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\protocol.c" />
+    <ClCompile Include="Src\Manager\Net\Enet\win32.c" />
+    <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
+    <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\Orange\OrangePlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
@@ -159,9 +183,13 @@
     <ClCompile Include="Src\Manager\Loading\Loading.cpp" />
     <ClCompile Include="Src\Manager\Sound\SoundManager.cpp" />
     <ClCompile Include="Src\Object\ActorBase.cpp" />
-    <ClCompile Include="Src\Object\Charactor\CharactorBase.cpp" />
+    <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
+    <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
+    <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
+    <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeOutScene.cpp" />
@@ -180,21 +208,35 @@
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
-    <ClInclude Include="Src\Object\Charactor\CharactorStateBase.h" />
-    <ClInclude Include="Src\Object\Charactor\CharacterStatsDefine.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectObj.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\Orange\OrangePlayer.h" />
-    <ClInclude Include="Src\Object\Charactor\Player\CommonPlayerState\Move\PlayerMoveState.h" />
-    <ClInclude Include="Src\Object\Charactor\Boss\Tomato\TomatoBoss.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Orange\OrangeSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tanaka\TanakaSelect.h" />
-    <ClInclude Include="Src\Object\CharaSelect\Tomato\TomatoSelect.h" />
+    <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
+    <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
+    <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoBossHeadbuttState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Headbutt\TomatoHeadbuttCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
+    <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
+    <ClInclude Include="Src\Object\Character\Player\Orange\OrangePlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectOperator.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />
@@ -203,17 +245,24 @@
     <ClInclude Include="Src\Manager\Loading\Loading.h" />
     <ClInclude Include="Src\Manager\Sound\SoundManager.h" />
     <ClInclude Include="Src\Object\ActorBase.h" />
-    <ClInclude Include="Src\Object\Charactor\CharactorBase.h" />
+    <ClInclude Include="Src\Object\Character\CharacterBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\BoxCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ColliderBase.h" />
     <ClInclude Include="Src\Object\Common\Collider\CapsuleCollider.h" />
+    <ClInclude Include="Src\Object\Common\Collider\ColliderTagDefine.h" />
     <ClInclude Include="Src\Object\Common\Collider\LineCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\ModelCollider.h" />
     <ClInclude Include="Src\Object\Common\Collider\SphereCollider.h" />
+    <ClInclude Include="Src\Object\Common\Collider\XZCircleCollider.h" />
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
+    <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
+    <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
+    <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
+    <ClInclude Include="Src\Object\UI\UI_Base.h" />
+    <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeOutScene.h" />

@@ -1,6 +1,5 @@
 #include"BossSelect.h"
 
-#include<DxLib.h>
 #include"../../Utility/Utility.h"
 
 #include"../../Application/Application.h"
@@ -23,7 +22,7 @@ void BossSelect::Load(void)
 	// âπê∫ÇÃÉVÅ[ÉìêÿÇËë÷Ç¶
 	Snd::GetIns().ChangeScene("Title");
 
-	Key::GetIns().SetMouceFixed(false);
+	Key::GetIns().SetMouseFixed(false);
 }
 void BossSelect::Init(void)
 {

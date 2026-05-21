@@ -7,6 +7,7 @@
 #include"../../Object/Common/Collider/CapsuleCollider.h"
 #include"../../Object/Common/Collider/BoxCollider.h"
 #include"../../Object/Common/Collider/ModelCollider.h"
+#include"../../Object/Common/Collider/XZCircleCollider.h"
 
 class CollisionManager
 {
@@ -15,7 +16,8 @@ public:
 		playerColliders(),
 		enemyColliders(),
 		stageColliders(),
-		otherColliders()
+		otherColliders(),
+		enemyPlayerOnlyColliders()
 	{
 	}
 	~CollisionManager() = default;
@@ -34,6 +36,7 @@ public:
 		enemyColliders.clear();
 		stageColliders.clear();
 		otherColliders.clear();
+		enemyPlayerOnlyColliders.clear();
 	}
 
 
@@ -61,6 +64,16 @@ private:
 	* 
 	* áFÇªÇÍà»äOÅ~ÇªÇÍà»äO
 	*/
+
+	// ì¡éÍÅ`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
+
+	// ÉvÉåÉCÉÑÅ[Ç…ÇæÇØìñÇΩÇÈÉGÉlÉ~Å[
+	std::vector<ColliderBase*> enemyPlayerOnlyColliders;
+	
+	// ÉXÉeÅ[ÉWÇ…ÇæÇØìñÇΩÇÈÉGÉlÉ~Å[
+	std::vector<ColliderBase*> enemyAttackAreaColliders;
+	
+	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`ì¡éÍ
 #pragma endregion
 
 #pragma region ìñÇΩÇËîªíËóp
@@ -73,6 +86,7 @@ private:
 	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b);
 	bool BoxToBox(BoxCollider* a, BoxCollider* b);
 	bool ModelToModel(ModelCollider* a, ModelCollider* b);
+	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b);
 
 	bool LineToSphere(LineCollider* line, SphereCollider* sphere);
 	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule);
@@ -81,8 +95,10 @@ private:
 	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule);
 	bool SphereToBox(SphereCollider* sphere, BoxCollider* box);
 	bool SphereToModel(SphereCollider* sphere, ModelCollider* model);
+	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle);
 	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box);
-	bool CasuleToModel(CapsuleCollider* capsule, ModelCollider* model);
+	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model);
+	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle);
 	bool BoxToModel(BoxCollider* box, ModelCollider* model);
 
 #pragma endregion

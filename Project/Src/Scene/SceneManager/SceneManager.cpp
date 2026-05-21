@@ -1,7 +1,5 @@
 ﻿#include "SceneManager.h"
 
-#include <DxLib.h>
-
 #include "../../Manager/Loading/Loading.h"
 
 #include"../Title/TitleScene.h"
@@ -276,9 +274,9 @@ void SceneManager::Init3D(void)
 	// フォグ設定
 	SetFogEnable(true);
 	// フォグの色
-	SetFogColor(100, 100, 100);
+	SetFogColor(200, 200, 200);
 	// フォグを発生させる奥行きの最小、最大距離
-	SetFogStartEnd(1000.0f, 15000.0f);
+	SetFogStartEnd(5000.0f, 10000.0f);
 
 	SetTextureAddressMode(DX_TEXADDRESS_WRAP);
 
