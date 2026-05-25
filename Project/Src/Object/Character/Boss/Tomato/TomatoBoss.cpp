@@ -347,7 +347,7 @@ void TomatoBoss::OnCollision(const ColliderBase& other)
 	if (GetInviCounter() > 0) { return; }
 
 	switch (other.GetTag()) {
-	case COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK: {
+	case COLLIDER_TAG::PLAYER_ATTACK: {
 		characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
 		SetInviCounter(150);
 		break;

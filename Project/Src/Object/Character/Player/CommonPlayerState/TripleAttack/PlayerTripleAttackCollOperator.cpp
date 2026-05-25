@@ -49,9 +49,7 @@ void PlayerTripleAttackCollOperator::Load(void)
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
-	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1);
-	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2);
-	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3);
+	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::PLAYER_ATTACK);
 }
 
 void PlayerTripleAttackCollOperator::OnCollision(const ColliderBase& other)

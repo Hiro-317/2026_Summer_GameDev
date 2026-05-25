@@ -81,7 +81,7 @@ private:
 	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("SimpleAttack","TargetSerchRange");
 
 	// 当たり判定のタグ
-	const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK;
+	const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::PLAYER_ATTACK;
 
 	// 当たり判定のサイズ（半径）
 	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("SimpleAttack","CollSize");
