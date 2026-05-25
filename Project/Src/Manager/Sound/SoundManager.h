@@ -92,9 +92,9 @@ private:
 	// テーブルの参照番号
 	enum TABLE_SUBSCR {
 		TABLE_ID,		// ID
+		TABLE_PATH,		// パス
 		TABLE_SCENE,	// 読み込むシーン
 		TABLE_TYPE,		// タイプ
-		TABLE_PATH,		// パス
 		TABLE_VOLUME,	// ボリューム
 		TABLE_LOOP,		// ループ
 		TABLE_DUPLI,	// 最大同時再生数
@@ -113,14 +113,14 @@ private:
 	// 音声テーブル読み込み用構造体
 	struct SoundTable
 	{
+		// パス
+		std::string path = {};
+
 		// 読み込みシーン
 		std::string scene = {};
 
 		// タイプ（BGM/SE）
 		std::string type = {};
-
-		// パス
-		std::string path = {};
 
 		// 個別の音量の割合
 		float volume = 1.0f;
@@ -135,16 +135,16 @@ private:
 		SoundTable(void) {}
 
 		SoundTable(
+			const std::string& path,
 			const std::string& scene,
 			const std::string& type,
-			const std::string& path,
 			const std::string& volume,
 			const std::string& loop,
 			const std::string& maxDupli
 		) :
+			path(path),
 			scene(scene),
 			type(type),
-			path(path),
 			volume(std::stof(volume)),
 			loop((loop == "TRUE") ? true : false),
 			maxDupli((unsigned char)std::stoi(maxDupli))

@@ -1,2 +1,2 @@
-SystemButton,All,SE,Data/Sound/Se/All/Button.mp3,0.5,False,2
-SystemSelect,All,SE,Data/Sound/Se/All/Select.mp3,0.4,False,2
+SystemButton,Data/Sound/Se/All/Button.mp3,All,SE,0.52,False,2
+SystemSelect,Data/Sound/Se/All/Select.mp3,All,SE,0.4,False,2
