@@ -3,7 +3,7 @@
 #include "EffectManager.h"
 
 
-EffectManager::EffectManager(const Vector3* followPos) : followPos(followPos)
+EffectManager::EffectManager(const Vector3* followPos = nullptr) : followPos(followPos)
 {
 }
 
@@ -12,9 +12,10 @@ EffectManager::~EffectManager()
 }
 
 void EffectManager::Update(void) {
-	
-	for (auto& info : effectInfo) {
-		info->Update(followPos);
+	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
+		(*info)->Update(followPos);
+		if ((*info)->IsEnd()) { (*info)->Release(); info = effectInfo.erase(info); }
+		else { info++; }
 	}
 }
 

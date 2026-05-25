@@ -7,7 +7,7 @@
 class EffectManager {
 public:
 
-	EffectManager(const Vector3* followPos);
+	EffectManager(const Vector3* followPos = nullptr);
 	~EffectManager();
 
 	void Update(void);
