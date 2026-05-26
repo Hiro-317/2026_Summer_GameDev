@@ -15,9 +15,7 @@ void CollisionManager::Add(ColliderBase* collider)
 
 		//ÉvÉåÉCÉÑÅ[ån
 	case COLLIDER_TAG::PLAYER:
-	case COLLIDER_TAG::PLAYER_PUNCH:
-	case COLLIDER_TAG::PLAYER_GOUGE:
-	case COLLIDER_TAG::PLAYER_THROWING:
+	case COLLIDER_TAG::PLAYER_COMMON:
 
 		playerColliders.emplace_back(collider);
 		break;

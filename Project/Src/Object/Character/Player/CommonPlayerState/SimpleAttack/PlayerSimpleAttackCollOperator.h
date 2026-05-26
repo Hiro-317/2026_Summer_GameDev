@@ -34,7 +34,7 @@ public:
 
 	// 攻撃対象を探索
 	void TargetSerch(void) {
-		ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(true);
+		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true);
 	}
 
 	// 攻撃対象が見つかったかどうかを取得
@@ -43,13 +43,16 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 攻撃の判定を発生させる
-	void CollOn(void) { ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true); }
+	void CollOn(void) { if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true); }
 
 	// 攻撃の判定を消す
 	void CollOff(void) { ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false); }
 
 	// 攻撃対象をリセットする
 	void ResetTarget(void) { isFindAttackTarget = false; targetPos = nullptr; }
+
+	// 攻撃のヒット管理のフラグをリセットする
+	void ResetIsHit(void) { isHit = false; }
 private:
 
 #pragma region 定数
@@ -86,6 +89,9 @@ private:
 
 	// 攻撃対象の座標
 	const Vector3* targetPos;
+
+	// 攻撃のヒット管理のフラグ
+	bool isHit;
 
 	// 更新処理
 	void SubUpdate(void)override;

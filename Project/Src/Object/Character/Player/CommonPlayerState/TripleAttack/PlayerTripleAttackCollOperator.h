@@ -19,7 +19,7 @@ public:
 	/// <param name="playerAngle">プレイヤーの角度</param>
 	PlayerTripleAttackCollOperator(
 		float FIND_ATTACK_TARGET_RANGE,
-		const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
+		COLLIDER_TAG COLL_TAG,
 		const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
 		const short SKILL_1_ATTACK_RATE_PERCENT,
@@ -35,7 +35,7 @@ public:
 
 	// 攻撃対象を探索
 	void TargetSerch(void) {
-		ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(true); 
+		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true); 
 	}
 
 	// 攻撃対象が見つかったかどうかを取得
@@ -44,18 +44,16 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 指定の段の攻撃の判定を発生させる
-	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { ColliderSerch(COLL_TAG[(int)stage]).back()->SetJudgeFlg(true); }
+	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true); }
 
 	// 指定の段の攻撃の判定を消す（指定がない場合は全ての段の判定を消す）
 	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::NON) {
 		if (stage == PLAYER_TRIPLE_ATTACK_STAGE::NON) {
 			// 指定がない場合は全ての段の判定を消す
-			for (int i = 0; i < (int)PLAYER_TRIPLE_ATTACK_STAGE::MAX; i++) {
-				ColliderSerch(COLL_TAG[i]).back()->SetJudgeFlg(false);
-			}
+			for (ColliderBase* coll : ColliderSerch(COLL_TAG)) { coll->SetJudgeFlg(false); }
 		}
 		// 指定がある場合はその段の判定を消す
-		else { ColliderSerch(COLL_TAG[(int)stage]).back()->SetJudgeFlg(false); }
+		else { ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(false); }
 	}
 
 	// 攻撃対象をリセットする
@@ -72,7 +70,7 @@ private:
 	const short SKILL_1_ATTACK_RATE_PERCENT;
 
 	// 攻撃の段階ごとのタグ
-	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG;
+	COLLIDER_TAG COLL_TAG;
 
 	// 攻撃の段階ごとの判定のサイズ（半径）
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE;

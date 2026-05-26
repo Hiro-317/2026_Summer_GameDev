@@ -26,14 +26,6 @@ private:
 	// 攻撃対象の探索範囲
 	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("TripleAttack","TargetSerchRange");
 
-	// 当たり判定のタグテーブル
-	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
-	{
-		COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1,
-		COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2,
-		COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3,
-	};
-
 	// 当たり判定のサイズテーブル（半径）
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_SIZE_TABLE =
 	{
