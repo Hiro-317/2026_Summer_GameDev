@@ -142,6 +142,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Boom\EffectBoom.cpp" />
+    <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
     <ClCompile Include="Src\Manager\Net\Enet\callbacks.c" />
@@ -207,6 +209,10 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
+    <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Manager\Effect\Boom\EffectBoom.h" />
+    <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />
+    <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />
     <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />

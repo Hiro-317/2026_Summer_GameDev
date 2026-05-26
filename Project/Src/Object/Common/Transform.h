@@ -72,6 +72,12 @@ struct Transform
 	/// <param name="path">モデルのパス（Data/Model/～～.mv1）</param>
 	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); }
 
+	/// <summary>
+	/// エフェクトをロード
+	/// </summary>
+	/// <param name="path">モデルのパス（Data/Effect/～～.efkefc）</param>
+	void LoadEffect(std::string path) { model = LoadEffekseerEffect(("Data/Effect/" + path + ".efkefc").c_str()); }
+
 	// 制御情報をモデルに適用
 	void Attach(void) { MV1ModelMatrix(model, scale, pos + centerDiff.TransMat(MatrixAllMultZXY({ angle })), { localAngle,angle }); }
 
