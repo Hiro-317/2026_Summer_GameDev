@@ -1,6 +1,5 @@
 #include "Application.h"
 
-#include <EffekseerForDXLib.h>
 #include "../pch.h"
 
 #include "../Manager/FPS/FPS.h"
@@ -9,6 +8,7 @@
 #include "../Manager/Camera/Camera.h"
 #include "../Manager/Sound/SoundManager.h"
 #include "../Manager/Font/FontManager.h"
+#include "../Manager/Effect/EffectManager.h"
 #include "../Scene/SceneManager/SceneManager.h"
 
 
@@ -53,7 +53,10 @@ void Application::Init(void)
 	// DxLibの初期化
 	isInitFail = false;
 	if (DxLib_Init() == -1) { isInitFail = true; return; }
+
 	if (Effekseer_Init(EFFECT_MAX_NUM) == -1) { isInitFail = true; return; }
+	SetChangeScreenModeGraphicsSystemResetFlag(false);
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// 描画先画面を裏にする
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -79,6 +82,10 @@ void Application::Init(void)
 
 	// フォントデータ生成 / 初期化処理
 	Font::CreateIns();
+
+	// エフェクト管理クラス生成 / 初期化処理
+	EffectManager::CreateIns();
+	printfDx("this: %p\n", this);
 
 	// シーン管理初期化 / 初期化処理
 	SceneManager::CreateIns();

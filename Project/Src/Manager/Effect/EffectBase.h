@@ -1,41 +1,50 @@
 #pragma once
 
-#include <EffekseerForDXLib.h>
+#include "../../pch.h"
+
+#include "../../Utility/Utility.h"
 
 #include "../../Object/Common/Transform.h"
+#include "../../Object/Common/DataLoad/ParameterLoad.h"
 
 enum class EFFECT_NAME {
 
 	NON = -1,
 
-	BOOM,
+	TACKLE_MOVE,
 
 	MAX
 };
 
 struct EFFECT_INFO
 {
+	EFFECT_NAME name = EFFECT_NAME::NON;
+	int handle = -1;
 	Transform trans{ Vector3() };
+	const Transform* follow = nullptr;
 	int speed = -1;
 };
 
 class EffectBase {
 public:
 
-	EffectBase(void){}
+	EffectBase(const ParameterLoad& parameter) : parameter(parameter){}
 
 	virtual ~EffectBase() = default;
 
 	virtual void Load(void) = 0;
 
-	virtual void Update(const Vector3* followPos)
+	virtual void Update(void)
 	{
 		if (playHandle != -1) {
 			if (IsEffekseer3DEffectPlaying(playHandle) == -1) {
 				end = true;
 				return;
 			}
-			SetPosPlayingEffekseer3DEffect(playHandle, followPos->x, followPos->y, followPos->z);
+			if (info.follow != nullptr) {
+				Vector3 pos = info.follow->pos + info.trans.pos.TransMat(MatrixAllMultXZY({ info.follow->angle }));
+				SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.x, pos.x);
+			}
 			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
 			SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 			UpdateEffekseer3D();
@@ -46,13 +55,55 @@ public:
 		DeleteEffekseerEffect(info.trans.model);
 	}
 
+	virtual void StopEffect(void)
+	{
+		StopEffekseer3DEffect(playHandle);
+		Release();
+	}
+
 	bool IsEnd(void) { return end; }
+
+	EFFECT_NAME GetName(void) { return info.name; }
 
 protected:
 
-	EFFECT_INFO info{};
+#pragma region パラメーター外部ファイル管理に関する関数
+	/// <summary>
+	/// パラメーター外部ファイル管理クラスから指定のパラメーターの指定の配列番号の値だけを取得する
+	/// </summary>
+	/// <param name="parameterName">パラメーターのID</param>
+	/// <param name="index">配列番号（指定なしで0）</param>
+	/// <returns></returns>
+	float GetParameter(const std::string& fileName, const std::string& parameterName, int index = 0)const {
+		return parameter.GetParameter(fileName, parameterName, index);
+	}
+
+	/// <summary>
+	/// パラメーター外部ファイル管理クラスから指定のパラメーターの指定の配列番号の値だけをint型にキャストして取得する
+	/// </summary>
+	/// <param name="parameterName">パラメーターのID</param>
+	/// <param name="index">配列番号（指定なしで0）</param>
+	/// <returns></returns>
+	int GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index = 0)const {
+		return parameter.GetParameterToInt(fileName, parameterName, index);
+	}
+
+	/// <summary>
+	/// パラメーター外部ファイル管理クラスから指定のパラメーターをVector3構造体にして取得する
+	/// </summary>
+	/// <param name="parameterName">パラメーターのID</param>
+	/// <returns></returns>
+	Vector3 GetParameterToVector3(const std::string& fileName, const std::string& parameterName) {
+		return parameter.GetParameterToVector3(fileName, parameterName);
+	}
+
+	EFFECT_INFO info;
 
 	int playHandle = -1;
 
 	bool end = false;
+
+private:
+
+	const ParameterLoad& parameter;
 };

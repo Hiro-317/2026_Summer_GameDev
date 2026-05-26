@@ -16,7 +16,6 @@ public:
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
 
-	const Vector3 GetInterestPos(void) { return INTEREST_POS; }
 
 private:
 
@@ -25,7 +24,7 @@ private:
 	// ƒXƒLƒ‹1ó‘Ô```````````````````````````
 
 	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
-	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("Skill1TargetSerchRange");
+	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("TripleAttack","TargetSerchRange");
 
 	// “–‚½‚è”»’è‚Ìƒ^ƒOƒe[ƒuƒ‹
 	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_TAG_TABLE =
@@ -38,40 +37,40 @@ private:
 	// “–‚½‚è”»’è‚ÌƒTƒCƒYƒe[ƒuƒ‹i”¼Œaj
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_SIZE_TABLE =
 	{
-		GetParameter("Skill1CollSize1"),
-		GetParameter("Skill1CollSize2"),
-		GetParameter("Skill1CollSize3"),
+		GetParameter("TripleAttack","CollSize1"),
+		GetParameter("TripleAttack","CollSize2"),
+		GetParameter("TripleAttack","CollSize3"),
 	};
 
 	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
-	const Vector3 SKILL_1_COLL_LOCAL_POS = GetParameterToVector3("Skill1CollLocalPos");
+	const Vector3 SKILL_1_COLL_LOCAL_POS = GetParameterToVector3("TripleAttack","CollLocalPos");
 
 	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_1_COOL_TIME = GetParameterToInt("Skill1CoolTime");
+	const int SKILL_1_COOL_TIME = GetParameterToInt("TripleAttack","CoolTime");
 
 	// UŒ‚‚ªŸ’i‚ÉŒq‚ª‚é—P—\ŠÔ
-	const int SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME = GetParameterToInt("Skill1AttackNextStageContinueTime");
+	const int SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME = GetParameterToInt("TripleAttack","AttackNextStageContinueTime");
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_START_TIME =
 	{
-		GetParameter("Skill1CollStartTime1"),
-		GetParameter("Skill1CollStartTime2"),
-		GetParameter("Skill1CollStartTime3"),
+		GetParameter("TripleAttack","CollStartTime1"),
+		GetParameter("TripleAttack","CollStartTime2"),
+		GetParameter("TripleAttack","CollStartTime3"),
 	};
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_END_TIME =
 	{
-		GetParameter("Skill1CollEndTime1"),
-		GetParameter("Skill1CollEndTime2"),
-		GetParameter("Skill1CollEndTime3"),
+		GetParameter("TripleAttack","CollEndTime1"),
+		GetParameter("TripleAttack","CollEndTime2"),
+		GetParameter("TripleAttack","CollEndTime3"),
 	};
 
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("Skill1AttackMoveSpeed");
+	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("TripleAttack","AttackMoveSpeed");
 
 	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
-	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameter("Skill2AttackRatePercent");
+	const short SKILL_1_ATTACK_RATE_PERCENT = GetParameter("TripleAttack","AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
 
@@ -79,28 +78,31 @@ private:
 	// ƒXƒLƒ‹2ó‘Ô```````````````````````````
 
 	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
-	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("Skill2TargetSerchRange");
+	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("SimpleAttack","TargetSerchRange");
 
 	// “–‚½‚è”»’è‚Ìƒ^ƒO
 	const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK;
 
 	// “–‚½‚è”»’è‚ÌƒTƒCƒYi”¼Œaj
-	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("Skill2CollSize");
+	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("SimpleAttack","CollSize");
 
 	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
-	const Vector3 SKILL_2_COLL_LOCAL_POS = GetParameterToVector3("Skill2CollLocalPos");
+	const Vector3 SKILL_2_COLL_LOCAL_POS = GetParameterToVector3("SimpleAttack","CollLocalPos");
 
 	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_2_COOL_TIME = GetParameterToInt("Skill2CoolTime");
+	const int SKILL_2_COOL_TIME = GetParameterToInt("SimpleAttack","CoolTime");
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_2_COLL_START_TIME = GetParameter("Skill2CollStartTime");
+	const float SKILL_2_COLL_START_TIME = GetParameter("SimpleAttack","CollStartTime");
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_2_COLL_END_TIME = GetParameter("Skill2CollEndTime");
+	const float SKILL_2_COLL_END_TIME = GetParameter("SimpleAttack","CollEndTime");
 
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("Skill2AttackMoveSpeed");
+	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("SimpleAttack","AttackMoveSpeed");
+
+	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
+	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameter("SimpleAttack","AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
@@ -108,15 +110,15 @@ private:
 	// ƒXƒLƒ‹3ó‘Ô```````````````````````````
 
 	// ‰ñ”ğ‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_3_COOL_TIME = GetParameterToInt("Skill3CoolTime");
+	const int SKILL_3_COOL_TIME = GetParameterToInt("Dodge","CoolTime");
 
 	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_3_INVI_START_TIME = GetParameter("Skill3InviStartTime");
+	const float SKILL_3_INVI_START_TIME = GetParameter("Dodge","InviStartTime");
 	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_3_INVI_END_TIME = GetParameter("Skill3InviEndTime");
+	const float SKILL_3_INVI_END_TIME = GetParameter("Dodge","InviEndTime");
 
 	// ‰ñ”ğ’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_3_MOVE_SPEED = GetParameter("Skill3DodgeMoveSpeed");
+	const float SKILL_3_MOVE_SPEED = GetParameter("Dodge","DodgeMoveSpeed");
 
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
@@ -146,16 +148,16 @@ private:
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ^ƒCƒv‚²‚Æ‚ÌÄ¶‘¬“x
 	const float ANIME_SPEED_TABLE[(int)ANIME_TYPE::MAX] = 
 	{
-		GetParameter("IdleAnimeSpeed"),		// IDLE
-		GetParameter("WalkAnimeSpeed"),		// WALK
-		GetParameter("RunAnimeSpeed"),		// RUN
-		GetParameter("Punch1AnimeSpeed"),	// PUNCH1
-		GetParameter("Punch2AnimeSpeed"),	// PUNCH2
-		GetParameter("Punch3AnimeSpeed"),	// PUNCH3
-		GetParameter("KickAnimeSpeed"),		// KICK
-		GetParameter("DodgeAnimeSpeed"),	// DODGE
-		GetParameter("DamageAnimeSpeed"),	// DAMAGE
-		GetParameter("DeathAnimeSpeed"),	// DEATH
+		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+		GetParameter("Anime", "WalkAnimeSpeed"),	// WALK
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "Punch1AnimeSpeed"),	// PUNCH1
+		GetParameter("Anime", "Punch2AnimeSpeed"),	// PUNCH2
+		GetParameter("Anime", "Punch3AnimeSpeed"),	// PUNCH3
+		GetParameter("Anime", "KickAnimeSpeed"),	// KICK
+		GetParameter("Anime", "DodgeAnimeSpeed"),	// DODGE
+		GetParameter("Anime", "DamageAnimeSpeed"),	// DAMAGE
+		GetParameter("Anime", "DeathAnimeSpeed"),	// DEATH
 	};
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒHƒ‹ƒ_‚Ü‚Å‚ÌƒpƒX

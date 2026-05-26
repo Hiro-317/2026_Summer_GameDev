@@ -22,8 +22,10 @@ public:
 		const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
 		const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
+		const short SKILL_1_ATTACK_RATE_PERCENT,
 
-		const Vector3& playerPos, const Vector3& playerAngle
+		const Vector3& playerPos, const Vector3& playerAngle,
+		const CharacterStats& playerStats
 	);
 	~PlayerTripleAttackCollOperator()override = default;
 
@@ -66,6 +68,9 @@ private:
 	// 攻撃対象を見つける距離
 	const float FIND_ATTACK_TARGET_RANGE;
 
+	// 三段攻撃の攻撃倍率
+	const short SKILL_1_ATTACK_RATE_PERCENT;
+
 	// 攻撃の段階ごとのタグ
 	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG;
 
@@ -91,6 +96,9 @@ private:
 
 	// 攻撃対象の座標
 	const Vector3* targetPos;
+
+	// プレイヤーのステータス
+	const CharacterStats& playerStats;
 
 	// 更新処理
 	void SubUpdate(void)override;

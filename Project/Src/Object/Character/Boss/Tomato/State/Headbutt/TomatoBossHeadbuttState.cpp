@@ -27,6 +27,7 @@ void TomatoBossHeadbuttState::Update(void)
 {
 	time++;
 	if (time > ATTACK_TIME) {
+		Exit();
 		DefaultChangeState();
 	}
 	else {

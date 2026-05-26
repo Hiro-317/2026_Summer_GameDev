@@ -12,7 +12,7 @@
 
 class BlockManager;
 class RockWall;
-class Player;
+class PlayerManager;
 class Boss;
 class TomatoBossStage;
 

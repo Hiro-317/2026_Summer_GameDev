@@ -20,7 +20,7 @@
 
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(600, 200, 10000, 10, "Data/Parameter/Charactor/Player/Orange/OrangePlayerParameter.csv", "Orange/OrangeModel")
+	PlayerBase(600, 200, 10000, 10, "Data/Parameter/Character/Player/Orange/", "Orange/OrangeModel")
 {
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
@@ -55,7 +55,9 @@ void OrangePlayer::PlayerLoad(void)
 			SKILL_1_COLL_TAG_TABLE,
 			SKILL_1_COLL_SIZE_TABLE,
 			SKILL_1_COLL_LOCAL_POS,
-			trans.pos, trans.angle
+			SKILL_1_ATTACK_RATE_PERCENT,
+			trans.pos, trans.angle,
+			characterStats
 		)
 	);
 

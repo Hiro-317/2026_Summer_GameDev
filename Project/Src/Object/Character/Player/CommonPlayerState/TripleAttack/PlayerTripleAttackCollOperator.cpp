@@ -7,18 +7,23 @@ PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 	const std::array<COLLIDER_TAG, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_TAG,
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> COLL_SIZE,
 	const Vector3& COLL_LOCAL_POS,
+	const short SKILL_1_ATTACK_RATE_PERCENT,
 
-	const Vector3& playerPos, const Vector3& playerAngle
+	const Vector3& playerPos, const Vector3& playerAngle,
+	const CharacterStats& playerStats
 ) :
 	FIND_ATTACK_TARGET_RANGE(FIND_ATTACK_TARGET_RANGE),
 
 	COLL_TAG(COLL_TAG), COLL_SIZE(COLL_SIZE),
 	COLL_LOCAL_POS(COLL_LOCAL_POS),
 
+	SKILL_1_ATTACK_RATE_PERCENT(SKILL_1_ATTACK_RATE_PERCENT),
+
 	playerPos(playerPos), playerAngle(playerAngle),
 
 	isFindAttackTarget(false),
-	targetPos(nullptr)
+	targetPos(nullptr),
+	playerStats(playerStats)
 {
 }
 
@@ -43,6 +48,10 @@ void PlayerTripleAttackCollOperator::Load(void)
 	}
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
+
+	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_1);
+	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_2);
+	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_TRIPLE_ATTACK_3);
 }
 
 void PlayerTripleAttackCollOperator::OnCollision(const ColliderBase& other)

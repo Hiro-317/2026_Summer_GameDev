@@ -36,9 +36,9 @@ void SoundManager::Init(void)
 
 		// ˆê’Uˆê•Ï”‚Éƒf[ƒ^‚ğæ‚è‚Ü‚Æ‚ß‚é
 		SoundTable data(
+			table[TABLE_PATH],
 			table[TABLE_SCENE],
 			table[TABLE_TYPE],
-			table[TABLE_PATH],
 			table[TABLE_VOLUME],
 			table[TABLE_LOOP],
 			table[TABLE_DUPLI]

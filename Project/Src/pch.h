@@ -10,3 +10,5 @@
 #include <enet/enet.h>
 
 #include <DxLib.h>
+
+#include <EffekseerForDXLib.h>

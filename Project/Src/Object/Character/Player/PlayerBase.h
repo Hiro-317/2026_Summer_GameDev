@@ -29,8 +29,6 @@ public:
 
 	~PlayerBase()override = default;
 
-	void CharacterLoad(void)override;
-	void CharacterUiDraw(void)override;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -48,15 +46,19 @@ public:
 
 	virtual void PlayerLoad(void) = 0;
 
+	const Vector3& GetInterestPos(void)const { return INTEREST_POS; }
+
 	void OnCollision(const ColliderBase& collider)override;
 
 private:
 
 	// ƒƒCƒ“ˆ—``````````````
+	void CharacterLoad(void)override;
 	void CharactorInit(void)override;
 	void CharactorUpdate(void)override;
 	void CharactorDraw(void)override;
 	void CharactorAlphaDraw(void)override;
+	void CharacterUiDraw(void)override;
 	void CharactorRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
@@ -66,16 +68,16 @@ protected:
 	// ƒ‚ƒfƒ‹``````````````````````````````
 
 	// ƒXƒP[ƒ‹
-	const Vector3 MODEL_SCALE = GetParameterToVector3("ModelScale");
+	const Vector3 MODEL_SCALE = GetParameterToVector3("Model", "Scale");
 
 	// ƒTƒCƒY
-	const Vector3 MODEL_SIZE = GetParameterToVector3("ModelSize") * MODEL_SCALE;
+	const Vector3 MODEL_SIZE = GetParameterToVector3("Model", "Size") * MODEL_SCALE;
 
 	// ’†S“_‚ÌƒYƒŒ
-	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("ModelCenterDiff") * MODEL_SCALE;
+	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("Model", "CenterDiff") * MODEL_SCALE;
 
 	// Šp“x‚ÌƒYƒŒ
-	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("ModelLocalRot") * (DX_PI_F / 180.0f);
+	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("Model", "LocalRot") * (DX_PI_F / 180.0f);
 
 	// `````````````````````````````````
 
@@ -90,19 +92,19 @@ protected:
 	const float LINE_COLLIDER_ENOUGH_DISTANCE = LINE_COLLIDER_END_POS.Length();
 
 	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ì”¼Œa
-	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.x * 0.5f) * GetParameter("ModelToColliderRate");
+	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate");
 	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹n“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
 	const Vector3 CAPSULE_COLLIDER_START_POS =
 		Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate")
+			(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
 	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹I“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
 	const Vector3 CAPSULE_COLLIDER_END_POS =
 		-Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("ModelToColliderRate")
+			(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
-			- GetParameter("ClimbOverHeight")
+			- GetParameter("Collider", "ClimbOverHeight")
 		);
 	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìâ‘Î‚É“–‚½‚ç‚È‚¢‚¨‚¨‚æ‚»‚Ì‹——£
 	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE =
@@ -111,33 +113,33 @@ protected:
 
 
 	// ‰Ÿ‚µo‚µ‚ğs‚¤Û‚Ìd‚³
-	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("CollisionPushWeight");
+	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("Collider", "CollisionPushWeight");
 	// ````````````````````````````````````````````````
 
 
 	// •Ï”‰Šú‰»Œn``````````````````````````
 
 	// ‰ŠúÀ•W
-	const Vector3 INIT_POS = GetParameterToVector3("InitPos");
+	const Vector3 INIT_POS = GetParameterToVector3("Init", "Pos");
 
 	// ’‹“_‚Ì‘Š‘ÎÀ•W
-	const Vector3 INTEREST_POS = GetParameterToVector3("InterestPos");
+	const Vector3 INTEREST_POS = GetParameterToVector3("Init", "InterestPos");
 
 	// ``````````````````````````•Ï”‰Šú‰»Œn
 
 	// ˆÚ“®ó‘Ô`````````````````````````````
 
 	// ‰ÁZˆÚ“®—Ê
-	const float MOVE_SPEED = GetParameter("MoveSpeed");
+	const float MOVE_SPEED = GetParameter("Move","Speed");
 
 	// Å‘åˆÚ“®—Ê
-	const float MOVE_SPEED_MAX = GetParameter("MoveSpeedMax");
+	const float MOVE_SPEED_MAX = GetParameter("Move","SpeedMax");
 
 	// ƒ_ƒbƒVƒ…‚ÌˆÚ“®—Ê”{—¦
-	const float DASH_SPEED_RATE = GetParameter("DashSpeedRate");
+	const float DASH_SPEED_RATE = GetParameter("Move", "DashSpeedRate");
 
 	// ƒ_ƒbƒVƒ…‚ÌƒXƒ^ƒ~ƒi‚ÌÅ‘å—Êi1ƒtƒŒ[ƒ€‚¸‚ÂƒfƒNƒŠƒƒ“ƒgj
-	const short DASH_STAMINA_MAX = (short)GetParameterToInt("DashStaminaMax");
+	const short DASH_STAMINA_MAX = (short)GetParameterToInt("Move", "DashStaminaMax");
 
 
 	// `````````````````````````````ˆÚ“®ó‘Ô
@@ -145,8 +147,8 @@ protected:
 
 	// ƒ_ƒ[ƒWó‘Ô`````````````````````````
 	
-		// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-		const unsigned char DAMAGE_INVI_TIME = (unsigned char)GetParameter("DamageInviTime");
+	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
+	const unsigned char DAMAGE_INVI_TIME = (unsigned char)GetParameter("Damage", "DamageInviTime");
 	 
 	// `````````````````````````ƒ_ƒ[ƒWó‘Ô
 
