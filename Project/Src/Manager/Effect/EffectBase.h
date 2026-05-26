@@ -32,23 +32,26 @@ public:
 
 	virtual ~EffectBase() = default;
 
-	virtual void Load(void) = 0;
-
 	virtual void Update(void)
 	{
-		if (playHandle != -1) {
-			if (IsEffekseer3DEffectPlaying(playHandle) == -1) {
-				end = true;
-				return;
-			}
-			if (info.follow != nullptr) {
-				Vector3 pos = info.follow->pos + info.trans.pos.TransMat(MatrixAllMultXZY({ info.follow->angle }));
-				SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.x, pos.x);
-			}
-			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
-			SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
-			UpdateEffekseer3D();
+		if (playHandle == -1) {
+			playHandle = PlayEffekseer3DEffect(info.trans.model);
 		}
+		if (IsEffekseer3DEffectPlaying(playHandle) == -1) {
+			end = true;
+			return;
+		}
+		if (info.follow != nullptr) {
+			Vector3 pos = info.follow->pos + info.trans.pos.TransMat(MatrixAllMultZXY({ info.follow->angle }));
+			Vector3 angle = info.follow->angle + info.trans.angle;
+			SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.y, pos.z);
+			SetRotationPlayingEffekseer3DEffect(playHandle, angle.x, angle.y, angle.z);
+		}
+		else {
+			SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
+			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+		}
+		SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 	}
 	virtual void Release(void) 
 	{
@@ -58,6 +61,7 @@ public:
 	virtual void StopEffect(void)
 	{
 		StopEffekseer3DEffect(playHandle);
+		playHandle = -1;
 		Release();
 	}
 

@@ -145,6 +145,7 @@ void GameScene::Update(void)
 	}
 
 	EffectManager::GetIns()->Update();
+	UpdateEffekseer3D();
 
 #endif // _DEBUG
 

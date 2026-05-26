@@ -52,6 +52,7 @@ void Application::Init(void)
 
 	// DxLib‚Ì‰Šú‰»
 	isInitFail = false;
+	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	if (DxLib_Init() == -1) { isInitFail = true; return; }
 
 	if (Effekseer_Init(EFFECT_MAX_NUM) == -1) { isInitFail = true; return; }

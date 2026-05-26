@@ -7,11 +7,8 @@ EffectTackleMove::EffectTackleMove(const ParameterLoad& parameter, EFFECT_NAME n
 	info.follow = follow;
 	info.name = name;
 	info.trans.pos = local;
-}
 
-void EffectTackleMove::Load(void)
-{
-	info.handle = LoadEffekseerEffect("Data/Effect/TackleMove.efkefc");
+	info.trans.LoadEffect("TackleMove");
 
 	info.trans.angle = GetParameterToVector3("TackleMove", "Angle");
 	info.trans.scale = GetParameterToVector3("TackleMove", "Scale");

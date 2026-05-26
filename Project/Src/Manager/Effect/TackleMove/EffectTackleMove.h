@@ -8,6 +8,4 @@ public:
 	EffectTackleMove(const ParameterLoad& parameter, EFFECT_NAME name, const Transform* follow, const Vector3& local);
 
 	~EffectTackleMove() = default;
-
-	void Load(void) override;
 };

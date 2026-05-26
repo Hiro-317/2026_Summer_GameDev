@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <list>
 
 #include "EffectFactory.h"
 
@@ -19,6 +19,7 @@ public:
 	void CreateEffect(EFFECT_NAME name, const Transform* follow, const Vector3& local);
 	void CreateEffect(EFFECT_NAME name, const Transform& trans);
 	void StopEffect(EFFECT_NAME name);
+	void StopEffectAll(void);
 
 private:
 
@@ -36,5 +37,5 @@ private:
 	// パラメーター外部ファイル管理クラス
 	ParameterLoad* parameter;
 
-	std::vector<EffectBase*> effectInfo;
+	std::list<EffectBase*> effectInfo;
 };

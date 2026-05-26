@@ -11,6 +11,7 @@ EffectManager::EffectManager(void)
 
 EffectManager::~EffectManager()
 {
+	StopEffectAll();
 	delete parameter;
 }
 
@@ -18,7 +19,7 @@ void EffectManager::Update(void) {
 
 	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
 		(*info)->Update();
-		if ((*info)->IsEnd()) { (*info)->Release(); info = effectInfo.erase(info); delete (*info); }
+		if ((*info)->IsEnd()) { (*info)->Release(); delete (*info); info = effectInfo.erase(info); }
 		else { info++; }
 	}
 }
@@ -26,19 +27,25 @@ void EffectManager::Update(void) {
 void EffectManager::CreateEffect(EFFECT_NAME name, const Transform* follow, const Vector3& local) {
 
 	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, follow, local));
-	effectInfo.back()->Load();
 }
 
 void EffectManager::CreateEffect(EFFECT_NAME name, const Transform& trans) {
 
 	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, trans));
-	effectInfo.back()->Load();
 }
 
 void EffectManager::StopEffect(EFFECT_NAME name) {
 
 	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
-		if ((*info)->GetName() == name) { (*info)->StopEffect(); }
+		if ((*info)->GetName() == name) { (*info)->StopEffect(); delete (*info); info = effectInfo.erase(info); }
 		else { info++; }
 	}
+}
+
+void EffectManager::StopEffectAll(void)
+{
+	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
+		(*info)->StopEffect();
+	}
+	effectInfo.clear();
 }
