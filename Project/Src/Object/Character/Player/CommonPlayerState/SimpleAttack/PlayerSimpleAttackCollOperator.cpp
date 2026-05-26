@@ -50,21 +50,34 @@ void PlayerSimpleAttackCollOperator::Load(void)
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
-	CreateAttackSkill(ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::PLAYER_ATTACK);
+	CreateAttackSkill(ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 }
 
-void PlayerSimpleAttackCollOperator::OnCollision(const ColliderBase& other)
+void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	switch (other.GetTag())
-	{
-	case COLLIDER_TAG::BOSS:
-	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
-		isFindAttackTarget = true;
-		targetPos = &other.GetTransform().pos;
-		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
-		break;
-	default:break;
+	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
+		switch (other.GetTag())
+		{
+		case COLLIDER_TAG::BOSS:
+		case COLLIDER_TAG::ENEMY:
+		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+			isFindAttackTarget = true;
+			targetPos = &other.GetTransform().pos;
+			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+			break;
+		default:break;
+		}
+	}
+	else if(ownTag == COLL_TAG) {
+		switch (other.GetTag())
+		{
+		case COLLIDER_TAG::BOSS:
+		case COLLIDER_TAG::ENEMY:
+		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+			isHit = true;
+			break;
+		default:break;
+		}
 	}
 }
 

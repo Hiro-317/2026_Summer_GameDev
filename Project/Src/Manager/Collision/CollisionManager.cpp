@@ -15,6 +15,7 @@ void CollisionManager::Add(ColliderBase* collider)
 
 		//ÉvÉåÉCÉÑÅ[ån
 	case COLLIDER_TAG::PLAYER:
+	case COLLIDER_TAG::PLAYER_ATTACK:
 	case COLLIDER_TAG::PLAYER_COMMON:
 
 		playerColliders.emplace_back(collider);
@@ -91,8 +92,8 @@ void CollisionManager::Matching(std::vector<ColliderBase*>& as, std::vector<Coll
 			if (!b->GetJudge()) { continue; }
 
 			if (IsHit(a, b)) {
-				a->CallOnCollision(*b);
-				b->CallOnCollision(*a);
+				a->CallOnCollision(a->GetTag(), *b);
+				b->CallOnCollision(b->GetTag(), *a);
 			}
 		}
 	}
@@ -111,8 +112,8 @@ void CollisionManager::Matching(std::vector<ColliderBase*>& s)
 			if (!s[b]->GetJudge()) { continue; }
 
 			if (IsHit(s[a], s[b])) {
-				s[a]->CallOnCollision(*s[b]);
-				s[b]->CallOnCollision(*s[a]);
+				s[a]->CallOnCollision(s[a]->GetTag(), *s[b]);
+				s[b]->CallOnCollision(s[b]->GetTag(), *s[a]);
 			}
 		}
 	}

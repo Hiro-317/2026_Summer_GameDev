@@ -51,7 +51,7 @@ void TomatoStampCollOperator::Draw(void)
 	}
 }
 
-void TomatoStampCollOperator::OnCollision(const ColliderBase& other)
+void TomatoStampCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 	switch (other.GetTag())
 	{

@@ -31,7 +31,7 @@ public:
 
 	void Load(void)override;
 
-	void OnCollision(const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// 攻撃対象を探索
 	void TargetSerch(void) {
@@ -44,7 +44,7 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 指定の段の攻撃の判定を発生させる
-	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true); }
+	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { if(isHit[(int)stage])ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true); }
 
 	// 指定の段の攻撃の判定を消す（指定がない場合は全ての段の判定を消す）
 	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::NON) {
@@ -91,6 +91,9 @@ private:
 
 	// 攻撃対象が見つかったかどうか
 	bool isFindAttackTarget;
+
+	// 攻撃が当たったかどうか
+	bool isHit[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
 
 	// 攻撃対象の座標
 	const Vector3* targetPos;

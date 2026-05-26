@@ -31,7 +31,7 @@ public:
 	const Transform& GetTrans(void)const { return trans; }
 
 	// “–‚½‚è”»’è‚Ì’Ê’m
-	virtual void OnCollision(const ColliderBase& collider) {}
+	virtual void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other) {}
 
 	// Ú’n”»’è‚Ì’Ê’m
 	virtual void OnGrounded() {
@@ -147,7 +147,7 @@ protected:
 		collider.back()->SetDynamicFlg((dynamicFlg) ? true : false);
 		collider.back()->SetPushFlg(pushFlg);
 		collider.back()->SetPushWeight(pushWeight);
-		collider.back()->SetOnCollisionFunc([this](const ColliderBase& collider) { this->OnCollision(collider); });
+		collider.back()->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other) { this->OnCollision(ownTag, other); });
 		collider.back()->SetOnGroundedFunc([this](void) { this->OnGrounded(); });
 		ColliderToSetSkill();
 	}

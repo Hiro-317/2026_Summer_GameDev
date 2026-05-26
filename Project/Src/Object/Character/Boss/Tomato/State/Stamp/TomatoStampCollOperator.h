@@ -24,7 +24,7 @@ public:
 
 	void Draw(void)override;
 
-	void OnCollision(const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// UŒ‚‚Ì’†SÀ•W‚Ìæ“¾
 	Vector3 GetAttackPos(void) { return trans.pos; }
