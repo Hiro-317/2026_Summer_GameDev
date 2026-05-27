@@ -190,7 +190,6 @@ protected:
 	// ````````````````````````````````@ƒXƒLƒ‹UI‚ÌÀ•W@
 #pragma endregion ’è”’è‹`
 
-
 	// ’‹“_À•W
 	Vector3 interestPos;
 };

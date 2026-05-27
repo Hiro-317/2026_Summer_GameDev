@@ -10,16 +10,14 @@ public:
 	PlayerDeathState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-
 		Vector3& pos, Vector3& angle,
-
 		const std::function<bool(void)> IsAnimeEnd,
-
 		const std::function<void(void)> PlayDeathAnime,
-		const std::function<void(void)> DefaultChangeState
+		const std::function<void(void)> DeathCamera,
+		const std::function<void(void)> ChangeGameOver
 	);
-	~PlayerDeathState()override = default;
 
+	~PlayerDeathState()override = default;
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -38,8 +36,14 @@ private:
 	// アニメーションが終了したかのフラグを取得する関数のポインタ
 	const std::function<bool(void)> IsAnimeEnd;
 
+	// 死亡アニメーション
 	const std::function<void(void)> PlayDeathAnime;
-	const std::function<void(void)> DefaultChangeState;
+
+	// 死亡した時のカメラ
+	const std::function<void(void)> DeathCamera;
+
+	// ゲームオーバーに遷移
+	const std::function<void(void)> ChangeGameOver;
 
 };
 

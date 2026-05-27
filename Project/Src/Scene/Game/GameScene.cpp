@@ -129,9 +129,9 @@ void GameScene::Update(void)
 		SceneManager::GetIns().PushScene(std::make_shared<GamePause>());
 		return;
 	}
-
+	
 	// ÉQÅ[ÉÄÉNÉäÉAîªíË
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down || ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xffffff);
 		return;
 	}

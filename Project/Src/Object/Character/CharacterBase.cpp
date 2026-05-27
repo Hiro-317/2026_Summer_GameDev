@@ -49,7 +49,9 @@ CharacterBase::CharacterBase(
 	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER),
 
 	operatorSenderId(MSG_SENDER_ID::None),
-	isOwnOperator(false)
+	isOwnOperator(false),
+
+	isDeath(false)
 {
 }
 

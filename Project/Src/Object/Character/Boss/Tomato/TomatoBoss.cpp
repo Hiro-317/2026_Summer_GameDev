@@ -22,7 +22,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(10000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
+	CharacterBase(7000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
 	subObjArray(),
 	playerPos(playerPos)
 {
