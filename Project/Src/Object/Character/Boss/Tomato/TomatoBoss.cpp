@@ -338,7 +338,7 @@ void TomatoBoss::CharactorRelease(void)
 }
 
 
-void TomatoBoss::OnCollision(const ColliderBase& other)
+void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 	if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 		if (other.GetTag() == COLLIDER_TAG::STAGE) {
@@ -347,13 +347,15 @@ void TomatoBoss::OnCollision(const ColliderBase& other)
 		}
 	}
 
-	if (GetInviCounter() > 0) { return; }
+	//if (GetInviCounter() > 0) { return; }
 
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK: {
-		characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		SetInviCounter(150);
-		break;
-	}
+	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
+		switch (other.GetTag()) {
+		case COLLIDER_TAG::PLAYER_ATTACK: {
+			characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+			SetInviCounter(150);
+			break;
+		}
+		}
 	}
 }

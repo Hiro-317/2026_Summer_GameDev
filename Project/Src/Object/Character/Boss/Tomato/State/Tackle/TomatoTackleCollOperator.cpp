@@ -74,7 +74,7 @@ void TomatoTackleCollOperator::Load(void)
 	SetJudge(false);
 }
 
-void TomatoTackleCollOperator::OnCollision(const ColliderBase& other)
+void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 }
 

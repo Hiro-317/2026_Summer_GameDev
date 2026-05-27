@@ -48,7 +48,7 @@ public:
 
 	const Vector3& GetInterestPos(void)const { return INTEREST_POS; }
 
-	void OnCollision(const ColliderBase& collider)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 private:
 

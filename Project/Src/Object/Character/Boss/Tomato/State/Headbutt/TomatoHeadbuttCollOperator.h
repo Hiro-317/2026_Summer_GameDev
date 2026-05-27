@@ -27,7 +27,7 @@ public:
 
 	void Load(void)override;
 
-	void OnCollision(const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	void CollSet(bool flg) { SetJudge(flg); }
 

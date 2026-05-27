@@ -22,7 +22,7 @@ public:
 		return ret;
 	}
 
-	void OnCollision(const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 private:
 

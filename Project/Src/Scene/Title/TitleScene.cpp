@@ -31,6 +31,8 @@ void TitleScene::Init(void)
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
 
 	Net::GetIns().Disconnection();
+
+	Snd::GetIns().Play("HURUHATA");
 }
 void TitleScene::Update(void)
 {

@@ -169,13 +169,13 @@ void PlayerBase::CharacterUiDraw(void)
 	}
 }
 
-void PlayerBase::OnCollision(const ColliderBase& collider)
+void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 	if (GetInviCounter() > 0) { return; }
 
 	// ‰ñ”ğ’†‚Ì–³“Gˆ—
 	if (state == (int)STATE::SKILL_3) {
-		switch (collider.GetTag()) {
+		switch (other.GetTag()) {
 		case COLLIDER_TAG::BOSS_ATTACK:
 			SetInviCounter(150);
 			// ƒ~ƒX‚Ì•\¦
@@ -186,9 +186,9 @@ void PlayerBase::OnCollision(const ColliderBase& collider)
 
 	if (state == (int)STATE::DEATH) { return; }
 
-	switch (collider.GetTag()) {
+	switch (other.GetTag()) {
 	case COLLIDER_TAG::BOSS_ATTACK:
-		characterStats.hp -= CalculateDamage(collider.GetSkillStats().Power(), characterStats.defensePower.Value());
+		characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
 		ChangeState((int)STATE::DAMAGE);
 		break;
 	}

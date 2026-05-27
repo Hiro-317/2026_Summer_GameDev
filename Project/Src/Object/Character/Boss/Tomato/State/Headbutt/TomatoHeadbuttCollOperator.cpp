@@ -72,7 +72,7 @@ void TomatoHeadbuttCollOperator::Load(void)
 	CreateAttackSkill(75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 }
 
-void TomatoHeadbuttCollOperator::OnCollision(const ColliderBase& other)
+void TomatoHeadbuttCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 }
 

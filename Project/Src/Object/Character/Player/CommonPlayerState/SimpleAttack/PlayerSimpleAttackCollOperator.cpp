@@ -20,12 +20,13 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 
 	playerPos(playerPos), playerAngle(playerAngle),
 
-	isFindAttackTarget(false),
-	targetPos(nullptr),
-
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
 
-	playerStats(playerStats)
+	playerStats(playerStats),
+
+	isFindAttackTarget(false),
+	targetPos(nullptr),
+	isHit(false)
 {
 }
 
@@ -46,24 +47,37 @@ void PlayerSimpleAttackCollOperator::Load(void)
 
 	// “–‚½‚è”»’èî•ñ‚ð¶¬‚·‚é
 	ColliderCreate(new SphereCollider(COLL_TAG, COLL_SIZE, COLL_SIZE, COLL_LOCAL_POS));
-	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
-	CreateAttackSkill(ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::ORANGE_PLAYER_KICK_ATTACK);
+	CreateAttackSkill(ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 }
 
-void PlayerSimpleAttackCollOperator::OnCollision(const ColliderBase& other)
+void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	switch (other.GetTag())
-	{
-	case COLLIDER_TAG::BOSS:
-	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
-		isFindAttackTarget = true;
-		targetPos = &other.GetTransform().pos;
-		ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(false);
-		break;
-	default:break;
+	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
+		switch (other.GetTag())
+		{
+		case COLLIDER_TAG::BOSS:
+		case COLLIDER_TAG::ENEMY:
+		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+			isFindAttackTarget = true;
+			targetPos = &other.GetTransform().pos;
+			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+			break;
+		default:break;
+		}
+	}
+	else if(ownTag == COLL_TAG) {
+		switch (other.GetTag())
+		{
+		case COLLIDER_TAG::BOSS:
+		case COLLIDER_TAG::ENEMY:
+		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+			isHit = true;
+			break;
+		default:break;
+		}
 	}
 }
 
@@ -71,5 +85,5 @@ void PlayerSimpleAttackCollOperator::SubUpdate(void)
 {
 	trans.pos = playerPos;
 	trans.angle = playerAngle;
-	ColliderSerch(COLLIDER_TAG::PLAYER_TRIPLE_ATTACK_TARGET_SERCH).back()->SetJudgeFlg(false);
+	ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
 }

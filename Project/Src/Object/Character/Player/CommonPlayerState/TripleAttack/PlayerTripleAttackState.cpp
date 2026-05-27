@@ -62,6 +62,9 @@ void PlayerTripleAttackState::Enter(void)
 
 	// 攻撃対象の探索を開始する
 	collOperator.TargetSerch();
+	
+	// 攻撃のヒット管理のフラグをリセットする
+	collOperator.ResetIsHit();
 }
 
 void PlayerTripleAttackState::Update(void)

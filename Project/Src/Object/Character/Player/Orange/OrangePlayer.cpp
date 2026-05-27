@@ -52,7 +52,7 @@ void OrangePlayer::PlayerLoad(void)
 	subObjArray.emplace_back(
 		new PlayerTripleAttackCollOperator(
 			SKILL_1_TARGET_SERCH_RANGE,
-			SKILL_1_COLL_TAG_TABLE,
+			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL_1_COLL_SIZE_TABLE,
 			SKILL_1_COLL_LOCAL_POS,
 			SKILL_1_ATTACK_RATE_PERCENT,
