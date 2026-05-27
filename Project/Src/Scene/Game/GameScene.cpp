@@ -231,8 +231,6 @@ void GameScene::Release(void)
 
 	// 画面演出用のメインスクリーンを解放
 	DeleteGraph(mainScreen);
-
-	EffectManager::GetIns()->DeleteIns();
 }
 
 void GameScene::Shake(ShakeKinds kinds, ShakeSize size, int time)

@@ -86,7 +86,6 @@ void Application::Init(void)
 
 	// エフェクト管理クラス生成 / 初期化処理
 	EffectManager::CreateIns();
-	printfDx("this: %p\n", this);
 
 	// シーン管理初期化 / 初期化処理
 	SceneManager::CreateIns();
@@ -146,6 +145,9 @@ void Application::Release(void)
 {
 	// シーン管理解放・削除	
 	SceneManager::DeleteIns();
+
+	// エフェクト管理クラス解放・削除
+	EffectManager::DeleteIns();
 
 	// フォントデータの削除
 	Font::DeleteIns();
