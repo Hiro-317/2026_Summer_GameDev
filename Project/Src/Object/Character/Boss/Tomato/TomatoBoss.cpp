@@ -22,13 +22,13 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1000,500,500,1,"Data/Parameter/Character/Boss/Tomato/"),
+	CharacterBase(10000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
 	subObjArray(),
 	playerPos(playerPos)
 {
-	state = (int)STATE::MOVE;
-	
 	isOwnOperator = true;
+
+	coolTime = 10;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -119,26 +119,8 @@ void TomatoBoss::CharacterLoad(void)
 #pragma region プレイヤーが抱える下位クラスを生成する
 
 	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats));
-	subObjArray.push_back(new TomatoTackleCollOperator(
-		characterStats,
-		CAPSULE_COLLIDER_RADIUS,
-		CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
-		CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ, 
-		CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
-		CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
-		CAPSULE_COLLIDER_ENOUGH_DISTANCE,
-		trans.pos, trans.angle
-	));
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(
-		characterStats,
-		CAPSULE_COLLIDER_RADIUS,
-		CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
-		CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ, 
-		CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
-		CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
-		CAPSULE_COLLIDER_ENOUGH_DISTANCE,
-		trans.pos, trans.angle
-	));
+	subObjArray.push_back(new TomatoTackleCollOperator(characterStats, TO_PLAYER_DISTANCE, trans.pos));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(characterStats, TO_PLAYER_DISTANCE, trans.pos));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
@@ -154,10 +136,10 @@ void TomatoBoss::CharacterLoad(void)
 			[&]() { state = static_cast<int>(STATE::IDLE); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
-			// クールタイム
-			90,
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, playerPos,
+			// クールタイム
+			[&]() { return coolTime; },
 			// 頭突きへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::HEADBUTT); },
 			// 移動への状態遷移関数のポインタ
@@ -165,9 +147,9 @@ void TomatoBoss::CharacterLoad(void)
 			// スタンプへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::STAMP); },
 			// 突進への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::TACKLE); }
+			[&]() { ChangeState((int)STATE::TACKLE); },
 			// 岩に当たっているか
-			[&]() { return rockHit; }
+			[&]() { return rockHit; },
 			// 岩の当たり判定戻し
 			[&]() { rockHit = false; }
 			)
@@ -185,6 +167,10 @@ void TomatoBoss::CharacterLoad(void)
 			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoHeadbuttCollOperator>(),
+			// XZコライダを消す
+			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			// XZコライダを戻す
+			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); }
 			)
@@ -221,6 +207,10 @@ void TomatoBoss::CharacterLoad(void)
 			SubObjSerch<TomatoTackleCollOperator>(),
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
+			// XZコライダを消す
+			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			// XZコライダを戻す
+			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); }
 			)
@@ -253,6 +243,7 @@ void TomatoBoss::CharacterLoad(void)
 	// HPバー生成
 	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS));
 #pragma endregion
+	ChangeState((int)STATE::HEADBUTT);
 
 }
 
@@ -262,7 +253,6 @@ void TomatoBoss::CharactorInit(void)
 	trans.pos = INIT_POS;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
-	EffectManager::GetIns()->CreateEffect(EFFECT_NAME::TACKLE_MOVE, &trans, Vector3());
 
 }
 

@@ -154,20 +154,6 @@ private:
 
 	// `````````````````````````````ˆÚ“®ó‘Ô
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
-
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌŽí—Þ
-	enum class ANIME_TYPE
-	{
-		NONE = -1,
-
-		MAX
-	};
-
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒHƒ‹ƒ_‚Ü‚Å‚ÌƒpƒX
-	const std::string ANIME_FOLDER_PATH = "Data/Model/Charactor/Tomato/Anime/";
-
-	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
 
 	// UŒ‚```````````````````````````````
 
@@ -208,4 +194,7 @@ private:
 
 	// Šâ‚É“–‚½‚Á‚½‚©
 	bool rockHit;
+
+	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	int coolTime;
 };

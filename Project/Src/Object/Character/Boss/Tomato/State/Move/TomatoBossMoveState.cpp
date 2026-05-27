@@ -31,7 +31,7 @@ void TomatoBossMoveState::Update(void)
 	// à íuÇÃçXêV
 	pos += moveDir * MOVE_SPEED;
 
-	if ((playerPos - pos).Length() <= 400.0f) {
+	if ((playerPos - pos).Length() <= 350.0f) {
 		headbuttChangeState();
 	}
 }

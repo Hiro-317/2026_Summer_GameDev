@@ -18,6 +18,9 @@ public:
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="resetAngle">角度を戻す</param>
+	/// <param name="DeleteColl">XZのコライダを消す</param>
+	/// <param name="ReviveColl">XZのコライダを復活させる</param>
 	/// <param name="DefaultChangeState">戻すステート</param>
 	TomatoBossTackleState(
 		const std::function<void(void)>& ownChangeState,
@@ -26,6 +29,8 @@ public:
 		Vector3& pos, Vector3& angle, const Vector3& playerPos,
 		TomatoTackleCollOperator* collOperator,
 		const std::function<void(void)> resetAngle,
+		const std::function<void(void)> DeleteColl,
+		const std::function<void(void)> ReviveColl,
 		const std::function<void(void)> DefaultChangeState
 	);
 	~TomatoBossTackleState()override = default;
@@ -71,6 +76,12 @@ private:
 
 	// 角度を戻す
 	const std::function<void(void)> resetAngle;
+
+	// XZのコライダを消す
+	const std::function<void(void)> DeleteColl;
+
+	// XZのコライダを復活させる
+	const std::function<void(void)> ReviveColl;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

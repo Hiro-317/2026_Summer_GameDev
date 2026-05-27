@@ -19,8 +19,8 @@ public:
 	TomatoBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		const int COOL_TIME,
 		Vector3& pos, const Vector3& playerPos,
+		const std::function<int(void)> coolTime,
 		const std::function<void(void)> headbuttChangeState,
 		const std::function<void(void)> moveChangeState,
 		const std::function<void(void)> stampChangeState,
@@ -45,12 +45,6 @@ public:
 
 private:
 
-#pragma region 定数
-	
-	const int COOL_TIME;
-
-#pragma endregion
-
 #pragma region 受け取る参照変数・関数
 
 	// 座標の参照
@@ -58,6 +52,9 @@ private:
 
 	// プレイヤーの座標の読み取り
 	const Vector3& playerPos;
+
+	// クールタイムの参照
+	const std::function<int(void)> coolTime;
 
 	// 頭突きへ
 	const std::function<void(void)> headbuttChangeState;

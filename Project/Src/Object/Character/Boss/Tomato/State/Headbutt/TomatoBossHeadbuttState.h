@@ -17,6 +17,9 @@ public:
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="TomatoHeadbuttCollOperator*">コライダーのポインタ</param>
+	/// <param name="DeleteColl">XZのコライダを消す</param>
+	/// <param name="ReviveColl">XZのコライダを復活させる</param>
 	/// <param name="DefaultChangeState">戻すステート</param>
 	TomatoBossHeadbuttState(
 		const std::function<void(void)>& ownChangeState,
@@ -24,6 +27,8 @@ public:
 		const float MOVE_SPEED, const float ATTACK_TIME,
 		Vector3& pos, Vector3& angle, const Vector3& playerPos,
 		TomatoHeadbuttCollOperator* collOperator,
+		const std::function<void(void)> DeleteColl,
+		const std::function<void(void)> ReviveColl,
 		const std::function<void(void)> DefaultChangeState
 	);
 	~TomatoBossHeadbuttState()override = default;
@@ -64,6 +69,12 @@ private:
 
 	// コリジョンオペレーターのポインタ
 	TomatoHeadbuttCollOperator* collOperator;
+
+	// XZのコライダを消す
+	const std::function<void(void)> DeleteColl;
+
+	// XZのコライダを復活させる
+	const std::function<void(void)> ReviveColl;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

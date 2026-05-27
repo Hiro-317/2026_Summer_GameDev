@@ -3,8 +3,8 @@
 TomatoBossIdleState::TomatoBossIdleState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
-	const int COOL_TIME,
 	Vector3& pos, const Vector3& playerPos,
+	const std::function<int(void)> coolTime,
 	const std::function<void(void)> headbuttChangeState,
 	const std::function<void(void)> moveChangeState, 
 	const std::function<void(void)> stampChangeState,
@@ -13,8 +13,8 @@ TomatoBossIdleState::TomatoBossIdleState(
 	const std::function<void(void)> rockReset
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	COOL_TIME(COOL_TIME),
 	pos(pos), playerPos(playerPos),
+	coolTime(coolTime),
 	headbuttChangeState(headbuttChangeState),
 	moveChangeState(moveChangeState),
 	stampChangeState(stampChangeState),
@@ -26,20 +26,20 @@ TomatoBossIdleState::TomatoBossIdleState(
 
 void TomatoBossIdleState::Enter(void)
 {
-	cnt = 0;
+	cnt = coolTime();
 }
 
 void TomatoBossIdleState::Update(void)
 {
-	if (cnt < COOL_TIME) {
-		cnt++;
+	if (cnt > 0) {
+		cnt--;
 		return;
 	}
 	float distance = (playerPos - pos).Length();
 	int luck = GetRand(10000);
 
 	if (luck <= 4000) {
-		if (distance <= 400.0f) {
+		if (distance <= 350.0f) {
 			headbuttChangeState();
 		}
 		else {
@@ -51,7 +51,7 @@ void TomatoBossIdleState::Update(void)
 		stampChangeState();
 	}
 	else {
-		if (!hitRock) {
+		if (!hitRock()) {
 
 			tackleChangeState();
 		}
