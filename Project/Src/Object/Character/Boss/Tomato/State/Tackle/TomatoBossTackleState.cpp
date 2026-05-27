@@ -50,6 +50,7 @@ void TomatoBossTackleState::Update(void)
 
 		if (collisionStage()) {
 			DefaultChangeState();
+			return;
 		}
 	}
 	angle.x += rotPow;

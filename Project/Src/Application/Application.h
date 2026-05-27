@@ -15,7 +15,7 @@ public:
 	static constexpr int SCREEN_SIZE_Y_HALF = SCREEN_SIZE_Y / 2;
 
 	// エフェクト最大数
-	static constexpr int EFFECT_MAX_NUM = 20000;
+	static constexpr int EFFECT_MAX_NUM = 8000;
 
 public:
 	// シングルトン（生成・取得・削除）

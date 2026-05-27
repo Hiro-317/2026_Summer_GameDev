@@ -1,17 +1,26 @@
 #pragma once
 
 #include "EffectBase.h"
-#include "Boom/EffectBoom.h"
+#include "TackleMove/EffectTackleMove.h"
 
 class EffectFactory {
 
 public:
 
-	static EffectBase* CreateEffect(EFFECT_NAME name) {
+	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Transform& trans) {
 		EffectBase* res{};
 
 		switch (name){
-		case EFFECT_NAME::BOOM: { res = new EffectBoom(); break; }
+		default: { break; }
+		}
+		return res;
+	}
+
+	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Transform* trans, const Vector3& local) {
+		EffectBase* res{};
+
+		switch (name){
+		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, trans, local); break; }
 		default: { break; }
 		}
 		return res;

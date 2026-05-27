@@ -1,6 +1,5 @@
 #include "GameScene.h"
 
-#include <EffekseerForDXLib.h>
 #include <cmath>
 #include "../../Utility/Utility.h"
 
@@ -11,6 +10,7 @@
 #include "../../Manager/Input/KeyManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
+#include "../../Manager/Effect/EffectManager.h"
 
 #include "../../scene/SceneManager/SceneManager.h"
 
@@ -144,6 +144,9 @@ void GameScene::Update(void)
 		return;
 	}
 
+	EffectManager::GetIns()->Update();
+	UpdateEffekseer3D();
+
 #endif // _DEBUG
 
 #pragma endregion
@@ -160,6 +163,8 @@ void GameScene::Draw(void)
 
 	// カメラ適用
 	Camera::GetIns().Apply();
+
+	Effekseer_Sync3DSetting();
 #pragma endregion
 
 #pragma region 描画処理（メイン）
@@ -226,6 +231,8 @@ void GameScene::Release(void)
 
 	// 画面演出用のメインスクリーンを解放
 	DeleteGraph(mainScreen);
+
+	EffectManager::GetIns()->DeleteIns();
 }
 
 void GameScene::Shake(ShakeKinds kinds, ShakeSize size, int time)

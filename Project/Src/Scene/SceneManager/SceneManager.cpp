@@ -1,6 +1,7 @@
 ﻿#include "SceneManager.h"
 
 #include "../../Manager/Loading/Loading.h"
+#include "../../Manager/Effect/EffectManager.h"
 
 #include"../Title/TitleScene.h"
 #include"../Game/GameScene.h"
@@ -89,6 +90,8 @@ void SceneManager::Release(void)
 // 状態遷移関数
 void SceneManager::ChangeScene(std::shared_ptr<SceneBase>scene)
 {
+	//エフェクトの開放
+	EffectManager::GetIns()->StopEffectAll();
 	// シーンが空か？
 	if (scenes.empty()) {
 		//空なので新しく入れる

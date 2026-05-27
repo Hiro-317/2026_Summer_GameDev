@@ -17,6 +17,8 @@
 #include "State/Stamp/TomatoStampState.h"
 #include "State/Stamp/TomatoStampCollOperator.h"
 
+#include "../../../../Manager/Effect/EffectManager.h"
+
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
@@ -153,7 +155,7 @@ void TomatoBoss::CharacterLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// クールタイム
-			45,
+			90,
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, playerPos,
 			// 頭突きへの状態遷移関数のポインタ
@@ -283,6 +285,7 @@ void TomatoBoss::CharactorInit(void)
 	trans.pos = INIT_POS;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
+	EffectManager::GetIns()->CreateEffect(EFFECT_NAME::TACKLE_MOVE, &trans, Vector3());
 
 }
 

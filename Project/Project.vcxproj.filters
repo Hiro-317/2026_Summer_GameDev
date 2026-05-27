@@ -70,6 +70,10 @@
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
+    <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Idle\TomatoBossIdleState.cpp" />
+    <ClCompile Include="Src\Manager\Effect\TackleMove\EffectTackleMove.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -226,7 +230,13 @@
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerNetManager\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
+    <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />
+    <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Idle\TomatoBossIdleState.h" />
+    <ClInclude Include="Src\Manager\Effect\TackleMove\EffectTackleMove.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">
