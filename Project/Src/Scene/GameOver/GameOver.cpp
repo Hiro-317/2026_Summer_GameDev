@@ -23,6 +23,8 @@ void GameOver::Load(void)
 	Snd::GetIns().ChangeScene("GameOver");
 
 	Key::GetIns().SetMouseFixed(false);
+
+	image = LoadGraph("Data/Image/GameOver/GameOverImage.png");
 }
 
 void GameOver::Init(void)
@@ -41,9 +43,11 @@ void GameOver::Update(void)
 
 void GameOver::Draw(void)
 {
+	DrawExtendGraph(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, image, true);
 	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "ゲームオーバーシーン");
 }
 
 void GameOver::Release(void)
 {
+	DeleteGraph(image);
 }
