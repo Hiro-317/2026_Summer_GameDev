@@ -1,3 +1,5 @@
 SystemButton,Data/Sound/Se/All/Button.mp3,All,SE,0.5,False,2
 SystemSelect,Data/Sound/Se/All/Select.mp3,All,SE,0.4,False,2
 HURUHATA,Data/Sound/BGM/BGM.m4a,Title,BGM,0.5,True,1
+PlayerSimpleAttack,Data/Sound/Se/Player/PlayerSimpleAttack.mp3,Game,SE,0.5,False,1
+PlayerTripleAttack,Data/Sound/Se/Player/PlayerTripleAttack.mp3,Game,SE,0.5,False,3

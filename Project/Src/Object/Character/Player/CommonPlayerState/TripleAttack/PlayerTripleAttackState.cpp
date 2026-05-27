@@ -1,5 +1,7 @@
 #include "PlayerTripleAttackState.h"
 
+#include "../../../../../Manager/Sound/SoundManager.h"
+
 PlayerTripleAttackState::PlayerTripleAttackState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -99,6 +101,7 @@ void PlayerTripleAttackState::Update(void)
 	else if (animePlayRate <= COLL_END_TIME[(int)attackStage]) {
 		// UŒ‚”»’è’†
 		collOperator.CollOn(attackStage);
+		SoundManager::GetIns().Play("PlayerTripleAttack");
 	}
 	else {
 		// UŒ‚”»’èI—¹Œã
