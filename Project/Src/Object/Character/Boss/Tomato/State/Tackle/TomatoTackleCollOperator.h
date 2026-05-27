@@ -31,6 +31,8 @@ public:
 
 	void CollSet(bool flg) { SetJudge(flg); }
 
+	bool GetStageHit(void) { return stageHit; }
+
 private:
 
 	// カプセルコライダーの半径
@@ -73,4 +75,5 @@ private:
 	// 更新処理
 	void SubUpdate(void)override;
 
+	bool stageHit;
 };

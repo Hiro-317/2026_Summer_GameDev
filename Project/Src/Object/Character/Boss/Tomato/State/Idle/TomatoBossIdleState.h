@@ -24,7 +24,9 @@ public:
 		const std::function<void(void)> headbuttChangeState,
 		const std::function<void(void)> moveChangeState,
 		const std::function<void(void)> stampChangeState,
-		const std::function<void(void)> tackleChangeState
+		const std::function<void(void)> tackleChangeState,
+		const std::function<bool(void)> hitRock,
+		const std::function<void(void)> rockReset
 	);
 	~TomatoBossIdleState()override = default;
 
@@ -65,6 +67,11 @@ private:
 	const std::function<void(void)> stampChangeState;
 	// “Ëi‚Ö
 	const std::function<void(void)> tackleChangeState;
+
+	// Šâ‚Æ‚Ì“–‚½‚è”»’è
+	const std::function<bool(void)> hitRock;
+	// Šâ‚Æ‚Ì“–‚½‚è”»’è‚Ì‰Šú‰»
+	const std::function<void(void)> rockReset;
 
 #pragma endregion
 
