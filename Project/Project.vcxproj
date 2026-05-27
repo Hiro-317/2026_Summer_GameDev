@@ -196,6 +196,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeOutScene.cpp" />
+    <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
     <ClCompile Include="Src\Scene\Select\BossSelect.cpp" />
@@ -275,6 +276,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeOutScene.h" />
+    <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />

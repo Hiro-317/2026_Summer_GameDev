@@ -8,6 +8,7 @@
 #include"../Clear/ClearScene.h"
 #include"../Select/CharaSelect.h"
 #include"../Select/BossSelect.h"
+#include"../GameOver/GameOver.h"
 
 #include"../Common/Fade/FadeInScene.h"
 #include"../Common/Fade/FadeOutScene.h"
@@ -128,6 +129,9 @@ void SceneManager::ChangeScene(SCENE_ID scene)
 	case SCENE_ID::CLEAR:
 		ChangeScene(std::make_shared<ClearScene>());
 		break;
+	case SCENE_ID::GAMEOVER:
+		ChangeScene(std::make_shared<GameOver>());
+		break;
 	default:
 		break;
 	}
@@ -156,6 +160,9 @@ void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, uns
 		break;
 	case SCENE_ID::CLEAR:
 		ChangeSceneFade(std::make_shared<ClearScene>(), FADE_TIME, FADE_COLOR);
+		break;
+	case SCENE_ID::GAMEOVER:
+		ChangeSceneFade(std::make_shared<GameOver>(), FADE_TIME, FADE_COLOR);
 		break;
 	default:
 		break;
@@ -188,6 +195,9 @@ void SceneManager::PushScene(SCENE_ID scene)
 		break;
 	case SCENE_ID::CLEAR:
 		PushScene(std::make_shared<ClearScene>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		PushScene(std::make_shared<GameOver>());
 		break;
 	default:
 		break;
@@ -227,6 +237,9 @@ void SceneManager::JumpScene(SCENE_ID scene)
 	case SCENE_ID::CLEAR:
 		JumpScene(std::make_shared<ClearScene>());
 		break;
+	case SCENE_ID::GAMEOVER:
+		JumpScene(std::make_shared<GameOver>());
+		break;
 	default:
 		break;
 	}
@@ -249,6 +262,9 @@ void SceneManager::JumpSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsig
 		break;
 	case SCENE_ID::CLEAR:
 		JumpSceneFade(std::make_shared<ClearScene>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		JumpSceneFade(std::make_shared<GameOver>());
 		break;
 	default:
 		break;

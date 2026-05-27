@@ -132,7 +132,7 @@ void GameScene::Update(void)
 	
 	// ÉQÅ[ÉÄÉNÉäÉAîªíË
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down || ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xffffff);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, 90, 0xffffff);
 		return;
 	}
 

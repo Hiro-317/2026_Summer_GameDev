@@ -51,6 +51,7 @@ public:
 		BOSS,
 		GAME,
 		CLEAR,
+		GAMEOVER,
 	};
 
 	// çXêV
