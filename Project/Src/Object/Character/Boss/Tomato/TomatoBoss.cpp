@@ -166,6 +166,10 @@ void TomatoBoss::CharacterLoad(void)
 			[&]() { ChangeState((int)STATE::STAMP); },
 			// 突進への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::TACKLE); }
+			// 岩に当たっているか
+			[&]() { return rockHit; }
+			// 岩の当たり判定戻し
+			[&]() { rockHit = false; }
 			)
 	);
 	AddState(
@@ -215,33 +219,6 @@ void TomatoBoss::CharacterLoad(void)
 			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoTackleCollOperator>(),
-			// ステージの岩か端に当たったか
-			[&]() { return rockHit; },
-			// 当たり判定を戻す
-			[&]() { rockHit = false; },
-			// 角度を戻す
-			[&]() { trans.angle.x = 0; },
-			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::IDLE); }
-			)
-	);
-	AddState(
-		static_cast<int>(STATE::TACKLE),
-		new TomatoBossTackleState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::TACKLE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::TACKLE); },
-			// 移動量と回転量
-			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
-			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos,
-			// コリジョンオペレーターの参照私
-			SubObjSerch<TomatoTackleCollOperator>(),
-			// ステージの岩か端に当たったか
-			[&]() { return rockHit; },
-			// 当たり判定を戻す
-			[&]() { rockHit = false; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// 攻撃終了後の状態遷移関数のポインタ

@@ -18,8 +18,6 @@ public:
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
-	/// <param name="collisionStage">ステージの岩か端に当たったか</param>
-	/// <param name="reset">当たり判定を戻す</param>
 	/// <param name="DefaultChangeState">戻すステート</param>
 	TomatoBossTackleState(
 		const std::function<void(void)>& ownChangeState,
@@ -27,8 +25,6 @@ public:
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Vector3& angle, const Vector3& playerPos,
 		TomatoTackleCollOperator* collOperator,
-		const std::function<bool(void)> collisionStage,
-		const std::function<void(void)> reset,
 		const std::function<void(void)> resetAngle,
 		const std::function<void(void)> DefaultChangeState
 	);
@@ -72,12 +68,6 @@ private:
 
 	// コリジョンオペレーター
 	TomatoTackleCollOperator* collOperator;
-
-	// ステージの岩か端に当たったか
-	const std::function<bool(void)> collisionStage;
-
-	// 当たり判定を戻す
-	const std::function<void(void)> reset;
 
 	// 角度を戻す
 	const std::function<void(void)> resetAngle;
