@@ -53,12 +53,13 @@ void TomatoBossTackleState::Update(void)
 		}
 		else {
 			if (collOperator->GetStageHit()) {
-				Exit();
+				DefaultChangeState();
 				return;
 			}
 		}
 	}
 	angle.x += rotPow;
+	collOperator->Set(pos);
 }
 
 void TomatoBossTackleState::Exit(void)
@@ -66,7 +67,6 @@ void TomatoBossTackleState::Exit(void)
 	resetAngle();
 	collOperator->CollSet(false);
 	ReviveColl();
-	DefaultChangeState();
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

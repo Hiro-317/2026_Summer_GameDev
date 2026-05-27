@@ -11,8 +11,7 @@ public:
 	/// <param name="stats">ステータス</param>
 	TomatoTackleCollOperator(
 		const CharacterStats stats,
-		const float TO_PLAYER_DISTANCE,
-		const Vector3& pos
+		const float TO_PLAYER_DISTANCE
 	);
 	~TomatoTackleCollOperator()override = default;
 
@@ -21,6 +20,8 @@ public:
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
+
+	void Set(Vector3 pos) { trans.pos = pos; }
 
 	bool GetStageHit(void) { return stageHit; }
 
@@ -34,12 +35,8 @@ private:
 
 	const CharacterStats stats;
 
-	const Vector3& pos;
 
 #pragma endregion
-
-	// 更新処理
-	void SubUpdate(void)override;
 
 	bool stageHit;
 };

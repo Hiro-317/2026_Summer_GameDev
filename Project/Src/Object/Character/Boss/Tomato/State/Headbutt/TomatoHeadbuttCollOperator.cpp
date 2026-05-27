@@ -4,14 +4,11 @@
 
 TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
 	const CharacterStats stats,
-	const float TO_PLAYER_DISTANCE,
-	const Vector3& pos
+	const float TO_PLAYER_DISTANCE
 )
 	: stats(stats),
-	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
-	pos(pos)
+	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f)
 {
-	trans.pos = pos;
 }
 
 void TomatoHeadbuttCollOperator::Load(void)
@@ -24,16 +21,4 @@ void TomatoHeadbuttCollOperator::Load(void)
 	CreateAttackSkill(75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
 	SetJudge(false);
-}
-
-void TomatoHeadbuttCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
-{
-}
-
-void TomatoHeadbuttCollOperator::SubUpdate(void)
-{
-	trans.pos = pos;
-}
-
-void TomatoHeadbuttCollOperator::SubDraw(void) {
 }

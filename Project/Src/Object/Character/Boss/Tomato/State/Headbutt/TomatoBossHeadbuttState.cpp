@@ -32,7 +32,6 @@ void TomatoBossHeadbuttState::Update(void)
 {
 	time++;
 	if (time > ATTACK_TIME) {
-		Exit();
 		DefaultChangeState();
 	}
 	else {
@@ -40,6 +39,7 @@ void TomatoBossHeadbuttState::Update(void)
 		float cnt = time <= ATTACK_TIME / 2.0f ? time : time - (ATTACK_TIME + 1.0f);
 		pos += moveDir * MOVE_SPEED * cnt;
 	}
+	collOperator->Set(pos);
 }
 
 void TomatoBossHeadbuttState::Exit(void)

@@ -4,14 +4,11 @@
 
 TomatoTackleCollOperator::TomatoTackleCollOperator(
 	const CharacterStats stats,
-	const float TO_PLAYER_DISTANCE,
-	const Vector3& pos
+	const float TO_PLAYER_DISTANCE
 )
 	: stats(stats),
-	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
-	pos(pos)
+	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f)
 {
-	trans.pos = pos;
 }
 
 void TomatoTackleCollOperator::Load(void)
@@ -37,9 +34,4 @@ void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBa
 
 		stageHit = true;
 	}
-}
-
-void TomatoTackleCollOperator::SubUpdate(void)
-{
-	trans.pos = pos;
 }

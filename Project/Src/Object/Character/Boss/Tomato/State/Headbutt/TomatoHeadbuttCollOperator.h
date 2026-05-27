@@ -11,16 +11,15 @@ public:
 	/// <param name="stats">ステータス</param>
 	TomatoHeadbuttCollOperator(
 		const CharacterStats stats,
-		const float TO_PLAYER_DISTANCE,
-		const Vector3& pos
+		const float TO_PLAYER_DISTANCE
 	);
 	~TomatoHeadbuttCollOperator()override = default;
 
 	void Load(void)override;
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
-
 	void CollSet(bool flg) { SetJudge(flg); }
+
+	void Set(Vector3 pos) { trans.pos = pos; }
 
 private:
 
@@ -32,12 +31,6 @@ private:
 
 	const CharacterStats stats;
 
-	const Vector3& pos;
-
 #pragma endregion
-
-	// 更新処理
-	void SubUpdate(void)override;
-	void SubDraw(void)override;
 
 };
