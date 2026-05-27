@@ -23,7 +23,8 @@ PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 
 	isFindAttackTarget(false),
 	targetPos(nullptr),
-	playerStats(playerStats)
+	playerStats(playerStats),
+	isHit(false)
 {
 }
 
@@ -73,6 +74,7 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+				isHit = true;
 			break;
 		default:break;
 		}

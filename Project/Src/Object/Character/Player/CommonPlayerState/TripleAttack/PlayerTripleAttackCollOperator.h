@@ -44,7 +44,7 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 指定の段の攻撃の判定を発生させる
-	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { if(isHit[(int)stage])ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true); }
+	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { if(!isHit)ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true); }
 
 	// 指定の段の攻撃の判定を消す（指定がない場合は全ての段の判定を消す）
 	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::NON) {
@@ -59,6 +59,8 @@ public:
 	// 攻撃対象をリセットする
 	void ResetTarget(void) { isFindAttackTarget = false; targetPos = nullptr; }
 
+	// 攻撃のヒット管理のフラグをリセットする
+	void ResetIsHit(void) { isHit = false; }
 private:
 
 #pragma region 定数
@@ -92,8 +94,8 @@ private:
 	// 攻撃対象が見つかったかどうか
 	bool isFindAttackTarget;
 
-	// 攻撃が当たったかどうか
-	bool isHit[(int)PLAYER_TRIPLE_ATTACK_STAGE::MAX];
+	// 攻撃のヒット管理のフラグ
+	bool isHit;
 
 	// 攻撃対象の座標
 	const Vector3* targetPos;

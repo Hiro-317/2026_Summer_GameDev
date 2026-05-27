@@ -105,7 +105,7 @@ public:
 static constexpr int CRITICAL_RAND_MAX = 10000;
 
 // デフォルト会心率(単位:%)
-static constexpr short DEFAULT_CRITICAL_RATE = 30;
+static constexpr short DEFAULT_CRITICAL_RATE = 10;
 // デフォルト会心ダメージ(単位:%)
 static constexpr short DEFAULT_CRITICAL_DAMAGE = 150;
 
@@ -119,11 +119,19 @@ struct Critical
 
 	// 会心判定
 	bool IsCritical(void)const {
-		return (GetRand(CRITICAL_RAND_MAX) >= CRITICAL_RAND_MAX * PercentConversion(rate.Value()));
+		return (GetRand(CRITICAL_RAND_MAX) <= CRITICAL_RAND_MAX * PercentConversion(rate.Value()));
 	}
 	// 判定を含めた最終的な倍率
-	float ResultDamage(void)const {
-		return (IsCritical()) ? PercentConversion(damage.Value()) : 1.0f;
+	float ResultDamageRate(bool* const isCritical)const {
+		// アウトプット引数の指定がなければ会心判定を保存せず数値のみを返す
+		if (isCritical == nullptr) {
+			return (IsCritical()) ? PercentConversion(damage.Value()) : 1.0f;
+		}
+		// アウトプット引数の指定があれば会心判定をアウトプット引数に保存して数値を返す
+		else {
+			*isCritical = IsCritical();
+			return (*isCritical) ? PercentConversion(damage.Value()) : 1.0f;
+		}
 	}
 
 	// バフ/デバフ の効果時間の更新
@@ -133,7 +141,7 @@ struct Critical
 	}
 
 	// 生成
-	Critical(void) : rate(DEFAULT_CRITICAL_RATE), damage(DEFAULT_CRITICAL_DAMAGE) {}
+	Critical(bool IS_CRITICAL) : rate((IS_CRITICAL) ? DEFAULT_CRITICAL_RATE : 0), damage(DEFAULT_CRITICAL_DAMAGE) {}
 };
 
 
@@ -177,12 +185,13 @@ struct CharacterStats
 		short HP_MAX,
 		short ATTACK_POWER,
 		short DEFENSE_POWER,
-		short SPEED_POWER
+		short SPEED_POWER,
+		bool IS_CRITICAL = true
 	) :
 		hpMax(HP_MAX),
 		hp(hpMax.Value()),
 		attackPower(ATTACK_POWER),
-		critical(),
+		critical(IS_CRITICAL),
 		defensePower(DEFENSE_POWER),
 		speedPower(SPEED_POWER)
 	{
@@ -207,12 +216,12 @@ private:
 
 public:
 	// 威力（攻撃力を参照しない バフ/デバフ や 回復 などのスキルはそのまま技威力が実数値として返される）
-	short Power(void)const {
+	short Power(bool* const isCritical = nullptr)const {
 		short ret = 0;
 		if (attackPower == nullptr || critical == nullptr) { ret = SKILL_POWER; }
 		else {
 			ret = (short)Round(attackPower->Value() * PercentConversion(SKILL_POWER));
-			ret = (short)Round((float)ret * critical->ResultDamage());
+			ret = (short)Round((float)ret * critical->ResultDamageRate(isCritical));
 		}
 		return ret;
 	}
