@@ -12,6 +12,7 @@ EffectManager::EffectManager(void)
 EffectManager::~EffectManager()
 {
 	StopEffectAll();
+	parameter->Release();
 	delete parameter;
 }
 
@@ -46,6 +47,7 @@ void EffectManager::StopEffectAll(void)
 {
 	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
 		(*info)->StopEffect();
+		info++;
 	}
 	effectInfo.clear();
 }
