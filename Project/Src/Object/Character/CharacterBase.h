@@ -32,11 +32,13 @@ public:
 
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
+	bool GetIsDeath(void)const { return isDeath; }
 
 	const CharacterStats& GetCharacterStats(void)const { return characterStats; }
 
 	void Load(void)override;
 	void UiDraw(void)override;
+
 
 private:
 
@@ -68,7 +70,6 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
 
-
 protected:
 
 	// UI管理用インスタンス
@@ -76,6 +77,9 @@ protected:
 
 	// ステート管理用変数
 	int state;
+
+	// 死んだかどうか
+	bool isDeath;
 
 	// ステートの追加
 	void AddState(int stateNum, CharacterStateBase* stateIns) { stateMap.emplace(stateNum, stateIns); }

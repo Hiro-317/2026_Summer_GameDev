@@ -22,7 +22,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(1000,500,500,1,"Data/Parameter/Character/Boss/Tomato/"),
+	CharacterBase(7000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
 	subObjArray(),
 	playerPos(playerPos)
 {
@@ -155,7 +155,7 @@ void TomatoBoss::CharacterLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// クールタイム
-			90,
+			111190,
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, playerPos,
 			// 頭突きへの状態遷移関数のポインタ

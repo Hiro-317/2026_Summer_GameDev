@@ -119,20 +119,15 @@ void PlayerBase::CharactorUpdate(void)
 
 	interestPos = trans.pos + INTEREST_POS;
 
-	if (characterStats.hp <= 0) {
-		//ChangeState((int)STATE::DEATH);
+	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
+		ChangeState((int)STATE::DEATH);
 	}
 
 #ifdef _DEBUG		// クールタイム用
+	if (CheckHitKey(KEY_INPUT_0))characterStats.hp -= 10;
 	if (state == (int)STATE::DEATH) {
 		// 不動オブジェクトにする
 		SetDynamicFlg(false);
-
-		// カメラを固定する
-		Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30));
-
-		// 死亡状態に遷移する
-		ChangeState((int)STATE::DEATH);
 	}
 #endif // _DEBUG
 

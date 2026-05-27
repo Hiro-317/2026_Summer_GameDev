@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../PlayerBase.h"
+#include "../CommonPlayerState/Death/PlayerDeathState.h"
 
 class PlayerTripleAttackCollOperator;
 
@@ -15,7 +16,6 @@ public:
 
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
-
 
 private:
 

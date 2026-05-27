@@ -20,7 +20,7 @@
 
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(600, 200, 10000, 10, "Data/Parameter/Character/Player/Orange/", "Orange/OrangeModel")
+	PlayerBase(600, 200, 400, 10, "Data/Parameter/Character/Player/Orange/", "Orange/OrangeModel")
 {
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
@@ -31,6 +31,9 @@ void OrangePlayer::PlayerLoad(void)
 {
 
 #pragma region ƒ‚ƒfƒ‹
+
+	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“````````````````````````````
 
@@ -116,7 +119,7 @@ void OrangePlayer::PlayerLoad(void)
 
 	// “–‚½‚è”»’è‚ÌƒIƒyƒŒ[ƒ^[
 	stateSkill1Context.collOperator = SubObjSerch<PlayerTripleAttackCollOperator>();
-
+	
 	// À•W
 	stateSkill1Context.pos = &trans.pos;
 	// Šp“x
@@ -221,15 +224,13 @@ void OrangePlayer::PlayerLoad(void)
 	AddState(
 		(int)STATE::DEATH,
 		new PlayerDeathState(
-			// ©•ª‚Ìó‘Ô‚ÉŠÖ”ŠÖ”
 			[&]() { state = (int)STATE::DEATH; },
-			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
 			[&]() { return state == (int)STATE::DEATH; },
-			// À•W / Šp“x
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
-			[&]() { state = (int)STATE::MOVE; }
+			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); },
+			[&]() { isDeath = true; }
 		)
 	);
 	// ‘JˆÚğŒ‚Ì“o˜^ibefore = ‘JˆÚŒ³)(after = ‘JˆÚŒãj
@@ -296,7 +297,6 @@ void OrangePlayer::PlayerLoad(void)
 			"SkillSlotDodge"
 		)
 	);
-
 
 #pragma endregion 
 }
