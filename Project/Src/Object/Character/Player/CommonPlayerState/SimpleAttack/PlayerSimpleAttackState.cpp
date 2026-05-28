@@ -1,5 +1,7 @@
 #include "PlayerSimpleAttackState.h"
 
+#include "../../../../../Manager/Sound/SoundManager.h"
+
 PlayerSimpleAttackState::PlayerSimpleAttackState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -49,6 +51,8 @@ void PlayerSimpleAttackState::Enter(void)
 {
 	// 攻撃アニメーションを再生する
 	PlayAttackAnime();
+
+	SoundManager::GetIns().Play("PlayerSimpleAttack");
 
 	// 攻撃のクールタイムをセットする
 	coolTimeCounter = COOL_TIME;
