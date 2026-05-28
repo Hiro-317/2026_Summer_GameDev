@@ -9,15 +9,6 @@
 
 #include"../../Object/ActorBase.h"
 
-
-class BlockManager;
-class RockWall;
-class PlayerManager;
-class Boss;
-class TomatoBossStage;
-
-class SkyDome;
-
 class GameScene : public SceneBase
 {
 public:
@@ -59,28 +50,6 @@ private:
 	// 当たり判定管理クラス
 	CollisionManager* collision;
 
-	// オブジェクト格納用の配列
-	std::vector<ActorBase*>objects;
-
-	// ステージ管理クラス
-	TomatoBossStage* tomatoBossStage;
-
-	// 配列の中から特定のオブジェクトを探す
-	template<typename T>
-	T* ObjSerch(void) {
-		for (auto* obj : objects) {
-			if (dynamic_cast<T*>(obj)) { return dynamic_cast<T*>(obj); }
-		}
-		return nullptr;
-	}
-	template<typename T = ActorBase>
-	std::vector<T*> ObjArraySerch(void) {
-		std::vector<T*> objArray;
-		for (auto* obj : objects) {
-			if (dynamic_cast<T*>(obj)) { objArray.emplace_back(dynamic_cast<T*>(obj)); }
-		}
-		return objArray;
-	}
 #pragma region 画面演出用
 	// ヒットストップカウンター
 	static int hitStop;

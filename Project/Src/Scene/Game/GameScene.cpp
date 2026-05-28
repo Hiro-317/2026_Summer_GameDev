@@ -40,10 +40,6 @@ ShakeSize GameScene::shakeSize = ShakeSize::MEDIUM;
 GameScene::GameScene():
 	collision(nullptr),
 
-	objects(),
-
-	tomatoBossStage(nullptr),
-
 	mainScreen(-1)
 {
 }
@@ -219,14 +215,6 @@ void GameScene::Release(void)
 		obj->Release();
 		delete obj;
 		obj = nullptr;
-	}
-
-	// ステージ管理クラスの解放
-	if (tomatoBossStage)
-	{
-		tomatoBossStage->Release();
-		delete tomatoBossStage;
-		tomatoBossStage = nullptr;
 	}
 
 	// 画面演出用のメインスクリーンを解放

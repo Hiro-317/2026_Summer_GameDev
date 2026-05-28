@@ -47,6 +47,7 @@ public:
 	enum class SCENE_ID
 	{
 		TITLE,
+		LOBBY,
 		CHARACTOR,
 		BOSS,
 		GAME,
