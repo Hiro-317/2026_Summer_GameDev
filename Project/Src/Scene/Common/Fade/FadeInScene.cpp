@@ -6,11 +6,12 @@
 
 #include"../../SceneManager/SceneManager.h"
 
-FadeInScene::FadeInScene(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, bool sceneTransitionKinds) :
+FadeInScene::FadeInScene(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR, bool sceneTransitionKinds) :
 	scene(scene),
 	FADE_TIME(FADE_TIME),
 	fadeCounter(FADE_TIME),
 	FADE_COLOR(FADE_COLOR),
+	FADE_OUT_COLOR(FADE_OUT_COLOR),
 	sceneTransitionKinds(sceneTransitionKinds)
 {
 }
@@ -21,7 +22,7 @@ void FadeInScene::Update(void)
 	else {
 		// メンバ変数は破棄されるため一時変数に情報を保存
 		unsigned short fadeTimeWork = FADE_TIME;
-		unsigned int fadeColor = FADE_COLOR;
+		unsigned int fadeOutColor = FADE_OUT_COLOR;
 
 		if (sceneTransitionKinds) {
 			// ChangeScene()
@@ -38,7 +39,7 @@ void FadeInScene::Update(void)
 		}
 
 		// 目的のシーンを抱えた状態でフェードアウト演出を行うシーンを上に重ねる
-		SceneManager::GetIns().PushScene(std::make_shared<FadeOutScene>(fadeTimeWork, fadeColor));
+		SceneManager::GetIns().PushScene(std::make_shared<FadeOutScene>(fadeTimeWork, fadeOutColor));
 
 		return;
 	}
