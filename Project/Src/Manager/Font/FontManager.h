@@ -41,6 +41,8 @@ public:
 		MARUMINYA_50,
 		MARUMINYA_80,
 
+		DAMAGE_UI_32,
+
 		MAX
 	};
 
@@ -60,6 +62,7 @@ public:
 		110,	// GOKUSYOU_110
 		50,		// MARUMINYA_50
 		80,		// MARUMINYA_80
+		32,		// DAMAGE_UI_32
 	};
 
 private:
@@ -84,6 +87,7 @@ private:
 		"x10y12pxDonguriDuel",	// GOKUSYOU_110
 		"x12y12pxMaruMinya",	// MARUMINYA_50
 		"x12y12pxMaruMinya",	// MARUMINYA_80
+		"KKM-アナログテレビフォントv2"	// DAMAGE_UI_32
 	};
 
 	// フォントの太さテーブル
@@ -99,6 +103,7 @@ private:
 		-1,	// GOKUSYOU_110
 		-1,	// MARUMINYA_50
 		20,	// MARUMINYA_80
+		-1, // DAMAGE_UI_32
 	};
 
 #pragma region フォントのタイプ一覧
@@ -127,14 +132,16 @@ private:
 		0x01,	// GOKUSYOU_110
 		0x01,	// MARUMINYA_50
 		0x01,	// MARUMINYA_80
+		0x01,	// DAMAGE_UI_32
 	};
 
 
 	// フォントをウィンドウズに一時保持するためのフォントデータパス
-	const char* FONT_PATH_TABLE[2] =
+	const char* FONT_PATH_TABLE[3] =
 	{
 		"Data/Font/x10y12pxDonguriDuel.ttf",
 		"Data/Font/x12y12pxMaruMinya.ttf",
+		"Data/Font/DamageUi.ttf",
 	};
 
 };

@@ -20,6 +20,7 @@
 #include "../../../../Manager/Effect/EffectManager.h"
 
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../UI/DamageUI/DamageUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharacterBase(3000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
@@ -247,6 +248,8 @@ void TomatoBoss::CharacterLoad(void)
 #pragma region UI¶¬
 	// HPƒo[¶¬
 	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS));
+
+	ui_ArrayIns.emplace_back(new DamageUI());
 #pragma endregion
 	ChangeState((int)STATE::IDLE);
 
@@ -319,12 +322,13 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		}
 	}
 
-	//if (GetInviCounter() > 0) { return; }
+
 
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
-			characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+			short damage = SubUiSerch<DamageUI>()->DamageSetting(CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value()));
+			characterStats.hp -= damage;
 			SetInviCounter(150);
 			break;
 		}
