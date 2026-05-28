@@ -13,13 +13,17 @@ public:
 	virtual ~UI_Base() = default;
 
 	virtual void Load(void) = 0;
-	virtual void Init(void);
-	virtual void Update(void);
-	virtual void Draw(void);
-	virtual void Release(void);
+	void Init(void);
+	void Update(void);
+	void Draw(void);
+	void Release(void);
 
 protected:
 
+	// UIの画像
+	std::vector<int> uiImages;	
+
+	// UI画像のファイルパスの種類
 	enum class FILE_PATH_TYPE
 	{
 		PLAYER_HP,
@@ -31,8 +35,7 @@ protected:
 		MAX
 	};
 
-	std::vector<int> uiImages;	// UIの画像
-
+	// 種類別のファイルパス
 	std::vector<std::string> uiKindsPath = {
 		"Data/Image/UI/Player/HP/",
 		"Data/Image/UI/Player/Stamina/",
@@ -62,8 +65,11 @@ protected:
 		}
 	}
 
+
+	// 継承先で定義するクラスたち～～～
 	virtual void SubInit(void) {}
 	virtual void SubUpdate(void) {}
 	virtual void SubDraw(void) {}
 	virtual void SubRelease(void) {}
+	// 継承先で定義するクラスたち～～～
 };
