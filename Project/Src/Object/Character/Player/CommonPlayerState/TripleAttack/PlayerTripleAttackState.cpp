@@ -67,6 +67,9 @@ void PlayerTripleAttackState::Enter(void)
 	
 	// 攻撃のヒット管理のフラグをリセットする
 	collOperator.ResetIsHit();
+
+	// 前回までの当たり判定を消す
+	collOperator.CollOff();
 }
 
 void PlayerTripleAttackState::Update(void)

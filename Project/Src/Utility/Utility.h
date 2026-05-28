@@ -637,3 +637,12 @@ static std::vector<after> ArrayCast(const std::vector<before>& array) {
 
 // %•ÏŠ·
 static float PercentConversion(int percent) { return ((float)percent * 0.01f); }
+
+template<typename T>
+constexpr T UtilityClamp(const T& value, const T& min, const T& max)
+{
+    if (value < min) return min;
+    if (value > max) return max;
+
+    return value;
+}

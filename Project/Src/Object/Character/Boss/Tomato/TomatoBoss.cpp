@@ -327,7 +327,9 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
-			short damage = SubUiSerch<DamageUI>()->DamageSetting(CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value()));
+			bool isClitical = false;
+			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
+			SubUiSerch<DamageUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
 			SetInviCounter(150);
 			break;
