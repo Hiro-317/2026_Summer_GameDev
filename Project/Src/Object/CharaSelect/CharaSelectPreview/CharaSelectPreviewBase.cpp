@@ -2,7 +2,7 @@
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../../Common/AnimationController/AnimationController.h"
+#include "../../Common/AnimationController/AnimationController.h""
 
 CharaSelectPreviewBase::CharaSelectPreviewBase(MSG_SENDER_ID operatorSenderId, const Vector3& pos) :
 	ActorBase(),

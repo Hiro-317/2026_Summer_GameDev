@@ -70,8 +70,10 @@
     <ClCompile Include="Src\Manager\Effect\TackleMove\EffectTackleMove.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
-    <ClCompile Include="Src\Object\Lobby\Lobby.cpp" />
     <ClCompile Include="Src\Object\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
+    <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
+    <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -235,8 +237,12 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
-    <ClInclude Include="Src\Object\Lobby\Lobby.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyStage\LobbyStage.h" />
     <ClInclude Include="Src\Object\SkyDome\SkyDome.h" />
+    <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

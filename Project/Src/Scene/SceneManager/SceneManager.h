@@ -48,8 +48,7 @@ public:
 	{
 		TITLE,
 		LOBBY,
-		CHARACTOR,
-		BOSS,
+		BOSS_SELECT,
 		GAME,
 		CLEAR,
 	};

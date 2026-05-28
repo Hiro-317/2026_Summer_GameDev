@@ -17,8 +17,8 @@ public:
 	void SetPos(const Vector3& pos) { trans.pos = pos; }
 private:
 	// •\¦‚·‚é‘å‚«‚³
-	const float SCALE = 30.0f;
+	const float SCALE = 100.0f;
 
 	// À•W
-	const Vector3 POS = { 1000.0f,0.0f,1000.0f };
+	const Vector3 POS = Vector3(0, 0, 0);
 };
