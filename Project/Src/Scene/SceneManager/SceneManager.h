@@ -66,9 +66,9 @@ public:
 	void ChangeScene(SCENE_ID scene);
 
 	// 状態遷移（フェードあり）（遷移先のシーンのincludeが必要）
-	void ChangeSceneFade(std::shared_ptr<SceneBase>scene, unsigned short FADE_TIME = 30, unsigned int FADE_COLOR = 0x000000);
+	void ChangeSceneFade(std::shared_ptr<SceneBase>scene, unsigned short FADE_TIME = 30, unsigned int FADE_COLOR = 0x000000, unsigned int FADE_OUT_COLOR = 0x000000);
 	// 状態遷移（フェードあり）（遷移先のシーンのincludeが必要ない。ただしメインのシーンに限る）
-	void ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME = 30, unsigned int FADE_COLOR = 0x000000);
+	void ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME = 30, unsigned int FADE_COLOR = 0x000000, unsigned int FADE_OUT_COLOR = 0x000000);
 
 	// シーンを新しく積む（遷移先のシーンのincludeが必要）
 	void PushScene(std::shared_ptr<SceneBase>scene);

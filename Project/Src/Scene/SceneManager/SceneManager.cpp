@@ -137,32 +137,32 @@ void SceneManager::ChangeScene(SCENE_ID scene)
 	}
 }
 
-void SceneManager::ChangeSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
+void SceneManager::ChangeSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR)
 {
-	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, true));
+	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, FADE_OUT_COLOR, true));
 }
 
-void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
+void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR)
 {
 	switch (scene)
 	{
 	case SCENE_ID::TITLE:
-		ChangeSceneFade(std::make_shared<TitleScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<TitleScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::CHARACTOR:
-		ChangeSceneFade(std::make_shared<CharaSelect>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<CharaSelect>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::BOSS:
-		ChangeSceneFade(std::make_shared<BossSelect>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<BossSelect>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::GAME:
-		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::CLEAR:
-		ChangeSceneFade(std::make_shared<ClearScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<ClearScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::GAMEOVER:
-		ChangeSceneFade(std::make_shared<GameOver>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<GameOver>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	default:
 		break;
@@ -247,7 +247,7 @@ void SceneManager::JumpScene(SCENE_ID scene)
 
 void SceneManager::JumpSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
 {
-	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, false));
+	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, FADE_COLOR, false));
 }
 
 void SceneManager::JumpSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)

@@ -11,7 +11,7 @@ class FadeInScene : public SceneBase
 {
 public:
 
-	FadeInScene(std::shared_ptr<SceneBase>scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, bool sceneTransitionKinds);
+	FadeInScene(std::shared_ptr<SceneBase>scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR, bool sceneTransitionKinds);
 	~FadeInScene()override = default;
 
 	void Load(void)override {}
@@ -31,6 +31,7 @@ private:
 	const unsigned short FADE_TIME;
 	// フェードカラー
 	unsigned int FADE_COLOR;
+	unsigned int FADE_OUT_COLOR;
 
 	// フェードカウンター
 	unsigned short fadeCounter;
