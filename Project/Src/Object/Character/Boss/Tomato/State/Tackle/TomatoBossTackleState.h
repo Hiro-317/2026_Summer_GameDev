@@ -31,7 +31,8 @@ public:
 		const std::function<void(void)> resetAngle,
 		const std::function<void(void)> DeleteColl,
 		const std::function<void(void)> ReviveColl,
-		const std::function<void(void)> DefaultChangeState
+		const std::function<void(void)> DefaultChangeState,
+		const std::function<void(void)> SetCoolTime
 	);
 	~TomatoBossTackleState()override = default;
 
@@ -85,6 +86,9 @@ private:
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
+
+	// クールタイムの設定
+	const std::function<void(void)> SetCoolTime;
 
 #pragma endregion
 
