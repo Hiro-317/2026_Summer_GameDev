@@ -9,12 +9,14 @@ TomatoStampState::TomatoStampState(
 	Vector3& pos, const bool& isGround,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> offCollider,
-	const std::function<void(void)> onCollider
+	const std::function<void(void)> onCollider,
+	const std::function<void(void)> SetCoolTime
 ) :CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), collOperator(collOperator), isGround(isGround),
 	DefaultChangeState(DefaultChangeState),
 	offCollider(offCollider),
-	onCollider(onCollider)
+	onCollider(onCollider),
+	SetCoolTime(SetCoolTime)
 {
 	prevPos = pos.y;
 	nowAttackTime = 0;
@@ -68,6 +70,7 @@ void TomatoStampState::Update(void)
 void TomatoStampState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
+	SetCoolTime();
 }
 
 void TomatoStampState::AlwaysUpdate(void)

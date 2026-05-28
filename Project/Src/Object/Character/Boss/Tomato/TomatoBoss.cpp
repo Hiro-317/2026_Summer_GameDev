@@ -172,8 +172,10 @@ void TomatoBoss::CharacterLoad(void)
 			// XZコライダを戻す
 			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::IDLE); }
-			)
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = 120; }
+		)
 	);
 	AddState(
 		static_cast<int>(STATE::MOVE),
@@ -212,7 +214,9 @@ void TomatoBoss::CharacterLoad(void)
 			// XZコライダを戻す
 			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::IDLE); }
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = 240; }
 			)
 	);
 	AddState(
@@ -231,8 +235,9 @@ void TomatoBoss::CharacterLoad(void)
 			// 攻撃時に当たり判定を消すように
 			[&]() { SetJudge(false); },
 			// 落下中は当たり判定を再生させる
-			[&]() { SetJudge(true); }
-
+			[&]() { SetJudge(true); },
+			// クールタイムの設定
+			[&]() { coolTime = 180; }
 		)
 	);
 	
@@ -243,7 +248,7 @@ void TomatoBoss::CharacterLoad(void)
 	// HPバー生成
 	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS));
 #pragma endregion
-	ChangeState((int)STATE::HEADBUTT);
+	ChangeState((int)STATE::IDLE);
 
 }
 
