@@ -31,6 +31,7 @@ void TomatoBossTackleState::Enter(void)
 	rotPow = ROTATION_POW;
 	DeleteColl();
 	collOperator->ResetStageHit();
+	collOperator->SetDrawArea(true);
 }
 
 void TomatoBossTackleState::Update(void)
@@ -74,6 +75,7 @@ void TomatoBossTackleState::Exit(void)
 	collOperator->CollSet(false);
 	ReviveColl();
 	SetCoolTime();
+	collOperator->SetDrawArea(false);
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)
