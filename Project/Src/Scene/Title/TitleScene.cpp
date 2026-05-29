@@ -24,6 +24,7 @@ void TitleScene::Load(void)
 	Snd::GetIns().ChangeScene("Title");
 
 	Key::GetIns().SetMouseFixed(false);
+	image = LoadGraph("Data/Image/BossSelect/TomatoSelect.png");
 }
 void TitleScene::Init(void)
 {
@@ -47,7 +48,7 @@ void TitleScene::Update(void)
 	// シーン進行処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 		Snd::GetIns().Play("SystemButton");
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BOSS_SELECT);
 		return;
 	}
 
@@ -64,6 +65,8 @@ void TitleScene::Update(void)
 void TitleScene::Draw(void)
 {
 	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "タイトルシーン");
+
+	DrawGraph(0, 0, image, true);
 }
 void TitleScene::Release(void)
 {

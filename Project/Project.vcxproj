@@ -203,9 +203,9 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\BossSelectScene\BossSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
-    <ClCompile Include="Src\Scene\Select\BossSelect.cpp" />
     <ClCompile Include="Src\Scene\Select\CharaSelect.cpp" />
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
@@ -292,9 +292,9 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
+    <ClInclude Include="Src\Scene\Lobby\BossSelectScene\BossSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
-    <ClInclude Include="Src\Scene\Select\BossSelect.h" />
     <ClInclude Include="Src\Scene\Select\CharaSelect.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\SceneManager\SceneManager.h" />
