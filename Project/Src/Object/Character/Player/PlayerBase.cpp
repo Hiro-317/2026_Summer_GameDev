@@ -131,6 +131,9 @@ void PlayerBase::CharactorUpdate(void)
 	}
 #endif // _DEBUG
 
+	if (missCounter <= 0) {
+		missCounter = 0;
+	}
 }
 
 void PlayerBase::CharactorDraw(void)
@@ -162,6 +165,11 @@ void PlayerBase::CharacterUiDraw(void)
 		debugDrwStr("ëßêÿÇÍ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("Å`Å`Å`Å`Å`Å`('#ÅGÉ÷;`)");
 	}
+
+	if (missCounter > 0) {
+		missCounter--;
+		DrawFormatStringToHandle(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "É~ÉX");
+	}
 }
 
 void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
@@ -174,6 +182,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		case COLLIDER_TAG::BOSS_ATTACK:
 			SetInviCounter(150);
 			// É~ÉXÇÃï\é¶
+			missCounter = 60;
 			break;
 		}
 		return;

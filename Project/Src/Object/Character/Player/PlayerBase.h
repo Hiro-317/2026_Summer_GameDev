@@ -192,4 +192,7 @@ protected:
 
 	// ’‹“_À•W
 	Vector3 interestPos;
+
+	bool isMiss = false;
+	int missCounter = 0;
 };
