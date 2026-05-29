@@ -2,7 +2,9 @@
 
 
 CharaSelectScene::CharaSelectScene(const std::function<void(void)>& LobbyPreviewCharaChange) :
-	LobbyPreviewCharaChange(LobbyPreviewCharaChange)
+	LobbyPreviewCharaChange(LobbyPreviewCharaChange),
+
+	frameImage(-1)
 {
 }
 
@@ -28,5 +30,5 @@ void CharaSelectScene::Draw(void)
 
 void CharaSelectScene::Release(void)
 {
-
+	LobbyPreviewCharaChange();
 }

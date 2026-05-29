@@ -57,7 +57,7 @@ void TitleScene::Update(void)
 		Snd::GetIns().Play("SystemButton");
 		Net::GetIns().StartHost();
 		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 		return;
 	}
 }
