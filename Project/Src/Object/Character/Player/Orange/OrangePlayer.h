@@ -21,6 +21,9 @@ private:
 
 #pragma region ’è”’è‹`
 
+
+
+
 	// ƒXƒLƒ‹1ó‘Ô```````````````````````````
 
 	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
@@ -62,7 +65,7 @@ private:
 	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("TripleAttack","AttackMoveSpeed");
 
 	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
-	const short SKILL_1_ATTACK_RATE_PERCENT = GetParameter("TripleAttack","AttackRatePercent");
+	const short SKILL_1_ATTACK_RATE_PERCENT = (short)GetParameter("TripleAttack","AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
 

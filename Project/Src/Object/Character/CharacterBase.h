@@ -22,10 +22,11 @@ public:
 	);
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
 	CharacterBase(
-		short HP_MAX,
-		short ATTACK_POWER,
-		short DEFENSE_POWER,
-		short SPEED_POWER,
+		const std::string fileName,
+		const std::string hpParameterID,
+		const std::string attackPowerParameterID,
+		const std::string defensePowerParameterID,
+		const std::string moveSpeedParameterID,
 		const std::string& parameterPath
 	);
 	virtual ~CharacterBase()override = default;

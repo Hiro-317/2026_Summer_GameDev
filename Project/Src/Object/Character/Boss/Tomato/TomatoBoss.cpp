@@ -25,7 +25,13 @@
 #include "../../../UI/DamageUI/DamageUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(3000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
+	CharacterBase(
+		"TomatoBossParameter",
+		"TomatoBossHP",
+		"TomatoBossAttackPower",
+		"TomatoBossDefensePower",
+		"TomatoBossMoveSpeed",
+		"Data/Parameter/Character/Boss/Tomato/"),
 	subObjArray(),
 	playerPos(playerPos)
 {

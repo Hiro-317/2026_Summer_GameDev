@@ -28,10 +28,12 @@ CharacterBase::CharacterBase(
 }
 
 CharacterBase::CharacterBase(
-	short HP_MAX,
-	short ATTACK_POWER,
-	short DEFENSE_POWER,
-	short SPEED_POWER,
+	const std::string fileName,
+	const std::string hpParameterID,
+	const std::string attackPowerParameterID,
+	const std::string defensePowerParameterID,
+	const std::string moveSpeedParameterID,
+
 	const std::string& parameterPath
 ) :
 	ActorBase(parameterPath),
@@ -46,7 +48,12 @@ CharacterBase::CharacterBase(
 	inviCounter(0),
 	isInviEffect(false),
 
-	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER),
+	characterStats(
+		GetParameter((fileName).c_str(), (hpParameterID).c_str()),
+		GetParameter((fileName).c_str(), (attackPowerParameterID).c_str()),
+		GetParameter((fileName).c_str(), (defensePowerParameterID).c_str()),
+		GetParameter((fileName).c_str(), (moveSpeedParameterID).c_str())
+		),
 
 	operatorSenderId(MSG_SENDER_ID::None),
 	isOwnOperator(false),
