@@ -26,20 +26,23 @@ PlayerBase::PlayerBase(
 }
 
 PlayerBase::PlayerBase(
-	short HP_MAX,
-	short ATTACK_POWER, 
-	short DEFENSE_POWER,
-	short SPEED_POWER, 
+	const std::string fileName,
+	const std::string hpParameterID,
+	const std::string attackPowerParameterID,
+	const std::string defensePowerParameterID,
+	const std::string moveSpeedParameterID,
 	const std::string& parameterPath,
 
 	std::string modelPath
 ) :
 	CharacterBase(
-		HP_MAX,
-		ATTACK_POWER,
-		DEFENSE_POWER,
-		SPEED_POWER,
-		parameterPath)
+		fileName,
+		hpParameterID,
+		attackPowerParameterID,
+		defensePowerParameterID,
+		moveSpeedParameterID,
+		parameterPath
+	)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 }

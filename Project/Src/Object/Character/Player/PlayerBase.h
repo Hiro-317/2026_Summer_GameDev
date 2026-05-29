@@ -18,10 +18,12 @@ public:
 	);
 
 	PlayerBase(
-		short HP_MAX,
-		short ATTACK_POWER,
-		short DEFENSE_POWER,
-		short SPEED_POWER,
+		const std::string fileName,
+		const std::string hpParameterID,
+		const std::string attackPowerParameterID,
+		const std::string defensePowerParameterID,
+		const std::string moveSpeedParameterID,
+
 		const std::string& parameterPath,
 
 		std::string modelPath
