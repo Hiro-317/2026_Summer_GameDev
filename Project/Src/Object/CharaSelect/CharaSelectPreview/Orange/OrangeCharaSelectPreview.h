@@ -28,10 +28,10 @@ private:
 
 		CHARA_NAME = "ƒŠƒ‚ƒlƒ“";
 
-		HP = 300;
-		ATTACK = 300;
-		DEFENCE = 200;
-		SPEED = 5;
+		HP = 600;
+		ATTACK = 200;
+		DEFENCE = 400;
+		SPEED = 10;
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");

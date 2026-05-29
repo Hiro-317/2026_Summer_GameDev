@@ -139,17 +139,15 @@ void GameScene::Update(void)
 	}
 
 #if _DEBUG
-
 	// ƒV[ƒ“‚ðÄ“Ç‚Ýž‚Ý
 	if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_RELOAD).down) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 		return;
 	}
+#endif // _DEBUG
 
 	EffectManager::GetIns()->Update();
 	UpdateEffekseer3D();
-
-#endif // _DEBUG
 
 #pragma endregion
 }
