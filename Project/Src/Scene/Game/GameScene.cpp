@@ -127,8 +127,8 @@ void GameScene::Update(void)
 	}
 	
 	// ゲームクリア判定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xffffff);
+	if (ObjSerch<TomatoBoss>()->GetIsDeath()) {
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xff0000, 0x000000);
 		return;
 	}
 
@@ -137,7 +137,7 @@ void GameScene::Update(void)
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, 90, 0xffffff, 0x000000);
 		return;
 	}
-
+	
 #if _DEBUG
 
 	// シーンを再読み込み
