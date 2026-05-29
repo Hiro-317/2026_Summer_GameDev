@@ -38,6 +38,9 @@ void TomatoBossIdleState::Update(void)
 	float distance = (playerPos - pos).Length();
 	int luck = GetRand(10000);
 
+	stampChangeState();
+	return;
+
 	if (luck <= 4000) {
 		if (distance <= 350.0f) {
 			headbuttChangeState();

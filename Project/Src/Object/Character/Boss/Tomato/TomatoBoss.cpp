@@ -8,6 +8,8 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
+#include "../../../../Scene/Game/GameScene.h"
+
 #include "State/Idle/TomatoBossIdleState.h"
 #include "State/Headbutt/TomatoBossHeadbuttState.h"
 #include "State/Headbutt/TomatoHeadbuttCollOperator.h"
@@ -27,6 +29,8 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	subObjArray(),
 	playerPos(playerPos)
 {
+	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
+
 	isOwnOperator = true;
 
 	coolTime = 120;
@@ -119,9 +123,9 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats));
-	subObjArray.push_back(new TomatoTackleCollOperator(characterStats, TO_PLAYER_DISTANCE));
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(characterStats, TO_PLAYER_DISTANCE));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats, *collParam));
+	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
@@ -310,20 +314,12 @@ void TomatoBoss::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
+	collParam->Release();
 }
 
 
 void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
-		if (other.GetTag() == COLLIDER_TAG::STAGE) {
-
-			rockHit = true;
-		}
-	}
-
-
-
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
@@ -331,9 +327,17 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
 			SubUiSerch<DamageUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
+			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+			GameScene::HitStop(10);
 			SetInviCounter(150);
 			break;
 		}
+		}
+		if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
+			if (other.GetTag() == COLLIDER_TAG::STAGE) {
+
+				rockHit = true;
+			}
 		}
 	}
 }

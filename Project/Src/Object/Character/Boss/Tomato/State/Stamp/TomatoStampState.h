@@ -54,7 +54,7 @@ private:
 	static constexpr float JUMP_POW = 29.0f;
 
 	// –Ú•W‚Ü‚Å‚Ì“’BŠÔ(Š„‡)
-	static constexpr float TIME_RATE = 10.0f;
+	static constexpr float TIME_RATE = 15.0f;
 
 #pragma endregion
 
