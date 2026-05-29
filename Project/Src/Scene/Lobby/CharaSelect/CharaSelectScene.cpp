@@ -37,6 +37,8 @@ void CharaSelectScene::Update(void)
 
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 		if (ObjSerch<CharaSelectPreviewManager>()->GetCharaType() != CHARA_TYPE::Orange) { return; }
+		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, (ObjSerch<CharaSelectPreviewManager>())->GetCharaType());
+		LobbyPreviewCharaChange();
 		SceneManager::GetIns().PopScene();
 		return;
 	}
@@ -54,9 +56,6 @@ void CharaSelectScene::Draw(void)
 
 void CharaSelectScene::Release(void)
 {
-	SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, (ObjSerch<CharaSelectPreviewManager>())->GetCharaType());
-	LobbyPreviewCharaChange();
-
 	for (ActorBase*& obj : objects) {
 		obj->Release();
 		delete obj;
