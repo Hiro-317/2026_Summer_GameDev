@@ -49,6 +49,8 @@ void TomatoTackleCollOperator::Load(void)
 
 	collBack.localAngle = ANGLE;
 	collFront.localAngle = ANGLE;
+
+	isDrawArea = false;
 }
 
 void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
@@ -59,14 +61,12 @@ void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBa
 	}
 }
 
-void TomatoTackleCollOperator::SubUpdate(void)
-{
-}
-
 void TomatoTackleCollOperator::SubAlphaDraw(void)
 {
-	SetUseLighting(false);
-	//collFront.Draw();
-	//collBack.Draw();
-	SetUseLighting(true);
+	if (isDrawArea) {
+		SetUseLighting(false);
+		collFront.Draw();
+		collBack.Draw();
+		SetUseLighting(true);
+	}
 }

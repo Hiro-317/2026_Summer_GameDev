@@ -27,12 +27,16 @@ void TomatoBossHeadbuttState::Enter(void)
 	moveDir = (playerPos - pos).Normalized();
 	time = -100;
 	DeleteColl();
+	collOperator->SetDrawArea(true);
 }
 
 void TomatoBossHeadbuttState::Update(void)
 {
 	time++;
 	if (time < 0) {
+		collOperator->SetScale(((float)time + 100.0f) / 100.0f);
+		collOperator->SetViewPos(pos);
+		collOperator->SetAngle(Vector3::Yonly(atan2f(moveDir.x, moveDir.z)));
 		return;
 	}
 	if (time == 0) {
@@ -52,6 +56,7 @@ void TomatoBossHeadbuttState::Update(void)
 void TomatoBossHeadbuttState::Exit(void)
 {
 	collOperator->CollSet(false);
+	collOperator->SetDrawArea(false);
 	ReviveColl();
 	SetCoolTime();
 }
