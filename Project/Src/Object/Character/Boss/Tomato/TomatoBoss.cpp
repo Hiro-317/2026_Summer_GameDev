@@ -241,7 +241,7 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region UIê∂ê¨
 	// HPÉoÅ[ê∂ê¨
-	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS));
+	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS,"TomatoBoss"));
 #pragma endregion
 	ChangeState((int)STATE::HEADBUTT);
 
