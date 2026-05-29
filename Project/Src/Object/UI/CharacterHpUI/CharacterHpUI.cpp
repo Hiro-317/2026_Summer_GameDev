@@ -1,12 +1,15 @@
 #include "CharacterHpUI.h"
 
-CharacterHpUI::CharacterHpUI(const CharacterStats& stats, const CHARACTER_KINDS characterKinds) :
+#include "../../../Manager/Font/FontManager.h"
+
+CharacterHpUI::CharacterHpUI(const CharacterStats& stats, const CHARACTER_KINDS characterKinds, const std::string CHARA_NAME) :
 	playerhp(stats.hp),
 	PLAYER_HP_MAX(stats.hpMax.Value()),
 	CHARA_KINDS(characterKinds), // Ç±Ç±Ç≈èâä˙âª
 	hpRatio(0.0f),
 	hpBarOffset(0.0f),
-	damageBarOffset(0.0f)
+	damageBarOffset(0.0f),
+	CHARA_NAME(CHARA_NAME)
 {
 
 }
@@ -63,6 +66,9 @@ void CharacterHpUI::SubDraw()
 		uiImages.at((int)IMAGE_KINDS::HP_GAUGE),
 		true
 	);
+
+	int color = ((bool)((int)CHARA_KINDS)) ? 0xff0000 : 0xffffff;
+	DrawFormatStringToHandle(uiPos.x + 20, uiPos.y + ((HP_IMAGE_SIZE[(int)CHARA_KINDS].y / 2) - 10), color, Font::GetIns().GetFont(FontKinds::DEFAULT_20), (CHARA_NAME).c_str());
 }
 
 void CharacterHpUI::SubRelease()

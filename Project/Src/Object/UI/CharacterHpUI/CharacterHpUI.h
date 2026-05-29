@@ -23,7 +23,7 @@ public:
 		MAX
 	};
 
-	CharacterHpUI(const CharacterStats& stats, const CHARACTER_KINDS characterKinds);	// コンストラクタ
+	CharacterHpUI(const CharacterStats& stats, const CHARACTER_KINDS characterKinds, const std::string CHARA_NAME);	// コンストラクタ
 	~CharacterHpUI() override = default;	//デストラクタ
 
 private:
@@ -84,6 +84,9 @@ private:
 	};
 
 	const CHARACTER_KINDS CHARA_KINDS;
+
+	const std::string CHARA_NAME;
+
 #pragma endregion 定数定義
 
 #pragma region 変数定義
@@ -95,6 +98,7 @@ private:
 	float damageBarOffset;
 
 	float damageBarAxcel;
+
 #pragma endregion 変数定義
 
 };
