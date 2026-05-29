@@ -4,8 +4,12 @@
 
 TomatoStampCollOperator::TomatoStampCollOperator
 (
-	float ATTACK_RADIUS, int ATTACK_DURATION, const bool& isGround, const Vector3& playerPos, const CharacterStats stats
-)	: ATTACK_RADIUS(ATTACK_RADIUS), ATTACK_DURATION(ATTACK_DURATION), ground(isGround), playerPos(playerPos), stats(stats)
+	float ATTACK_RADIUS, int ATTACK_DURATION, const bool& isGround, const Vector3& playerPos, const CharacterStats stats, const ParameterLoad& collParam
+)	: ATTACK_RADIUS(ATTACK_RADIUS), ATTACK_DURATION(ATTACK_DURATION),
+	ground(isGround), playerPos(playerPos), stats(stats),
+	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
+	HEIGHT(collParam.GetParameter("Stamp","Height")),
+	collBack(Vector3()), collFront(Vector3())
 {
 	isDrawArea = false;
 	end = false;
@@ -39,16 +43,15 @@ void TomatoStampCollOperator::Load(void)
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 
 	CreateAttackSkill(100, &stats, COLLIDER_TAG::BOSS_ATTACK);
-}
 
-void TomatoStampCollOperator::Draw(void)
-{
-	if (!GetIsDraw()) {
-		return;
-	}
-	if (isDrawArea) {
-		DrawCone3D((trans.pos + Vector3::Yonly(30.0f)).ToVECTOR(), (trans.pos + Vector3::Yonly(25.0f)).ToVECTOR(), ATTACK_RADIUS, 64, 0xdd9900, 0xffffff, true);
-	}
+	collBack.Load("Range/CircleRangeBack");
+	collFront.Load("Range/CircleRangeFront");
+
+	collBack.pos = Vector3::Yonly(HEIGHT);
+	collFront.pos = Vector3::Yonly(HEIGHT + 1.0f);
+
+	collBack.scale = SCALE;
+	collFront.scale = Vector3(0);
 }
 
 void TomatoStampCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
@@ -65,7 +68,9 @@ void TomatoStampCollOperator::SubUpdate(void)
 {
 	if (!isDrawArea) {
 		trans.pos = playerPos;
-		trans.pos.y = 0.0f;
+		trans.pos.y = HEIGHT;
+		collBack.pos = Vector3(trans.pos.x, collBack.pos.y, trans.pos.z);
+		collFront.pos = Vector3(trans.pos.x, collFront.pos.y, trans.pos.z);
 		end = false;
 		attackCnt = 0;
 	}
@@ -82,5 +87,15 @@ void TomatoStampCollOperator::SubUpdate(void)
 				end = true;
 			}
 		}
+	}
+}
+
+void TomatoStampCollOperator::SubAlphaDraw(void)
+{
+	if (isDrawArea) {
+		SetUseLighting(false);
+		collFront.Draw();
+		collBack.Draw();
+		SetUseLighting(true);
 	}
 }

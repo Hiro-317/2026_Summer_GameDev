@@ -10,8 +10,9 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	TomatoHeadbuttCollOperator(
+		const float TO_PLAYER_DISTANCE,
 		const CharacterStats stats,
-		const float TO_PLAYER_DISTANCE
+		const ParameterLoad& collParam
 	);
 	~TomatoHeadbuttCollOperator()override = default;
 
@@ -19,7 +20,7 @@ public:
 
 	void CollSet(bool flg) { SetJudge(flg); }
 
-	void Set(Vector3 pos) { trans.pos = pos; }
+	void SetPos(Vector3 pos) { trans.pos = pos; }
 
 private:
 
@@ -30,6 +31,8 @@ private:
 #pragma region 受け取る参照変数
 
 	const CharacterStats stats;
+
+	const ParameterLoad& collParam;
 
 #pragma endregion
 

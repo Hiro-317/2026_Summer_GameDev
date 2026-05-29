@@ -3,11 +3,13 @@
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
 TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
+	const float TO_PLAYER_DISTANCE,
 	const CharacterStats stats,
-	const float TO_PLAYER_DISTANCE
+	const ParameterLoad& collParam
 )
 	: stats(stats),
-	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f)
+	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
+	collParam(collParam)
 {
 }
 

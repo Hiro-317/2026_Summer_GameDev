@@ -253,7 +253,8 @@ void OrangePlayer::PlayerLoad(void)
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
 			GetCharacterStats() , 
-			CharacterHpUI::CHARACTER_KINDS::PLAYER
+			CharacterHpUI::CHARACTER_KINDS::PLAYER,
+			"OrangePlayer"
 		)
 	);
 
