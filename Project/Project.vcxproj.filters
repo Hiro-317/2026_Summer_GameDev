@@ -23,7 +23,6 @@
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
     <ClCompile Include="Src\Scene\Select\BossSelect.cpp" />
-    <ClCompile Include="Src\Scene\Select\CharaSelect.cpp" />
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
@@ -47,7 +46,6 @@
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
     <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Stamp\TomatoStampState.cpp" />
     <ClCompile Include="Src\Manager\Net\Enet\callbacks.c" />
@@ -75,6 +73,8 @@
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
+    <ClCompile Include="Src\Object\UI\DamageUI\DamageUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -108,7 +108,6 @@
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
     <ClInclude Include="Src\Scene\Select\BossSelect.h" />
-    <ClInclude Include="Src\Scene\Select\CharaSelect.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Src\Scene\Title\End\EndScene.h" />
@@ -217,7 +216,6 @@
     <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectOperator.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
@@ -245,6 +243,9 @@
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
     <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />
+    <ClInclude Include="Src\Object\UI\DamageUI\DamageUI.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

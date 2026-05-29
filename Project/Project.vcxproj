@@ -176,7 +176,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectOperator.cpp" />
+    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
@@ -206,7 +206,6 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Select\BossSelect.cpp" />
-    <ClCompile Include="Src\Scene\Select\CharaSelect.cpp" />
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
@@ -249,9 +248,10 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectOperator.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
@@ -295,7 +295,6 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
     <ClInclude Include="Src\Scene\Select\BossSelect.h" />
-    <ClInclude Include="Src\Scene\Select\CharaSelect.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Src\Scene\Title\End\EndScene.h" />

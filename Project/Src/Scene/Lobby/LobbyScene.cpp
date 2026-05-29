@@ -107,13 +107,13 @@ void LobbyScene::Update(void)
 		case LobbyScene::CHOICE::CharaChange: {
 			SceneManager::GetIns().PushScene(
 				std::make_shared<CharaSelectScene>(
-					[&]() { ObjSerch< LobbyCharaPreviewManager>()->ChangeChara(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID)); }
+					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ChangeChara(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID)); }
 				)
 			);
 			return;
 		}
 		case LobbyScene::CHOICE::Enter: {
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BOSS_SELECT);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 			return;
 		}
 		}

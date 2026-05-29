@@ -65,10 +65,6 @@ void LobbyCharaPreviewManager::ChangeChara(CHARA_TYPE type)
 		charaPreview = new LobbyCharaPreviewOrange(Vector3(300, 0, 100));
 		break;
 	}
-	case CHARA_TYPE::Tanaka: {
-		charaPreview = new LobbyCharaPreviewOrange(Vector3(300, 0, 100));
-		break;
-	}
 	default: { break; }
 	}
 

@@ -20,7 +20,6 @@ public:
 		switch (chara) {
 		case CHARA_TYPE::Orange: { ret.instance = new OrangePlayer(id); break; }
 		case CHARA_TYPE::Tomato: { ret.instance = new OrangePlayer(id); break; }
-		case CHARA_TYPE::Tanaka: { ret.instance = new OrangePlayer(id); break; }
 		default: { ret.instance = nullptr; break; }
 		}
 

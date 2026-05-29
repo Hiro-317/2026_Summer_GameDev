@@ -22,10 +22,6 @@ public:
 	void Release(void)override;
 
 private:
-
-	// ˜g‚Ì‰æ‘œ
-	int frameImage;
 	
 	const std::function<void(void)> LobbyPreviewCharaChange;
-
 };
