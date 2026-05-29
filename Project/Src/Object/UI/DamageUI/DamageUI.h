@@ -27,7 +27,7 @@ public:
 
 private:
 
-    static constexpr float DAMAGE_UI_ALIVE_TIME = 120.0f;
+    static constexpr float DAMAGE_UI_ALIVE_TIME = 60.0f;
     static constexpr float DAMAGE_UI_BOUNCE_START_TIME = DAMAGE_UI_ALIVE_TIME / 3;
     static constexpr float DAMAGE_UI_BOUNCE_TIME = DAMAGE_UI_ALIVE_TIME - DAMAGE_UI_BOUNCE_START_TIME;
     static constexpr float DAMAGE_UI_BOUNCE_POWER = 12.0f;
