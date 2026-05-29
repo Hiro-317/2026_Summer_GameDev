@@ -30,10 +30,8 @@ public:
 	bool GetStageHit(void) { return stageHit; }
 	void ResetStageHit(void) { stageHit = false; }
 
-protected:
-
-	void SubUpdate(void) override;
-	void SubAlphaDraw(void) override;
+	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
+	void SetDrawArea(bool flg) { isDrawArea = flg; }
 
 private:
 
@@ -58,10 +56,15 @@ private:
 
 #pragma endregion
 
+	void SubAlphaDraw(void) override;
+
 	bool stageHit;
 
 	int rate;
 
 	Transform collBack;
 	Transform collFront;
+
+	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
+	bool isDrawArea;
 };

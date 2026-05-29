@@ -271,6 +271,27 @@ void TomatoBoss::CharactorInit(void)
 void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+
+	if (CheckHitKey(KEY_INPUT_G)) {
+		characterStats.hp = 1;
+	}
+
+	static int i = 0;
+	if (characterStats.hp <= 0) {
+		if (i == 0) {
+			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, 120);
+		}
+		i++;
+		trans.scale += Vector3(0.75f)*i;
+		coolTime = 10000;
+		ChangeState((int)STATE::IDLE);
+
+		if (i > 120) {
+
+			i = 0;
+			isDeath = true;
+		}
+	}
 }
 
 void TomatoBoss::CharactorDraw(void)
