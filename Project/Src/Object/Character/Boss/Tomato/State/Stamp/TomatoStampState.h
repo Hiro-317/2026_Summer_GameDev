@@ -27,7 +27,8 @@ public:
 		Vector3& pos, const bool& isGround,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
-		const std::function<void(void)> onCollider
+		const std::function<void(void)> onCollider,
+		const std::function<void(void)> SetCoolTime
 	);
 
 	~TomatoStampState()override = default;
@@ -79,6 +80,9 @@ private:
 
 	// 攻撃時のエネミー自体のコライダーをつけるようにのポインター
 	const std::function<void(void)> onCollider;
+
+	// クールタイムの設定
+	const std::function<void(void)> SetCoolTime;
 
 #pragma endregion
 

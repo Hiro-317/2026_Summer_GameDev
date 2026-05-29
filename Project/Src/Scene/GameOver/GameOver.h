@@ -2,11 +2,11 @@
 
 #include"../SceneBase.h"
 
-class ClearScene : public SceneBase
+class GameOver : public SceneBase
 {
 public:
-	ClearScene();
-	~ClearScene()override;
+	GameOver();
+	~GameOver()override;
 
 	void Load(void)override;
 	void Init(void)override;

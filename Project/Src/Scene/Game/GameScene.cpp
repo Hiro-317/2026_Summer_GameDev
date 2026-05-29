@@ -127,8 +127,14 @@ void GameScene::Update(void)
 	}
 	
 	// ゲームクリア判定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down || ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xffffff);
+		return;
+	}
+
+	// ゲームオーバー判定
+	if (ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, 90, 0xffffff, 0x000000);
 		return;
 	}
 

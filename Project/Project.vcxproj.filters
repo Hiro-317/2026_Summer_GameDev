@@ -74,6 +74,7 @@
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
+    <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -243,6 +244,7 @@
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
+    <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

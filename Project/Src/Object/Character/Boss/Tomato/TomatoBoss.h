@@ -176,6 +176,15 @@ private:
 		return nullptr;
 	}
 
+	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ‚Ì’†‚©‚ç“Á’è‚ÌƒIƒuƒWƒFƒNƒg‚ğ’T‚·
+	template<typename SubUiClass = UI_Base>
+	SubUiClass* SubUiSerch(void) {
+		for (UI_Base* ui : ui_ArrayIns) {
+			if (dynamic_cast<SubUiClass*>(ui)) { return dynamic_cast<SubUiClass*>(ui); }
+		}
+		return nullptr;
+	}
+
 	// ƒƒCƒ“ˆ—``````````````
 	void CharacterLoad(void)override;
 	void CharactorInit(void)override;

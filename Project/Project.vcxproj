@@ -193,12 +193,14 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\SkyDome\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
     <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
+    <ClCompile Include="Src\Object\UI\DamageUI\DamageUI.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
     <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeOutScene.cpp" />
+    <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
@@ -278,6 +280,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\SkyDome\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
     <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
+    <ClInclude Include="Src\Object\UI\DamageUI\DamageUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
@@ -285,6 +288,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeOutScene.h" />
+    <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />

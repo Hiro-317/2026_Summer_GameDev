@@ -20,15 +20,16 @@
 #include "../../../../Manager/Effect/EffectManager.h"
 
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../UI/DamageUI/DamageUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
-	CharacterBase(7000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
+	CharacterBase(3000,300,500,1,"Data/Parameter/Character/Boss/Tomato/"),
 	subObjArray(),
 	playerPos(playerPos)
 {
 	isOwnOperator = true;
 
-	coolTime = 10;
+	coolTime = 120;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -172,8 +173,10 @@ void TomatoBoss::CharacterLoad(void)
 			// XZコライダを戻す
 			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::IDLE); }
-			)
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = 120; }
+		)
 	);
 	AddState(
 		static_cast<int>(STATE::MOVE),
@@ -212,7 +215,9 @@ void TomatoBoss::CharacterLoad(void)
 			// XZコライダを戻す
 			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::IDLE); }
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = 240; }
 			)
 	);
 	AddState(
@@ -231,8 +236,9 @@ void TomatoBoss::CharacterLoad(void)
 			// 攻撃時に当たり判定を消すように
 			[&]() { SetJudge(false); },
 			// 落下中は当たり判定を再生させる
-			[&]() { SetJudge(true); }
-
+			[&]() { SetJudge(true); },
+			// クールタイムの設定
+			[&]() { coolTime = 180; }
 		)
 	);
 	
@@ -242,8 +248,10 @@ void TomatoBoss::CharacterLoad(void)
 #pragma region UI生成
 	// HPバー生成
 	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS));
+
+	ui_ArrayIns.emplace_back(new DamageUI());
 #pragma endregion
-	ChangeState((int)STATE::HEADBUTT);
+	ChangeState((int)STATE::IDLE);
 
 }
 
@@ -314,12 +322,15 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		}
 	}
 
-	//if (GetInviCounter() > 0) { return; }
+
 
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
-			characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+			bool isClitical = false;
+			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
+			SubUiSerch<DamageUI>()->DamageSetting(damage, isClitical);
+			characterStats.hp -= damage;
 			SetInviCounter(150);
 			break;
 		}

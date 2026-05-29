@@ -7,6 +7,7 @@
 #include "../Lobby/LobbyScene.h"
 #include "../Game/GameScene.h"
 #include "../Clear/ClearScene.h"
+#include"../GameOver/GameOver.h"
 
 #include "../Common/Fade/FadeInScene.h"
 #include "../Common/Fade/FadeOutScene.h"
@@ -124,31 +125,37 @@ void SceneManager::ChangeScene(SCENE_ID scene)
 	case SCENE_ID::CLEAR:
 		ChangeScene(std::make_shared<ClearScene>());
 		break;
+	case SCENE_ID::GAMEOVER:
+		ChangeScene(std::make_shared<GameOver>());
+		break;
 	default:
 		break;
 	}
 }
 
-void SceneManager::ChangeSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
+void SceneManager::ChangeSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR)
 {
-	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, true));
+	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, FADE_OUT_COLOR, true));
 }
 
-void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
+void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR)
 {
 	switch (scene)
 	{
 	case SCENE_ID::TITLE:
-		ChangeSceneFade(std::make_shared<TitleScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<TitleScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::LOBBY:
-		ChangeSceneFade(std::make_shared<LobbyScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<LobbyScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::GAME:
-		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::CLEAR:
-		ChangeSceneFade(std::make_shared<ClearScene>(), FADE_TIME, FADE_COLOR);
+		ChangeSceneFade(std::make_shared<ClearScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
+		break;
+	case SCENE_ID::GAMEOVER:
+		ChangeSceneFade(std::make_shared<GameOver>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	default:
 		break;
@@ -178,6 +185,9 @@ void SceneManager::PushScene(SCENE_ID scene)
 		break;
 	case SCENE_ID::CLEAR:
 		PushScene(std::make_shared<ClearScene>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		PushScene(std::make_shared<GameOver>());
 		break;
 	default:
 		break;
@@ -220,6 +230,9 @@ void SceneManager::JumpScene(SCENE_ID scene)
 	case SCENE_ID::CLEAR:
 		JumpScene(std::make_shared<ClearScene>());
 		break;
+	case SCENE_ID::GAMEOVER:
+		JumpScene(std::make_shared<GameOver>());
+		break;
 	default:
 		break;
 	}
@@ -227,7 +240,7 @@ void SceneManager::JumpScene(SCENE_ID scene)
 
 void SceneManager::JumpSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
 {
-	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, false));
+	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, FADE_COLOR, false));
 }
 
 void SceneManager::JumpSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
@@ -245,6 +258,9 @@ void SceneManager::JumpSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsig
 		break;
 	case SCENE_ID::CLEAR:
 		JumpSceneFade(std::make_shared<ClearScene>());
+		break;
+	case SCENE_ID::GAMEOVER:
+		JumpSceneFade(std::make_shared<GameOver>());
 		break;
 	default:
 		break;

@@ -8,29 +8,36 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 	TomatoHeadbuttCollOperator* collOperator,
 	const std::function<void(void)> DeleteColl,
 	const std::function<void(void)> ReviveColl,
-	const std::function<void(void)> DefaultChangeState
-) 
+	const std::function<void(void)> DefaultChangeState,
+	const std::function<void(void)> SetCoolTime
+)
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ATTACK_TIME(ATTACK_TIME),
 	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
 	DeleteColl(DeleteColl),
 	ReviveColl(ReviveColl),
-	DefaultChangeState(DefaultChangeState)
+	DefaultChangeState(DefaultChangeState),
+	SetCoolTime(SetCoolTime)
 {
 }
 
 void TomatoBossHeadbuttState::Enter(void)
 {
 	moveDir = (playerPos - pos).Normalized();
-	time = 0;
-	collOperator->CollSet(true);
+	time = -100;
 	DeleteColl();
 }
 
 void TomatoBossHeadbuttState::Update(void)
 {
 	time++;
+	if (time < 0) {
+		return;
+	}
+	if (time == 0) {
+		collOperator->CollSet(true);
+	}
 	if (time > ATTACK_TIME) {
 		DefaultChangeState();
 	}
@@ -46,6 +53,7 @@ void TomatoBossHeadbuttState::Exit(void)
 {
 	collOperator->CollSet(false);
 	ReviveColl();
+	SetCoolTime();
 }
 
 void TomatoBossHeadbuttState::AlwaysUpdate(void)

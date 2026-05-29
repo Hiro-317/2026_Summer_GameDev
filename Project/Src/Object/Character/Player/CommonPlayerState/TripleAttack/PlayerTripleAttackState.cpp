@@ -1,5 +1,7 @@
 #include "PlayerTripleAttackState.h"
 
+#include "../../../../../Manager/Sound/SoundManager.h"
+
 PlayerTripleAttackState::PlayerTripleAttackState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -65,6 +67,9 @@ void PlayerTripleAttackState::Enter(void)
 	
 	// 攻撃のヒット管理のフラグをリセットする
 	collOperator.ResetIsHit();
+
+	// 前回までの当たり判定を消す
+	collOperator.CollOff();
 }
 
 void PlayerTripleAttackState::Update(void)
@@ -99,6 +104,7 @@ void PlayerTripleAttackState::Update(void)
 	else if (animePlayRate <= COLL_END_TIME[(int)attackStage]) {
 		// 攻撃判定中
 		collOperator.CollOn(attackStage);
+		SoundManager::GetIns().Play("PlayerTripleAttack");
 	}
 	else {
 		// 攻撃判定終了後

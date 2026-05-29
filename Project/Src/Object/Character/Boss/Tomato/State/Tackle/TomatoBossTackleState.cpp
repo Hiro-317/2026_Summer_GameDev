@@ -9,7 +9,8 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)> resetAngle,
 	const std::function<void(void)> DeleteColl,
 	const std::function<void(void)> ReviveColl,
-	const std::function<void(void)> DefaultChangeState
+	const std::function<void(void)> DefaultChangeState,
+	const std::function<void(void)> SetCoolTime
 ) 
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
@@ -18,7 +19,8 @@ TomatoBossTackleState::TomatoBossTackleState(
 	resetAngle(resetAngle),
 	DeleteColl(DeleteColl),
 	ReviveColl(ReviveColl),
-	DefaultChangeState(DefaultChangeState)
+	DefaultChangeState(DefaultChangeState),
+	SetCoolTime(SetCoolTime)
 {
 	rotPow = ROTATION_POW;
 }
@@ -67,6 +69,7 @@ void TomatoBossTackleState::Exit(void)
 	resetAngle();
 	collOperator->CollSet(false);
 	ReviveColl();
+	SetCoolTime();
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

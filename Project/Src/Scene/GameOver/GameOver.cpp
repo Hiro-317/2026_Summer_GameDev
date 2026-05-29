@@ -1,4 +1,4 @@
-#include "ClearScene.h"
+#include "GameOver.h"
 
 #include"../../Utility/Utility.h"
 
@@ -10,28 +10,28 @@
 
 #include"../SceneManager/SceneManager.h"
 
-ClearScene::ClearScene()
+GameOver::GameOver()
 {
 }
 
-ClearScene::~ClearScene()
+GameOver::~GameOver()
 {
 }
 
-void ClearScene::Load(void)
+void GameOver::Load(void)
 {
-	Snd::GetIns().ChangeScene("Clear");
+	Snd::GetIns().ChangeScene("GameOver");
 
 	Key::GetIns().SetMouseFixed(false);
 
-	image = LoadGraph("Data/Image/Clear/GameClearImage.png");
+	image = LoadGraph("Data/Image/GameOver/GameOverImage.png");
 }
 
-void ClearScene::Init(void)
+void GameOver::Init(void)
 {
 }
 
-void ClearScene::Update(void)
+void GameOver::Update(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down ||
 		Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -41,13 +41,13 @@ void ClearScene::Update(void)
 	}
 }
 
-void ClearScene::Draw(void)
+void GameOver::Draw(void)
 {
 	DrawExtendGraph(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, image, true);
-	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "クリアシーン");
+	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "ゲームオーバーシーン");
 }
 
-void ClearScene::Release(void)
+void GameOver::Release(void)
 {
 	DeleteGraph(image);
 }
