@@ -55,10 +55,12 @@ void TomatoStampState::Update(void)
 	if (nowAttackTime < TIME_RATE) {
 
 		attackPos = collOperator->GetAttackPos();
-		attackDistRate = Vector3::XZonly(attackPos.x - pos.x, attackPos.z - pos.z) / (TIME_RATE - nowAttackTime);
+		attackDistRate = Vector3::XZonly(attackPos.x - pos.x, attackPos.z - pos.z) / (TIME_RATE - (float)nowAttackTime);
 
 		nowAttackTime++;
 		pos += attackDistRate;
+
+		collOperator->SetScale(1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE);
 	}
 
 	if (collOperator->End()) {

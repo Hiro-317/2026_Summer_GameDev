@@ -10,8 +10,9 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	TomatoTackleCollOperator(
+		const float TO_PLAYER_DISTANCE,
 		const CharacterStats stats,
-		const float TO_PLAYER_DISTANCE
+		const ParameterLoad& collParam
 	);
 	~TomatoTackleCollOperator()override = default;
 
@@ -21,22 +22,46 @@ public:
 
 	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
-	void Set(Vector3 pos) { trans.pos = pos; }
+	void SetPos(Vector3 pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); }
+	void SetViewPos(Vector3 pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
+	void SetAngle(Vector3 angle) { collBack.angle = angle; collFront.angle = angle; }
+	void SetScale(Vector3 scale) { collFront.scale = Vector3(SCALE.x * scale.x, SCALE.y, SCALE.z); }
 
 	bool GetStageHit(void) { return stageHit; }
+	void ResetStageHit(void) { stageHit = false; }
+
+protected:
+
+	void SubUpdate(void) override;
+	void SubAlphaDraw(void) override;
 
 private:
 
 	// カプセルコライダーのローカル座標
 	const float TO_PLAYER_DISTANCE;
 
+	// コライダー描画の高さ
+	const float HEIGHT;
+
+	// コライダー描画の拡大率
+	const Vector3 SCALE;
+
+	// コライダー描画の中心
+	const Vector3 CENTER;
+
+	// コライダー描画のローカル回転
+	const Vector3 ANGLE;
 
 #pragma region 受け取る参照変数
 
 	const CharacterStats stats;
 
-
 #pragma endregion
 
 	bool stageHit;
+
+	int rate;
+
+	Transform collBack;
+	Transform collFront;
 };

@@ -79,7 +79,7 @@ struct Transform
 	void LoadEffect(std::string path) { model = LoadEffekseerEffect(("Data/Effect/" + path + ".efk").c_str()); }
 
 	// 制御情報をモデルに適用
-	void Attach(void) { MV1ModelMatrix(model, scale, pos + centerDiff.TransMat(MatrixAllMultZXY({ angle })), { localAngle,angle }); }
+	void Attach(void) { MV1ModelMatrix(model, scale, pos + centerDiff.TransMat(MatrixAllMultZXY({ localAngle,angle })), { localAngle,angle }); }
 
 	// モデルを描画（変数情報をモデルに適用してから
 	void Draw(void) {

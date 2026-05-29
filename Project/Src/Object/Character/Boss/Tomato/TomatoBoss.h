@@ -206,4 +206,7 @@ private:
 
 	// 攻撃のクールタイム
 	int coolTime;
+
+	// コライダーの当たり判定描画のパラメーター
+	ParameterLoad* collParam;
 };

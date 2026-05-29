@@ -30,6 +30,7 @@ void TomatoBossTackleState::Enter(void)
 	time = 0;
 	rotPow = ROTATION_POW;
 	DeleteColl();
+	collOperator->ResetStageHit();
 }
 
 void TomatoBossTackleState::Update(void)
@@ -45,23 +46,26 @@ void TomatoBossTackleState::Update(void)
 		moveDir = (playerPos - pos).Normalized();
 		angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
+		collOperator->SetViewPos(Vector3::XZonly(pos.x, pos.z));
+		collOperator->SetAngle(Vector3::Yonly(angle.y));
+		collOperator->SetScale(Vector3::Xonly(((float)time - 180.0f) / 180.0f + 1.0f));
 	}
 	else {
 		// ˆÊ’u‚ÌXV
 		pos += moveDir * MOVE_SPEED;
 		collOperator->CollSet(true);
-		if (time < 185) {
+		if (time < 190) {
 			time++;
+			collOperator->ResetStageHit();
+			return;
 		}
-		else {
-			if (collOperator->GetStageHit()) {
-				DefaultChangeState();
-				return;
-			}
+		if (collOperator->GetStageHit()) {
+			DefaultChangeState();
+			return;
 		}
 	}
 	angle.x += rotPow;
-	collOperator->Set(pos);
+	collOperator->SetPos(Vector3::XZonly(pos.x, pos.z));
 }
 
 void TomatoBossTackleState::Exit(void)

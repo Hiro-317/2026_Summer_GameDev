@@ -16,18 +16,19 @@ public:
 		int ATTACK_DURATION,
 		const bool& isGournd,
 		const Vector3& playerPos,
-		const CharacterStats stats
+		const CharacterStats stats,
+		const ParameterLoad& collParam
 	);
 	~TomatoStampCollOperator()override = default;
 
 	void Load(void)override;
 
-	void Draw(void)override;
-
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// 攻撃の中心座標の取得
 	Vector3 GetAttackPos(void) { return trans.pos; }
+
+	void SetScale(float scale) { collFront.scale = SCALE * scale; }
 
 	// 攻撃範囲の描画設定
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
@@ -44,6 +45,12 @@ private:
 
 	// 攻撃の発生持続時間
 	const int ATTACK_DURATION;
+
+	// コライダー描画の高さ
+	const float HEIGHT;
+
+	// コライダー描画の拡大率
+	const Vector3 SCALE;
 
 #pragma endregion
 
@@ -68,9 +75,13 @@ private:
 	// 攻撃範囲描画フラグ
 	bool isDrawArea;
 
+	Transform collBack;
+	Transform collFront;
+
 #pragma endregion
 
 	// 更新処理
 	void SubUpdate(void)override;
 
+	void SubAlphaDraw(void)override;
 };
