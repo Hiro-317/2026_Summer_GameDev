@@ -174,8 +174,6 @@ void GameScene::Draw(void)
 	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "ÉQÅ[ÉÄÉVÅ[Éì");
-
 	Camera::GetIns().DrawDebug();
 #pragma endregion
 

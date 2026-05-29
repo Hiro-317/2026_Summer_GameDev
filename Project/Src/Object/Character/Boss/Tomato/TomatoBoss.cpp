@@ -272,10 +272,6 @@ void TomatoBoss::CharactorUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	if (CheckHitKey(KEY_INPUT_G)) {
-		characterStats.hp = 1;
-	}
-
 	static int i = 0;
 	if (characterStats.hp <= 0) {
 		if (i == 0) {
