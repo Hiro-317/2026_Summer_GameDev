@@ -14,7 +14,8 @@
 
 #include"End/EndScene.h"
 
-TitleScene::TitleScene()
+TitleScene::TitleScene():
+	image(-1)
 {
 }
 
@@ -24,6 +25,8 @@ void TitleScene::Load(void)
 	Snd::GetIns().ChangeScene("Title");
 
 	Key::GetIns().SetMouseFixed(false);
+
+	image = LoadGraph("Data/Image/Title/Title.png");
 }
 void TitleScene::Init(void)
 {
@@ -53,20 +56,12 @@ void TitleScene::Update(void)
 		return;
 	}
 
-	// でばっぐ
-	// シーン進行処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::TEXT_INPUT_LANGUAGE_SWITCH).down) {
-		Snd::GetIns().Play("SystemButton");
-		Net::GetIns().StartHost();
-		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
-		return;
-	}
 }
 void TitleScene::Draw(void)
 {
-	DrawFormatStringToHandle(0, 0, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "タイトルシーン");
+	DrawGraph(0, 0, image, true);
 }
 void TitleScene::Release(void)
 {
+	DeleteGraph(image);
 }

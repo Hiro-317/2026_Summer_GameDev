@@ -35,6 +35,11 @@ void CharaSelectScene::Update(void)
 {
 	for (ActorBase* obj : objects) { obj->Update(); }
 
+	if(Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		SceneManager::GetIns().PopScene();
+		return;
+	}
+
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 		if (ObjSerch<CharaSelectPreviewManager>()->GetCharaType() != CHARA_TYPE::Orange) { return; }
 		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, (ObjSerch<CharaSelectPreviewManager>())->GetCharaType());
