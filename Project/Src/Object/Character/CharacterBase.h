@@ -20,6 +20,11 @@ public:
 		short DEFENSE_POWER,
 		short SPEED_POWER
 	);
+
+	CharacterBase(
+		const std::string& parameterPath
+	);
+
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
 	CharacterBase(
 		const std::string fileName,

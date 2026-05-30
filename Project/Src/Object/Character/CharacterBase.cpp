@@ -27,6 +27,24 @@ CharacterBase::CharacterBase(
 {
 }
 
+CharacterBase::CharacterBase(const std::string& parameterPath):
+	ActorBase(parameterPath),
+
+	state(0),
+	stateMap(),
+
+	DEFAULT_COLOR(),
+
+	anime(nullptr),
+
+	inviCounter(0),
+	isInviEffect(false),
+
+	operatorSenderId(MSG_SENDER_ID::None),
+	isOwnOperator(false)
+{
+}
+
 CharacterBase::CharacterBase(
 	const std::string fileName,
 	const std::string hpParameterID,
