@@ -28,6 +28,8 @@ CharacterBase::CharacterBase(
 }
 
 CharacterBase::CharacterBase(const std::string& parameterPath):
+	characterStats(0,0,0,0),
+
 	ActorBase(parameterPath),
 
 	state(0),

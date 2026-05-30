@@ -1,59 +1,74 @@
 #include "DamageUI.h"
 #include "../../../pch.h"
 
-DamageUI::DamageUI() :
+HitUI::HitUI() :
     UI_Base()
 {
 }
 
-DamageUI::~DamageUI()
+HitUI::~HitUI()
 {
 }
 
-void DamageUI::Load(void)
+void HitUI::Load(void)
 {
 }
 
-void DamageUI::SubInit(void)
+void HitUI::SubInit(void)
 {
 }
 
-void DamageUI::SubUpdate(void)
+void HitUI::SubUpdate(void)
 {
     auto it = damageUiList.begin();
-
     while (it != damageUiList.end()) {
         if (!it->AliveUpdate()) { it = damageUiList.erase(it); }
         else { ++it; }
     }
 }
 
-void DamageUI::SubDraw(void)
+void HitUI::SubDraw(void)
 {
     for (const auto& ui : damageUiList) { ui.Draw(); }
 }
 
-void DamageUI::SubRelease(void)
+void HitUI::SubRelease(void)
 {
     damageUiList.clear();
 }
 
-void DamageUI::DamageSetting(short damage, bool isCritical)
+/// <summary>
+/// ダメージ値の設定
+/// </summary>
+/// <param name="damage">表示するダメージ値</param>
+/// <param name="isCritical">会心ならば true / 非会心ならば false</param>
+void HitUI::DamageSetting(const short damage, const bool isCritical)
+{
+    AddPopup(
+        std::to_string(damage),
+        isCritical ? 0xffff00 : 0xffffff
+    );
+}
+
+// ミス！を表示する関数
+void HitUI::MissSetting()
+{
+    AddPopup(
+        "\u30DF\u30B9\uFF01",
+        0x00ffff
+    );
+}
+
+void HitUI::AddPopup(const std::string& text, int color)
 {
     AddDamageUiInfo info;
 
     info.aliveTime = (short)DAMAGE_UI_ALIVE_TIME;
-    info.damageValue = damage;
-    info.isCritical = isCritical;
+    info.text = text;
+    info.color = color;
 
-    // ランダム出現位置
-    info.pos.x =
-        (float)(App::SCREEN_SIZE_X_HALF
-            + GetRand(200) - 100);
-    info.pos.y =
-        (float)(App::SCREEN_SIZE_Y_HALF
-            + GetRand(100) - 50);
+    info.pos.x = (float)(App::SCREEN_SIZE_X_HALF + GetRand(200) - 100);
+    info.pos.y = (float)(App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50);
 
-    // 設定した値をリストに登録する
     damageUiList.emplace_back(info);
 }

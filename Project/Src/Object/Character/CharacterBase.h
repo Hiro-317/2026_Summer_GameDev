@@ -149,6 +149,15 @@ protected:
 	
 #pragma endregion オーバーライド不可(使用のみ)
 
+	// 抱える下位クラスを格納する配列の中から特定のオブジェクトを探す
+	template<typename SubUiClass = UI_Base>
+	SubUiClass* SubUiSerch(void) {
+		for (UI_Base* ui : ui_ArrayIns) {
+			if (dynamic_cast<SubUiClass*>(ui)) { return dynamic_cast<SubUiClass*>(ui); }
+		}
+		return nullptr;
+	}
+
 	// 無敵カウンターのゲット関数
 	unsigned char GetInviCounter(void)const { return inviCounter; }
 	// 無敵カウンターのセット関数
