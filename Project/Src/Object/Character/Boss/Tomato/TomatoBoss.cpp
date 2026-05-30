@@ -259,7 +259,7 @@ void TomatoBoss::CharacterLoad(void)
 	// HPÉoÅ[ê∂ê¨
 	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS, "TomatoBoss"));
 
-	ui_ArrayIns.emplace_back(new DamageUI());
+	ui_ArrayIns.emplace_back(new HitUI());
 #pragma endregion
 	ChangeState((int)STATE::IDLE);
 
@@ -348,7 +348,7 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		case COLLIDER_TAG::PLAYER_ATTACK: {
 			bool isClitical = false;
 			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
-			SubUiSerch<DamageUI>()->DamageSetting(damage, isClitical);
+			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
 			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 			GameScene::HitStop(10);

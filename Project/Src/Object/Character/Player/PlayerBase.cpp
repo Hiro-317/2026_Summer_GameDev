@@ -8,6 +8,8 @@
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
 
+#include "../../UI/DamageUI/DamageUI.h"
+
 PlayerBase::PlayerBase(
 	short HP_MAX,
 	short ATTACK_POWER,
@@ -101,6 +103,8 @@ void PlayerBase::CharacterLoad(void)
 
 #pragma endregion
 
+	ui_ArrayIns.emplace_back(new HitUI());
+
 	// Ç‹Ç∆ÇﬂÇƒì«Ç›çûÇ›èàóù
 	for (ActorBase*& c : subObjArray) { c->Load(); }
 }
@@ -169,10 +173,7 @@ void PlayerBase::CharacterUiDraw(void)
 		debugDrwStr("Å`Å`Å`Å`Å`Å`('#ÅGÉ÷;`)");
 	}
 
-	if (missCounter > 0) {
-		missCounter--;
-		DrawFormatStringToHandle(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_64), "É~ÉX");
-	}
+		
 }
 
 void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
@@ -184,8 +185,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::BOSS_ATTACK:
 			SetInviCounter(150);
-			// É~ÉXÇÃï\é¶
-			missCounter = 60;
+			SubUiSerch<HitUI>()->MissSetting();
 			break;
 		}
 		return;
