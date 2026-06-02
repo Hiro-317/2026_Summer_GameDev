@@ -2,7 +2,6 @@
 
 #include "../../../../Application/Application.h"
 
-#include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../Manager/Font/FontManager.h"
 #include "../../../../Manager/Camera/Camera.h"
 
@@ -21,6 +20,7 @@
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 	PlayerBase(
+		operatorSenderId,
 		"OrangeParameter", 
 		"PlayerHP",
 		"PlayerAttackPower",
@@ -29,8 +29,7 @@ OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 		"Data/Parameter/Character/Player/Orange/", 
 		"Orange/OrangeModel")
 {
-	this->operatorSenderId = operatorSenderId;
-	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
+
 }
 
 
@@ -236,7 +235,7 @@ void OrangePlayer::PlayerLoad(void)
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
-			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); },
+			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); SetPushFlg(true); },
 			[&]() { isDeath = true; }
 		)
 	);
@@ -310,32 +309,4 @@ void OrangePlayer::PlayerLoad(void)
 }
 
 
-void OrangePlayer::ReceptionUpdate(void)
-{
-	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
-		// 自分のキャラ（操作対象）の場合
-		if (isOwnOperator) {
-			// ホストから送られた座標と今の自分の座標の距離を測る
-			float diff = (trans.pos, dataPtr->pos).Length();
 
-			// 誤差が小さいなら無視
-			if (diff > 0.5f) {
-				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
-				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
-			}
-		}
-		// 他人のキャラなら、そのまま同期
-		else { trans.pos = dataPtr->pos; }
-
-		// 角度を同期
-		trans.angle = dataPtr->angle;
-		delete dataPtr;
-	}
-}
-
-void OrangePlayer::SendUpdate(void)
-{
-	if (Net::GetIns().IsHost() || isOwnOperator) {
-		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
-	}
-}

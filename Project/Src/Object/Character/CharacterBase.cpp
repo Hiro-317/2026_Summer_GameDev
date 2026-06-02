@@ -2,6 +2,8 @@
 #include"CharacterBase.h"
 #include "../UI/UI_Base.h"
 
+#include "../../Manager/Net/NetWorkManager.h"
+
 CharacterBase::CharacterBase(
 	short HP_MAX,
 	short ATTACK_POWER,
@@ -102,21 +104,21 @@ void CharacterBase::SubInit(void)
 
 void CharacterBase::SubUpdate(void)
 {
-	if (!isOwnOperator) { return; }
+	if (isOwnOperator) {
+		// 無敵カウンターの更新
+		Invi();
 
-	// 無敵カウンターの更新
-	Invi();
+		// キャラクター固有の更新
+		CharactorUpdate();
 
-	// キャラクター固有の更新
-	CharactorUpdate();
+		for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
 
-	for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
-
-	// ステートの更新
-	if (stateMap.size() > 0) {
-		stateMap.at(state)->OtherStateConditionsUpdate();
-		stateMap.at(state)->Update();
-		for (std::pair<const int, CharacterStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
+		// ステートの更新
+		if (stateMap.size() > 0) {
+			stateMap.at(state)->OtherStateConditionsUpdate();
+			stateMap.at(state)->Update();
+			for (std::pair<const int, CharacterStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
+		}
 	}
 
 	// アニメーション更新
@@ -235,4 +237,32 @@ void CharacterBase::AddInFbxAnimation(int inFbxMaxIndex, const float* speed)
 void CharacterBase::AddAnimation(int index, float speed, const char* filePath)
 {
 	anime->Add(index, speed, filePath);
+}
+
+void CharacterBase::AnimePlay(int type, bool loop)
+{
+	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
+	// 自身のPC以外のすべてに再生したことを送信する
+	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
+
+	// ホストだったら操作者PC以外に伝達する
+	if (Net::GetIns().IsHost()) {
+
+		// すべてのIDを精査する
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
+			if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+
+			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
+			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
+
+			// また、この情報の発信源である送信者IDを持つPCにも送らない
+			if (id == (int)operatorSenderId) { continue; }
+
+			// それ以外のこの情報が伝わってないPCに情報を送る
+			Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop), operatorSenderId, (MSG_SENDER_ID)id);
+		}
+	}
+
+	anime->Play(type, loop);
 }

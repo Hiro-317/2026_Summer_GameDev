@@ -39,7 +39,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 
 	isOwnOperator = true;
 
-	coolTime = 120;
+	coolTime = 6000000;
 }
 
 void TomatoBoss::CharacterLoad(void)

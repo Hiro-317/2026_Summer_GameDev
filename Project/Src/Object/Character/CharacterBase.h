@@ -139,13 +139,16 @@ protected:
 	/// <param name="filePath">パス</param>
 	void AddAnimation(int index, float speed, const char* filePath);
 
-	void AnimePlay(int type, bool loop = true) { anime->Play(type, loop); }
+	void AnimePlay(int type, bool loop = true);
 
 	bool IsAnimeEnd(void)const { return anime->GetAnimEnd(); }
 
 	float GetAnimeRatio(void)const { return anime->GetAnimeRatio();}
 
 	int GetAnimePlayType(void)const { return anime->GetPlayType(); }
+
+	float GetAnimeStep(void)const { return anime->GetStep(); }
+	void SetAnimeStep(float step) { anime->SetStep(step); }
 	
 #pragma endregion オーバーライド不可(使用のみ)
 

@@ -48,8 +48,8 @@ void TitleScene::Update(void)
 	// シーン進行処理
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 		Snd::GetIns().Play("SystemButton");
-		Net::GetIns().StartHost();
-		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
+		//Net::GetIns().StartHost();
+		//SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
 		return;
 	}

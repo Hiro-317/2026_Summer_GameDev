@@ -9,23 +9,25 @@
 // データタイプ（<> <- 送信者）
 enum class MSG_DATA_TYPE
 {
-	// 未設定
-	None = -1,
+    // 未設定
+    None = -1,
 
-	// <ホスト/クライアント>接続に関するシステムイベント（接続完了、切断など）
-	ConnectInform,
+    // <ホスト/クライアント>接続に関するシステムイベント（接続完了、切断など）
+    ConnectInform,
 
-	// <ホスト>ID
-	SenderId,
+    // <ホスト>ID
+    SenderId,
 
     // <ホスト>接続状況
     ConnectStatus,
 
-	// <ホスト>システムイベント（シーン遷移など）
-	SystemInform,
+    // <ホスト>システムイベント（シーン遷移など）
+    SystemInform,
 
-	// <ホスト/クライアント>プレイヤー：自分の座標/角度
-	PlayerTrans,
+    // <ホスト/クライアント>プレイヤー：自分の座標/角度
+    PlayerTrans,
+    // <ホスト/クライアント>プレイヤー：アニメの種類
+    PlayerAnimeType,
     // <ホスト/クライアント>プレイヤー：アニメーション再生ステップ
     PlayerAnimeStep,
 	// <ホスト/クライアント>プレイヤー：自分の入力
@@ -40,8 +42,8 @@ enum class MSG_DATA_TYPE
 enum class MSG_DATA_CHANNEL {
 	None = -1,  // 未設定
 
-	Reliable,   // 確実に届ける（順番も保証）
-	Unreliable, // 届けることを保証しない（順番も保証しない）
+	Reliable,   // 確実に届ける
+	Unreliable, // 速度重視
 
     Max
 };
@@ -330,11 +332,10 @@ struct MsgDataPlayerTrans
     }
 };
 
-// <ホスト/クライアント>プレイヤーアニメーション再生ステップ送信構造体
-struct MsgDataPlayerAnimeStep
+struct MsgDataPlayerAnimeType
 {
     // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerAnimeStep;
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerAnimeType;
 
     // データの送信チャンネル
     static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
@@ -342,17 +343,19 @@ struct MsgDataPlayerAnimeStep
     // ヘッダー
     MsgDataHeader header;
 
-    // 再生ステップ
-    float animeStep;
+    int animeType;
+    bool loop;
 
-    MsgDataPlayerAnimeStep(float animeStep) :
-        header(MSG_DATA_TYPE::PlayerAnimeStep),
-        animeStep(animeStep)
+    MsgDataPlayerAnimeType(int animeType, bool loop) :
+        header(DATA_TYPE),
+        animeType(animeType),
+        loop(loop)
     {
     }
-    MsgDataPlayerAnimeStep(void) :
-        header(MSG_DATA_TYPE::PlayerAnimeStep),
-        animeStep()
+    MsgDataPlayerAnimeType() :
+        header(DATA_TYPE),
+        animeType(),
+        loop()
     {
     }
 };

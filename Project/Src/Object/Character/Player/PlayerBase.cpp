@@ -1,5 +1,6 @@
 #include "PlayerBase.h"
 
+#include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
 
@@ -8,7 +9,7 @@
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
 
-#include "../../UI/DamageUI/DamageUI.h"
+#include "../../UI/HitUI/HitUI.h"
 
 PlayerBase::PlayerBase(
 	short HP_MAX,
@@ -25,9 +26,13 @@ PlayerBase::PlayerBase(
 		SPEED_POWER)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
+	this->operatorSenderId = operatorSenderId;
+	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
 }
 
 PlayerBase::PlayerBase(
+	MSG_SENDER_ID operatorSenderId,
+
 	const std::string fileName,
 	const std::string hpParameterID,
 	const std::string attackPowerParameterID,
@@ -47,6 +52,9 @@ PlayerBase::PlayerBase(
 	)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
+
+	this->operatorSenderId = operatorSenderId;
+	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
 }
 
 void PlayerBase::CharacterLoad(void)
@@ -137,10 +145,6 @@ void PlayerBase::CharactorUpdate(void)
 		SetDynamicFlg(false);
 	}
 #endif // _DEBUG
-
-	if (missCounter <= 0) {
-		missCounter = 0;
-	}
 }
 
 void PlayerBase::CharactorDraw(void)
@@ -159,6 +163,7 @@ void PlayerBase::CharacterUiDraw(void)
 
 		// 1行ずつ描画するためのラムダ式（デバッグ用）
 		int yPos = 150; const int FONT_SIZE = 20;
+
 		auto debugDrwStr = [&](std::string str)->void {
 			DrawStringToHandle(0, yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
 			yPos += FONT_SIZE;
@@ -172,12 +177,11 @@ void PlayerBase::CharacterUiDraw(void)
 		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
 		debugDrwStr("～～～～～～('#；ω;`)");
 	}
-
-		
 }
 
 void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	if (!Net::GetIns().IsHost()) { return; }
 	if (GetInviCounter() > 0) { return; }
 
 	// 回避中の無敵処理
@@ -212,4 +216,39 @@ void PlayerBase::CharactorRelease(void)
 		}
 	}
 	subObjArray.clear();
+}
+
+void PlayerBase::ReceptionUpdate(void)
+{
+	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
+		// 自分のキャラ（操作対象）の場合
+		if (isOwnOperator) {
+			// ホストから送られた座標と今の自分の座標の距離を測る
+			float diff = (trans.pos, dataPtr->pos).Length();
+
+			// 誤差が小さいなら無視
+			if (diff > 0.5f) {
+				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
+				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
+			}
+		}
+		// 他人のキャラなら、そのまま同期
+		else { trans.pos = dataPtr->pos; }
+
+		// 角度を同期
+		trans.angle = dataPtr->angle;
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId)) {
+		AnimePlay(dataPtr->animeType);
+		delete dataPtr;
+	}
+}
+
+void PlayerBase::SendUpdate(void)
+{
+	if (Net::GetIns().IsHost() || isOwnOperator) {
+		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
+	}
 }

@@ -276,7 +276,7 @@ private:
 		case MSG_DATA_TYPE::ConnectStatus: { MsgDataConnectStatusRecv(event); break; }
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerTrans: { MsgDataRecv<MsgDataPlayerTrans>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::PlayerAnimeStep: { MsgDataRecv<MsgDataPlayerAnimeStep>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerAnimeType: { MsgDataRecv<MsgDataPlayerAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
 		}

@@ -18,6 +18,8 @@ public:
 	);
 
 	PlayerBase(
+		MSG_SENDER_ID operatorSenderId,
+
 		const std::string fileName,
 		const std::string hpParameterID,
 		const std::string attackPowerParameterID,
@@ -51,6 +53,9 @@ public:
 	const Vector3& GetInterestPos(void)const { return INTEREST_POS; }
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+
+	void ReceptionUpdate(void)override;
+	void SendUpdate(void)override;
 
 private:
 
@@ -194,7 +199,4 @@ protected:
 
 	// íçéãì_ç¿ïW
 	Vector3 interestPos;
-
-	bool isMiss = false;
-	int missCounter = 0;
 };

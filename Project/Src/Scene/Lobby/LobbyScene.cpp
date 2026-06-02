@@ -72,52 +72,85 @@ void LobbyScene::Update(void)
 	// オブジェクト全ての更新処理
 	for (ActorBase* obj : objects) { obj->Update(); }
 
-#pragma region 操作
-	// タイトル画面に戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		Snd::GetIns().Play("SystemButton");
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
-		return;
-	}
+	if (Net::GetIns().GetState() == Net::NetState::None) {
+		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_HOST_START).down) { Net::GetIns().StartHost(); }
+		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_CLIENT_START).down) { Net::GetIns().ConnectClient(); }
 
-	// 左
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
-		Snd::GetIns().Play("SystemSelect");
-
-		choice = (CHOICE)((int)choice - 1);
-		if (choice <= CHOICE::None) { choice = (CHOICE)((int)CHOICE::None + 1); }
-	}
-	// 右
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
-		Snd::GetIns().Play("SystemSelect");
-
-		choice = (CHOICE)((int)choice + 1);
-		if (choice >= CHOICE::Max) { choice = (CHOICE)((int)CHOICE::Max - 1); }
-	}
-	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-		Snd::GetIns().Play("SystemButton");
-
-		switch (choice) {
-		case LobbyScene::CHOICE::None: { break; }
-		case LobbyScene::CHOICE::Exit: {
+		// タイトル画面に戻る
+		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
 			return;
 		}
-		case LobbyScene::CHOICE::CharaChange: {
-			SceneManager::GetIns().PushScene(
-				std::make_shared<CharaSelectScene>(
-					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ChangeChara(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID)); }
-				)
-			);
+	}
+#pragma region 操作
+
+	if (Net::GetIns().IsHost()) {
+		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+			Net::GetIns().Disconnection();
 			return;
 		}
-		case LobbyScene::CHOICE::Enter: {
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
-			return;
+		// 左
+		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+			Snd::GetIns().Play("SystemSelect");
+
+			choice = (CHOICE)((int)choice - 1);
+			if (choice <= CHOICE::None) { choice = (CHOICE)((int)CHOICE::None + 1); }
 		}
+		// 右
+		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+			Snd::GetIns().Play("SystemSelect");
+
+			choice = (CHOICE)((int)choice + 1);
+			if (choice >= CHOICE::Max) { choice = (CHOICE)((int)CHOICE::Max - 1); }
+		}
+		// 決定
+		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			Snd::GetIns().Play("SystemButton");
+
+			switch (choice) {
+			case LobbyScene::CHOICE::None: { break; }
+			case LobbyScene::CHOICE::Exit: {
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+				return;
+			}
+			case LobbyScene::CHOICE::CharaChange: {
+				SceneManager::GetIns().PushScene(
+					std::make_shared<CharaSelectScene>(
+						[&]() { ObjSerch<LobbyCharaPreviewManager>()->ChangeChara(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID)); }
+					)
+				);
+				return;
+			}
+			case LobbyScene::CHOICE::Enter: {
+				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+					SceneManager::GetIns().SetSelectCharaType((MSG_SENDER_ID)id, CHARA_TYPE::Orange);
+				}
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame);
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+				return;
+			}
+			}
 		}
 	}
+	else {
+		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+			Net::GetIns().Disconnection();
+			return;
+		}
+		while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
+			if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
+				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+					SceneManager::GetIns().SetSelectCharaType((MSG_SENDER_ID)id, CHARA_TYPE::Orange);
+				}
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+				delete dataPtr;
+				return;
+			}
+			delete dataPtr;
+		}
+	}
+
 #pragma endregion
 
 }
