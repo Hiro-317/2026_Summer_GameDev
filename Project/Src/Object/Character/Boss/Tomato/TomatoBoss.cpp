@@ -22,7 +22,7 @@
 #include "../../../../Manager/Effect/EffectManager.h"
 
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../UI/DamageUI/DamageUI.h"
+#include "../../../UI/HitUI/HitUI.h"
 
 TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	CharacterBase(
@@ -39,7 +39,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 
 	isOwnOperator = true;
 
-	coolTime = 6000000;
+	coolTime = 120;
 }
 
 void TomatoBoss::CharacterLoad(void)
