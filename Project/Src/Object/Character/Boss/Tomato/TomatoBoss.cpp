@@ -2,6 +2,7 @@
 
 #include "../../../../Application/Application.h"
 
+#include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../Manager/Font/FontManager.h"
 
 #include "../../../Common/Collider/LineCollider.h"
@@ -271,7 +272,6 @@ void TomatoBoss::CharactorInit(void)
 	trans.pos = INIT_POS;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
-
 }
 
 void TomatoBoss::CharactorUpdate(void)
@@ -293,6 +293,26 @@ void TomatoBoss::CharactorUpdate(void)
 			i = 0;
 			isDeath = true;
 		}
+	}
+}
+
+void TomatoBoss::ReceptionUpdate(void)
+{
+	if (!Net::GetIns().IsHost()) {
+		while (MsgDataBossTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTrans>(operatorSenderId)) {
+
+			// À•W/Šp“x‚ð“¯Šú
+			trans.pos = dataPtr->pos;
+			trans.angle = dataPtr->angle;
+			delete dataPtr;
+		}
+	}
+}
+
+void TomatoBoss::SendUpdate(void)
+{
+	if (Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.angle));
 	}
 }
 

@@ -21,6 +21,8 @@ public:
 		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
 		return ret;
 	}
+	void ReceptionUpdate(void)override;
+	void SendUpdate(void)override;
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 

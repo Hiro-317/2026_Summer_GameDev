@@ -35,6 +35,9 @@ enum class MSG_DATA_TYPE
 	// <ホスト>プレイヤー：被ダメ
 	PlayerDamage,
 
+    // <ホスト>ボス : 自分の座標/角度
+    BossTrans,
+
 	Max
 };
 
@@ -412,6 +415,34 @@ struct MsgDataPlayerDamage
         header(DATA_TYPE),
         damage(),
         pos()
+    {
+    }
+};
+
+// <ホスト>ボス移動情報送信構造体
+struct MsgDataBossTrans
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossTrans;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+    Vector3 pos;
+    Vector3 angle;
+
+    MsgDataBossTrans(const Vector3& pos, const Vector3& angle) :
+        header(DATA_TYPE),
+        pos(pos),
+        angle(angle)
+    {
+    }
+    MsgDataBossTrans(void) :
+        header(DATA_TYPE),
+        pos(),
+        angle()
     {
     }
 };

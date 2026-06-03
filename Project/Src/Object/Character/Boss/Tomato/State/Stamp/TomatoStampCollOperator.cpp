@@ -69,8 +69,6 @@ void TomatoStampCollOperator::SubUpdate(void)
 	if (!isDrawArea) {
 		trans.pos = playerPos;
 		trans.pos.y = HEIGHT;
-		collBack.pos = Vector3(trans.pos.x, collBack.pos.y, trans.pos.z);
-		collFront.pos = Vector3(trans.pos.x, collFront.pos.y, trans.pos.z);
 		end = false;
 		attackCnt = 0;
 	}
@@ -88,14 +86,16 @@ void TomatoStampCollOperator::SubUpdate(void)
 			}
 		}
 	}
+	collBack.pos = Vector3(trans.pos.x, collBack.pos.y, trans.pos.z);
+	collFront.pos = Vector3(trans.pos.x, collFront.pos.y, trans.pos.z);
 }
 
 void TomatoStampCollOperator::SubAlphaDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);
-		collFront.Draw();
 		collBack.Draw();
+		collFront.Draw();
 		SetUseLighting(true);
 	}
 }
