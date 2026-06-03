@@ -3,6 +3,8 @@
 #include "../PlayerBase.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
 
+#include "../../../../Common/Vector2.h"
+
 class PlayerTripleAttackCollOperator;
 
 
@@ -19,8 +21,17 @@ private:
 
 #pragma region ’è”’è‹`
 
+	// ‰æ‘œ‚Ì–¼‘O
+	const char* HP_FRAME_IMAGE_NAME = "PlayerHpFrame";
+	const char* HP_IMAGE_NAME = "PlayerHp";
+	const char* HP_LOST_IMAGE_NAME = "PlayerHpLost";
 
+	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
+	const Vector2I HP_IMAGE_SIZE = Vector2I(354, 50);
+	
+	const short HP_GAUGE_OFFSET = 10;
 
+	const Vector2I HP_UI_POS = Vector2I(0, App::SCREEN_SIZE_Y_HALF);
 
 	// ƒXƒLƒ‹1ó‘Ô```````````````````````````
 

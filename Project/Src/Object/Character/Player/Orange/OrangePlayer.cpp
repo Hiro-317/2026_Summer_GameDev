@@ -2,6 +2,7 @@
 
 #include "../../../../Application/Application.h"
 
+#include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../Manager/Font/FontManager.h"
 #include "../../../../Manager/Camera/Camera.h"
 
@@ -15,6 +16,7 @@
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../UI/HitUI/HitUI.h"
 
 
 
@@ -255,55 +257,74 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma region UIの登録と設定
 
+	int number = 0;
+	if (isOwnOperator) {
+		number = 0;
+	}
+	else {
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
+			number++;
+			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+		}
+	}
 	// HPの登録
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
-			GetCharacterStats() , 
+			GetCharacterStats(),
 			CharacterHpUI::CHARACTER_KINDS::PLAYER,
+			number,
 			"OrangePlayer"
 		)
 	);
 
-	// スタミナのUI登録
-	ui_ArrayIns.emplace_back(
-		new PlayerStaminaUI(
-			dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
-			DASH_STAMINA_MAX
-		)
-	);
+	if (isOwnOperator) {
 
-	// スキル1のUI
-	ui_ArrayIns.emplace_back(
-		new PlayerSkillUI(
-			SKILL1_UI_DRAW_POS,
-			dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-			SKILL_1_COOL_TIME,
-			PlayerSkillUI::SKILL_UI_COLOR::RED,
-			"SkillSlotTripleAttack"
-		)
-	);
+		// スタミナのUI登録
+		ui_ArrayIns.emplace_back(
+			new PlayerStaminaUI(
+				dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
+				DASH_STAMINA_MAX
+			)
+		);
 
-	// スキル2のUI
-	ui_ArrayIns.emplace_back(
-		new PlayerSkillUI(
-			SKILL2_UI_DRAW_POS,
-			dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-			SKILL_2_COOL_TIME,
-			PlayerSkillUI::SKILL_UI_COLOR::BLUE,
-			"SkillSlotSimpleAttack"
-		)
-	);
+		// スキル1のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL1_UI_DRAW_POS,
+				dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				SKILL_1_COOL_TIME,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				"SkillSlotTripleAttack"
+			)
+		);
 
-	// スキル3のUI
-	ui_ArrayIns.emplace_back(
-		new PlayerSkillUI(
-			SKILL3_UI_DRAW_POS,
-			dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-			SKILL_3_COOL_TIME, 
-			PlayerSkillUI::SKILL_UI_COLOR::GREEN,
-			"SkillSlotDodge"
-		)
-	);
+		// スキル2のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL2_UI_DRAW_POS,
+				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+				SKILL_2_COOL_TIME,
+				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+				"SkillSlotSimpleAttack"
+			)
+		);
+
+		// スキル3のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL3_UI_DRAW_POS,
+				dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+				SKILL_3_COOL_TIME,
+				PlayerSkillUI::SKILL_UI_COLOR::GREEN,
+				"SkillSlotDodge"
+			)
+		);
+
+		ui_ArrayIns.emplace_back(new HitUI());
+
+	}
+
 
 #pragma endregion 
 }

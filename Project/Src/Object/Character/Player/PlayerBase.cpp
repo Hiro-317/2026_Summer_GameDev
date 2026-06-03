@@ -9,8 +9,6 @@
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
 
-#include "../../UI/HitUI/HitUI.h"
-
 PlayerBase::PlayerBase(
 	short HP_MAX,
 	short ATTACK_POWER,
@@ -111,7 +109,6 @@ void PlayerBase::CharacterLoad(void)
 
 #pragma endregion
 
-	ui_ArrayIns.emplace_back(new HitUI());
 
 	// ‚Ü‚Æ‚ß‚Ä“Ç‚Ýž‚Ýˆ—
 	for (ActorBase*& c : subObjArray) { c->Load(); }
