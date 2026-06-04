@@ -138,8 +138,8 @@ private:
 		NONE = -1,
 		
 		IDLE,
-		HEADBUTT,
 		MOVE,
+		HEADBUTT,
 		TACKLE,
 		STAMP,
 

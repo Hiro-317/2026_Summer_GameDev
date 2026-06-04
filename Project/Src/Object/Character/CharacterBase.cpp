@@ -120,6 +120,9 @@ void CharacterBase::SubUpdate(void)
 			for (std::pair<const int, CharacterStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
 		}
 	}
+	else {
+
+	}
 
 	// アニメーション更新
 	if (anime) { anime->Update(); }

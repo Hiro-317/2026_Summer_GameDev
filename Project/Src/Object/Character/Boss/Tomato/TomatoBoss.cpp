@@ -38,9 +38,11 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 {
 	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
 
+	coolTime = 120;
+
+	this->operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = true;
 
-	coolTime = 120;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -130,7 +132,7 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, 5, isGround, playerPos, characterStats, *collParam));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, playerPos, characterStats, *collParam));
 	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
 	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
 
@@ -298,14 +300,69 @@ void TomatoBoss::CharactorUpdate(void)
 
 void TomatoBoss::ReceptionUpdate(void)
 {
-	if (!Net::GetIns().IsHost()) {
-		while (MsgDataBossTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTrans>(operatorSenderId)) {
+	while (MsgDataBossTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTrans>(operatorSenderId)) {
 
-			// 座標/角度を同期
-			trans.pos = dataPtr->pos;
-			trans.angle = dataPtr->angle;
-			delete dataPtr;
+		// 座標/角度を同期
+		trans.pos = dataPtr->pos;
+		trans.angle = dataPtr->angle;
+		delete dataPtr;
+	}
+	while (MsgDataBossInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossInform>(operatorSenderId)) {
+
+		if (dataPtr->inform != MsgDataBossInform::INFORM_TYPE::ColliderOn && dataPtr->inform != MsgDataBossInform::INFORM_TYPE::ColliderOff) {
+			ChangeState((int)dataPtr->inform);
 		}
+		else {
+			if (dataPtr->inform == MsgDataBossInform::INFORM_TYPE::ColliderOn) {
+				switch ((STATE)state)
+				{
+				case STATE::HEADBUTT:
+
+					SubObjSerch<TomatoHeadbuttCollOperator>()->CollSet(true);
+					break;
+
+				case STATE::TACKLE:
+					
+					SubObjSerch<TomatoTackleCollOperator>()->CollSet(true);
+					break;
+
+				case STATE::STAMP:
+
+					SubObjSerch<TomatoStampCollOperator>()->CollSet(true);
+					break;
+
+				case STATE::IDLE:
+				case STATE::MOVE:
+				default:
+					break;
+				}
+			}
+			else {
+				switch ((STATE)state)
+				{
+				case STATE::HEADBUTT:
+
+					SubObjSerch<TomatoHeadbuttCollOperator>()->CollSet(false);
+					break;
+
+				case STATE::TACKLE:
+
+					SubObjSerch<TomatoTackleCollOperator>()->CollSet(false);
+					break;
+
+				case STATE::STAMP:
+
+					SubObjSerch<TomatoStampCollOperator>()->CollSet(false);
+					break;
+
+				case STATE::IDLE:
+				case STATE::MOVE:
+				default:
+					break;
+				}
+			}
+		}
+		delete dataPtr;
 	}
 }
 
