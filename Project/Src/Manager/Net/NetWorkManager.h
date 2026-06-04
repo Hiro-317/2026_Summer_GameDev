@@ -357,6 +357,7 @@ private:
 					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerTrans: { delete static_cast<MsgDataPlayerTrans*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					}
 				}

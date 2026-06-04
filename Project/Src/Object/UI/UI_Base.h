@@ -1,9 +1,11 @@
 #pragma once
 
 #include "../../pch.h"
-#include <vector>
+
 #include <map>
 #include <string>
+
+#include "UIDefine.h"
 
 class UI_Base
 {
@@ -22,27 +24,6 @@ protected:
 
 	// UIの画像
 	std::vector<int> uiImages;	
-
-	// UI画像のファイルパスの種類
-	enum class FILE_PATH_TYPE
-	{
-		PLAYER_HP,
-		PLAYER_STAMINA,
-		PLAYER_SKILL,
-
-		BOSS_HP,
-
-		MAX
-	};
-
-	// 種類別のファイルパス
-	std::vector<std::string> uiKindsPath = {
-		"Data/Image/UI/Player/HP/",
-		"Data/Image/UI/Player/Stamina/",
-		"Data/Image/UI/Player/Skill/",
-
-		"Data/Image/UI/Boss/HP/",
-	};
 
 	/// <summary>
 	/// 指定された画像を指定された配列の変数にロードする
@@ -65,11 +46,10 @@ protected:
 		}
 	}
 
-
 	// 継承先で定義するクラスたち～～～
 	virtual void SubInit(void) {}
 	virtual void SubUpdate(void) {}
 	virtual void SubDraw(void) {}
 	virtual void SubRelease(void) {}
-	// 継承先で定義するクラスたち～～～
+	// ～～～～～～～～～～～～～～～～
 };

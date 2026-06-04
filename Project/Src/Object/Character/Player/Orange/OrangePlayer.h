@@ -22,16 +22,19 @@ private:
 #pragma region íËêîíËã`
 
 	// âÊëúÇÃñºëO
-	const char* HP_FRAME_IMAGE_NAME = "PlayerHpFrame";
-	const char* HP_IMAGE_NAME = "PlayerHp";
-	const char* HP_LOST_IMAGE_NAME = "PlayerHpLost";
+	const std::string HP_FRAME_IMAGE_NAME = "PlayerHpFrame";
+	const std::string HP_IMAGE_NAME =		"PlayerHp";
+	const std::string HP_LOST_IMAGE_NAME = "PlayerHpLost";
 
 	// HPÉoÅ[ÇÃâÊëúÉTÉCÉY
 	const Vector2I HP_IMAGE_SIZE = Vector2I(354, 50);
-	
 	const short HP_GAUGE_OFFSET = 10;
-
-	const Vector2I HP_UI_POS = Vector2I(0, App::SCREEN_SIZE_Y_HALF);
+	const Vector2I HP_UI_POS[(int)MSG_SENDER_ID::Max] = {
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + (HP_IMAGE_SIZE.y + 20)),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 20) * 2)),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 20) * 3)),
+	};
 
 	// ÉXÉLÉã1èÛë‘Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 

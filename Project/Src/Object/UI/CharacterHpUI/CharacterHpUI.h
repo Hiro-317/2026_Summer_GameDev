@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <algorithm> 
+#include <string>
 
 #include "../UI_Base.h"
 
@@ -15,27 +16,20 @@
 class CharacterHpUI : public UI_Base
 {
 public:
-	enum class CHARACTER_KINDS
-	{
-		PLAYER,
-		BOSS,
-
-		MAX
-	};
 
 	// コンストラクタ
 	CharacterHpUI(
 		const CharacterStats& stats,
 
-		const char* HP_FRAME_IMAGE_NAME,
-		const char* HP_IMAGE_NAME,
-		const char* HP_LOST_IMAGE_NAME,
+		const std::string HP_FRAME_IMAGE_NAME,
+		const std::string HP_IMAGE_NAME,
+		const std::string HP_LOST_IMAGE_NAME,
 
 		const Vector2I& HP_IMAGE_SIZE,
 		short HP_GAUGE_OFFSET,
-
 		const Vector2I& HP_UI_POS,
 
+		const FILE_PATH_TYPE PATH_TYPE,
 		const std::string CHARA_NAME
 	);	
 
@@ -62,20 +56,22 @@ private:
 #pragma region 定数定義
 
 	// 画像の名前
-	const char* HP_FRAME_IMAGE_NAME;
-	const char* HP_IMAGE_NAME;
-	const char* HP_LOST_IMAGE_NAME;
+	const std::string HP_FRAME_IMAGE_NAME;	// フレームの画像パス
+	const std::string HP_IMAGE_NAME;		// HPバーの画像パス
+	const std::string HP_LOST_IMAGE_NAME;	// ダメージを受けた時のHPバーの画像パス
 
 	// HPバーの画像サイズ
-	const Vector2I HP_IMAGE_SIZE;
-
-	const short HP_GAUGE_OFFSET = 10;
-
-	const Vector2I HP_UI_POS = Vector2I(0, App::SCREEN_SIZE_Y_HALF);
+	const Vector2I HP_IMAGE_SIZE;	// HP画像サイズ
+	const short HP_GAUGE_OFFSET;	// HP画像とフレーム画像のズレ
+	const Vector2I HP_UI_POS;		// HP画像の描画位置
 
 	const std::string CHARA_NAME;		// HPの上に描画する名前
 
+	const FILE_PATH_TYPE PATH_TYPE;		// なんのファイルパスか
+
 	const short HP_MAX;
+
+	const float HP_DAMAGE_BAR_DEC = 0.5;
 
 #pragma endregion 定数定義
 

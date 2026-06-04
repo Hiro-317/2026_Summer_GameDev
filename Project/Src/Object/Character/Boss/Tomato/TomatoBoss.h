@@ -164,15 +164,13 @@ private:
 
 
 	// 画像の名前
-	const char* HP_FRAME_IMAGE_NAME = "BossHpFrame";
-	const char* HP_IMAGE_NAME = "BossHp";
-	const char* HP_LOST_IMAGE_NAME = "BossHpLost";
+	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame";
+	const std::string HP_IMAGE_NAME = "BossHp";
+	const std::string HP_LOST_IMAGE_NAME = "BossHpLost";
 
 	// HPバーの画像サイズ
 	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
-
 	const short HP_GAUGE_OFFSET = 18;
-
 	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, 0);
 
 #pragma endregion 定数定義

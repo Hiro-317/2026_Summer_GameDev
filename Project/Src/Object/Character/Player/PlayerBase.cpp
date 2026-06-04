@@ -6,8 +6,11 @@
 
 #include "CommonPlayerState/Move/PlayerMoveState.h"
 
+#include "../../UI/HitUI/HitUI.h"
+
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
+
 
 PlayerBase::PlayerBase(
 	short HP_MAX,

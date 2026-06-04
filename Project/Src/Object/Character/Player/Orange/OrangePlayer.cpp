@@ -272,10 +272,15 @@ void OrangePlayer::PlayerLoad(void)
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
 			GetCharacterStats(),
-			CharacterHpUI::CHARACTER_KINDS::PLAYER,
-			number,
+			HP_FRAME_IMAGE_NAME,
+			HP_IMAGE_NAME,
+			HP_LOST_IMAGE_NAME,
+			HP_IMAGE_SIZE,
+			HP_GAUGE_OFFSET,
+			HP_UI_POS[number],
+			FILE_PATH_TYPE::PLAYER_HP,
 			"OrangePlayer"
-		)
+			)
 	);
 
 	if (isOwnOperator) {
