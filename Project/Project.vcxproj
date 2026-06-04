@@ -283,6 +283,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\UI\HitUI\HitUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
     <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
+    <ClInclude Include="Src\Object\UI\UIDefine.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />

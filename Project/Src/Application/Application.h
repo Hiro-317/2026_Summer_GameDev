@@ -7,8 +7,8 @@ class Application
 {
 public:
 	// スクリーンサイズ
-	static constexpr int SCREEN_SIZE_X = 1440;	// スクリーン横幅;
-	static constexpr int SCREEN_SIZE_Y = 810;	// スクリーン縦幅;
+	static constexpr int SCREEN_SIZE_X = 1440 / 4 * 3;	// スクリーン横幅;
+	static constexpr int SCREEN_SIZE_Y = 810 / 4 * 3;	// スクリーン縦幅;
 
 	// スクリーンの真ん中
 	static constexpr int SCREEN_SIZE_X_HALF = SCREEN_SIZE_X / 2;
