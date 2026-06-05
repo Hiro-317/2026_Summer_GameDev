@@ -271,7 +271,7 @@ void OrangePlayer::PlayerLoad(void)
 	// HP‚Ì“o˜^
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
-			GetCharacterStats(),
+			characterStats,
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,

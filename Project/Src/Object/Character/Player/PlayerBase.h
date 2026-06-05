@@ -199,4 +199,5 @@ protected:
 
 	// ’‹“_À•W
 	Vector3 interestPos;
+
 };
