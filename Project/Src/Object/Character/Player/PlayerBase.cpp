@@ -112,7 +112,6 @@ void PlayerBase::CharacterLoad(void)
 
 #pragma endregion
 
-
 	// Ç‹Ç∆ÇﬂÇƒì«Ç›çûÇ›èàóù
 	for (ActorBase*& c : subObjArray) { c->Load(); }
 }
@@ -160,12 +159,23 @@ void PlayerBase::CharactorAlphaDraw(void)
 void PlayerBase::CharacterUiDraw(void)
 {
 	if (App::GetIns().IsDrawDebug()) {
+		int number = 0;
+		if (isOwnOperator) {
+			number = 0;
+		}
+		else {
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
+				number++;
+				if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+			}
+		}
 
 		// 1çsÇ∏Ç¬ï`âÊÇ∑ÇÈÇΩÇﬂÇÃÉâÉÄÉ_éÆÅiÉfÉoÉbÉOópÅj
-		int yPos = 150; const int FONT_SIZE = 20;
+		int yPos = 150; int xPos[4] = { 0, 400, 600, 900 };  const int FONT_SIZE = 20;
 
 		auto debugDrwStr = [&](std::string str)->void {
-			DrawStringToHandle(0, yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
+			DrawStringToHandle(xPos[number], yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
 			yPos += FONT_SIZE;
 			};
 
@@ -175,6 +185,7 @@ void PlayerBase::CharacterUiDraw(void)
 		debugDrwStr("â¡ë¨ìx:" + std::to_string(accelSum.Length()));
 		debugDrwStr("ÉXÉ^É~Éi:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
 		debugDrwStr("ëßêÿÇÍ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
+		debugDrwStr("HPÅF" + std::to_string(characterStats.hp));
 		debugDrwStr("Å`Å`Å`Å`Å`Å`('#ÅGÉ÷;`)");
 	}
 }
@@ -199,7 +210,9 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 	switch (other.GetTag()) {
 	case COLLIDER_TAG::BOSS_ATTACK:
-		characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		characterStats.hp -= damage;
 		ChangeState((int)STATE::DAMAGE);
 		break;
 	}
@@ -244,11 +257,24 @@ void PlayerBase::ReceptionUpdate(void)
 		AnimePlay(dataPtr->animeType);
 		delete dataPtr;
 	}
+
+	while (MsgDataPlayerDamage* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerDamage>(operatorSenderId)) {
+		characterStats.hp -= dataPtr->damage;
+		ChangeState((int)STATE::DAMAGE);
+
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(operatorSenderId)) {
+		characterStats.hp = dataPtr->hp;
+		delete dataPtr;
+	}
 }
 
 void PlayerBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost() || isOwnOperator) {
 		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
-	}
+		//Net::GetIns().Send(MsgDataPlayerHp(characterStats.hp), operatorSenderId);
+	} 
 }

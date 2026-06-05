@@ -277,8 +277,9 @@ private:
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerTrans: { MsgDataRecv<MsgDataPlayerTrans>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerAnimeType: { MsgDataRecv<MsgDataPlayerAnimeType>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerHp: { MsgDataRecv<MsgDataPlayerHp>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTrans: { MsgDataRecv<MsgDataBossTrans>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossInform: { MsgDataRecv<MsgDataBossInform>(event, headerData->senderId); break; }
 		}
@@ -360,6 +361,7 @@ private:
 					case MSG_DATA_TYPE::PlayerTrans: { delete static_cast<MsgDataPlayerTrans*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerHp: { delete static_cast<MsgDataPlayerHp*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					}
 				}

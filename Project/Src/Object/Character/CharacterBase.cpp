@@ -111,8 +111,6 @@ void CharacterBase::SubUpdate(void)
 		// キャラクター固有の更新
 		CharactorUpdate();
 
-		for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
-
 		// ステートの更新
 		if (stateMap.size() > 0) {
 			stateMap.at(state)->OtherStateConditionsUpdate();
@@ -123,6 +121,9 @@ void CharacterBase::SubUpdate(void)
 	else {
 
 	}
+
+	for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
+
 
 	// アニメーション更新
 	if (anime) { anime->Update(); }

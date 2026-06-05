@@ -53,6 +53,8 @@ private:
 		MAX
 	};
 
+	short const GetHp(void) { return playerhp; }
+
 #pragma region ’è”’è‹`
 
 	// ‰æ‘œ‚Ì–¼‘O
