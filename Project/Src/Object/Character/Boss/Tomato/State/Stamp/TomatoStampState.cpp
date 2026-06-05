@@ -1,6 +1,7 @@
 #include "TomatoStampState.h"
 
 #include "../../../../../ActorBase.h"
+#include "../../../../../../Manager/Net/NetWorkManager.h"
 
 TomatoStampState::TomatoStampState(
 	const std::function<void(void)>& ownChangeState,
@@ -33,6 +34,10 @@ void TomatoStampState::Enter(void)
 	prevPos = pos.y - 0.5f;
 	attackCnt = 0;
 	isAttack = true;
+	SetCoolTime();
+	if (Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackC));
+	}
 }
 
 void TomatoStampState::Update(void)
@@ -51,6 +56,20 @@ void TomatoStampState::Update(void)
 			onCollider();
 		}
 	}
+	else {
+		if (attackCnt <= ATTACK_DURATION) {
+			if (attackCnt == 0) {
+				if (Net::GetIns().IsHost()) {
+					collOperator->CollSet(true);
+					Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOn));
+				}
+			}
+			attackCnt++;
+		}
+		else {
+			DefaultChangeState();
+		}
+	}
 
 	if (nowAttackTime < TIME_RATE) {
 
@@ -62,17 +81,15 @@ void TomatoStampState::Update(void)
 
 		collOperator->SetScale(1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE);
 	}
-
-	if (collOperator->End()) {
-		Exit();
-		DefaultChangeState();
-	}
 }
 
 void TomatoStampState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
-	SetCoolTime();
+	if (Net::GetIns().IsHost()) {
+		collOperator->CollSet(false);
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOff));
+	}
 }
 
 void TomatoStampState::AlwaysUpdate(void)

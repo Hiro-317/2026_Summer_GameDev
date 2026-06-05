@@ -37,6 +37,8 @@ enum class MSG_DATA_TYPE
 
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
+    // <ホスト>ボス : イベント (ステート遷移など)
+    BossInform,
 
 	Max
 };
@@ -443,6 +445,60 @@ struct MsgDataBossTrans
         header(DATA_TYPE),
         pos(),
         angle()
+    {
+    }
+};
+
+// <ホスト>ボスイベント送信構造体
+struct MsgDataBossInform
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossInform;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // システムイベント列挙型定義
+    enum class INFORM_TYPE
+    {
+        None = -1,
+
+        // アイドルステートへ遷移
+        ChangeIdle,
+        // ムーブステートへ遷移
+        ChangeMove,
+        
+        // 攻撃Aステートへ遷移
+        ChangeAttackA,
+        // 攻撃Bステートへ遷移
+        ChangeAttackB,
+        // 攻撃Cステートへ遷移
+        ChangeAttackC,
+        // 攻撃Dステートへ遷移
+        ChangeAttackD,
+        // 攻撃Eステートへ遷移
+        ChangeAttackE,
+
+        // コライダーオン
+        ColliderOn,
+        // コライダーオフ
+        ColliderOff,
+
+    };
+
+    INFORM_TYPE inform;
+
+    MsgDataBossInform(INFORM_TYPE inform) :
+        header(DATA_TYPE),
+        inform(inform)
+    {
+    }
+    MsgDataBossInform(void) :
+        header(DATA_TYPE),
+        inform(INFORM_TYPE::None)
     {
     }
 };

@@ -56,6 +56,9 @@ private:
 	// 目標までの到達時間(割合)
 	static constexpr float TIME_RATE = 15.0f;
 
+	// 攻撃の発生持続時間
+	static constexpr int ATTACK_DURATION = 5.0f;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数

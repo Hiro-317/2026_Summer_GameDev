@@ -13,7 +13,6 @@ public:
 	/// <param name="ATTACK_DURATION">UŒ‚”»’è‚Ì‘±ŠÔ</param>
 	TomatoStampCollOperator(
 		float ATTACK_RADIUS,
-		int ATTACK_DURATION,
 		const bool& isGournd,
 		const Vector3& playerPos,
 		const CharacterStats stats,
@@ -32,6 +31,7 @@ public:
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
+	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
 	// UŒ‚I—¹
 	bool End(void) { return end; }
@@ -42,9 +42,6 @@ private:
 
 	// UŒ‚”ÍˆÍ‚Ì”¼Œa
 	const float ATTACK_RADIUS;
-
-	// UŒ‚‚Ì”­¶‘±ŠÔ
-	const int ATTACK_DURATION;
 
 	// ƒRƒ‰ƒCƒ_[•`‰æ‚Ì‚‚³
 	const float HEIGHT;

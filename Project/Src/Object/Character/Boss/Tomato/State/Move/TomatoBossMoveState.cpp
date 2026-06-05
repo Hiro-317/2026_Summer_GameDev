@@ -1,5 +1,7 @@
 #include "TomatoBossMoveState.h"
 
+#include "../../../../../../Manager/Net/NetWorkManager.h"
+
 TomatoBossMoveState::TomatoBossMoveState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -19,6 +21,9 @@ TomatoBossMoveState::TomatoBossMoveState(
 
 void TomatoBossMoveState::Enter(void)
 {
+	if(Net::GetIns().IsHost()){
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeMove));
+	}
 }
 
 void TomatoBossMoveState::Update(void)

@@ -4,8 +4,8 @@
 
 TomatoStampCollOperator::TomatoStampCollOperator
 (
-	float ATTACK_RADIUS, int ATTACK_DURATION, const bool& isGround, const Vector3& playerPos, const CharacterStats stats, const ParameterLoad& collParam
-)	: ATTACK_RADIUS(ATTACK_RADIUS), ATTACK_DURATION(ATTACK_DURATION),
+	float ATTACK_RADIUS, const bool& isGround, const Vector3& playerPos, const CharacterStats stats, const ParameterLoad& collParam
+)	: ATTACK_RADIUS(ATTACK_RADIUS),
 	ground(isGround), playerPos(playerPos), stats(stats),
 	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
 	HEIGHT(collParam.GetParameter("Stamp","Height")),
@@ -71,20 +71,6 @@ void TomatoStampCollOperator::SubUpdate(void)
 		trans.pos.y = HEIGHT;
 		end = false;
 		attackCnt = 0;
-	}
-	else {
-		if (ground) {
-			if (attackCnt <= ATTACK_DURATION) {
-				if (attackCnt != 0) {
-					ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
-				}
-				attackCnt++;
-			}
-			else {
-				ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
-				end = true;
-			}
-		}
 	}
 	collBack.pos = Vector3(trans.pos.x, collBack.pos.y, trans.pos.z);
 	collFront.pos = Vector3(trans.pos.x, collFront.pos.y, trans.pos.z);

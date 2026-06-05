@@ -1,5 +1,7 @@
 #include "TomatoBossTackleState.h"
 
+#include "../../../../../../Manager/Net/NetWorkManager.h"
+
 TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -32,6 +34,10 @@ void TomatoBossTackleState::Enter(void)
 	DeleteColl();
 	collOperator->ResetStageHit();
 	collOperator->SetDrawArea(true);
+	SetCoolTime();
+	if (Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackB));
+	}
 }
 
 void TomatoBossTackleState::Update(void)
@@ -54,7 +60,12 @@ void TomatoBossTackleState::Update(void)
 	else {
 		// ˆÊ’u‚ÌXV
 		pos += moveDir * MOVE_SPEED;
-		collOperator->CollSet(true);
+
+		if (Net::GetIns().IsHost()) {
+			collOperator->CollSet(true);
+			Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOn));
+		}
+
 		if (time < 190) {
 			time++;
 			collOperator->ResetStageHit();
@@ -72,10 +83,12 @@ void TomatoBossTackleState::Update(void)
 void TomatoBossTackleState::Exit(void)
 {
 	resetAngle();
-	collOperator->CollSet(false);
 	ReviveColl();
-	SetCoolTime();
 	collOperator->SetDrawArea(false);
+	if (Net::GetIns().IsHost()) {
+		collOperator->CollSet(false);
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOff));
+	}
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

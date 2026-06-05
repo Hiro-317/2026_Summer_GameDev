@@ -1,5 +1,7 @@
 #include "TomatoBossIdleState.h"
 
+#include "../../../../../../Manager/Net/NetWorkManager.h"
+
 TomatoBossIdleState::TomatoBossIdleState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
@@ -27,6 +29,9 @@ TomatoBossIdleState::TomatoBossIdleState(
 void TomatoBossIdleState::Enter(void)
 {
 	cnt = coolTime();
+	if (Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeIdle));
+	}
 }
 
 void TomatoBossIdleState::Update(void)

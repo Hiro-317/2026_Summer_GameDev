@@ -1,5 +1,7 @@
 #include "TomatoBossHeadbuttState.h"
 
+#include "../../../../../../Manager/Net/NetWorkManager.h"
+
 TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -28,6 +30,10 @@ void TomatoBossHeadbuttState::Enter(void)
 	time = -100;
 	DeleteColl();
 	collOperator->SetDrawArea(true);
+	SetCoolTime();
+	if (Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackA));
+	}
 }
 
 void TomatoBossHeadbuttState::Update(void)
@@ -40,7 +46,10 @@ void TomatoBossHeadbuttState::Update(void)
 		return;
 	}
 	if (time == 0) {
-		collOperator->CollSet(true);
+		if (Net::GetIns().IsHost()) {
+			collOperator->CollSet(true);
+			Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOn));
+		}
 	}
 	if (time > ATTACK_TIME) {
 		DefaultChangeState();
@@ -55,10 +64,12 @@ void TomatoBossHeadbuttState::Update(void)
 
 void TomatoBossHeadbuttState::Exit(void)
 {
-	collOperator->CollSet(false);
 	collOperator->SetDrawArea(false);
 	ReviveColl();
-	SetCoolTime();
+	if (Net::GetIns().IsHost()) {
+		collOperator->CollSet(false);
+		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOff));
+	}
 }
 
 void TomatoBossHeadbuttState::AlwaysUpdate(void)
