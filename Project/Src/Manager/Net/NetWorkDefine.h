@@ -36,11 +36,13 @@ enum class MSG_DATA_TYPE
 	PlayerHp,
     // <ホスト>プレイヤー：被ダメ
     PlayerDamage,
+
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
     // <ホスト>ボス : イベント (ステート遷移など)
     BossInform,
-
+    // <ホスト/クライアント>ボス : HPとクリティカル情報
+    BossHit,
 
 	Max
 };
@@ -525,6 +527,34 @@ struct MsgDataBossInform
     MsgDataBossInform(void) :
         header(DATA_TYPE),
         inform(INFORM_TYPE::None)
+    {
+    }
+};
+
+// <ホスト>ボス移動情報送信構造体
+struct MsgDataBossHit
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossHit;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+    int damage;
+    bool clitical;
+
+    MsgDataBossHit(const int& damage, const bool& clitical) :
+        header(DATA_TYPE),
+        damage(damage),
+        clitical(clitical)
+    {
+    }
+    MsgDataBossHit(void) :
+        header(DATA_TYPE),
+        damage(),
+        clitical()
     {
     }
 };

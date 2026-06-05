@@ -376,6 +376,16 @@ void TomatoBoss::ReceptionUpdate(void)
 		}
 		delete dataPtr;
 	}
+	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>(operatorSenderId))
+	{
+		SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
+		characterStats.hp -= dataPtr->damage;
+		GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+		GameScene::HitStop(10);
+		SetInviCounter(150);
+
+		delete dataPtr;
+	}
 }
 
 void TomatoBoss::SendUpdate(void)
@@ -437,11 +447,14 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		case COLLIDER_TAG::PLAYER_ATTACK: {
 			bool isClitical = false;
 			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
+
 			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
 			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 			GameScene::HitStop(10);
 			SetInviCounter(150);
+			
+			Net::GetIns().Send(MsgDataBossHit(damage, isClitical));
 			break;
 		}
 		}

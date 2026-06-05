@@ -282,6 +282,7 @@ private:
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTrans: { MsgDataRecv<MsgDataBossTrans>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossInform: { MsgDataRecv<MsgDataBossInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
 		}
 
 		// パケットの解放
