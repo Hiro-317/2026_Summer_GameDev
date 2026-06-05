@@ -164,6 +164,17 @@ private:
 
 	// `````````````````````````````````
 
+
+	// ‰æ‘œ‚Ì–¼‘O
+	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame";
+	const std::string HP_IMAGE_NAME = "BossHp";
+	const std::string HP_LOST_IMAGE_NAME = "BossHpLost";
+
+	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
+	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
+	const short HP_GAUGE_OFFSET = 18;
+	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, 0);
+
 #pragma endregion ’è”’è‹`
 
 

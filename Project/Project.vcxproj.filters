@@ -243,6 +243,7 @@
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\UI\HitUI\HitUI.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\UI\UIDefine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

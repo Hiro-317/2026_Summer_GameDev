@@ -258,7 +258,19 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region UIê∂ê¨
 	// HPÉoÅ[ê∂ê¨
-	ui_ArrayIns.emplace_back(new CharacterHpUI(characterStats, CharacterHpUI::CHARACTER_KINDS::BOSS, "TomatoBoss"));
+	ui_ArrayIns.emplace_back(
+		new CharacterHpUI(
+			characterStats,
+			HP_FRAME_IMAGE_NAME,
+			HP_IMAGE_NAME,
+			HP_LOST_IMAGE_NAME,
+			HP_IMAGE_SIZE,
+			HP_GAUGE_OFFSET,
+			HP_UI_POS,
+			FILE_PATH_TYPE::BOSS_HP,
+			"TomatoBoss"
+		)
+	);
 
 	ui_ArrayIns.emplace_back(new HitUI());
 #pragma endregion

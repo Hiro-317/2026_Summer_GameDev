@@ -195,7 +195,11 @@ protected:
 
 	// ステータス
 	CharacterStats characterStats;
+
+	// 誰が操作権を持つか
 	MSG_SENDER_ID operatorSenderId;
+
+	// 自分が操作しているかどうか
 	bool isOwnOperator;
 
 };
