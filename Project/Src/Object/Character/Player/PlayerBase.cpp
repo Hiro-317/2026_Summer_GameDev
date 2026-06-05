@@ -202,8 +202,13 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		characterStats.hp -= CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
 		ChangeState((int)STATE::DAMAGE);
 		break;
-	}
 
+	case COLLIDER_TAG::STAGE:
+		if (other.GetShape() == ColliderBase::SHAPE::BOX) {
+
+			shadowPos.emplace(ownTag, trans.pos);
+		}
+	}
 }
 
 void PlayerBase::CharactorRelease(void)

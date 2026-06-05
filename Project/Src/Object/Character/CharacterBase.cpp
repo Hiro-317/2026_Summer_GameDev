@@ -129,6 +129,16 @@ void CharacterBase::SubDraw(void)
 {
 	// キャラクター固有の描画
 	CharactorDraw();
+
+	// 影の描画
+	for (auto pos : shadowPos) {
+		switch (pos.first)
+		{
+		default:
+			break;
+		}
+	}
+	shadowPos.clear();
 }
 
 void CharacterBase::SubAlphaDraw(void)

@@ -307,6 +307,3 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma endregion 
 }
-
-
-
