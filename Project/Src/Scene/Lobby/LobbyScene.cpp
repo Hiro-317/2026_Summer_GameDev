@@ -36,23 +36,30 @@ void LobbyScene::Load(void)
 	ObjAdd(new LobbyCharaPreviewManager());
 
 #pragma region 各画像の読み込み
-	boardImage = LoadGraph("Data/Image/Lobby/LobbyBoard.png");
 
-	choiceButtonImage[(int)CHOICE::Exit][0] = LoadGraph("Data/Image/Lobby/LobbyExitToNotSelect.png");
-	choiceButtonImage[(int)CHOICE::Exit][1] = LoadGraph("Data/Image/Lobby/LobbyExitToSelect.png");
+	// 画面上部のボードの画像
+	boardImage = LoadGraph((IMAGE_DATA_FILE_DIR + "LobbyBoard.png").c_str());
 
-	choiceButtonImage[(int)CHOICE::CharaChange][0] = LoadGraph("Data/Image/Lobby/LobbyCharaChangeToNotSelect.png");
-	choiceButtonImage[(int)CHOICE::CharaChange][1] = LoadGraph("Data/Image/Lobby/LobbyCharaChangeToSelect.png");
+	// 選択肢ボタンの画像
+	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
+		// 名前
+		const std::string IMAGE_NAME = IMAGE_DATA_FILE_DIR + CHOICE_BUTTON_IMAGE_NAME[choiceIndex];
 
-	choiceButtonImage[(int)CHOICE::Enter][0] = LoadGraph("Data/Image/Lobby/LobbyEnterToNotSelect.png");
-	choiceButtonImage[(int)CHOICE::Enter][1] = LoadGraph("Data/Image/Lobby/LobbyEnterToSelect.png");
+		// 選択時
+		choiceButtonImage[choiceIndex][(int)true] = LoadGraph((IMAGE_NAME + CHOICE_BUTTON_IMAGE_DECORATION + ".png").c_str());
 
-	arrowImage = LoadGraph("Data/Image/Lobby/NowSelectArrow.png");
+		// 非選択時
+		choiceButtonImage[choiceIndex][(int)false] = LoadGraph((IMAGE_NAME + NOT_CHOICE_BUTTON_IMAGE_DECORATION + ".png").c_str());
+	}
 
-	enterKeyImage[0] = LoadGraph("Data/Image/Lobby/NowSelectKeyboard.png");
-	enterKeyImage[1] = LoadGraph("Data/Image/Lobby/NowSelectController.png");
+	// 選択中の矢印
+	arrowImage = LoadGraph((IMAGE_DATA_FILE_DIR + "NowSelectArrow.png").c_str());
+
+	// 選択中の決定キー
+	enterKeyImage[(int)false] = LoadGraph((IMAGE_DATA_FILE_DIR + "NowSelectKeyboard.png").c_str());
+	enterKeyImage[(int)true] = LoadGraph((IMAGE_DATA_FILE_DIR + "NowSelectController.png").c_str());
+
 #pragma endregion
-
 }
 
 void LobbyScene::Init(void)
@@ -72,82 +79,83 @@ void LobbyScene::Update(void)
 	// オブジェクト全ての更新処理
 	for (ActorBase* obj : objects) { obj->Update(); }
 
-	if (Net::GetIns().GetState() == Net::NetState::None) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_HOST_START).down) { Net::GetIns().StartHost(); }
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_CLIENT_START).down) { Net::GetIns().ConnectClient(); }
-
-		// タイトル画面に戻る
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-			Snd::GetIns().Play("SystemButton");
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
-			return;
-		}
-	}
 #pragma region 操作
 
-	if (Net::GetIns().IsHost()) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-			Net::GetIns().Disconnection();
-			return;
-		}
-		// 左
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
-			Snd::GetIns().Play("SystemSelect");
-
-			choice = (CHOICE)((int)choice - 1);
-			if (choice <= CHOICE::None) { choice = (CHOICE)((int)CHOICE::None + 1); }
-		}
-		// 右
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
-			Snd::GetIns().Play("SystemSelect");
-
-			choice = (CHOICE)((int)choice + 1);
-			if (choice >= CHOICE::Max) { choice = (CHOICE)((int)CHOICE::Max - 1); }
-		}
-		// 決定
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			Snd::GetIns().Play("SystemButton");
-
-			switch (choice) {
-			case LobbyScene::CHOICE::None: { break; }
-			case LobbyScene::CHOICE::Exit: {
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
-				return;
-			}
-			case LobbyScene::CHOICE::CharaChange: {
-				SceneManager::GetIns().PushScene(
-					std::make_shared<CharaSelectScene>(
-						[&]() { ObjSerch<LobbyCharaPreviewManager>()->ChangeChara(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID)); }
-					)
-				);
-				return;
-			}
-			case LobbyScene::CHOICE::Enter: {
-				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-					SceneManager::GetIns().SetSelectCharaType((MSG_SENDER_ID)id, CHARA_TYPE::Orange);
-				}
-				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame);
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
-				return;
-			}
-			}
-		}
+	// タイトル画面に戻る
+	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		Snd::GetIns().Play("SystemButton");
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+		return;
 	}
-	else {
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+
+	// 左
+	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+		Snd::GetIns().Play("SystemSelect");
+
+		choice = (CHOICE)((int)choice - 1);
+		if (choice <= CHOICE::None) { choice = (CHOICE)((int)CHOICE::None + 1); }
+	}
+	// 右
+	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+		Snd::GetIns().Play("SystemSelect");
+
+		choice = (CHOICE)((int)choice + 1);
+		if (choice >= CHOICE::Max) { choice = (CHOICE)((int)CHOICE::Max - 1); }
+	}
+
+
+	// 決定
+	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		Snd::GetIns().Play("SystemButton");
+
+		// 選択肢ごとの処理
+		switch (choice) {
+
+		case LobbyScene::CHOICE::None: { break; }	// 選択肢なし（ありえないはず）
+
+		case LobbyScene::CHOICE::Exit: {	// 退出
+
+			// ネットワーク切断
 			Net::GetIns().Disconnection();
+
+			// タイトル画面に戻る
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+
+			// 以降はthisがnullptrとなっているため終了
 			return;
 		}
-		while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
-			if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
-				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-					SceneManager::GetIns().SetSelectCharaType((MSG_SENDER_ID)id, CHARA_TYPE::Orange);
-				}
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
-				delete dataPtr;
-				return;
-			}
-			delete dataPtr;
+
+		case LobbyScene::CHOICE::Multi: {	// マルチ
+
+			// 専用のシーンを追加する
+			//SceneManager::GetIns().PushScene();
+
+			// 終了
+			return;
+		}
+
+		case LobbyScene::CHOICE::CharaChange: {	// キャラ変更
+
+			// 専用のシーンを追加する
+			SceneManager::GetIns().PushScene(
+				std::make_shared<CharaSelectScene>(
+					// キャラ変更シーンから戻ってきたときに、プレビューを更新
+					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId()); }
+				)
+			);
+
+			// 終了
+			return;
+		}
+
+		case LobbyScene::CHOICE::Enter: {	// 出撃
+
+			// ゲームシーンに遷移
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+
+			// 以降はthisがnullptrとなっているため終了
+			return;
+		}
 		}
 	}
 
@@ -165,10 +173,10 @@ void LobbyScene::Draw(void)
 
 	// 選択肢の描画
 	for(int i = 0; i < (int)CHOICE::Max; i++) {
-		DrawRotaGraph(choiceButtonPos[i].x, choiceButtonPos[i].y, 1, 0, choiceButtonImage[i][(int)((CHOICE)i == choice)], true);
+		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)((CHOICE)i == choice)], true);
 	}
-	DrawRotaGraph(choiceButtonPos[(int)choice].x, choiceButtonPos[(int)choice].y, 1, 0, arrowImage, true);
-	DrawRotaGraph(choiceButtonPos[(int)choice].x, choiceButtonPos[(int)choice].y - 100, 1, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 1, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
 
 }
 

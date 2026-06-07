@@ -6,8 +6,8 @@
 
 #include "Orange/LobbyCharaPreviewOrange.h"
 
-LobbyCharaPreviewManager::LobbyCharaPreviewManager():
-	charaPreview(nullptr)
+LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
+	charaPreview(nullptr, nullptr, nullptr, nullptr)
 {
 }
 
@@ -16,60 +16,69 @@ void LobbyCharaPreviewManager::Load(void)
 	if(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID) == CHARA_TYPE::None) {
 		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
 	}
-	ChangeChara(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID));
-}
-
-void LobbyCharaPreviewManager::Init(void)
-{
+	ReloadChara(Net::HOST_SENDER_ID);
 }
 
 void LobbyCharaPreviewManager::Update(void)
 {
 	// キャラプレビューの更新
-	charaPreview->Update();
+	for (LobbyCharaPreviewBase* preview : charaPreview) {
+		if (preview == nullptr) { continue; }
+		preview->Update();
+	}
 }
 
 void LobbyCharaPreviewManager::Draw(void)
 {
 	// キャラプレビューの描画
-	charaPreview->Draw();
+	for (LobbyCharaPreviewBase* preview : charaPreview) {
+		if (preview == nullptr) { continue; }
+		preview->Draw();
+	}
 }
 
 void LobbyCharaPreviewManager::Release(void)
 {
 	// キャラプレビューの解放
-	if(charaPreview != nullptr) {
-		charaPreview->Release();
-		delete charaPreview;
-		charaPreview = nullptr;
+	for (LobbyCharaPreviewBase*& preview : charaPreview) {
+		if (preview == nullptr) { continue; }
+		preview->Release();
+		delete preview;
+		preview = nullptr;
 	}
 }
 
-void LobbyCharaPreviewManager::ChangeChara(CHARA_TYPE type)
+void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 {
+	// 送信元IDのチェック
+	if (senderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= senderId) { return; }
+
 	// キャラプレビューの解放
-	if(charaPreview != nullptr) {
-		charaPreview->Release();
-		delete charaPreview;
-		charaPreview = nullptr;
+	if (charaPreview[(int)senderId] != nullptr) {
+		charaPreview[(int)senderId]->Release();
+		delete charaPreview[(int)senderId];
+		charaPreview[(int)senderId] = nullptr;
 	}
 
-	switch (type) {
-	case CHARA_TYPE::None: { break; }
+	// キャラプレビューの生成
+	switch (SceneManager::GetIns().GetSelectCharaType(senderId)) {
 
-	case CHARA_TYPE::Orange: {
-		charaPreview = new LobbyCharaPreviewOrange(Vector3(300, 0, 100));
+	case CHARA_TYPE::None: { break; }	// 未選択
+
+	case CHARA_TYPE::Orange: {	// オレンジ
+		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId]);
 		break;
 	}
-	case CHARA_TYPE::Tomato: {
-		charaPreview = new LobbyCharaPreviewOrange(Vector3(300, 0, 100));
+
+	case CHARA_TYPE::Tomato: {	// トマト
+		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId]);
 		break;
 	}
-	default: { break; }
+
+	default: { break; }	// 例外
 	}
 
-	if(charaPreview != nullptr) {
-		charaPreview->Load();
-		charaPreview->Init();
-	}
+	// キャラプレビューのロードと初期化
+	charaPreview[(int)senderId]->Load();
+	charaPreview[(int)senderId]->Init();
 }

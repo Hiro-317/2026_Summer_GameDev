@@ -24,16 +24,41 @@ public:
 	void Release(void)override;
 
 private:
-
+#pragma region 定数定義
 	enum class CHOICE {
 		None = -1,
 
-		Exit,
-		CharaChange,
-		Enter,
+		Exit,			// タイトルに戻る
+		Multi,			// マルチプレイ
+		CharaChange,	// キャラチェンジ
+		Enter,			// 出撃
 
 		Max
 	};
+
+	// 画像データのディレクトリ
+	const std::string IMAGE_DATA_FILE_DIR = "Data/Image/Lobby/";
+
+	// 各ボタン画像の名前
+	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
+		"LobbyExit",		// タイトルに戻る
+		"LobbyMulti",		// マルチプレイ
+		"LobbyCharaChange",	// キャラチェンジ
+		"LobbyEnter",		// 出撃
+	};
+
+	// ボタン画像の 選択時/非選択時 の修飾される名前
+	const std::string CHOICE_BUTTON_IMAGE_DECORATION = "ToSelect";			// 選択時
+	const std::string NOT_CHOICE_BUTTON_IMAGE_DECORATION = "ToNotSelect";	// 非選択時
+
+	// ボタンの画像の位置
+	const Vector2I CHOICE_BUTTON_POS[(int)CHOICE::Max] = {
+		{ 100, App::GetIns().SCREEN_SIZE_Y - 100 },									// タイトルに戻る
+		{ App::GetIns().SCREEN_SIZE_X - 500, App::GetIns().SCREEN_SIZE_Y - 100 },	// マルチプレイ
+		{ App::GetIns().SCREEN_SIZE_X - 300, App::GetIns().SCREEN_SIZE_Y - 100 },	// キャラチェンジ
+		{ App::GetIns().SCREEN_SIZE_X - 100, App::GetIns().SCREEN_SIZE_Y - 100 },	// 出撃
+	};
+#pragma endregion
 
 	// 選択中のボタンのインデックス
 	CHOICE choice;
@@ -44,18 +69,10 @@ private:
 	// ボタンの画像
 	int choiceButtonImage[(int)CHOICE::Max][2];
 
-	// ボタンの画像の位置
-	const Vector2I choiceButtonPos[(int)CHOICE::Max] = {
-		{ 150, App::GetIns().SCREEN_SIZE_Y - 150 },									// 戻る
-		{ App::GetIns().SCREEN_SIZE_X - 450, App::GetIns().SCREEN_SIZE_Y - 150 },	// キャラチェンジ
-		{ App::GetIns().SCREEN_SIZE_X - 150, App::GetIns().SCREEN_SIZE_Y - 150 },	// 決定
-	};
-
 	// 選択中のボタンの上に表示する矢印の画像
 	int arrowImage;
 
 	// 選択中のボタンの上に表示する決定キーの画像
 	int enterKeyImage[2];
-
 
 };
