@@ -442,6 +442,8 @@ void TomatoBoss::CharactorRelease(void)
 
 void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	if (!Net::GetIns().IsHost()) return;
+
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
