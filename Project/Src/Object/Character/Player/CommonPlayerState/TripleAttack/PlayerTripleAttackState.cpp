@@ -39,10 +39,7 @@ void PlayerTripleAttackState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(ATTACK_KEY).down) {
-		OwnChangeState();
-		Enter();
-	}
+	if (Key::GetIns().GetInfo(ATTACK_KEY).down) { OwnChangeState(); }
 }
 
 void PlayerTripleAttackState::Enter(void)
@@ -116,7 +113,7 @@ void PlayerTripleAttackState::Update(void)
 	else if (animePlayRate <= COLL_END_TIME[(int)attackStage]) {
 		// 攻撃判定中
 		collOperator.CollOn(attackStage);
-		if (Net::GetIns().IsHost()) {
+		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, (MsgDataPlayerCollOperator::COLLIDER_KINDS)attackStage));
 		}
 		SoundManager::GetIns().Play("PlayerTripleAttack");

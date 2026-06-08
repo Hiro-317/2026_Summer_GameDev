@@ -97,7 +97,7 @@ void CharacterBase::SubInit(void)
  	SetInviEffectFlg();
 
 	// キャラクター固有の初期化
-	CharactorInit();
+	CharacterInit();
 
 	for (UI_Base*& ui : ui_ArrayIns) { ui->Init(); }
 }
@@ -109,7 +109,7 @@ void CharacterBase::SubUpdate(void)
 		Invi();
 
 		// キャラクター固有の更新
-		CharactorUpdate();
+		CharacterUpdate();
 
 		// ステートの更新
 		if (stateMap.size() > 0) {
@@ -119,7 +119,7 @@ void CharacterBase::SubUpdate(void)
 		}
 	}
 	else {
-
+		CharacterRemoteUpdate();
 	}
 
 	for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
@@ -132,13 +132,13 @@ void CharacterBase::SubUpdate(void)
 void CharacterBase::SubDraw(void)
 {
 	// キャラクター固有の描画
-	CharactorDraw();
+	CharacterDraw();
 }
 
 void CharacterBase::SubAlphaDraw(void)
 {
 	// キャラクター固有の描画
-	CharactorAlphaDraw();
+	CharacterAlphaDraw();
 }
 
 void CharacterBase::UiDraw(void)
@@ -151,7 +151,7 @@ void CharacterBase::UiDraw(void)
 void CharacterBase::SubRelease(void)
 {
 	// キャラクター固有の解放
-	CharactorRelease();
+	CharacterRelease();
 
 	// ステート管理用マップの解放
 	for (auto& s : stateMap) {
@@ -245,28 +245,5 @@ void CharacterBase::AddAnimation(int index, float speed, const char* filePath)
 
 void CharacterBase::AnimePlay(int type, bool loop)
 {
-	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
-	// 自身のPC以外のすべてに再生したことを送信する
-	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
-
-	// ホストだったら操作者PC以外に伝達する
-	if (Net::GetIns().IsHost()) {
-
-		// すべてのIDを精査する
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-
-			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
-			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
-
-			// また、この情報の発信源である送信者IDを持つPCにも送らない
-			if (id == (int)operatorSenderId) { continue; }
-
-			// それ以外のこの情報が伝わってないPCに情報を送る
-			Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop), operatorSenderId, (MSG_SENDER_ID)id);
-		}
-	}
-
 	anime->Play(type, loop);
 }

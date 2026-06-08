@@ -38,7 +38,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 {
 	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
 
-	coolTime = 120;
+	coolTime = 1200000;
 
 	this->operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = true;
@@ -281,7 +281,7 @@ void TomatoBoss::CharacterLoad(void)
 
 }
 
-void TomatoBoss::CharactorInit(void)
+void TomatoBoss::CharacterInit(void)
 {
 	// ˆÊ’u‚ð‰ŠúˆÊ’u‚É‚·‚é
 	trans.pos = INIT_POS;
@@ -289,7 +289,7 @@ void TomatoBoss::CharactorInit(void)
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 }
 
-void TomatoBoss::CharactorUpdate(void)
+void TomatoBoss::CharacterUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
@@ -344,12 +344,12 @@ void TomatoBoss::SendUpdate(void)
 	}
 }
 
-void TomatoBoss::CharactorDraw(void)
+void TomatoBoss::CharacterDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
 }
 
-void TomatoBoss::CharactorAlphaDraw(void)
+void TomatoBoss::CharacterAlphaDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
@@ -375,7 +375,7 @@ void TomatoBoss::CharacterUiDraw(void)
 }
 
 
-void TomatoBoss::CharactorRelease(void)
+void TomatoBoss::CharacterRelease(void)
 {
 	for (ActorBase*& c : subObjArray) {
 		if (c) {

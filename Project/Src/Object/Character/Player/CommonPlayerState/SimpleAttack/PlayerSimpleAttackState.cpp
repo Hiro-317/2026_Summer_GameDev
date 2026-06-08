@@ -42,10 +42,8 @@ void PlayerSimpleAttackState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(ATTACK_KEY).down) {
-		OwnChangeState();
-		Enter();
-	}
+	if (Key::GetIns().GetInfo(ATTACK_KEY).down) { OwnChangeState(); }
+
 }
 
 void PlayerSimpleAttackState::Enter(void)

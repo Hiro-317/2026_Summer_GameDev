@@ -61,15 +61,20 @@ private:
 
 	// ƒƒCƒ“ˆ—``````````````
 	void CharacterLoad(void)override;
-	void CharactorInit(void)override;
-	void CharactorUpdate(void)override;
-	void CharactorDraw(void)override;
-	void CharactorAlphaDraw(void)override;
+	void CharacterInit(void)override;
+	void CharacterUpdate(void)override;
+	void CharacterRemoteUpdate(void)override;
+	void CharacterDraw(void)override;
+	void CharacterAlphaDraw(void)override;
 	void CharacterUiDraw(void)override;
-	void CharactorRelease(void)override;
+	void CharacterRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
+
 protected:
+
+	void ChangeState(int state)override;
+	void AnimePlay(int type, bool loop = true)override;
 
 #pragma region ’è”’è‹`
 	// ƒ‚ƒfƒ‹``````````````````````````````

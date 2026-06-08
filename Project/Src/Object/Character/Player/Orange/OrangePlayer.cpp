@@ -95,7 +95,7 @@ void OrangePlayer::PlayerLoad(void)
 		(int)STATE::MOVE,
 		new PlayerMoveState(
 			// 自分の状態に遷移する関数
-			[&]() { state = (int)STATE::MOVE; },
+			[&]() { ChangeState((int)STATE::MOVE); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::MOVE; },
 			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
@@ -154,7 +154,7 @@ void OrangePlayer::PlayerLoad(void)
 		(int)STATE::SKILL_1,
 		new PlayerTripleAttackState(
 			// 自分の状態に遷移する関数
-			[&]() { state = (int)STATE::SKILL_1; },
+			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
 			// コンテキスト構造体
@@ -167,7 +167,7 @@ void OrangePlayer::PlayerLoad(void)
 		(int)STATE::SKILL_2,
 		new PlayerSimpleAttackState(
 			// 自分の状態に遷移する関数
-			[&]() { state = (int)STATE::SKILL_2; },
+			[&]() { ChangeState((int)STATE::SKILL_2); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
 			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
@@ -181,7 +181,7 @@ void OrangePlayer::PlayerLoad(void)
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; }
+			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
 
@@ -189,7 +189,7 @@ void OrangePlayer::PlayerLoad(void)
 		(int)STATE::SKILL_3,
 		new PlayerDodgeState(
 			// 自分の状態に関する関数
-			[&]() { state = (int)STATE::SKILL_3; },
+			[&]() { ChangeState((int)STATE::SKILL_3); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
 			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合
@@ -204,7 +204,7 @@ void OrangePlayer::PlayerLoad(void)
 			// 無敵時間のセット関数
 			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; }
+			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
 
@@ -212,7 +212,7 @@ void OrangePlayer::PlayerLoad(void)
 		(int)STATE::DAMAGE,
 		new PlayerDamageState(
 			// 自分の状態に関する関数
-			[&]() { state = (int)STATE::DAMAGE; },
+			[&]() { ChangeState((int)STATE::DAMAGE); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DAMAGE; },
 			// 定数（ダメージを受けた時の無敵時間）
@@ -224,7 +224,7 @@ void OrangePlayer::PlayerLoad(void)
 			// 無敵時間のセット関数
 			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { state = (int)STATE::MOVE; }
+			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
 
@@ -232,7 +232,7 @@ void OrangePlayer::PlayerLoad(void)
 	AddState(
 		(int)STATE::DEATH,
 		new PlayerDeathState(
-			[&]() { state = (int)STATE::DEATH; },
+			[&]() { ChangeState((int)STATE::DEATH); },
 			[&]() { return state == (int)STATE::DEATH; },
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
@@ -346,13 +346,15 @@ void OrangePlayer::ReceptionUpdate(void)
 		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2:
 		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3: {
 			// 三段攻撃
-			SubObjSerch<PlayerTripleAttackCollOperator>()->CollOn((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds);
+			if (dataPtr->isCollider) { SubObjSerch<PlayerTripleAttackCollOperator>()->CollOn((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds); }
+			else { SubObjSerch<PlayerTripleAttackCollOperator>()->CollOff((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack: {
 			// キック
-			SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn();
+			if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
+			else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }
 			break;
 		}
 
