@@ -54,8 +54,8 @@ public:
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
-	void ReceptionUpdate(void)override;
-	void SendUpdate(void)override;
+	virtual void ReceptionUpdate(void)override;
+	virtual void SendUpdate(void)override;
 
 private:
 

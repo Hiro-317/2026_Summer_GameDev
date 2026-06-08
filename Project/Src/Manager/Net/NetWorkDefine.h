@@ -36,6 +36,8 @@ enum class MSG_DATA_TYPE
 	PlayerHp,
     // <ホスト>プレイヤー：被ダメ
     PlayerDamage,
+    // <ホスト>当たり判定情報送信構造体
+    PlayerCollOperator,
 
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
@@ -445,6 +447,50 @@ struct MsgDataPlayerHp
     MsgDataPlayerHp(void) :
         header(DATA_TYPE),
         hp()
+    {
+    }
+};
+
+// <ホスト>当たり判定情報送信構造体
+struct MsgDataPlayerCollOperator
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerCollOperator;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // 当たり判定の種類の列挙型定義
+    enum class COLLIDER_KINDS
+    {
+        Non = -1,
+
+        CommonPlayerTripleAttack_1,
+        CommonPlayerTripleAttack_2,
+        CommonPlayerTripleAttack_3,
+        CommonPlayerSimpleAttack,
+        
+        Max
+    };
+    // 当たり判定の種類の列挙型定義の変数定義
+    COLLIDER_KINDS collKinds;
+
+    // 当たり判定：ON / OFF
+    bool isCollider;
+
+    MsgDataPlayerCollOperator(bool isCollider, COLLIDER_KINDS collKinds) :
+        header(DATA_TYPE),
+        isCollider(isCollider),
+        collKinds(collKinds)
+    {
+    }
+    MsgDataPlayerCollOperator(void) :
+        header(DATA_TYPE),
+        isCollider(),
+        collKinds()
     {
     }
 };

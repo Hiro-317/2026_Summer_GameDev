@@ -334,5 +334,39 @@ void OrangePlayer::PlayerLoad(void)
 #pragma endregion 
 }
 
+void OrangePlayer::ReceptionUpdate(void)
+{
+	PlayerBase::ReceptionUpdate();
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+		
+		switch (dataPtr->collKinds) {
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_1:
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2:
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3: {
+			// 三段攻撃
+			SubObjSerch<PlayerTripleAttackCollOperator>()->CollOn((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds);
+			break;
+		}
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack: {
+			// キック
+			SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn();
+			break;
+		}
+
+		default: { break; }	// 例外
+		}
+
+		delete dataPtr;
+	}
+}
+
+void OrangePlayer::SendUpdate(void)
+{
+	PlayerBase::SendUpdate();
+}
+
 
 
