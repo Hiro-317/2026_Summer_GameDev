@@ -555,12 +555,6 @@ struct MsgDataBossInform
         ChangeAttackD,
         // 攻撃Eステートへ遷移
         ChangeAttackE,
-
-        // コライダーオン
-        ColliderOn,
-        // コライダーオフ
-        ColliderOff,
-
     };
 
     INFORM_TYPE inform;

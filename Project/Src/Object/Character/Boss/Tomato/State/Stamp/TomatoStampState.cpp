@@ -61,7 +61,6 @@ void TomatoStampState::Update(void)
 			if (attackCnt == 0) {
 				if (Net::GetIns().IsHost()) {
 					collOperator->CollSet(true);
-					Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOn));
 				}
 			}
 			attackCnt++;
@@ -88,7 +87,6 @@ void TomatoStampState::Exit(void)
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {
 		collOperator->CollSet(false);
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOff));
 	}
 }
 

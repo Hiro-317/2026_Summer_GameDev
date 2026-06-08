@@ -43,6 +43,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	this->operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = true;
 
+	rockHit = false;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -321,59 +322,7 @@ void TomatoBoss::ReceptionUpdate(void)
 	}
 	while (MsgDataBossInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossInform>(operatorSenderId)) {
 
-		if (dataPtr->inform != MsgDataBossInform::INFORM_TYPE::ColliderOn && dataPtr->inform != MsgDataBossInform::INFORM_TYPE::ColliderOff) {
-			ChangeState((int)dataPtr->inform);
-		}
-		else {
-			if (dataPtr->inform == MsgDataBossInform::INFORM_TYPE::ColliderOn) {
-				switch ((STATE)state)
-				{
-				case STATE::HEADBUTT:
-
-					SubObjSerch<TomatoHeadbuttCollOperator>()->CollSet(true);
-					break;
-
-				case STATE::TACKLE:
-					
-					SubObjSerch<TomatoTackleCollOperator>()->CollSet(true);
-					break;
-
-				case STATE::STAMP:
-
-					SubObjSerch<TomatoStampCollOperator>()->CollSet(true);
-					break;
-
-				case STATE::IDLE:
-				case STATE::MOVE:
-				default:
-					break;
-				}
-			}
-			else {
-				switch ((STATE)state)
-				{
-				case STATE::HEADBUTT:
-
-					SubObjSerch<TomatoHeadbuttCollOperator>()->CollSet(false);
-					break;
-
-				case STATE::TACKLE:
-
-					SubObjSerch<TomatoTackleCollOperator>()->CollSet(false);
-					break;
-
-				case STATE::STAMP:
-
-					SubObjSerch<TomatoStampCollOperator>()->CollSet(false);
-					break;
-
-				case STATE::IDLE:
-				case STATE::MOVE:
-				default:
-					break;
-				}
-			}
-		}
+		ChangeState((int)dataPtr->inform);
 		delete dataPtr;
 	}
 	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>(operatorSenderId))
@@ -442,6 +391,8 @@ void TomatoBoss::CharactorRelease(void)
 
 void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	if (!Net::GetIns().IsHost()) return;
+
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
