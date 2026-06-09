@@ -116,7 +116,7 @@ void PlayerBase::CharacterLoad(void)
 	for (ActorBase*& c : subObjArray) { c->Load(); }
 }
 
-void PlayerBase::CharactorInit(void)
+void PlayerBase::CharacterInit(void)
 {
 	// 位置を初期位置にする
 	trans.pos = INIT_POS;
@@ -127,11 +127,11 @@ void PlayerBase::CharactorInit(void)
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 }
 
-void PlayerBase::CharactorUpdate(void)
+void PlayerBase::CharacterUpdate(void)
 {
-	for (ActorBase*& c : subObjArray) { c->Update(); }
-
 	interestPos = trans.pos + INTEREST_POS;
+
+	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
@@ -146,12 +146,17 @@ void PlayerBase::CharactorUpdate(void)
 #endif // _DEBUG
 }
 
-void PlayerBase::CharactorDraw(void)
+void PlayerBase::CharacterRemoteUpdate(void)
+{
+	for (ActorBase*& c : subObjArray) { c->Update(); }
+}
+
+void PlayerBase::CharacterDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
 }
 
-void PlayerBase::CharactorAlphaDraw(void)
+void PlayerBase::CharacterAlphaDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
@@ -219,7 +224,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 }
 
-void PlayerBase::CharactorRelease(void)
+void PlayerBase::CharacterRelease(void)
 {
 	for (ActorBase*& c : subObjArray) {
 		if (c) {
@@ -231,6 +236,59 @@ void PlayerBase::CharactorRelease(void)
 	subObjArray.clear();
 }
 
+void PlayerBase::ChangeState(int state)
+{
+	CharacterBase::ChangeState(state);
+
+	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
+
+	// ホストだったら操作者PC以外に伝達する
+	if (Net::GetIns().IsHost()) {
+
+		// すべてのIDを精査する
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
+			if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+
+			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
+			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
+
+			// また、この情報の発信源である送信者IDを持つPCにも送らない
+			if (id == (int)operatorSenderId) { continue; }
+
+			// それ以外のこの情報が伝わってないPCに情報を送る
+			Net::GetIns().Send(MsgDataPlayerState(state), operatorSenderId, (MSG_SENDER_ID)id);
+		}
+	}
+}
+
+void PlayerBase::AnimePlay(int type, bool loop)
+{
+	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
+	// 自身のPC以外のすべてに再生したことを送信する
+	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
+
+	// ホストだったら操作者PC以外に伝達する
+	if (Net::GetIns().IsHost()) {
+
+		// すべてのIDを精査する
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
+			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+
+			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
+			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
+
+			// また、この情報の発信源である送信者IDを持つPCにも送らない
+			if (id == (int)operatorSenderId) { continue; }
+
+			// それ以外のこの情報が伝わってないPCに情報を送る
+			Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop), operatorSenderId, (MSG_SENDER_ID)id);
+		}
+	}
+
+	CharacterBase::AnimePlay(type, loop);
+}
 void PlayerBase::ReceptionUpdate(void)
 {
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
@@ -275,6 +333,5 @@ void PlayerBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost() || isOwnOperator) {
 		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
-		//Net::GetIns().Send(MsgDataPlayerHp(characterStats.hp), operatorSenderId);
 	} 
 }

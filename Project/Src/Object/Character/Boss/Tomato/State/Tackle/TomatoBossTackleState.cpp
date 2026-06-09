@@ -63,7 +63,6 @@ void TomatoBossTackleState::Update(void)
 
 		if (Net::GetIns().IsHost()) {
 			collOperator->CollSet(true);
-			Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOn));
 		}
 
 		if (time < 190) {
@@ -87,7 +86,6 @@ void TomatoBossTackleState::Exit(void)
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {
 		collOperator->CollSet(false);
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOff));
 	}
 }
 

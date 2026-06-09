@@ -98,7 +98,7 @@ protected:
 	}
 
 	// 指定のステートへ遷移
-	void  ChangeState(int nextState) {
+	virtual void  ChangeState(int nextState) {
 		// 遷移前のステートの終了処理を呼び出す
 		stateMap.at(state)->Exit();
 
@@ -111,12 +111,14 @@ protected:
 
 	// キャラクター固有の処理をここに追加
 	virtual void CharacterLoad(void) = 0;
-	virtual void CharactorInit(void) = 0;
-	virtual void CharactorUpdate(void) = 0;
-	virtual void CharactorDraw(void) = 0;
-	virtual void CharactorAlphaDraw(void) = 0;
+	virtual void CharacterInit(void) = 0;
+	virtual void CharacterUpdate(void) = 0;
+	virtual void CharacterRemoteUpdate() {}
+	virtual void CharacterDraw(void) = 0;
+	virtual void CharacterAlphaDraw(void) = 0;
 	virtual void CharacterUiDraw(void) = 0;
-	virtual void CharactorRelease(void) = 0;
+	virtual void CharacterRelease(void) = 0;
+
 
 #pragma region アニメーションコントローラー
 	// アニメーションコントローラーの作成
@@ -139,7 +141,7 @@ protected:
 	/// <param name="filePath">パス</param>
 	void AddAnimation(int index, float speed, const char* filePath);
 
-	void AnimePlay(int type, bool loop = true);
+	virtual void AnimePlay(int type, bool loop = true);
 
 	bool IsAnimeEnd(void)const { return anime->GetAnimEnd(); }
 

@@ -48,7 +48,6 @@ void TomatoBossHeadbuttState::Update(void)
 	if (time == 0) {
 		if (Net::GetIns().IsHost()) {
 			collOperator->CollSet(true);
-			Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOn));
 		}
 	}
 	if (time > ATTACK_TIME) {
@@ -68,7 +67,6 @@ void TomatoBossHeadbuttState::Exit(void)
 	ReviveColl();
 	if (Net::GetIns().IsHost()) {
 		collOperator->CollSet(false);
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ColliderOff));
 	}
 }
 

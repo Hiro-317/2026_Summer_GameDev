@@ -16,7 +16,8 @@ public:
 
 	void PlayerLoad(void)override;
 
-
+	void ReceptionUpdate(void)override;
+	void SendUpdate(void)override;
 private:
 
 #pragma region ’è”’è‹`

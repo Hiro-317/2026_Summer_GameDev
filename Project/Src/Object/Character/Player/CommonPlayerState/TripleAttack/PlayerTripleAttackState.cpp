@@ -1,5 +1,6 @@
 #include "PlayerTripleAttackState.h"
 
+#include "../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../Manager/Sound/SoundManager.h"
 
 PlayerTripleAttackState::PlayerTripleAttackState(
@@ -38,10 +39,7 @@ void PlayerTripleAttackState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(ATTACK_KEY).down) {
-		OwnChangeState();
-		Enter();
-	}
+	if (Key::GetIns().GetInfo(ATTACK_KEY).down) { OwnChangeState(); }
 }
 
 void PlayerTripleAttackState::Enter(void)
@@ -70,12 +68,23 @@ void PlayerTripleAttackState::Enter(void)
 
 	// 前回までの当たり判定を消す
 	collOperator.CollOff();
+
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_1));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3));
+	}
 }
 
 void PlayerTripleAttackState::Update(void)
 {
 	// 一旦攻撃判定をオフにしておく
 	collOperator.CollOff();
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_1));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3));
+	}
 
 	// アニメーションの再生割合を取得する
 	float animePlayRate = GetAnimePlayRatio();
@@ -104,6 +113,9 @@ void PlayerTripleAttackState::Update(void)
 	else if (animePlayRate <= COLL_END_TIME[(int)attackStage]) {
 		// 攻撃判定中
 		collOperator.CollOn(attackStage);
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, (MsgDataPlayerCollOperator::COLLIDER_KINDS)attackStage));
+		}
 		SoundManager::GetIns().Play("PlayerTripleAttack");
 	}
 	else {
@@ -121,7 +133,11 @@ void PlayerTripleAttackState::Exit(void)
 {
 	// 当たり判定をオフにする
 	collOperator.CollOff();
-
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_1));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3));
+	}
 	// 探索情報をリセットする
 	collOperator.ResetTarget();
 }

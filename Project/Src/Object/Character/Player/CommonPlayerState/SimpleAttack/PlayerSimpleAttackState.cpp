@@ -1,5 +1,6 @@
 #include "PlayerSimpleAttackState.h"
 
+#include "../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../Manager/Sound/SoundManager.h"
 
 PlayerSimpleAttackState::PlayerSimpleAttackState(
@@ -41,10 +42,8 @@ void PlayerSimpleAttackState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(ATTACK_KEY).down) {
-		OwnChangeState();
-		Enter();
-	}
+	if (Key::GetIns().GetInfo(ATTACK_KEY).down) { OwnChangeState(); }
+
 }
 
 void PlayerSimpleAttackState::Enter(void)
@@ -68,6 +67,9 @@ void PlayerSimpleAttackState::Update(void)
 {
 	// 一旦攻撃判定をオフにしておく
 	collOperator.CollOff();
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+	}
 
 	// アニメーションの再生割合を取得する
 	float animePlayRate = GetAnimePlayRatio();
@@ -96,6 +98,9 @@ void PlayerSimpleAttackState::Update(void)
 	else if (animePlayRate <= COLL_END_TIME) {
 		// 攻撃判定中
 		collOperator.CollOn();
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+		}
 	}
 	else {
 		// 攻撃判定終了後
@@ -112,6 +117,9 @@ void PlayerSimpleAttackState::Exit(void)
 {
 	// 当たり判定をオフにする
 	collOperator.CollOff();
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+	}
 
 	// 探索情報をリセットする
 	collOperator.ResetTarget();

@@ -30,7 +30,6 @@ public:
 	// ‘¼‚Ìó‘Ô‚É‘JˆÚ‚·‚éğŒŠÖ”‚ğ‚·‚×‚ÄŒÄ‚Ño‚·ŠÖ”
 	void OtherStateConditionsUpdate(void) {
 		for (std::function<void(void)>& func : OtherStateConditions) { func(); }
-		if (!IsOwnState()) { Exit(); }
 	}
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—

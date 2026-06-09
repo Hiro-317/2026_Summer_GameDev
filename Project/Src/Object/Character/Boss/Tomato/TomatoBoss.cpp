@@ -43,6 +43,7 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	this->operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = true;
 
+	rockHit = false;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -280,7 +281,7 @@ void TomatoBoss::CharacterLoad(void)
 
 }
 
-void TomatoBoss::CharactorInit(void)
+void TomatoBoss::CharacterInit(void)
 {
 	// ˆÊ’u‚ð‰ŠúˆÊ’u‚É‚·‚é
 	trans.pos = INIT_POS;
@@ -288,7 +289,7 @@ void TomatoBoss::CharactorInit(void)
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 }
 
-void TomatoBoss::CharactorUpdate(void)
+void TomatoBoss::CharacterUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
@@ -321,67 +322,17 @@ void TomatoBoss::ReceptionUpdate(void)
 	}
 	while (MsgDataBossInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossInform>(operatorSenderId)) {
 
-		if (dataPtr->inform != MsgDataBossInform::INFORM_TYPE::ColliderOn && dataPtr->inform != MsgDataBossInform::INFORM_TYPE::ColliderOff) {
-			ChangeState((int)dataPtr->inform);
-		}
-		else {
-			if (dataPtr->inform == MsgDataBossInform::INFORM_TYPE::ColliderOn) {
-				switch ((STATE)state)
-				{
-				case STATE::HEADBUTT:
-
-					SubObjSerch<TomatoHeadbuttCollOperator>()->CollSet(true);
-					break;
-
-				case STATE::TACKLE:
-					
-					SubObjSerch<TomatoTackleCollOperator>()->CollSet(true);
-					break;
-
-				case STATE::STAMP:
-
-					SubObjSerch<TomatoStampCollOperator>()->CollSet(true);
-					break;
-
-				case STATE::IDLE:
-				case STATE::MOVE:
-				default:
-					break;
-				}
-			}
-			else {
-				switch ((STATE)state)
-				{
-				case STATE::HEADBUTT:
-
-					SubObjSerch<TomatoHeadbuttCollOperator>()->CollSet(false);
-					break;
-
-				case STATE::TACKLE:
-
-					SubObjSerch<TomatoTackleCollOperator>()->CollSet(false);
-					break;
-
-				case STATE::STAMP:
-
-					SubObjSerch<TomatoStampCollOperator>()->CollSet(false);
-					break;
-
-				case STATE::IDLE:
-				case STATE::MOVE:
-				default:
-					break;
-				}
-			}
-		}
+		ChangeState((int)dataPtr->inform);
 		delete dataPtr;
 	}
 	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>(operatorSenderId))
 	{
 		SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
 		characterStats.hp -= dataPtr->damage;
-		GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
-		GameScene::HitStop(10);
+		if (dataPtr->clitical) {
+			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+		}
+		GameScene::HitStop(4);
 		SetInviCounter(150);
 
 		delete dataPtr;
@@ -395,12 +346,12 @@ void TomatoBoss::SendUpdate(void)
 	}
 }
 
-void TomatoBoss::CharactorDraw(void)
+void TomatoBoss::CharacterDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }
 }
 
-void TomatoBoss::CharactorAlphaDraw(void)
+void TomatoBoss::CharacterAlphaDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
 }
@@ -426,7 +377,7 @@ void TomatoBoss::CharacterUiDraw(void)
 }
 
 
-void TomatoBoss::CharactorRelease(void)
+void TomatoBoss::CharacterRelease(void)
 {
 	for (ActorBase*& c : subObjArray) {
 		if (c) {
@@ -442,6 +393,8 @@ void TomatoBoss::CharactorRelease(void)
 
 void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	if (!Net::GetIns().IsHost()) return;
+
 	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
@@ -450,8 +403,10 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
-			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
-			GameScene::HitStop(10);
+			if (isClitical) {
+				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+			}
+			GameScene::HitStop(4);
 			SetInviCounter(150);
 			
 			Net::GetIns().Send(MsgDataBossHit(damage, isClitical));
