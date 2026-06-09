@@ -325,11 +325,6 @@ void PlayerBase::ReceptionUpdate(void)
 		characterStats.hp = dataPtr->hp;
 		delete dataPtr;
 	}
-
-	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
-		ChangeState(dataPtr->state);
-		delete dataPtr;
-	}
 }
 
 void PlayerBase::SendUpdate(void)

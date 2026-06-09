@@ -338,6 +338,28 @@ void OrangePlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
 
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
+
+		switch ((STATE)state) {
+		case PlayerBase::STATE::SKILL_1: {
+			SubObjSerch<PlayerTripleAttackCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_2: {
+			SubObjSerch<PlayerSimpleAttackCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_3: {
+			break;
+		}
+
+		default: { break; }
+		}
+
+		delete dataPtr;
+	}
+
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
 		
 		switch (dataPtr->collKinds) {
