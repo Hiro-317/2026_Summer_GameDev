@@ -326,10 +326,10 @@ void OrangePlayer::PlayerLoad(void)
 			)
 		);
 
-		ui_ArrayIns.emplace_back(new HitUI());
 
 	}
 
+	ui_ArrayIns.emplace_back(new HitUI());
 
 #pragma endregion 
 }
