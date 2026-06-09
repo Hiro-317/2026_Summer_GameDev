@@ -329,8 +329,10 @@ void TomatoBoss::ReceptionUpdate(void)
 	{
 		SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
 		characterStats.hp -= dataPtr->damage;
-		GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
-		GameScene::HitStop(10);
+		if (dataPtr->clitical) {
+			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+		}
+		GameScene::HitStop(4);
 		SetInviCounter(150);
 
 		delete dataPtr;
@@ -401,8 +403,10 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
-			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
-			GameScene::HitStop(10);
+			if (isClitical) {
+				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+			}
+			GameScene::HitStop(4);
 			SetInviCounter(150);
 			
 			Net::GetIns().Send(MsgDataBossHit(damage, isClitical));
