@@ -274,7 +274,7 @@ void PlayerBase::AnimePlay(int type, bool loop)
 		// すべてのIDを精査する
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 
 			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
 			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
