@@ -131,6 +131,8 @@ void PlayerBase::CharacterUpdate(void)
 {
 	interestPos = trans.pos + INTEREST_POS;
 
+	for (ActorBase*& c : subObjArray) { c->Update(); }
+
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
 	}
