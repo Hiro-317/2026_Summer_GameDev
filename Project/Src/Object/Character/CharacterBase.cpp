@@ -104,9 +104,10 @@ void CharacterBase::SubInit(void)
 
 void CharacterBase::SubUpdate(void)
 {
+	// 無敵カウンターの更新
+	Invi();
+
 	if (isOwnOperator) {
-		// 無敵カウンターの更新
-		Invi();
 
 		// キャラクター固有の更新
 		CharacterUpdate();
