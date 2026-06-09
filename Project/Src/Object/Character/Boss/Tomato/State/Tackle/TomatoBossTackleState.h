@@ -59,6 +59,12 @@ private:
 	// 回転量
 	const float ROTATION_POW;
 
+	// チャージ
+	static constexpr int CHARGE_POW = 180;
+
+	// 強制突進タイム
+	static constexpr int FORCE_MOVE_TIME = 200;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
