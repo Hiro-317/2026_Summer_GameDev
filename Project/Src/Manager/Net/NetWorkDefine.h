@@ -24,6 +24,11 @@ enum class MSG_DATA_TYPE
     // <ホスト>システムイベント（シーン遷移など）
     SystemInform,
 
+    // <ホスト/クライアント>キャラセレクト
+	CharaSelect,
+	// <クライアント>ロビーでの準備完了
+	ClientReady,
+
     // <ホスト/クライアント>プレイヤー：自分の座標/角度
     PlayerTrans,
     // <ホスト/クライアント>プレイヤー：アニメの種類
@@ -313,6 +318,58 @@ struct MsgDataSystemInform
     MsgDataSystemInform(void) :
         header(DATA_TYPE),
         inform(INFORM_TYPE::None)
+    {
+    }
+};
+
+// <ホスト/クライアント>キャラセレクト送信構造体
+struct MsgDataCharaSelect
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::CharaSelect;
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+	// キャラタイプ
+    int charaType;
+
+    MsgDataCharaSelect(int charaType) :
+        header(DATA_TYPE),
+        charaType(charaType)
+    {
+    }
+    MsgDataCharaSelect(void) :
+        header(DATA_TYPE),
+        charaType()
+    {
+    }
+};
+
+// <クライアント>ロビーでの準備完了送信構造体
+struct MsgDataClientReady
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::ClientReady;
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+	// 準備完了フラグ
+    bool ready;
+
+    MsgDataClientReady(bool ready) :
+        header(DATA_TYPE),
+        ready(ready)
+    {
+    }
+    MsgDataClientReady(void) :
+        header(DATA_TYPE),
+        ready()
     {
     }
 };

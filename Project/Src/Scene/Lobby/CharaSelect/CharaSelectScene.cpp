@@ -28,23 +28,46 @@ void CharaSelectScene::Load(void)
 
 void CharaSelectScene::Init(void)
 {
+	// 初期化
 	for (ActorBase* obj : objects) { obj->Init(); }
 }
 
 void CharaSelectScene::Update(void)
 {
+	// 更新
 	for (ActorBase* obj : objects) { obj->Update(); }
 
+	// 戻る
 	if(Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+
+		// このシーンを破棄
 		SceneManager::GetIns().PopScene();
+
+		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
+	// キャラ確定
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-		if (ObjSerch<CharaSelectPreviewManager>()->GetCharaType() != CHARA_TYPE::Orange) { return; }
-		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, (ObjSerch<CharaSelectPreviewManager>())->GetCharaType());
+
+		// 現在CharaSelectPreviewManagerクラスで選択されているキャラを取得
+		CHARA_TYPE nowSelect = ObjSerch<CharaSelectPreviewManager>()->GetCharaType();
+
+		if (nowSelect != CHARA_TYPE::Orange) { return; }
+
+		// 選択中のキャラで、SceneManagerが抱えているキャラ選択情報を書き換える
+		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), nowSelect);
+
+		// キャラ変更情報を送信
+		Net::GetIns().Send(MsgDataCharaSelect((int)nowSelect));
+
+		// このパソコンのロビーシーンのプレビューを更新する
 		LobbyPreviewCharaChange();
+
+		// キャラ変更終了でこのシーンを破棄
 		SceneManager::GetIns().PopScene();
+
+		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 }

@@ -1,0 +1,102 @@
+#pragma once
+
+#include "../SceneBase.h"
+
+#include "../../Common/Vector2.h"
+
+#include "../../Application/Application.h"
+
+#include "../../Manager/Net/NetWorkDefine.h"
+
+class MultiLobbyScene : public SceneBase
+{
+public:
+	MultiLobbyScene();
+	~MultiLobbyScene() = default;
+
+	// 読み込み
+	void Load(void)override;
+	// 初期化処理
+	void Init(void)override;
+	// 更新ステップ
+	void Update(void)override;
+	// 描画処理
+	void Draw(void)override;
+	// 解放処理
+	void Release(void)override;
+
+private:
+#pragma region 定数定義
+	enum class CHOICE {
+		None = -1,
+
+		Disconnected,	// 切断
+		CharaChange,	// キャラチェンジ
+		Enter,			// <ホスト>出撃 / <クライアント>準備完了
+
+		Max
+	};
+
+	enum class SELECTION_STATE {
+		None = -1,
+
+		NotSelect = (int)false,	// 非選択中
+		Select = (int)true,		// 選択中
+
+		Disable,				// 選択できない(クライアントの準備完了を押したときの)
+
+		Max
+	};
+
+	// 画像データのディレクトリ
+	const std::string IMAGE_DATA_FILE_DIR = "Data/Image/Lobby/";
+
+	// 各ボタン画像の名前
+	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max]; /*= {
+		"LobbyDisconnected",// 切断
+		"LobbyCharaChange",	// キャラチェンジ
+		"LobbyEnter",		// <ホスト>出撃 / <クライアント>準備完了
+	};*/
+
+	// ボタン画像の 選択時/非選択時/選択できないとき の修飾される名前
+	const std::string CHOICE_BUTTON_IMAGE_DECORATION[(int)SELECTION_STATE::Max] = {
+		"ToNotSelect",	// 非選択時
+		"ToSelect",		// 選択時
+		"ToDisable",	// 選択できないとき
+	};
+
+	// ボタンの画像の位置
+	const Vector2I CHOICE_BUTTON_POS[(int)CHOICE::Max] = {
+		{ 100, App::GetIns().SCREEN_SIZE_Y - 100 },									// 切断
+		{ App::GetIns().SCREEN_SIZE_X - 300, App::GetIns().SCREEN_SIZE_Y - 100 },	// キャラチェンジ
+		{ App::GetIns().SCREEN_SIZE_X - 100, App::GetIns().SCREEN_SIZE_Y - 100 },	// <ホスト>出撃 / <クライアント>準備完了
+	};
+
+	// ボードの位置
+	const Vector2I BOARD_POS = { App::GetIns().SCREEN_SIZE_X_HALF, 115 };
+#pragma endregion
+
+	// 選択中のボタンのインデックス
+	CHOICE choice;
+
+	// ボタンごとの選択状態
+	SELECTION_STATE buttonSelectionState[(int)CHOICE::Max];
+
+	// <クライアント>準備完了
+	std::vector<unsigned char> clientReady;
+
+	// ボタンごとの選択状態を choiceとclientReady を参照して更新する
+	void ButtonSelectionStateReload(void);
+
+	// 看板の画像
+	int boardImage;
+
+	// ボタンの画像
+	int choiceButtonImage[(int)CHOICE::Max][(int)SELECTION_STATE::Max];
+
+	// 選択中のボタンの上に表示する矢印の画像
+	int arrowImage;
+
+	// 選択中のボタンの上に表示する決定キーの画像
+	int enterKeyImage[2];
+};

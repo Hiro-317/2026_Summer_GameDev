@@ -48,6 +48,7 @@ public:
 	{
 		TITLE,
 		LOBBY,
+		MULTI_LOBBY,
 		BOSS_SELECT,
 		GAME,
 		CLEAR,

@@ -129,6 +129,8 @@ void LobbyScene::Update(void)
 
 			// 専用のシーンを追加する
 			//SceneManager::GetIns().PushScene();
+			Net::GetIns().StartHost();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
 
 			// 終了
 			return;

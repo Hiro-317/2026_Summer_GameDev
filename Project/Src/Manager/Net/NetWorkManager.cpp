@@ -144,15 +144,21 @@ void NetWorkManager::ConnectedUpdate(void)
 
 		// 切断通知
         if (event.type == ENET_EVENT_TYPE_DISCONNECT) {
-            for (auto it = connectInfo.begin(); it != connectInfo.end(); it++) {
-                if (it->peer != event.peer) { continue; }
-                // 接続状況を更新
-                connectStatus.LostMember(it->senderId);
-                // 接続情報を消去
-                connectInfo.erase(it);
-                // 新しい接続状況を送る
-                Send(MsgDataConnectStatus(connectStatus));
-                break;
+
+            if (IsHost()) {
+                for (auto it = connectInfo.begin(); it != connectInfo.end(); it++) {
+                    if (it->peer != event.peer) { continue; }
+                    // 接続状況を更新
+                    connectStatus.LostMember(it->senderId);
+                    // 接続情報を消去
+                    connectInfo.erase(it);
+                    // 新しい接続状況を送る
+                    Send(MsgDataConnectStatus(connectStatus));
+                    break;
+                }
+            }
+            else {
+                
             }
             continue;
         }

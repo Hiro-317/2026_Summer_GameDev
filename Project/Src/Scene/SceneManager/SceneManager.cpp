@@ -5,6 +5,7 @@
 
 #include "../Title/TitleScene.h"
 #include "../Lobby/LobbyScene.h"
+#include "../Lobby/MultiLobbyScene.h"
 #include "../Game/GameScene.h"
 #include "../Clear/ClearScene.h"
 #include"../GameOver/GameOver.h"
@@ -119,6 +120,9 @@ void SceneManager::ChangeScene(SCENE_ID scene)
 	case SCENE_ID::LOBBY:
 		ChangeScene(std::make_shared<LobbyScene>());
 		break;
+	case SCENE_ID::MULTI_LOBBY:
+		ChangeScene(std::make_shared<MultiLobbyScene>());
+		break;
 	case SCENE_ID::GAME:
 		ChangeScene(std::make_shared<GameScene>());
 		break;
@@ -147,6 +151,9 @@ void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, uns
 		break;
 	case SCENE_ID::LOBBY:
 		ChangeSceneFade(std::make_shared<LobbyScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
+		break;
+	case SCENE_ID::MULTI_LOBBY:
+		ChangeSceneFade(std::make_shared<MultiLobbyScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
 		break;
 	case SCENE_ID::GAME:
 		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
@@ -179,6 +186,9 @@ void SceneManager::PushScene(SCENE_ID scene)
 		break;
 	case SCENE_ID::LOBBY:
 		PushScene(std::make_shared<LobbyScene>());
+		break;
+	case SCENE_ID::MULTI_LOBBY:
+		PushScene(std::make_shared<MultiLobbyScene>());
 		break;
 	case SCENE_ID::GAME:
 		PushScene(std::make_shared<GameScene>());
@@ -224,6 +234,9 @@ void SceneManager::JumpScene(SCENE_ID scene)
 	case SCENE_ID::LOBBY:
 		JumpScene(std::make_shared<LobbyScene>());
 		break;
+	case SCENE_ID::MULTI_LOBBY:
+		JumpScene(std::make_shared<MultiLobbyScene>());
+		break;
 	case SCENE_ID::GAME:
 		JumpScene(std::make_shared<GameScene>());
 		break;
@@ -252,6 +265,9 @@ void SceneManager::JumpSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsig
 		break;
 	case SCENE_ID::LOBBY:
 		JumpSceneFade(std::make_shared<LobbyScene>());
+		break;
+	case SCENE_ID::MULTI_LOBBY:
+		JumpSceneFade(std::make_shared<MultiLobbyScene>());
 		break;
 	case SCENE_ID::GAME:
 		JumpSceneFade(std::make_shared<GameScene>());
