@@ -7,7 +7,7 @@
 
 #include <windows.h>
 
-#include <enet/enet.h>
+#include <enet.h>
 
 #include <DxLib.h>
 
