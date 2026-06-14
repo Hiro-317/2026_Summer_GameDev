@@ -26,6 +26,10 @@ public:
 	void Release(void)override;
 
 private:
+
+	// ホストかどうか
+	const bool IS_HOST;
+
 #pragma region 定数定義
 	enum class CHOICE {
 		None = -1,
@@ -52,11 +56,11 @@ private:
 	const std::string IMAGE_DATA_FILE_DIR = "Data/Image/Lobby/";
 
 	// 各ボタン画像の名前
-	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max]; /*= {
-		"LobbyDisconnected",// 切断
-		"LobbyCharaChange",	// キャラチェンジ
-		"LobbyEnter",		// <ホスト>出撃 / <クライアント>準備完了
-	};*/
+	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
+		"LobbyExit",										// 切断
+		"LobbyCharaChange",									// キャラチェンジ
+		(IS_HOST) ? "LobbyEnter" : "LobbyClientEnter",		// <ホスト>出撃 / <クライアント>準備完了
+	};
 
 	// ボタン画像の 選択時/非選択時/選択できないとき の修飾される名前
 	const std::string CHOICE_BUTTON_IMAGE_DECORATION[(int)SELECTION_STATE::Max] = {
@@ -83,9 +87,9 @@ private:
 	SELECTION_STATE buttonSelectionState[(int)CHOICE::Max];
 
 	// <クライアント>準備完了
-	std::vector<unsigned char> clientReady;
+	std::vector<unsigned char> readyList;
 
-	// ボタンごとの選択状態を choiceとclientReady を参照して更新する
+	// ボタンごとの選択状態を choiceとreadyList を参照して更新する
 	void ButtonSelectionStateReload(void);
 
 	// 看板の画像

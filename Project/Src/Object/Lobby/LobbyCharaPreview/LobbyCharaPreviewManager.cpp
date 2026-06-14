@@ -60,10 +60,13 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 		charaPreview[(int)senderId] = nullptr;
 	}
 
+	// 接続参加状態を参照、参加していなければ処理終了
+	if (!Net::GetIns().GetConnectStatus().IsEntry(senderId)) { return; }
+
 	// キャラプレビューの生成
 	switch (SceneManager::GetIns().GetSelectCharaType(senderId)) {
 
-	case CHARA_TYPE::None: { break; }	// 未選択
+	case CHARA_TYPE::None: { return; }	// 未選択
 
 	case CHARA_TYPE::Orange: {	// オレンジ
 		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId]);
@@ -75,7 +78,7 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 		break;
 	}
 
-	default: { break; }	// 例外
+	default: { return; }	// 例外
 	}
 
 	// キャラプレビューのロードと初期化

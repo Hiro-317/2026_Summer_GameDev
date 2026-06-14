@@ -81,6 +81,12 @@ void NetWorkManager::HostingUpdate(void)
         case ENET_EVENT_TYPE_DISCONNECT: {
             for (auto it = connectInfo.begin(); it != connectInfo.end(); ++it) {
                 if (it->peer == event.peer) {
+
+                    // 切断があったことを保存する
+                    MsgDataConnectInform* disConnectInfo = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Disconnect);
+                    disConnectInfo->header.senderId = it->senderId;
+                    msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)it->senderId].emplace_back(disConnectInfo);
+
                     // 接続状況を更新（末尾を消す）
                     connectStatus.RemoveMember();
                     // 新しい接続状況を送る

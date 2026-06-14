@@ -129,7 +129,7 @@ void LobbyScene::Update(void)
 
 			// 専用のシーンを追加する
 			//SceneManager::GetIns().PushScene();
-			Net::GetIns().StartHost();
+			if (!Net::GetIns().StartHost()) { Net::GetIns().ConnectClient(); }
 			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
 
 			// 終了
@@ -151,6 +151,9 @@ void LobbyScene::Update(void)
 		}
 
 		case LobbyScene::CHOICE::Enter: {	// 出撃
+
+			Net::GetIns().StartHost();
+			Net::GetIns().CloseReceptionToConnected();
 
 			// ゲームシーンに遷移
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
@@ -195,7 +198,7 @@ void LobbyScene::Release(void)
 	DeleteGraph(boardImage);
 
 	// オブジェクト全ての解放処理
-	for (ActorBase* obj : objects) {
+	for (ActorBase*& obj : objects) {
 		if (!obj) { continue; }
 		obj->Release();
 		delete obj;

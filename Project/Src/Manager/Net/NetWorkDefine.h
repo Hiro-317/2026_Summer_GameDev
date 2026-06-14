@@ -205,6 +205,11 @@ struct MsgDataConnectInform
     enum class INFORM_TYPE
     {
         None = -1,
+
+        Connect,                        // 接続
+
+        Disconnect,                     // 切断
+
         CloseReceptionToConnected,      // <ホスト>接続待ち終了（接続人数確定）
     };
 

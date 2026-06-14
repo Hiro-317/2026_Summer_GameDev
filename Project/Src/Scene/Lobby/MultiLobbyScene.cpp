@@ -16,11 +16,7 @@
 
 MultiLobbyScene::MultiLobbyScene() : 
 	SceneBase(),
-	CHOICE_BUTTON_IMAGE_NAME(
-		"LobbyDisconnected",
-		"LobbyCharaChange",
-		(Net::GetIns().IsHost()) ? "LobbyEnter" : "LobbyClientEnter"
-	)
+	IS_HOST(Net::GetIns().IsHost())
 {
 }
 
@@ -42,7 +38,7 @@ void MultiLobbyScene::Load(void)
 	ObjAdd(new LobbyCharaPreviewManager());
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
-	clientReady.resize((Net::GetIns().IsHost()) ? (int)MSG_SENDER_ID::Max - 1 : 1);
+	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
 
 #pragma region 各画像の読み込み
 
@@ -79,9 +75,9 @@ void MultiLobbyScene::Init(void)
 	for (ActorBase* obj : objects) { obj->Init(); }
 
 	// クライアントの準備完了状態を初期化
-	for (size_t i = 0; i < clientReady.size(); i++) { clientReady.at(i) = false; }
-
-	for (unsigned char& ready : clientReady) { ready = (unsigned char)false; }
+	for (unsigned char& ready : readyList) { ready = (unsigned char)false; }
+	// ホストは常に準備完了状態
+	readyList.at((int)Net::HOST_SENDER_ID) = (unsigned char)true;
 
 	// 選択中の値を初期化
 	choice = CHOICE::CharaChange;
@@ -90,6 +86,15 @@ void MultiLobbyScene::Init(void)
 
 	// カメラの設定
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(330, 530, -1000), Vector3::Xonly(Deg2Rad(16)));
+
+	// 自信のキャラクタータイプを初期化する
+	SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
+
+	// キャラ変更情報を送信
+	Net::GetIns().Send(MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId())));
+
+	// キャラプレビューの初期化
+	ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId());
 }
 
 void MultiLobbyScene::Update(void)
@@ -146,7 +151,12 @@ void MultiLobbyScene::Update(void)
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 
 		// 効果音
-		Snd::GetIns().Play("SystemButton");
+		if (choice > CHOICE::None && choice < CHOICE::Max &&
+			buttonSelectionState[(int)choice] != SELECTION_STATE::Disable
+			) {
+			Snd::GetIns().Play("SystemButton");
+		}
+		else { /*Snd::GetIns().Play("");*/ }
 
 		// 選択肢ごとの処理
 		switch (choice) {
@@ -154,6 +164,9 @@ void MultiLobbyScene::Update(void)
 		case MultiLobbyScene::CHOICE::None: { break; }	// 選択肢なし（ありえないはず）
 
 		case MultiLobbyScene::CHOICE::Disconnected: {	// 切断
+
+			// クライアントかつ、準備完了状態だったら、処理をしない
+			if (!IS_HOST && readyList.at((int)Net::GetIns().GetSenderId()) == (unsigned char)true) { break; }
 
 			// ネットワーク切断
 			Net::GetIns().Disconnection();
@@ -166,6 +179,9 @@ void MultiLobbyScene::Update(void)
 		}
 
 		case MultiLobbyScene::CHOICE::CharaChange: {	// キャラ変更
+
+			// クライアントかつ、準備完了状態だったら、処理をしない
+			if (!IS_HOST && readyList.at((int)Net::GetIns().GetSenderId()) == (unsigned char)true) { break; }
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
@@ -182,7 +198,14 @@ void MultiLobbyScene::Update(void)
 		case MultiLobbyScene::CHOICE::Enter: {	// <ホスト>出撃 / <クライアント>準備完了
 
 			// ホスト
-			if (Net::GetIns().IsHost()) {
+			if (IS_HOST) {
+
+				// 全クライアントの準備完了フラグを確認する
+				if (buttonSelectionState[(int)choice] == SELECTION_STATE::Disable) { break; }
+
+				// 接続人数を確定する
+				Net::GetIns().CloseReceptionToConnected();
+
 				// ゲームシーン遷移を通知
 				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame));
 
@@ -194,11 +217,14 @@ void MultiLobbyScene::Update(void)
 			}
 			// クライアント
 			else {
-				// 準備完了
-				clientReady.back() = 1 - clientReady.back();
+				// 自信の準備状態の参照を生成
+				unsigned char& ready = readyList.at((int)Net::GetIns().GetSenderId());
 
-				// 準備完了の状態を送信
-				Net::GetIns().Send(MsgDataClientReady((bool)clientReady.back()));
+				// 準備 完了/未完了 切り替え
+				ready = 1 - ready;
+
+				// 準備の状態を送信
+				Net::GetIns().Send(MsgDataClientReady((bool)ready));
 
 				// ボタンごとの選択状態を更新
 				ButtonSelectionStateReload();
@@ -211,8 +237,62 @@ void MultiLobbyScene::Update(void)
 
 #pragma region 受信処理
 
+	// 接続/切断 の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		switch (dataPtr->inform)
+		{
+		case MsgDataConnectInform::INFORM_TYPE::None: { break; }
+
+		case MsgDataConnectInform::INFORM_TYPE::Connect: {
+
+			// 現状の選択キャラを送る
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+
+				if (id == (int)dataPtr->header.senderId) { continue; }
+
+				Net::GetIns().Send(
+					MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
+					(MSG_SENDER_ID)id,
+					dataPtr->header.senderId
+				);
+			}
+
+			break;
+		}
+
+		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
+			// 切断されたID以降の選択キャラをソートして正す
+			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max - 1; id++) {
+				SceneManager::GetIns().SetSelectCharaType(
+					(MSG_SENDER_ID)id,
+					SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)((int)id + 1))
+				);
+			}
+
+			// キャラプレビューを更新する
+			ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+
+			// 最新状態の選択キャラを送りなおす
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				Net::GetIns().Send(
+					MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
+					(MSG_SENDER_ID)id
+				);
+			}
+
+			break;
+		}
+
+		default: { break; }
+		}
+
+		delete dataPtr;
+
+	}
+
 	// 選択キャラの受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>()) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true, true)) {
 
 		// 受け取ったキャラタイプを保存する
 		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
@@ -223,15 +303,17 @@ void MultiLobbyScene::Update(void)
 		delete dataPtr;
 	}
 
-	// 接続完了の受信
-	while(auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>()) {
+	// 準備完了の受信
+	while(auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>(MSG_SENDER_ID::None, true)) {
 
 		// 受け取った準備完了フラグを保存する
-		clientReady.at((int)dataPtr->header.senderId - 1) = (unsigned char)dataPtr->ready;
+		readyList.at((int)dataPtr->header.senderId) = (unsigned char)dataPtr->ready;
+
+		// ボタンごとの選択状態を更新
+		ButtonSelectionStateReload();
 
 		delete dataPtr;
 	}
-
 	
 	// システム通知の受信
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
@@ -249,7 +331,6 @@ void MultiLobbyScene::Update(void)
 	}
 
 #pragma endregion
-
 }
 
 void MultiLobbyScene::Draw(void)
@@ -271,15 +352,26 @@ void MultiLobbyScene::Draw(void)
 
 void MultiLobbyScene::Release(void)
 {
-	// 画像の解放
-	DeleteGraph(enterKeyImage[0]);
-	DeleteGraph(enterKeyImage[1]);
+#pragma region 画像の解放
+
+	// 選択中の決定キー
+	DeleteGraph(enterKeyImage[(int)true]);
+	DeleteGraph(enterKeyImage[(int)false]);
+
+	// 選択中の矢印
 	DeleteGraph(arrowImage);
-	for (int* handlePair : choiceButtonImage) {
-		DeleteGraph(handlePair[0]);
-		DeleteGraph(handlePair[1]);
+
+	// 選択肢ボタンの画像
+	for(int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
+		for (int selectionState = 0; selectionState < (int)SELECTION_STATE::Max; selectionState++) {
+			DeleteGraph(choiceButtonImage[choiceIndex][selectionState]);
+		}
 	}
+
+	// 画面上部のボードの画像
 	DeleteGraph(boardImage);
+
+#pragma endregion
 
 	// オブジェクト全ての解放処理
 	for (ActorBase* obj : objects) {
@@ -294,17 +386,33 @@ void MultiLobbyScene::Release(void)
 
 void MultiLobbyScene::ButtonSelectionStateReload(void)
 {
+	// クライアントで準備完了を押していた場合、要素すべてを選択不可状態にする
+	if (!IS_HOST && readyList.at((int)Net::GetIns().GetSenderId()) == (unsigned char)true) {
+		for (auto& state : buttonSelectionState) { state = SELECTION_STATE::Disable; }
+		return;
+	}
+
 	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
-		// クライアントで準備完了を押していた場合、要素すべてを選択不可状態にする
-		if (!Net::GetIns().IsHost()) {
-			if (clientReady.back() == (unsigned char)true) { buttonSelectionState[choiceIndex] = SELECTION_STATE::Disable; continue; }
-		}
-
-		// 上記の例外を除き、
-
 		// choice(選択中のボタンの種類) を参照し、
 		// そのボタンを 選択中の場合「Select」/ 選択中の場合「NotSelect」
 		buttonSelectionState[choiceIndex] =
 			((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
+	}
+
+	if (!IS_HOST) { return; }
+	// ホストの場合
+
+	// 全クライアントの準備完了フラグを確認する
+	// まだ全員準備完了していなかったら、出撃ボタンを選択不可状態にする
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+
+		// まず、参加しているクライアントかどうかを確認する（参加していないクライアントの準備完了フラグは見ない）
+		if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id) == false) { break; }
+
+		// 準備完了していないクライアントがいたら、出撃ボタンを選択不可状態にする
+		if (readyList.at(id) == (unsigned char)false) {
+			buttonSelectionState[(int)CHOICE::Enter] = SELECTION_STATE::Disable;
+			break;
+		}
 	}
 }

@@ -92,9 +92,30 @@ public:
 	// イベント通知を送信（Send()をラッピングした関数）
 	void EventInformSend(MsgDataSystemInform::INFORM_TYPE eventInform)const { Send(MsgDataSystemInform(eventInform)); }
 
-	// データを取得する
+	/// <summary>
+	/// データを取得する
+	/// </summary>
+	/// <param name="DataType">typename 構造体の種類</param>
+	/// <param name="senderId">送信者ID（誰が送ったデータを取得するか）（指定なし(None)で全IDを探索、最初に見つかったデータを取得する）</param>
+	/// <param name="reSend">取得したデータをホストがクライアントへ再分配するかどうか（「true」= する、「false」= しない）（デフォルトは「false」）</param>
+	/// <param name="ownReSend">ホストが再分配する際、送信元のIDにも送るかどうか（1つ前の引数(reSend)指定が「true」である前提）（「true」= する、「false」= しない）（デフォルトは「false」）</param>
+	/// <returns></returns>
 	template <typename DataType>
-	DataType* GetMsgData(MSG_SENDER_ID senderId = HOST_SENDER_ID) {
+	DataType* GetMsgData(MSG_SENDER_ID senderId = MSG_SENDER_ID::None, bool reSend = false, bool ownReSend = false) {
+
+		// 送信者IDが指定されていない場合は、
+		// 全ての送信者IDのデータを探索して最初に見つかったものを返す仕様にする
+		if (senderId == MSG_SENDER_ID::None) {
+
+			// 送信者IDを1から順に参照していく（ホストの送信IDは常に1なので、ホストのものが優先される）
+			senderId = (MSG_SENDER_ID)((int)senderId + 1);
+
+			// 送信者IDを順に参照していき、データが見つかったらループを抜ける
+			for (; senderId < MSG_SENDER_ID::Max; senderId = (MSG_SENDER_ID)((int)senderId + 1)) {
+				if (!msgData[(int)DataType::DATA_TYPE][(int)senderId].empty()) { break; }
+			}
+		}
+
 		// 参照を取得
 		std::deque<void*>& queue = msgData[(int)DataType::DATA_TYPE][(int)senderId];
 
@@ -106,6 +127,14 @@ public:
 
 		// 配列から削除する
 		queue.pop_front();
+
+		// 自信がホストかつ引数(reSend)がtrueなら再分配する
+		if (IsHost() && reSend) {
+			for (int id = 1; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (id == (int)data->header.senderId && !ownReSend) { continue; }
+				Send(*data, data->header.senderId, (MSG_SENDER_ID)id);
+			}
+		}
 
 		// 返す
 		return data;
@@ -305,6 +334,12 @@ private:
 	void MsgDataConnectInformRecv(const ENetEvent& event) {
 		MsgDataConnectInform* recvData = (MsgDataConnectInform*)event.packet->data;
 		switch (recvData->inform) {
+		case MsgDataConnectInform::INFORM_TYPE::Connect: 
+		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
+			MsgDataRecv<MsgDataConnectInform>(event, recvData->header.senderId);
+			break;
+		}
+
 		case MsgDataConnectInform::INFORM_TYPE::CloseReceptionToConnected: {
 			state = NetState::Connected;
 			break; 
