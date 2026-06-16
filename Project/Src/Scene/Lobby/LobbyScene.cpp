@@ -9,6 +9,7 @@
 #include "../../Scene/SceneManager/SceneManager.h"
 
 #include "CharaSelect/CharaSelectScene.h"
+#include "MultiPopup/MultiPopupScene.h"
 
 #include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
@@ -32,7 +33,7 @@ void LobbyScene::Load(void)
 	//<例>ObjAdd(new Player());
 
 	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
+	//ObjAdd(new LobbyStage());
 	ObjAdd(new LobbyCharaPreviewManager());
 
 #pragma region 各画像の読み込み
@@ -128,9 +129,7 @@ void LobbyScene::Update(void)
 		case LobbyScene::CHOICE::Multi: {	// マルチ
 
 			// 専用のシーンを追加する
-			//SceneManager::GetIns().PushScene();
-			if (!Net::GetIns().StartHost()) { Net::GetIns().ConnectClient(); }
-			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
+			SceneManager::GetIns().PushScene(std::make_shared<MultiPopupScene>());
 
 			// 終了
 			return;
@@ -181,7 +180,7 @@ void LobbyScene::Draw(void)
 		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)((CHOICE)i == choice)], true);
 	}
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
-	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 1, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
 
 }
 

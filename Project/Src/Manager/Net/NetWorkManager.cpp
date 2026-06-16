@@ -131,7 +131,7 @@ void NetWorkManager::ConnectingUpdate(void)
     ENetEvent event;
     // イベントがある限りループして処理する
     while (enet_host_service(host, &event, 0) > 0) {
-        if (event.type == ENET_EVENT_TYPE_CONNECT) { continue; }
+        if (event.type == ENET_EVENT_TYPE_CONNECT) { state = NetState::Connected; break; }
         if (event.type == ENET_EVENT_TYPE_DISCONNECT) { DisconnectionComplete(); break; }
         MsgDataRecv(event);
     }
@@ -145,6 +145,7 @@ void NetWorkManager::ConnectedUpdate(void)
 
 	// イベントがある限りループして処理する
     while (enet_host_service(host, &event, 0) > 0) {
+
 		// 接続通知
         if (event.type == ENET_EVENT_TYPE_CONNECT) { enet_peer_disconnect(event.peer, 0); continue; }
 

@@ -300,7 +300,7 @@ private:
 		// ヘッダーを参照してデータの種類を振り分ける
 		switch (headerData->dataType) {
 		case MSG_DATA_TYPE::None: { break; }
-		case MSG_DATA_TYPE::ConnectInform: { MsgDataConnectInformRecv(event); break; }
+		case MSG_DATA_TYPE::ConnectInform: { MsgDataRecv<MsgDataConnectInform>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::SenderId: { MsgDataSenderIdRecv(event); break; }
 		case MSG_DATA_TYPE::ConnectStatus: { MsgDataConnectStatusRecv(event); break; }
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
@@ -328,23 +328,6 @@ private:
 		DataType* newData = new DataType();
 		memcpy(newData, event.packet->data, sizeof(DataType));
 		msgData[(int)DataType::DATA_TYPE][(int)senderId].emplace_back(newData);
-	}
-
-	// 接続に関するシステムイベントを受信して処理する
-	void MsgDataConnectInformRecv(const ENetEvent& event) {
-		MsgDataConnectInform* recvData = (MsgDataConnectInform*)event.packet->data;
-		switch (recvData->inform) {
-		case MsgDataConnectInform::INFORM_TYPE::Connect: 
-		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
-			MsgDataRecv<MsgDataConnectInform>(event, recvData->header.senderId);
-			break;
-		}
-
-		case MsgDataConnectInform::INFORM_TYPE::CloseReceptionToConnected: {
-			state = NetState::Connected;
-			break; 
-		}
-		}
 	}
 
 	// 送信者IDを受信して設定
