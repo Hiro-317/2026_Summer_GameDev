@@ -5,7 +5,7 @@
 class TomatoBoss : public CharacterBase
 {
 public:
-	TomatoBoss(const Vector3& playerPos);
+	TomatoBoss(const std::vector<Vector3&> playerPos);
 	~TomatoBoss()override = default;
 
 	// 状態遷移後1度行う初期化処理
@@ -175,6 +175,9 @@ private:
 	const short HP_GAUGE_OFFSET = 18;
 	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, 0);
 
+	// ゲームクリア時の変更時間
+	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
+
 #pragma endregion 定数定義
 
 
@@ -200,7 +203,7 @@ private:
 	// ～～～～～～～～～～～～～～メイン処理
 
 	// プレイヤーの座標の参照(読み取り専用)
-	const Vector3& playerPos;
+	const std::vector<Vector3&> playerPos;
 
 	// トマトの向いている向き
 	Vector3 moveDir;
@@ -213,4 +216,7 @@ private:
 
 	// コライダーの当たり判定描画のパラメーター
 	ParameterLoad* collParam;
+
+	// ゲームクリア時のカウントダウン
+	int gameOverCnt;
 };

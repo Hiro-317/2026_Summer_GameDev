@@ -25,7 +25,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../UI/HitUI/HitUI.h"
 
-TomatoBoss::TomatoBoss(const Vector3& playerPos) :
+TomatoBoss::TomatoBoss(const std::vector<Vector3&> playerPos) :
 	CharacterBase(
 		"TomatoBossParameter",
 		"TomatoBossHP",
@@ -293,19 +293,19 @@ void TomatoBoss::CharacterUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	static int i = 0;
+	// É{ÉXÇÃHPÇ™É[ÉçÇ…Ç»Ç¡ÇΩÇ∆Ç´
 	if (characterStats.hp <= 0) {
-		if (i == 0) {
-			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, 120);
+		// èâÇﬂÇƒì¸Ç¡ÇΩÇÁâÊñ óhÇÍ
+		if (gameOverCnt == 0) {
+			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, GAMECLEAR_CHANGE_TIME);
 		}
-		i++;
-		trans.scale += Vector3(0.75f)*i;
-		coolTime = 10000;
+		gameOverCnt++;
+		trans.scale += Vector3(0.75f) * gameOverCnt++;
 		ChangeState((int)STATE::IDLE);
 
-		if (i > 120) {
+		if (gameOverCnt > GAMECLEAR_CHANGE_TIME) {
 
-			i = 0;
+			gameOverCnt = 0;
 			isDeath = true;
 		}
 	}
