@@ -50,10 +50,6 @@ private:
 	// 当たり判定管理クラス
 	CollisionManager* collision;
 
-	// ボスに渡すプレイヤーの座標/ポインタ
-	const Vector3* playerPos;
-	std::vector<const Vector3*> playerPoss;
-
 #pragma region 画面演出用
 	// ヒットストップカウンター
 	static int hitStop;

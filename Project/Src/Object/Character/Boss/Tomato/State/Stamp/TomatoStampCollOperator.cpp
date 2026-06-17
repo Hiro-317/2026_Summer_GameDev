@@ -4,7 +4,7 @@
 
 TomatoStampCollOperator::TomatoStampCollOperator
 (
-	float ATTACK_RADIUS, const bool& isGround, const std::vector<const Vector3*> playerPos, const CharacterStats stats, const ParameterLoad& collParam
+	float ATTACK_RADIUS, const bool& isGround, const Vector3& playerPos, const CharacterStats stats, const ParameterLoad& collParam
 )	: ATTACK_RADIUS(ATTACK_RADIUS),
 	ground(isGround), playerPos(playerPos), stats(stats),
 	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
@@ -19,8 +19,7 @@ TomatoStampCollOperator::TomatoStampCollOperator
 
 void TomatoStampCollOperator::Load(void)
 {
-	// 1Pを初期値にしてる
-	trans.pos = *playerPos.at(0);
+	trans.pos = playerPos;
 
 	// 動的オブジェクトとしての挙動を無効にする
 	SetDynamicFlg(false);
@@ -34,19 +33,14 @@ void TomatoStampCollOperator::Load(void)
 #pragma endregion
 
 	// 当たり判定情報を生成する
-	for (int i = 0; i < playerPos.size(); i++) {
-		ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS));
-		ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS));
-	}
+	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS));
+	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS));
 	SetJudge(false);
 
 	// 攻撃範囲の当たり判定
-	for (int i = 0; i < playerPos.size(); i++) {
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i)->SetTransformPos(*playerPos.at(i));
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i)->SetDynamicFlg(true);
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i)->SetPushFlg(true);
-		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i)->SetJudgeFlg(true);
-	}
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 
 	CreateAttackSkill(100, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
@@ -62,15 +56,18 @@ void TomatoStampCollOperator::Load(void)
 
 void TomatoStampCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	switch (other.GetTag())
+	{
+	case COLLIDER_TAG::PLAYER:
+		break;
+	default:break;
+	}
 }
 
 void TomatoStampCollOperator::SubUpdate(void)
 {
 	if (!isDrawArea) {
-		for (int i = 0; i < playerPos.size(); i++) {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i)->SetTransformPos(*playerPos.at(i));
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).at(i)->SetTransformPos(*playerPos.at(i));
-		}
+		trans.pos = playerPos;
 		trans.pos.y = HEIGHT;
 		end = false;
 		attackCnt = 0;

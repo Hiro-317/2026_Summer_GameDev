@@ -25,7 +25,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../UI/HitUI/HitUI.h"
 
-TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
+TomatoBoss::TomatoBoss(const std::vector<Vector3&> playerPos) :
 	CharacterBase(
 		"TomatoBossParameter",
 		"TomatoBossHP",
@@ -44,15 +44,6 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
 	isOwnOperator = true;
 
 	rockHit = false;
-
-	targetNum = 0;
-
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		damaged.emplace_back(0);
-	}
-
-	mostDamaged = 0;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -161,7 +152,7 @@ void TomatoBoss::CharacterLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// 自分の座標、プレイヤーの座標の読み取り
-			trans.pos, *playerPos.at(targetNum),
+			trans.pos, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
 			// 頭突きへの状態遷移関数のポインタ
@@ -188,7 +179,7 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と攻撃時間
 			MOVE_SPEED, 20.0f,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, *playerPos.at(targetNum),
+			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoHeadbuttCollOperator>(),
 			// XZコライダを消す
@@ -211,7 +202,7 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, *playerPos.at(targetNum),
+			trans.pos, trans.angle, playerPos,
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// 移動後攻撃に状態遷移関数のポインタ
@@ -228,7 +219,7 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, *playerPos.at(targetNum),
+			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoTackleCollOperator>(),
 			// 角度を戻す
@@ -254,8 +245,6 @@ void TomatoBoss::CharacterLoad(void)
 			SubObjSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り
 			trans.pos, isGround,
-			// 最与ダメプレイヤーをターゲットにする
-			[&]() { return targetNum; },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// 攻撃時に当たり判定を消すように
@@ -311,7 +300,7 @@ void TomatoBoss::CharacterUpdate(void)
 			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, GAMECLEAR_CHANGE_TIME);
 		}
 		gameOverCnt++;
-		trans.scale += Vector3(0.75f) * (float)gameOverCnt++;
+		trans.scale += Vector3(0.75f) * gameOverCnt++;
 		ChangeState((int)STATE::IDLE);
 
 		if (gameOverCnt > GAMECLEAR_CHANGE_TIME) {
@@ -340,19 +329,6 @@ void TomatoBoss::ReceptionUpdate(void)
 	{
 		SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
 		characterStats.hp -= dataPtr->damage;
-
-		// 与ダメを足す
-		damaged[static_cast<int>(Net::GetIns().GetSenderId())] += dataPtr->damage;
-
-		// 与ダメの最大値を探す
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-			if (mostDamaged < damaged.at(id)) {
-				mostDamaged = damaged.at(id);
-				targetNum = id;
-			}
-		}
-
 		if (dataPtr->clitical) {
 			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 		}
@@ -427,7 +403,6 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
 			characterStats.hp -= damage;
-
 			if (isClitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 			}

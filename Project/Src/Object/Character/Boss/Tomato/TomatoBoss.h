@@ -5,7 +5,7 @@
 class TomatoBoss : public CharacterBase
 {
 public:
-	TomatoBoss(const std::vector<const Vector3*> playerPos);
+	TomatoBoss(const std::vector<Vector3&> playerPos);
 	~TomatoBoss()override = default;
 
 	// 状態遷移後1度行う初期化処理
@@ -203,7 +203,7 @@ private:
 	// ～～～～～～～～～～～～～～メイン処理
 
 	// プレイヤーの座標の参照(読み取り専用)
-	const std::vector<const Vector3*> playerPos;
+	const std::vector<Vector3&> playerPos;
 
 	// トマトの向いている向き
 	Vector3 moveDir;
@@ -217,13 +217,6 @@ private:
 	// コライダーの当たり判定描画のパラメーター
 	ParameterLoad* collParam;
 
-	// プレイヤーの与ダメカウント
-	std::vector<int> damaged;
-	
-	// プレイヤーの最与ダメ/その番号
-	int mostDamaged;
-	int targetNum;
-	
 	// ゲームクリア時のカウントダウン
 	int gameOverCnt;
 };

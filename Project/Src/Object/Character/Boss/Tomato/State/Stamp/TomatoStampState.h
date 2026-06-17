@@ -25,7 +25,6 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
 		Vector3& pos, const bool& isGround,
-		const std::function<int(void)> PlayerNum,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
 		const std::function<void(void)> onCollider,
@@ -58,7 +57,7 @@ private:
 	static constexpr float TIME_RATE = 15.0f;
 
 	// 攻撃の発生持続時間
-	static constexpr int ATTACK_DURATION = 5;
+	static constexpr int ATTACK_DURATION = 5.0f;
 
 #pragma endregion
 
@@ -75,9 +74,6 @@ private:
 
 	// コリジョンオペレーター
 	TomatoStampCollOperator* collOperator;
-
-	// 攻撃対象のプレイヤー番号
-	const std::function<int(void)> PlayerNum;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

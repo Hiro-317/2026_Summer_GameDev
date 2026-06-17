@@ -74,14 +74,7 @@ void GameScene::Load(void)
 
 	ObjAdd(new PlayerManager());
 
-	// 接続されているプレイヤー数座標を取得する
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		playerPos = &ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos;
-		playerPoss.emplace_back(playerPos);
-	}
-
-	ObjAdd(new TomatoBoss(playerPoss));
+	ObjAdd(new TomatoBoss(ObjSerch<PlayerManager>()->GetPlayerIns(MSG_SENDER_ID::P1)->GetTrans().pos));
 
 	ObjAdd(new TomatoBossStage());
 }
@@ -107,13 +100,6 @@ void GameScene::Update(void)
 {
 	// オブジェクト全ての受信処理
 	for (ActorBase* obj : objects) { obj->ReceptionUpdate(); }
-
-	// 接続されているプレイヤー数座標を取得する
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		playerPos = &ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos;
-		playerPoss[id] = playerPos;
-	}
 
 #pragma region 画面演出
 	if (hitStop > 0) { hitStop--; return; }
