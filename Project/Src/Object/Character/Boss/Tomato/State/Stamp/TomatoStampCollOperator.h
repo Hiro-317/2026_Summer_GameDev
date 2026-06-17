@@ -14,7 +14,7 @@ public:
 	TomatoStampCollOperator(
 		float ATTACK_RADIUS,
 		const bool& isGournd,
-		const Vector3& playerPos,
+		const std::vector<const Vector3*> playerPos,
 		const CharacterStats stats,
 		const ParameterLoad& collParam
 	);
@@ -31,7 +31,7 @@ public:
 
 	// çUåÇîÕàÕÇÃï`âÊê›íË
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
-	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
+	void CollSet(int num, bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).at(num)->SetJudgeFlg(flg); }
 
 	// çUåÇèIóπ
 	bool End(void) { return end; }
@@ -55,7 +55,7 @@ private:
 
 	const bool& ground;
 
-	const Vector3& playerPos;
+	const std::vector<const Vector3*> playerPos;
 
 	const CharacterStats stats;
 
