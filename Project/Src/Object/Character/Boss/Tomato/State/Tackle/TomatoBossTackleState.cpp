@@ -45,7 +45,7 @@ void TomatoBossTackleState::Update(void)
 	angle.x += rotPow;
 
 	// ˆê•b‚Ì—­‚ß
-	if (time < 180) {
+	if (time < CHARGE_POW) {
 		
 		time++;
 
@@ -65,12 +65,11 @@ void TomatoBossTackleState::Update(void)
 			collOperator->CollSet(true);
 		}
 
-		if (time < 190) {
+		if (time < FORCE_MOVE_TIME) {
 			time++;
 			collOperator->ResetStageHit();
-			return;
 		}
-		if (collOperator->GetStageHit()) {
+		else if (collOperator->GetStageHit()) {
 			DefaultChangeState();
 			return;
 		}
