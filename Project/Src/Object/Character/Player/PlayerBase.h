@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../../Manager/Net/NetWorkManager.h"
+
 #include "../CharacterBase.h"
 
 #include "CommonPlayerState/TripleAttack/PlayerTripleAttackStDefine.h"
@@ -9,6 +11,7 @@ class PlayerBase : public CharacterBase
 {
 public:
 	PlayerBase(
+
 		short HP_MAX,
 		short ATTACK_POWER,
 		short DEFENSE_POWER,
@@ -50,7 +53,12 @@ public:
 
 	virtual void PlayerLoad(void) = 0;
 
-	const Vector3& GetInterestPos(void)const { return INTEREST_POS; }
+	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
+	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
+
+	void SetOtherPlayerPos(const std::vector<Vector3>& pos) {
+		otherPlayerPos = pos;
+	}
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
@@ -69,7 +77,6 @@ private:
 	void CharacterUiDraw(void)override;
 	void CharacterRelease(void)override;
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`ÉÅÉCÉìèàóù
-
 
 protected:
 
@@ -205,4 +212,6 @@ protected:
 	// íçéãì_ç¿ïW
 	Vector3 interestPos;
 
+	// é©êgà»äOÇÃÉvÉåÉCÉÑÅ[ÇÃç¿ïW
+	std::vector<Vector3>& otherPlayerPos;
 };

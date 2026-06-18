@@ -7,8 +7,9 @@ PlayerDeathState::PlayerDeathState(
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> PlayDeathAnime,
 	const std::function<void(void)> DeathCamera,
-	const std::function<void(void)> ChangeGameOver
-	):
+	const std::function<void(void)> ChangeGameOver,
+	const std::function<void(void)> DefaultChangeState
+):
 	CharacterStateBase(ownChangeState,isOwnState),
 	pos(pos), angle(angle),
 	IsAnimeEnd(IsAnimeEnd),
@@ -27,10 +28,7 @@ void PlayerDeathState::Enter(void)
 void PlayerDeathState::Update(void)
 {
 	if (IsAnimeEnd()) {
-		pos += Vector3().Yonly(3);
-		if (pos.y >= 300) {
-			ChangeGameOver();
-		}
+		DefaultChangeState();
 	}
 }
 

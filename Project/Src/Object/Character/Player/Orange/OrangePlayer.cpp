@@ -196,7 +196,7 @@ void OrangePlayer::PlayerLoad(void)
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
 			// 座標 / 角度
-			trans.pos,trans.angle,
+			trans.pos, trans.angle,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
@@ -238,7 +238,8 @@ void OrangePlayer::PlayerLoad(void)
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); SetPushFlg(true); },
-			[&]() { isDeath = true; }
+			[&]() { isDeath = true; },
+			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）

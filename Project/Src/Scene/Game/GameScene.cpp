@@ -147,7 +147,7 @@ void GameScene::Update(void)
 	}
 
 	// ゲームオーバー判定
-	if (ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
+	if (ObjSerch<PlayerManager>()->IsPlayerAllDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, 90, 0xffffff, 0x000000);
 		return;
 	}
