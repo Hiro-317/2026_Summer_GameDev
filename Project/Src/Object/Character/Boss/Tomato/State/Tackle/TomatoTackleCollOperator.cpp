@@ -4,10 +4,13 @@
 
 TomatoTackleCollOperator::TomatoTackleCollOperator(
 	const float TO_PLAYER_DISTANCE,
-	const CharacterStats stats,
+	MSG_SENDER_ID operatorSenderId,
+	const CharacterStats& stats,
 	const ParameterLoad& collParam
 )
-	:TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
+	:
+	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
+	operatorSenderId(operatorSenderId),
 	stats(stats),
 	HEIGHT(collParam.GetParameter("Tackle", "Height")),
 	SCALE(collParam.GetParameterToVector3("Tackle", "Scale")),
@@ -30,7 +33,7 @@ void TomatoTackleCollOperator::Load(void)
 		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, TO_PLAYER_DISTANCE)
 	);
 
-	CreateAttackSkill(150, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(operatorSenderId, 150, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
 	SetJudge(true);
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);

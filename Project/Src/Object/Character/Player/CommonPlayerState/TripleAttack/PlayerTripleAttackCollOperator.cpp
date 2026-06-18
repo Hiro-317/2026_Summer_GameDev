@@ -10,6 +10,8 @@ PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 	const short SKILL_1_ATTACK_RATE_PERCENT,
 
 	const Vector3& playerPos, const Vector3& playerAngle,
+
+	MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& playerStats
 ) :
 	FIND_ATTACK_TARGET_RANGE(FIND_ATTACK_TARGET_RANGE),
@@ -23,7 +25,10 @@ PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 
 	isFindAttackTarget(false),
 	targetPos(nullptr),
+
+	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
+
 	isHit(false)
 {
 }
@@ -50,7 +55,7 @@ void PlayerTripleAttackCollOperator::Load(void)
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
-	CreateAttackSkill(SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::PLAYER_ATTACK);
+	CreateAttackSkill(operatorSenderId, SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::PLAYER_ATTACK);
 }
 
 void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)

@@ -24,6 +24,8 @@ public:
 		const Vector3& playerAngle,
 
 		const short ATTACK_RATE_PERCENT,
+
+		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
 	);
 	~PlayerSimpleAttackCollOperator()override = default;
@@ -79,6 +81,8 @@ private:
 	const Vector3& playerPos;
 	// ƒvƒŒƒCƒ„[‚ÌŒü‚«
 	const Vector3& playerAngle;
+
+	const MSG_SENDER_ID operatorSenderId;
 
 	const CharacterStats& playerStats;
 

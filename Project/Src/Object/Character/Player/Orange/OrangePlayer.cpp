@@ -68,6 +68,7 @@ void OrangePlayer::PlayerLoad(void)
 			SKILL_1_COLL_LOCAL_POS,
 			SKILL_1_ATTACK_RATE_PERCENT,
 			trans.pos, trans.angle,
+			operatorSenderId,
 			characterStats
 		)
 	);
@@ -81,6 +82,7 @@ void OrangePlayer::PlayerLoad(void)
 			SKILL_2_COLL_LOCAL_POS,
 			trans.pos, trans.angle,
 			SKILL_2_ATTACK_RATE_PERCENT,
+			operatorSenderId,
 			characterStats
 		)
 	);

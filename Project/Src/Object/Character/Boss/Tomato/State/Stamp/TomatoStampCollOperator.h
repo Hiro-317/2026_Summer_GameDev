@@ -15,7 +15,8 @@ public:
 		float ATTACK_RADIUS,
 		const bool& isGournd,
 		const std::vector<const Vector3*> playerPos,
-		const CharacterStats stats,
+		const MSG_SENDER_ID operatorSenderId,
+		const CharacterStats& stats,
 		const ParameterLoad& collParam
 	);
 	~TomatoStampCollOperator()override = default;
@@ -57,7 +58,9 @@ private:
 
 	const std::vector<const Vector3*> playerPos;
 
-	const CharacterStats stats;
+	const MSG_SENDER_ID operatorSenderId;
+
+	const CharacterStats& stats;
 
 #pragma endregion
 

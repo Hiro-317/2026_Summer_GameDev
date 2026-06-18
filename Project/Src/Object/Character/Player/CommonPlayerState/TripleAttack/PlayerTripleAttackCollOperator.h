@@ -25,6 +25,8 @@ public:
 		const short SKILL_1_ATTACK_RATE_PERCENT,
 
 		const Vector3& playerPos, const Vector3& playerAngle,
+
+		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
 	);
 	~PlayerTripleAttackCollOperator()override = default;
@@ -89,6 +91,10 @@ private:
 	// プレイヤーの向き
 	const Vector3& playerAngle;
 
+	const MSG_SENDER_ID operatorSenderId;
+
+	// プレイヤーのステータス
+	const CharacterStats& playerStats;
 #pragma endregion
 
 	// 攻撃対象が見つかったかどうか
@@ -100,8 +106,6 @@ private:
 	// 攻撃対象の座標
 	const Vector3* targetPos;
 
-	// プレイヤーのステータス
-	const CharacterStats& playerStats;
 
 	// 更新処理
 	void SubUpdate(void)override;
