@@ -258,6 +258,9 @@ void MultiLobbyScene::Update(void)
 				);
 			}
 
+			// ボタンごとの選択状態を更新
+			ButtonSelectionStateReload();
+
 			break;
 		}
 
@@ -280,6 +283,9 @@ void MultiLobbyScene::Update(void)
 					(MSG_SENDER_ID)id
 				);
 			}
+
+			// ボタンごとの選択状態を更新
+			ButtonSelectionStateReload();
 
 			break;
 		}

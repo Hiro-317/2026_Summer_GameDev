@@ -11,13 +11,22 @@
 CharaSelectPreviewManager::CharaSelectPreviewManager() :
 	charaPreview(nullptr, nullptr),
 	selectCharaType(CHARA_TYPE::None),
-	frameImage(-1)
+
+	frameImage(-1), arrowImage(-1),
+	enterImage(-1, -1),
+
+
+	easingCounter(0.0f), easingRate(0.0f)
 {
 }
 
 void CharaSelectPreviewManager::Load(void)
 {
 	frameImage = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectFrame.png");
+	arrowImage = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectArrow.png");
+
+	enterImage[(int)true] = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectEnterController.png");
+	enterImage[(int)false] = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectEnterKeyboard.png");
 
 	// プレビュー生成ラムダ関数
 	auto CharaPreviewCreate = [&](CHARA_TYPE type)->CharaSelectPreviewBase* {
@@ -40,6 +49,8 @@ void CharaSelectPreviewManager::Init(void)
 
 	// 各キャラタイププレビューの初期化処理
 	for (CharaSelectPreviewBase* cp : charaPreview) { cp->Init(); }
+
+	easingCounter = easingRate = 0.0f;
 }
 
 void CharaSelectPreviewManager::Update(void)
@@ -64,13 +75,30 @@ void CharaSelectPreviewManager::Update(void)
 
 	// 選択中のキャラタイプのプレビューを更新
 	charaPreview[(int)selectCharaType]->Update();
+
+	if (easingCounter > 100000.0f) { easingCounter = 0.0f; }
+
+#pragma region イージング
+	easingCounter += 0.08f;
+	if (easingCounter > 100000.0f) { easingCounter = 0.0f; }
+	easingRate += sinf(easingCounter) * 0.001f;
+#pragma endregion
 }
 
 void CharaSelectPreviewManager::Draw(void)
 {
+	// 枠の描画
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1, 0, frameImage, true);
+
 	// 選択中のキャラタイプのプレビューの描画処理
 	charaPreview[(int)selectCharaType]->Draw();
+
+	// 矢印の描画
+	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1 + easingRate, 0, arrowImage, true);
+
+	// 決定キーの描画
+	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y - 48, 1 + easingRate, 0, enterImage[(int)Key::GetIns().LastInputKinds()], true);
+
 }
 
 void CharaSelectPreviewManager::Release(void)
@@ -82,4 +110,9 @@ void CharaSelectPreviewManager::Release(void)
 		delete cp;
 		cp = nullptr;
 	}
+
+	for (int& image : enterImage) { DeleteGraph(image); }
+
+	DeleteGraph(arrowImage);
+	DeleteGraph(frameImage);
 }

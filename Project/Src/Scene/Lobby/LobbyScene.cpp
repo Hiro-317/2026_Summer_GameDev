@@ -33,7 +33,7 @@ void LobbyScene::Load(void)
 	//<—á>ObjAdd(new Player());
 
 	ObjAdd(new SkyDome());
-	//ObjAdd(new LobbyStage());
+	ObjAdd(new LobbyStage());
 	ObjAdd(new LobbyCharaPreviewManager());
 
 #pragma region Še‰æ‘œ‚Ì“Ç‚İ‚İ

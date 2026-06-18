@@ -9,7 +9,7 @@ class HostAddressProvider
 public:
 	enum class MODE { Host, Client, Max };
 
-	HostAddressProvider(MODE mode);
+	HostAddressProvider(MODE mode, unsigned short roomNumber = 0);
 	~HostAddressProvider() = default;
 
 	// 更新処理
@@ -57,7 +57,9 @@ private:
 	const IPDATA BROADCAST_IP = { 255, 255, 255, 255 };
 
 	// 送る信号
-	const char* CONNECT_SIGNAL = "Casalist";
+	const char* DEFAULT_CONNECT_SIGNAL = "Casalist";
+
+	const std::string CONNECT_SIGNAL;
 
 	// UDPソケット
 	int udpSocket;

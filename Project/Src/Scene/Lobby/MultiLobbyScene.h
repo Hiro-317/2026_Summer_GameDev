@@ -57,9 +57,9 @@ private:
 
 	// 各ボタン画像の名前
 	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
-		"LobbyExit",										// 切断
-		"LobbyCharaChange",									// キャラチェンジ
-		(IS_HOST) ? "LobbyEnter" : "LobbyClientEnter",		// <ホスト>出撃 / <クライアント>準備完了
+		"LobbyExit",								// 切断
+		"LobbyCharaChange",							// キャラチェンジ
+		(IS_HOST) ? "LobbyEnter" : "LobbyReady",	// <ホスト>出撃 / <クライアント>準備完了
 	};
 
 	// ボタン画像の 選択時/非選択時/選択できないとき の修飾される名前

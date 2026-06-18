@@ -170,7 +170,7 @@ public:
 
 #pragma region ホスト操作
 	// ホストとして受付開始
-	bool StartHost(void) {
+	bool StartHost(unsigned short roomNumber = 0) {
 		// 接続受付を開始する
 		ENetAddress address = ENetAddress(ENET_HOST_ANY, PORT_NUMBER);
 		host = enet_host_create(&address, (size_t)MSG_SENDER_ID::Max, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
@@ -190,7 +190,7 @@ public:
 		connectStatus.Reset();
 
 		// ブロードキャスト送信のためのUDPソケットを生成する
-		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host);
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, roomNumber);
 
 		// ウィンドウテキストを設定
 		SetWindowText("<ホスト> P1");
@@ -218,10 +218,10 @@ public:
 #pragma region クライアント操作
 
 	// クライアントとして接続
-	void ConnectClient(void) {
+	void ConnectClient(unsigned short roomNumber = 0) {
 		bool socketCreate = false;
 		while (!socketCreate) {
-			hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client);
+			hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, roomNumber);
 			socketCreate = hostAddressProvider->SocketCreateResult();
 			if (!socketCreate) {
 				hostAddressProvider->End();

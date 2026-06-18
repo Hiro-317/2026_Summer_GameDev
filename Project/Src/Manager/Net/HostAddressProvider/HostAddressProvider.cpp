@@ -1,6 +1,8 @@
 #include "HostAddressProvider.h"
 
-HostAddressProvider::HostAddressProvider(MODE mode) :
+HostAddressProvider::HostAddressProvider(MODE mode, unsigned short roomNumber) :
+	CONNECT_SIGNAL(roomNumber == 0 ? DEFAULT_CONNECT_SIGNAL : DEFAULT_CONNECT_SIGNAL + std::to_string(roomNumber)),
+
 	hostAddress(),
 
 	broadCastSendCounter(0)
@@ -26,7 +28,8 @@ void HostAddressProvider::HostUpdate(void)
 	// ブロードキャスト送信(一定間隔で送り続ける)
 	if (++broadCastSendCounter >= BROADCAST_SEND_COOLTIME) {
 		broadCastSendCounter = 0;
-		NetWorkSendUDP(udpSocket, BROADCAST_IP, BROADCAST_PORT_NUMBER, CONNECT_SIGNAL, sizeof(CONNECT_SIGNAL));
+		//NetWorkSendUDP(udpSocket, BROADCAST_IP, BROADCAST_PORT_NUMBER, DEFAULT_CONNECT_SIGNAL, sizeof(DEFAULT_CONNECT_SIGNAL));
+		NetWorkSendUDP(udpSocket, BROADCAST_IP, BROADCAST_PORT_NUMBER, CONNECT_SIGNAL.c_str(), (int)CONNECT_SIGNAL.size() + 1);
 	}
 }
 
@@ -40,7 +43,8 @@ void HostAddressProvider::ClientUpdate(void)
 
 	// 叫び声が届いているか確認
 	if (NetWorkRecvUDP(udpSocket, &hostAddress, nullptr, buffer, sizeof(buffer), 0) >= 0) {
-		if (strcmp(buffer, CONNECT_SIGNAL) == 0) {
+		//if (strcmp(buffer, DEFAULT_CONNECT_SIGNAL) == 0) {
+		if (strcmp(buffer, CONNECT_SIGNAL.c_str()) == 0) {
 			// ホストが見つかった場合、IPアドレスを保持
 			this->hostAddress = hostAddress;
 		}

@@ -26,6 +26,16 @@ private:
 	// 枠の画像
 	int frameImage;
 
+	// 矢印の画像
+	int arrowImage;
+
+	// 決定キーの画像
+	int enterImage[2];
+
+	// 矢印の拡大演出カウンター
+	float easingCounter;
+	float easingRate;
+
 	// 選択中キャラのプレビューオブジェクト配列
 	CharaSelectPreviewBase* charaPreview[(int)CHARA_TYPE::Max];
 

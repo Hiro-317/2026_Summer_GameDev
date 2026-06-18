@@ -76,6 +76,10 @@ void NetWorkManager::HostingUpdate(void)
 
 			// 接続状況を送る
             Send(MsgDataConnectStatus(connectStatus));
+
+            // 新規接続としてキューに情報を保持する
+            msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)connectInfo.back().senderId].emplace_back(new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect));
+
             break;
         }
         case ENET_EVENT_TYPE_DISCONNECT: {
@@ -131,7 +135,12 @@ void NetWorkManager::ConnectingUpdate(void)
     ENetEvent event;
     // イベントがある限りループして処理する
     while (enet_host_service(host, &event, 0) > 0) {
-        if (event.type == ENET_EVENT_TYPE_CONNECT) { state = NetState::Connected; break; }
+        if (event.type == ENET_EVENT_TYPE_CONNECT) {
+            state = NetState::Connected;
+            // 新規接続としてキューに情報を保持する
+            msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect));
+            break;
+        }
         if (event.type == ENET_EVENT_TYPE_DISCONNECT) { DisconnectionComplete(); break; }
         MsgDataRecv(event);
     }
