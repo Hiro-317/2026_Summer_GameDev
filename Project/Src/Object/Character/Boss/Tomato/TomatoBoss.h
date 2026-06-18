@@ -172,7 +172,7 @@ private:
 
 	// HPバーの画像サイズ
 	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
-	const short HP_GAUGE_OFFSET = 18;
+	const Vector2I HP_GAUGE_OFFSET = Vector2I(18, 0);
 	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, 0);
 
 #pragma endregion 定数定義

@@ -263,7 +263,8 @@ void TomatoBoss::CharacterLoad(void)
 	// HPÉoÅ[ê∂ê¨
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
-			characterStats,
+			characterStats.hp,
+			characterStats.hpMax.Value(),
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,

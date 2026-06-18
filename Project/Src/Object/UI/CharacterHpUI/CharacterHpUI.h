@@ -11,7 +11,6 @@
 #include "../../../Application/Application.h"
 
 #include "../../../Common/Vector2.h"
-#include "../../Character/CharacterStatsDefine.h"
 
 class CharacterHpUI : public UI_Base
 {
@@ -19,15 +18,16 @@ public:
 
 	// コンストラクタ
 	CharacterHpUI(
-		const CharacterStats& stats,
+		const short& hp,
+		const short HP_MAX,
 
 		const std::string HP_FRAME_IMAGE_NAME,
 		const std::string HP_IMAGE_NAME,
 		const std::string HP_LOST_IMAGE_NAME,
 
-		const Vector2I& HP_IMAGE_SIZE,
-		short HP_GAUGE_OFFSET,
-		const Vector2I& HP_UI_POS,
+		const Vector2I HP_IMAGE_SIZE,
+		const Vector2I HP_GAUGE_OFFSET,
+		const Vector2I HP_UI_POS,
 
 		const FILE_PATH_TYPE PATH_TYPE,
 		const std::string CHARA_NAME
@@ -53,8 +53,6 @@ private:
 		MAX
 	};
 
-	short const GetHp(void) { return playerhp; }
-
 #pragma region 定数定義
 
 	// 画像の名前
@@ -64,21 +62,23 @@ private:
 
 	// HPバーの画像サイズ
 	const Vector2I HP_IMAGE_SIZE;	// HP画像サイズ
-	const short HP_GAUGE_OFFSET;	// HP画像とフレーム画像のズレ
+	const Vector2I HP_GAUGE_OFFSET;	// HP画像とフレーム画像のズレ
 	const Vector2I HP_UI_POS;		// HP画像の描画位置
 
 	const std::string CHARA_NAME;		// HPの上に描画する名前
 
 	const FILE_PATH_TYPE PATH_TYPE;		// なんのファイルパスか
 
-	const short HP_MAX;
+	const short HP_MAX;		// HPのマックス値
 
-	const float HP_DAMAGE_BAR_DEC = 0.5;
+	const float HP_DAMAGE_BAR_DEC = 0.5;	// ダメージ / もしくはHPが減った時のダメージバーの毎フレーム減少する量
+
+	const int CHARA_NAME_X_OFFSET = 20;	// キャラクターの名前を表示する座標オフセット
 
 #pragma endregion 定数定義
 
 #pragma region 変数定義
-	const short& playerhp;	// プレイヤーのHP
+	const short& hp;	// プレイヤーのHP
 
 	float hpRatio;	// HP割合
 	float hpBarOffset;	// HPの割合に応じてHP描画を調整するためのオフセット

@@ -216,7 +216,7 @@ void OrangePlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DAMAGE; },
 			// 定数（ダメージを受けた時の無敵時間）
-			DAMAGE_INVI_TIME,
+			DODGE_INVI_TIME,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
 			// アニメーションの終了フラグを取得する関数のポインタ
@@ -271,7 +271,8 @@ void OrangePlayer::PlayerLoad(void)
 	// HPの登録
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
-			characterStats,
+			characterStats.hp,
+			characterStats.hpMax.Value(),
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,

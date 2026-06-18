@@ -133,6 +133,7 @@ void PlayerBase::CharacterUpdate(void)
 
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
+	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
 	}
@@ -163,6 +164,7 @@ void PlayerBase::CharacterAlphaDraw(void)
 
 void PlayerBase::CharacterUiDraw(void)
 {
+	// デバッグ用描画
 	if (App::GetIns().IsDrawDebug()) {
 		int number = 0;
 		if (isOwnOperator) {
@@ -204,8 +206,17 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 	if (state == (int)STATE::SKILL_3) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::BOSS_ATTACK:
-			SetInviCounter(150);
-			SubUiSerch<HitUI>()->MissSetting();
+			// 回避成功時の無敵時間
+			SetInviCounter(DODGE_INVI_TIME);
+
+			// ホストが操作者だった場合表示
+			if (isOwnOperator) {
+				// 「ミス！」を出現させる
+				SubUiSerch<HitUI>()->MissSetting();
+			}
+			else {
+				Net::GetIns().Send(MsgDataPlayerMissUIPacket((int)operatorSenderId));
+			}
 			break;
 		}
 		return;
@@ -214,11 +225,15 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 	if (state == (int)STATE::DEATH) { return; }
 
 	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK:
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-		characterStats.hp -= damage;
+	case COLLIDER_TAG::BOSS_ATTACK:		// ボスの攻撃
+		// ダメージ状態に遷移
 		ChangeState((int)STATE::DAMAGE);
+		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
+		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		// ダメージ値分HPを減らす
+		characterStats.hp -= damage;
 		break;
 	}
 
@@ -325,6 +340,17 @@ void PlayerBase::ReceptionUpdate(void)
 
 	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(operatorSenderId)) {
 		characterStats.hp = dataPtr->hp;
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerMissUIPacket* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissUIPacket>(operatorSenderId)) 
+	{
+		if (Net::GetIns().IsHost()) { break; }
+		
+		if (dataPtr->playerNo == (int)Net::GetIns().GetSenderId()) {
+			SubUiSerch<HitUI>()->MissSetting();
+		}
+		
 		delete dataPtr;
 	}
 }
