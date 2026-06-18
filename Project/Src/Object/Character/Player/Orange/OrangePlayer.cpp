@@ -240,8 +240,6 @@ void OrangePlayer::PlayerLoad(void)
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
-			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); SetPushFlg(true); },
-			[&]() { isDeath = true; },
 			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
 		)
 	);

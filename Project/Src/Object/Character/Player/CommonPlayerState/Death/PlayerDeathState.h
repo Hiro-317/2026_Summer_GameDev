@@ -13,8 +13,6 @@ public:
 		Vector3& pos, Vector3& angle,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> PlayDeathAnime,
-		const std::function<void(void)> DeathCamera,
-		const std::function<void(void)> ChangeGameOver,
 		const std::function<void(void)> DefaultChangeState
 	);
 
@@ -38,10 +36,6 @@ private:
 	const std::function<bool(void)> IsAnimeEnd;
 	// 死亡アニメーション
 	const std::function<void(void)> PlayDeathAnime;
-	// 死亡した時のカメラ
-	const std::function<void(void)> DeathCamera;
-	// ゲームオーバーに遷移
-	const std::function<void(void)> ChangeGameOver;
 	// ダメージ状態終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
 };
