@@ -4,21 +4,23 @@
 
 
 CharacterHpUI::CharacterHpUI(
-	const CharacterStats& stats,
+	const short& hp,
+	const short HP_MAX,
 
 	const std::string HP_FRAME_IMAGE_NAME,
 	const std::string HP_IMAGE_NAME,
 	const std::string HP_LOST_IMAGE_NAME,
 
-	const Vector2I& HP_IMAGE_SIZE,
-	short HP_GAUGE_OFFSET,
-	const Vector2I& HP_UI_POS,
+	const Vector2I HP_IMAGE_SIZE,
+	const Vector2I HP_GAUGE_OFFSET,
+	const Vector2I HP_UI_POS,
 
 	const FILE_PATH_TYPE PATH_TYPE,
 	const std::string CHARA_NAME
 ) :
-	playerhp(stats.hp),
-	HP_MAX(stats.hpMax.Value()),
+	hp(hp),
+	HP_MAX(HP_MAX),
+
 	HP_FRAME_IMAGE_NAME(HP_FRAME_IMAGE_NAME),
 	HP_IMAGE_NAME(HP_IMAGE_NAME),
 	HP_LOST_IMAGE_NAME(HP_LOST_IMAGE_NAME),
@@ -48,7 +50,7 @@ void CharacterHpUI::Load(void)
 void CharacterHpUI::SubUpdate()
 {
 	// HPの割合によるHPバーの増減のための計算
-	hpRatio = (float)playerhp / (float)HP_MAX;
+	hpRatio = (float)hp / (float)HP_MAX;
 	hpBarOffset = HP_IMAGE_SIZE.x * (1.0f - hpRatio);
 
 	if (damageBarOffset < hpBarOffset) {
@@ -70,7 +72,7 @@ void CharacterHpUI::SubDraw()
 
 	// ダメージを受けたときの赤いゲージ
 	DrawRectGraph(
-		uiPos.x + HP_GAUGE_OFFSET,
+		uiPos.x + HP_GAUGE_OFFSET.x,
 		uiPos.y,
 		0, 0,
 		HP_IMAGE_SIZE.x - damageBarOffset,
@@ -81,7 +83,7 @@ void CharacterHpUI::SubDraw()
 
 	// HPバーの描画
 	DrawRectGraph(
-		uiPos.x + HP_GAUGE_OFFSET,
+		uiPos.x + HP_GAUGE_OFFSET.x,
 		uiPos.y,
 		0, 0,
 		HP_IMAGE_SIZE.x - hpBarOffset, 
@@ -92,7 +94,7 @@ void CharacterHpUI::SubDraw()
 
 	// HPを描画するキャラの名前（仮）
 	DrawFormatStringToHandle(
-		uiPos.x + 20, 
+		uiPos.x + CHARA_NAME_X_OFFSET,
 		uiPos.y + ((HP_IMAGE_SIZE.y / 2) - 10),
 		0xffffff, 
 		Font::GetIns().GetFont(FontKinds::DEFAULT_20), 

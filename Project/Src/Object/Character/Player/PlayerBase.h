@@ -160,7 +160,7 @@ protected:
 	// ƒ_ƒ[ƒWó‘Ô`````````````````````````
 	
 	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const unsigned char DAMAGE_INVI_TIME = (unsigned char)GetParameter("Damage", "DamageInviTime");
+	const unsigned char DODGE_INVI_TIME = (unsigned char)GetParameter("Damage", "DamageInviTime");
 	 
 	// `````````````````````````ƒ_ƒ[ƒWó‘Ô
 

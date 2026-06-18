@@ -14,7 +14,7 @@ enum class FILE_PATH_TYPE
 };
 
 // 種類別のファイルパス
-static const std::vector<std::string> uiKindsPath = {
+static const std::string uiKindsPath[(int)FILE_PATH_TYPE::MAX] = {
 	"Data/Image/UI/Player/HP/",
 	"Data/Image/UI/Player/Stamina/",
 	"Data/Image/UI/Player/Skill/",

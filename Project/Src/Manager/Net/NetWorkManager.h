@@ -279,6 +279,7 @@ private:
 		case MSG_DATA_TYPE::PlayerAnimeType: { MsgDataRecv<MsgDataPlayerAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerHp: { MsgDataRecv<MsgDataPlayerHp>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerMissUIPacket: { MsgDataRecv<MsgDataPlayerMissUIPacket>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerState: { MsgDataRecv<MsgDataPlayerState>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerCollOperator: { MsgDataRecv<MsgDataPlayerCollOperator>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
@@ -366,6 +367,7 @@ private:
 					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHp: { delete static_cast<MsgDataPlayerHp*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerMissUIPacket: { delete static_cast<MsgDataPlayerMissUIPacket*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
 					}
