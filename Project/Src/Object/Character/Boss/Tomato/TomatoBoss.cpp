@@ -142,9 +142,9 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, playerPos, characterStats, *collParam));
-	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, playerPos, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }

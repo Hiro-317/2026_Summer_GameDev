@@ -4,9 +4,18 @@
 
 TomatoStampCollOperator::TomatoStampCollOperator
 (
-	float ATTACK_RADIUS, const bool& isGround, const std::vector<const Vector3*> playerPos, const CharacterStats stats, const ParameterLoad& collParam
-)	: ATTACK_RADIUS(ATTACK_RADIUS),
-	ground(isGround), playerPos(playerPos), stats(stats),
+	float ATTACK_RADIUS,
+	const bool& isGround,
+	const std::vector<const Vector3*> playerPos,
+	const MSG_SENDER_ID operatorSenderId,
+	const CharacterStats& stats,
+	const ParameterLoad& collParam
+)	: 
+	ATTACK_RADIUS(ATTACK_RADIUS),
+	ground(isGround),
+	playerPos(playerPos),
+	operatorSenderId(operatorSenderId),
+	stats(stats),
 	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
 	HEIGHT(collParam.GetParameter("Stamp","Height")),
 	collBack(Vector3()), collFront(Vector3())
@@ -48,7 +57,7 @@ void TomatoStampCollOperator::Load(void)
 		ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i)->SetJudgeFlg(true);
 	}
 
-	CreateAttackSkill(100, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(operatorSenderId, 100, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
 	collBack.Load("Range/CircleRangeBack");
 	collFront.Load("Range/CircleRangeFront");

@@ -6,6 +6,8 @@
 
 #include "../Common/Collider/ColliderTagDefine.h"
 
+#include "../../Manager/Net/NetWorkDefine.h"
+
 // ダメージ計算式（計算式忘れた、後で書く）
 static short CalculateDamage(short damage, short defense) { return Round((float)damage / (((float)defense + 100.0f) / 100.0f)); }
 
@@ -229,16 +231,21 @@ public:
 	// コライダータグ
 	const COLLIDER_TAG COLL_TAG;
 
+	// 操作者
+	const MSG_SENDER_ID operatorSenderId;
+
 	/// <summary>
 	/// 攻撃/回復 スキル生成
 	/// </summary>
 	/// <param name="SKILL_POWER">技威力</param>
 	/// <param name="characterStats">ステータスのポインタ（回復などの攻撃力や会心率ダメを参照しないスキルの場合は未設定でOK）</param>
 	SkillStats(
+		MSG_SENDER_ID operatorSenderId,
 		short SKILL_POWER,
 		const CharacterStats* characterStats = nullptr,
 		COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON
 	) :
+		operatorSenderId(operatorSenderId),
 		SKILL_POWER(SKILL_POWER),
 		attackPower(characterStats ? &characterStats->attackPower : nullptr),
 		critical(characterStats ? &characterStats->critical : nullptr),
@@ -252,7 +259,8 @@ public:
 	/// </summary>
 	/// <param name="SKILL_POWER">技威力</param>
 	/// <param name="SKILL_TIME">技効果時間</param>
-	SkillStats(short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
+	SkillStats(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
+		operatorSenderId(operatorSenderId),
 		SKILL_POWER(SKILL_POWER), SKILL_TIME(SKILL_TIME),
 		COLL_TAG(COLL_TAG),
 		attackPower(nullptr), critical(nullptr)
