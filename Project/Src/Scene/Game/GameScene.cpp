@@ -100,6 +100,7 @@ void GameScene::Init(void)
 		ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
 		Vector3::YZonly(250, -550), Deg2Rad(4.0f)
 	);
+	focusFlg = false;
 	//Camera::GetIns().ChangeModeFree(Deg2Rad(5.0f), 10.0f);
 }
 
@@ -107,13 +108,6 @@ void GameScene::Update(void)
 {
 	// オブジェクト全ての受信処理
 	for (ActorBase* obj : objects) { obj->ReceptionUpdate(); }
-
-	// 接続されているプレイヤー数座標を取得する
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		playerPos = &ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos;
-		playerPoss[id] = playerPos;
-	}
 
 #pragma region 画面演出
 	if (hitStop > 0) { hitStop--; return; }
@@ -126,6 +120,25 @@ void GameScene::Update(void)
 
 	// オブジェクト全ての更新処理
 	for (ActorBase* obj : objects) { obj->Update(); }
+
+	Vector3 pos = Vector3();
+
+	// 注目するか
+	if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_FOCUS).down) {
+		focusFlg = !focusFlg;
+		if (focusFlg) {
+			Camera::GetIns().ChangeModeFollowAuto(
+				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans(),
+				&ObjSerch<TomatoBoss>()->GetTrans().pos);
+		}
+		else {
+			Camera::GetIns().ChangeModeFollowRemote(
+				&ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
+				Vector3::YZonly(250, -550), Deg2Rad(4.0f)
+			);
+		}
+	}
 
 	// 当たり判定
 	collision->Check();
