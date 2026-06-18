@@ -342,18 +342,6 @@ void TomatoBoss::ReceptionUpdate(void)
 		SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
 		characterStats.hp -= dataPtr->damage;
 
-		// 与ダメを足す
-		damaged[static_cast<int>(Net::GetIns().GetSenderId())] += dataPtr->damage;
-
-		// 与ダメの最大値を探す
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-			if (mostDamaged < damaged.at(id)) {
-				mostDamaged = damaged.at(id);
-				targetNum = id;
-			}
-		}
-
 		if (dataPtr->clitical) {
 			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 		}
@@ -426,16 +414,36 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			bool isClitical = false;
 			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
 
-			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
+			// ホストならそのままUI描画
+			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
+				SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
+			}
+			// それ以外にはUI用にそれぞれにダメージとクリティカル情報を渡す
+			else {
+				Net::GetIns().Send(MsgDataBossHit(damage, isClitical), MSG_SENDER_ID::None, other.GetSkillStats().operatorSenderId);
+			}
+
+			// ダメージ減らす
 			characterStats.hp -= damage;
 
+			// 与ダメを足す
+			damaged[static_cast<int>(other.GetSkillStats().operatorSenderId)] += damage;
+
+			// 与ダメの最大値を探す
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				if (mostDamaged < damaged.at(id)) {
+					mostDamaged = damaged.at(id);
+					targetNum = id;
+				}
+			}
+			// クリティカルなら揺らす
 			if (isClitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 			}
 			GameScene::HitStop(4);
 			SetInviCounter(150);
-			
-			Net::GetIns().Send(MsgDataBossHit(damage, isClitical));
+
 			break;
 		}
 		}
