@@ -56,9 +56,7 @@ public:
 	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
 	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
 
-	void SetOtherPlayerPos(const std::vector<Vector3>& pos) {
-		otherPlayerPos = pos;
-	}
+	void SetOtherPlayerPos(const Vector3* pos) { otherPlayerPos.emplace_back(pos); }
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
@@ -187,6 +185,7 @@ protected:
 
 		DAMAGE,			// ダメージ
 		DEATH,			// 倒される
+		OTHER_WATCH,
 
 		MAX
 	};
@@ -213,5 +212,5 @@ protected:
 	Vector3 interestPos;
 
 	// 自身以外のプレイヤーの座標
-	std::vector<Vector3>& otherPlayerPos;
+	std::vector<const Vector3*>otherPlayerPos;
 };

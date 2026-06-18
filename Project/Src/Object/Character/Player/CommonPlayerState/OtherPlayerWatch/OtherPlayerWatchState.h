@@ -7,17 +7,16 @@
 
 #include "../../../../../Common/Vector3.h"
 
-class OtherPlayerWatch : public CharacterStateBase
+class OtherPlayerWatchState : public CharacterStateBase
 {
 public:
-	OtherPlayerWatch(
+	OtherPlayerWatchState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		std::vector<Vector3>& pos,
-		const std::function<void(void)> CameraTargetChange
+		const std::vector<const Vector3*> pos
 	);
 
-	~OtherPlayerWatch()override = default;
+	~OtherPlayerWatchState()override = default;
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -27,17 +26,9 @@ public:
 	void Exit(void)override;
 
 private:
-
-	const int PLAYER_MAX = Net::GetIns().GetConnectStatus().EntryCount();
-
-	void ChangeCameraTarget() {
-	}
+	//const int PLAYER_MAX = Net::GetIns().GetConnectStatus().EntryCount();
 
 	// 座標の参照
-	std::vector<Vector3>& pos;
-
-	// カメラの注視点を変える
-	const std::function<void(void)> CameraTargetChange;
-
+	const std::vector<const Vector3*> pos;
 };
 

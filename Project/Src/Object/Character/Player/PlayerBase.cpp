@@ -25,7 +25,7 @@ PlayerBase::PlayerBase(
 		ATTACK_POWER,
 		DEFENSE_POWER,
 		SPEED_POWER),
-	otherPlayerPos(otherPlayerPos)
+	otherPlayerPos()
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 	this->operatorSenderId = operatorSenderId;
@@ -52,6 +52,7 @@ PlayerBase::PlayerBase(
 		moveSpeedParameterID,
 		parameterPath
 	),
+	otherPlayerPos()
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 

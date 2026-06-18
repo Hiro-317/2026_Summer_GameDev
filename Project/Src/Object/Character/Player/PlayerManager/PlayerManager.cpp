@@ -13,18 +13,21 @@ void PlayerManager::Load(void)
 {
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		std::vector<Vector3> pos;
-		// 自身以外のプレイヤーの座標を渡す
-
+		
 		playerInfo.emplace_back(PlayerFactory::CreatePlayer((MSG_SENDER_ID)id));
 	}
-	if (info.instance->GetOperatorSenderId() != Net::GetIns().GetSenderId()) {
-		pos.emplace_back(info.instance->GetTrans().pos);
-	}
+	
 
+	std::vector<Vector3> pos;
 	for (PlayerInfo& info : playerInfo) {
 		info.instance->Load();
+		
+		// 自身以外のプレイヤーの座標を渡す
+		if (info.instance->GetOperatorSenderId() != Net::GetIns().GetSenderId()) {
+			playerInfo.at((int)Net::GetIns().GetSenderId()).instance->SetOtherPlayerPos(&info.instance->GetTrans().pos);
+		}
 	}
+
 }
 
 void PlayerManager::Init(void)

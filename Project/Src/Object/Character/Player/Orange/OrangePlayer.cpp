@@ -12,6 +12,7 @@
 #include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
+#include "../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
@@ -241,9 +242,19 @@ void OrangePlayer::PlayerLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); SetPushFlg(true); },
 			[&]() { isDeath = true; },
-			[&]() { ChangeState((int)STATE::MOVE); }
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
 		)
 	);
+
+	AddState(
+		(int)STATE::OTHER_WATCH,
+		new OtherPlayerWatchState(
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
+			[&]() { return state == (int)STATE::OTHER_WATCH; },
+			otherPlayerPos
+		)
+	);
+
 	// ‘JˆÚðŒ‚Ì“o˜^ibefore = ‘JˆÚŒ³)(after = ‘JˆÚŒãj
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
 		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
@@ -329,8 +340,6 @@ void OrangePlayer::PlayerLoad(void)
 				"SkillSlotDodge"
 			)
 		);
-
-
 	}
 
 	ui_ArrayIns.emplace_back(new HitUI());
