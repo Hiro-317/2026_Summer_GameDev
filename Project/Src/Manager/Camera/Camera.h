@@ -61,9 +61,9 @@ public:
 	// 追従（手動操作）モードに変更
 	void ChangeModeFollowRemote(const Vector3* folowAt, const Vector3& lookAt = Vector3(), const Vector3& lookAtDiff = Vector3::Zonly(-400), float ROT_POWER = 3.0f * (DX_PI_F / 180.0f), const Vector3& angle = Vector3(), float fov = (60.0f * (DX_PI_F / 180.0f)));
 	// 追従（自動操作）モードに変更（引数省略バージョン）
-	void ChangeModeFollowAuto(const Transform& folowAt, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 400.0f, float FOLLOW_AUTO_MAX_DISTANCE = 500.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
+	void ChangeModeFollowAuto(const Transform& folowAt, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 350.0f, float FOLLOW_AUTO_MAX_DISTANCE = 400.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
 	// 追従（自動操作）モードに変更（引数非省略バージョン）
-	void ChangeModeFollowAuto(const Vector3* folowAt,const float* lookAtYangle, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 400.0f, float FOLLOW_AUTO_MAX_DISTANCE = 500.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
+	void ChangeModeFollowAuto(const Vector3* folowAt,const float* lookAtYangle, const Vector3* lookTarget, float FOLLOW_AUTO_MIN_DISTANCE = 350.0f, float FOLLOW_AUTO_MAX_DISTANCE = 400.0f, float fov = (80.0f * (DX_PI_F / 180.0f)));
 #pragma endregion
 
 	// 更新
@@ -232,6 +232,17 @@ private:
 #pragma endregion
 
 #pragma region FOLLOW_AUTO
+
+#pragma region 定数定義
+
+	// カメラ最低地上高
+	static constexpr float CAMERA_DOWN = 85.0f;
+
+	// 注視点最低地上高
+	static constexpr float FOCUS_DOWN = 70.0f;
+
+#pragma endregion
+
 	// 更新処理
 	void FollowAutoModeFunc(void);
 

@@ -58,7 +58,7 @@ void Camera::Init(void)
 	SET_APPLY(MODE::FOLLOW_REMOTE, &Camera::FollowRemoteApply);
 
 	SET_MODE_FUNC(MODE::FOLLOW_AUTO, &Camera::FollowAutoModeFunc);
-	SET_APPLY(MODE::FOLLOW_AUTO, &Camera::FollowRemoteApply);
+	SET_APPLY(MODE::FOLLOW_AUTO, &Camera::FollowAutoApply);
 #pragma endregion
 }
 
@@ -509,9 +509,12 @@ void Camera::FollowAutoModeFunc(void)
 	// 補間（ガタつき防止）
 	const float smooth = 0.1f;
 	pos += (desiredPos - pos) * smooth;
+	if (pos.y <= CAMERA_DOWN) pos.y = CAMERA_DOWN;
 
 	// 角度を算出する
-	angle = ((*folowAt + *lookTarget) * 0.5f) - pos;
+	Vector3 center = (*folowAt + *lookTarget) * 0.5f;
+	center.y = FOCUS_DOWN;
+	angle = (center - pos);
 	angle = Vector3::Yonly(atan2f(angle.x, angle.z));
 }
 
@@ -521,7 +524,9 @@ void Camera::FollowAutoApply(void)
 	if (folowAt == nullptr || lookTarget == nullptr) { return; }
 
 	// 適用
-	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), ((*folowAt + *lookTarget) * 0.5f).ToVECTOR());
+	Vector3 center = (*folowAt + *lookTarget) * 0.5f;
+	center.y = FOCUS_DOWN;
+	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), center.ToVECTOR());
 }
 #pragma endregion
 
@@ -540,14 +545,6 @@ void Camera::DrawDebug(void) const
 			Rad2Deg(angle.y),
 			Rad2Deg(angle.z)
 		);
-		DrawFormatString(
-			0, 110, 0xffffff,
-			"カメラ注視点 ：(% .1f, % .1f, % .1f)",
-			lookAtPos.ToVECTOR().x,
-			lookAtPos.ToVECTOR().y,
-			lookAtPos.ToVECTOR().z
-		);
-		DrawSphere3D(lookAtPos.ToVECTOR(), 20, 16, 0xff0000, 0xffffff, false);
 	}
 }
 

@@ -75,6 +75,10 @@ public:
 		CAMERA_ROT_BACK,
 		CAMERA_ROT_RIGHT,
 		CAMERA_ROT_LEFT,
+
+		// ’–Ú
+		CAMERA_FOCUS,
+
 #pragma endregion
 
 #pragma region ƒVƒXƒeƒ€‘€ì
