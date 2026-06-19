@@ -9,11 +9,6 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="own
-	/// 
-	/// 
-	/// 
-	/// 
-	/// 
 	/// ">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="INVI_TIME">無敵時間</param>

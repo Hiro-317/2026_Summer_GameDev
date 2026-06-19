@@ -11,7 +11,7 @@ class PlayerTripleAttackCollOperator;
 class OrangePlayer : public PlayerBase
 {
 public:
-	OrangePlayer(MSG_SENDER_ID operatorSenderId);
+	OrangePlayer(MSG_SENDER_ID operatorSenderId);	
 	~OrangePlayer()override = default;
 
 	void PlayerLoad(void)override;

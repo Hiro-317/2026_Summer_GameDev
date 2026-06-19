@@ -1,6 +1,5 @@
 #include "PlayerBase.h"
 
-#include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
 
@@ -13,6 +12,7 @@
 
 
 PlayerBase::PlayerBase(
+
 	short HP_MAX,
 	short ATTACK_POWER,
 	short DEFENSE_POWER,
@@ -24,7 +24,8 @@ PlayerBase::PlayerBase(
 		HP_MAX,
 		ATTACK_POWER,
 		DEFENSE_POWER,
-		SPEED_POWER)
+		SPEED_POWER),
+	otherPlayerTrans()
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 	this->operatorSenderId = operatorSenderId;
@@ -50,7 +51,9 @@ PlayerBase::PlayerBase(
 		defensePowerParameterID,
 		moveSpeedParameterID,
 		parameterPath
-	)
+	),
+	otherPlayerTrans(),
+	bossPos(nullptr)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 
@@ -131,15 +134,19 @@ void PlayerBase::CharacterUpdate(void)
 {
 	interestPos = trans.pos + INTEREST_POS;
 
-	for (ActorBase*& c : subObjArray) { c->Update(); }
-
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
+		isDeath = true;
 	}
 
 #ifdef _DEBUG		// クールタイム用
-	if (CheckHitKey(KEY_INPUT_0))characterStats.hp -= 10;
+	if (CheckHitKey(KEY_INPUT_0)) {
+		short damage = 10;
+		characterStats.hp -= damage;
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+	}
 	if (state == (int)STATE::DEATH) {
 		// 不動オブジェクトにする
 		SetDynamicFlg(false);
@@ -150,6 +157,8 @@ void PlayerBase::CharacterUpdate(void)
 void PlayerBase::CharacterRemoteUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+	// HPがゼロ以下になったら死亡状態に遷移
+	if (characterStats.hp <= 0) { isDeath = true; }
 }
 
 void PlayerBase::CharacterDraw(void)
@@ -209,14 +218,10 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			// 回避成功時の無敵時間
 			SetInviCounter(DODGE_INVI_TIME);
 
-			// ホストが操作者だった場合表示
-			if (isOwnOperator) {
-				// 「ミス！」を出現させる
-				SubUiSerch<HitUI>()->MissSetting();
-			}
-			else {
-				Net::GetIns().Send(MsgDataPlayerMissUIPacket((int)operatorSenderId));
-			}
+			// ホストが操作者だった場合表示「ミス！」を出現させる
+			if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
+			// ホスト以外が回避した場合、クライアント側に回避した通知を送る
+			else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); } 
 			break;
 		}
 		return;
@@ -306,6 +311,7 @@ void PlayerBase::AnimePlay(int type, bool loop)
 }
 void PlayerBase::ReceptionUpdate(void)
 {
+	// 座標・角度
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
@@ -326,11 +332,13 @@ void PlayerBase::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
+	// アニメーション
 	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId)) {
 		AnimePlay(dataPtr->animeType);
 		delete dataPtr;
 	}
 
+	// 攻撃を受けた時のダメージ
 	while (MsgDataPlayerDamage* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerDamage>(operatorSenderId)) {
 		characterStats.hp -= dataPtr->damage;
 		ChangeState((int)STATE::DAMAGE);
@@ -338,16 +346,18 @@ void PlayerBase::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
+	// HP
 	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(operatorSenderId)) {
 		characterStats.hp = dataPtr->hp;
 		delete dataPtr;
 	}
 
-	while (MsgDataPlayerMissUIPacket* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissUIPacket>(operatorSenderId)) 
+	// 回避した時の「ミス！」表示
+	while (MsgDataPlayerMissNotice* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(operatorSenderId)) 
 	{
 		if (Net::GetIns().IsHost()) { break; }
 		
-		if (dataPtr->playerNo == (int)Net::GetIns().GetSenderId()) {
+		if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
 			SubUiSerch<HitUI>()->MissSetting();
 		}
 		

@@ -12,6 +12,7 @@
 #include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
 #include "../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../CommonPlayerState/Death/PlayerDeathState.h"
+#include "../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
 #include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
@@ -198,7 +199,7 @@ void OrangePlayer::PlayerLoad(void)
 			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
 			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
 			// 座標 / 角度
-			trans.pos,trans.angle,
+			trans.pos, trans.angle,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
@@ -239,10 +240,20 @@ void OrangePlayer::PlayerLoad(void)
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
-			[&]() {	Camera::GetIns().ChangeModeFixedPoint(trans.pos + Vector3::YZonly(250, -550), Deg2Rad(30)); SetPushFlg(true); },
-			[&]() { isDeath = true; }
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
 		)
 	);
+
+	AddState(
+		(int)STATE::OTHER_WATCH,
+		new OtherPlayerWatchState(
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
+			[&]() { return state == (int)STATE::OTHER_WATCH; },
+			otherPlayerTrans,
+			bossPos
+		)
+	);
+
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
 		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
@@ -328,8 +339,6 @@ void OrangePlayer::PlayerLoad(void)
 				"SkillSlotDodge"
 			)
 		);
-
-
 	}
 
 	ui_ArrayIns.emplace_back(new HitUI());

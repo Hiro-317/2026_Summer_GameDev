@@ -37,7 +37,7 @@ enum class MSG_DATA_TYPE
     // <ホスト>プレイヤー：被ダメ
     PlayerDamage,
     // <ホスト>プレイヤー：ミスUIパケット
-    PlayerMissUIPacket,
+    PlayerMissNotice,
     // <クライアント>プレイヤー：状態
     PlayerState,
     // <クライアント>当たり判定情報送信構造体
@@ -456,10 +456,10 @@ struct MsgDataPlayerHp
 };
 
 // <ホスト>ミスUI送信構造体
-struct MsgDataPlayerMissUIPacket
+struct MsgDataPlayerMissNotice
 {
     // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerMissUIPacket;
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerMissNotice;
 
     // データの送信チャンネル
     static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
@@ -468,14 +468,14 @@ struct MsgDataPlayerMissUIPacket
     MsgDataHeader header;
 
     // ミスを描画する
-    int playerNo;
+    MSG_SENDER_ID playerNo;
 
-    MsgDataPlayerMissUIPacket(int playerNo) :
+    MsgDataPlayerMissNotice(MSG_SENDER_ID playerNo) :
         header(DATA_TYPE),
         playerNo(playerNo)
     {
     }
-    MsgDataPlayerMissUIPacket(void) :
+    MsgDataPlayerMissNotice(void) :
         header(DATA_TYPE),
         playerNo()
     {

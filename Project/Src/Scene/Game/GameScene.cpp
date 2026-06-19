@@ -84,6 +84,9 @@ void GameScene::Load(void)
 	ObjAdd(new TomatoBoss(playerPoss));
 
 	ObjAdd(new TomatoBossStage());
+
+	// プレイヤーにボスの座標をわたす
+	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<TomatoBoss>()->GetTrans().pos);
 }
 
 void GameScene::Init(void)
@@ -160,7 +163,7 @@ void GameScene::Update(void)
 	}
 
 	// ゲームオーバー判定
-	if (ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
+	if (ObjSerch<PlayerManager>()->IsPlayerAllDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, 90, 0xffffff, 0x000000);
 		return;
 	}
