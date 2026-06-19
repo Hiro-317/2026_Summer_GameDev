@@ -84,8 +84,16 @@ void TomatoStampCollOperator::SubUpdate(void)
 		end = false;
 		attackCnt = 0;
 	}
-	collBack.pos = Vector3(trans.pos.x, collBack.pos.y, trans.pos.z);
-	collFront.pos = Vector3(trans.pos.x, collFront.pos.y, trans.pos.z);
+	else {
+		for (int i = 0; i < playerPos.size(); i++) {
+			auto coll = ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).at(i);
+			if (coll->GetJudge()) {
+
+				collBack.pos = Vector3(coll->GetPos().x, collBack.pos.y, coll->GetPos().z);
+				collFront.pos = Vector3(coll->GetPos().x, collFront.pos.y, coll->GetPos().z);
+			}
+		}
+	}
 }
 
 void TomatoStampCollOperator::SubAlphaDraw(void)

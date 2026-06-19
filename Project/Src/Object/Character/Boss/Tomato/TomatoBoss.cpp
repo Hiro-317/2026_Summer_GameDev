@@ -161,9 +161,10 @@ void TomatoBoss::CharacterLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// 自分の座標、プレイヤーの座標の読み取り
-			trans.pos, *playerPos.at(targetNum),
+			trans.pos, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
+			[&]() { return targetNum; },
 			// 頭突きへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::HEADBUTT); },
 			// 移動への状態遷移関数のポインタ
@@ -188,9 +189,10 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と攻撃時間
 			MOVE_SPEED, 20.0f,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, *playerPos.at(targetNum),
+			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoHeadbuttCollOperator>(),
+			[&]() { return targetNum; },
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
@@ -211,7 +213,8 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, *playerPos.at(targetNum),
+			trans.pos, trans.angle, playerPos,
+			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// 移動後攻撃に状態遷移関数のポインタ
@@ -228,9 +231,10 @@ void TomatoBoss::CharacterLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, *playerPos.at(targetNum),
+			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoTackleCollOperator>(),
+			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// XZコライダを消す

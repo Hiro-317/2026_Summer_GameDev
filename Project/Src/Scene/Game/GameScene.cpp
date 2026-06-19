@@ -75,13 +75,13 @@ void GameScene::Load(void)
 	ObjAdd(new PlayerManager());
 
 	// 接続されているプレイヤー数座標を取得する
+	std::vector<const Vector3*> pos;
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		playerPos = &ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos;
-		playerPoss.emplace_back(playerPos);
+		pos.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
 	}
 
-	ObjAdd(new TomatoBoss(playerPoss));
+	ObjAdd(new TomatoBoss(pos));
 
 	ObjAdd(new TomatoBossStage());
 }
