@@ -111,7 +111,7 @@ public:
 			senderId = (MSG_SENDER_ID)((int)senderId + 1);
 
 			// 送信者IDを順に参照していき、データが見つかったらループを抜ける
-			for (; senderId < MSG_SENDER_ID::Max; senderId = (MSG_SENDER_ID)((int)senderId + 1)) {
+			for (; (int)senderId < (int)MSG_SENDER_ID::Max - 1; senderId = (MSG_SENDER_ID)((int)senderId + 1)) {
 				if (!msgData[(int)DataType::DATA_TYPE][(int)senderId].empty()) { break; }
 			}
 		}

@@ -355,7 +355,7 @@ void TomatoBoss::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
-	while (MsgDataBossTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTarget>(operatorSenderId)) {
+	while (MsgDataBossTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTarget>()) {
 
 		targetNum = (int)dataPtr->targetNum;
 
@@ -445,9 +445,10 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 				if (mostDamaged < damaged.at(id)) {
 					mostDamaged = damaged.at(id);
 					targetNum = id;
-					Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
 				}
 			}
+			Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
+
 			// クリティカルなら揺らす
 			if (isClitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
