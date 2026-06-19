@@ -21,6 +21,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
+	GetTarget(GetTarget),
 	ResetAngle(ResetAngle),
 	DeleteColl(DeleteColl),
 	ReviveColl(ReviveColl),
