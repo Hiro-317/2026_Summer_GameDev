@@ -25,7 +25,7 @@ PlayerBase::PlayerBase(
 		ATTACK_POWER,
 		DEFENSE_POWER,
 		SPEED_POWER),
-	otherPlayerPos()
+	otherPlayerTrans()
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 	this->operatorSenderId = operatorSenderId;
@@ -52,7 +52,8 @@ PlayerBase::PlayerBase(
 		moveSpeedParameterID,
 		parameterPath
 	),
-	otherPlayerPos()
+	otherPlayerTrans(),
+	bossPos(nullptr)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 
@@ -133,15 +134,19 @@ void PlayerBase::CharacterUpdate(void)
 {
 	interestPos = trans.pos + INTEREST_POS;
 
-	for (ActorBase*& c : subObjArray) { c->Update(); }
-
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
+		isDeath = true;
 	}
 
 #ifdef _DEBUG		// クールタイム用
-	if (CheckHitKey(KEY_INPUT_0))characterStats.hp -= 10;
+	if (CheckHitKey(KEY_INPUT_0)) {
+		short damage = 10;
+		characterStats.hp -= damage;
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+	}
 	if (state == (int)STATE::DEATH) {
 		// 不動オブジェクトにする
 		SetDynamicFlg(false);
@@ -152,6 +157,8 @@ void PlayerBase::CharacterUpdate(void)
 void PlayerBase::CharacterRemoteUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+	// HPがゼロ以下になったら死亡状態に遷移
+	if (characterStats.hp <= 0) { isDeath = true; }
 }
 
 void PlayerBase::CharacterDraw(void)

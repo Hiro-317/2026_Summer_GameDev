@@ -24,7 +24,7 @@ void PlayerManager::Load(void)
 		
 		// 自身以外のプレイヤーの座標を渡す
 		if (info.instance->GetOperatorSenderId() != Net::GetIns().GetSenderId()) {
-			playerInfo.at((int)Net::GetIns().GetSenderId()).instance->SetOtherPlayerPos(&info.instance->GetTrans().pos);
+			playerInfo.at((int)Net::GetIns().GetSenderId()).instance->SetOtherPlayerTrans(&info.instance->GetTrans());
 		}
 	}
 

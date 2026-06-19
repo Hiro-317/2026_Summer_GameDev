@@ -249,7 +249,8 @@ void OrangePlayer::PlayerLoad(void)
 		new OtherPlayerWatchState(
 			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
 			[&]() { return state == (int)STATE::OTHER_WATCH; },
-			otherPlayerPos
+			otherPlayerTrans,
+			bossPos
 		)
 	);
 

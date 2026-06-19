@@ -84,6 +84,9 @@ void GameScene::Load(void)
 	ObjAdd(new TomatoBoss(playerPoss));
 
 	ObjAdd(new TomatoBossStage());
+
+	// プレイヤーにボスの座標をわたす
+	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<TomatoBoss>()->GetTrans().pos);
 }
 
 void GameScene::Init(void)

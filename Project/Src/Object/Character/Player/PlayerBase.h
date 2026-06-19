@@ -51,12 +51,14 @@ public:
 		return ret;
 	}
 
+	void SetBossPos(const Vector3* bossPos) { this->bossPos = bossPos; }
+
 	virtual void PlayerLoad(void) = 0;
 
 	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
 	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
 
-	void SetOtherPlayerPos(const Vector3* pos) { otherPlayerPos.emplace_back(pos); }
+	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
@@ -212,5 +214,9 @@ protected:
 	Vector3 interestPos;
 
 	// 自身以外のプレイヤーの座標
-	std::vector<const Vector3*>otherPlayerPos;
+	std::vector<const Transform*>otherPlayerTrans;
+
+	// ボスの座標のポインタ
+	const Vector3* bossPos;
+
 };

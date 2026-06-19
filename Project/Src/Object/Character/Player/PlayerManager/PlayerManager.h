@@ -44,6 +44,11 @@ public:
 		return ret;
 	}
 
+	// ボスの座標のポインタをセット
+	void SetBossPos(const Vector3* bossPos) {
+		for (PlayerInfo& info : playerInfo) { info.instance->SetBossPos(bossPos); } 
+	}
+
 private:
 
 	const int PLAYER_MAX = Net::GetIns().GetConnectStatus().EntryCount();

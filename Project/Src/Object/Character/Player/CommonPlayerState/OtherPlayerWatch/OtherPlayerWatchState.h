@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../../../../../Manager/Camera/Camera.h"
 #include "../../../../../Manager/Net/NetWorkManager.h"
 
 #include "../../../CharacterStateBase.h"
 
-#include "../../../../../Common/Vector3.h"
+#include "../../../../Common/Transform.h"
 
 class OtherPlayerWatchState : public CharacterStateBase
 {
@@ -13,7 +12,8 @@ public:
 	OtherPlayerWatchState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		const std::vector<const Vector3*> pos
+		const std::vector<const Transform*>& playerTrans,
+		const Vector3*& bossPos
 	);
 
 	~OtherPlayerWatchState()override = default;
@@ -29,6 +29,8 @@ private:
 	//const int PLAYER_MAX = Net::GetIns().GetConnectStatus().EntryCount();
 
 	// ç¿ïWÇÃéQè∆
-	const std::vector<const Vector3*> pos;
+	const std::vector<const Transform*>& playerTrans;
+
+	const Vector3*& bossPos;
 };
 
