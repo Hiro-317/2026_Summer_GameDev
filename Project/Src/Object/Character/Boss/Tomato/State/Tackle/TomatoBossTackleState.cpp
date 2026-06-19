@@ -1,6 +1,7 @@
 #include "TomatoBossTackleState.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../../Manager/Sound/SoundManager.h"
 
 TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
@@ -35,6 +36,9 @@ void TomatoBossTackleState::Enter(void)
 	collOperator->ResetStageHit();
 	collOperator->SetDrawArea(true);
 	SetCoolTime();
+	
+	SoundManager::GetIns().Play("TackleCharge");
+
 	if (Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackB));
 	}
@@ -67,9 +71,11 @@ void TomatoBossTackleState::Update(void)
 
 		if (time < FORCE_MOVE_TIME) {
 			time++;
+			SoundManager::GetIns().Play("TackleMove");
 			collOperator->ResetStageHit();
 		}
 		else if (collOperator->GetStageHit()) {
+			SoundManager::GetIns().Play("TackleRock");
 			DefaultChangeState();
 			return;
 		}
