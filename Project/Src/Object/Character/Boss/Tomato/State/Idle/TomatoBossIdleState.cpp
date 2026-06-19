@@ -5,8 +5,9 @@
 TomatoBossIdleState::TomatoBossIdleState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, const Vector3& playerPos,
-	const std::function<int(void)> coolTime,
+	Vector3& pos, const std::vector<const Vector3*> playerPos,
+	const std::function<int(void)> CoolTime,
+	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> headbuttChangeState,
 	const std::function<void(void)> moveChangeState, 
 	const std::function<void(void)> stampChangeState,
@@ -16,7 +17,8 @@ TomatoBossIdleState::TomatoBossIdleState(
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), playerPos(playerPos),
-	coolTime(coolTime),
+	CoolTime(CoolTime),
+	GetTarget(GetTarget),
 	headbuttChangeState(headbuttChangeState),
 	moveChangeState(moveChangeState),
 	stampChangeState(stampChangeState),
@@ -28,7 +30,7 @@ TomatoBossIdleState::TomatoBossIdleState(
 
 void TomatoBossIdleState::Enter(void)
 {
-	cnt = coolTime();
+	cnt = CoolTime();
 	if (Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeIdle));
 	}
@@ -40,7 +42,7 @@ void TomatoBossIdleState::Update(void)
 		cnt--;
 		return;
 	}
-	float distance = (playerPos - pos).Length();
+	float distance = (*playerPos.at(GetTarget()) - pos).Length();
 	int luck = GetRand(10000);
 
 	if (luck <= 4000) {

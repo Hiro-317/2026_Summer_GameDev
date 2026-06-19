@@ -19,8 +19,9 @@ public:
 	TomatoBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, const Vector3& playerPos,
-		const std::function<int(void)> coolTime,
+		Vector3& pos, const std::vector<const Vector3*>playerPos,
+		const std::function<int(void)> CoolTime,
+		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> headbuttChangeState,
 		const std::function<void(void)> moveChangeState,
 		const std::function<void(void)> stampChangeState,
@@ -51,10 +52,11 @@ private:
 	Vector3& pos;
 
 	// プレイヤーの座標の読み取り
-	const Vector3& playerPos;
+	const std::vector<const Vector3*> playerPos;
 
+	const std::function<int(void)> GetTarget;
 	// クールタイムの参照
-	const std::function<int(void)> coolTime;
+	const std::function<int(void)> CoolTime;
 
 	// 頭突きへ
 	const std::function<void(void)> headbuttChangeState;

@@ -26,7 +26,7 @@ public:
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// UŒ‚‚Ì’†SÀ•W‚Ìæ“¾
-	Vector3 GetAttackPos(void) { return trans.pos; }
+	Vector3 GetAttackPos(void) { return collBack.pos; }
 
 	void SetScale(float scale) { collFront.scale = SCALE * scale; }
 

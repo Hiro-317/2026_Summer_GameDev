@@ -7,9 +7,11 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Vector3& angle, const Vector3& playerPos,
+	Vector3& pos, Vector3& angle,
+	const std::vector<const Vector3*> playerPos,
 	TomatoTackleCollOperator* collOperator,
-	const std::function<void(void)> resetAngle,
+	const std::function<int(void)> GetTarget,
+	const std::function<void(void)> ResetAngle,
 	const std::function<void(void)> DeleteColl,
 	const std::function<void(void)> ReviveColl,
 	const std::function<void(void)> DefaultChangeState,
@@ -19,7 +21,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
-	resetAngle(resetAngle),
+	ResetAngle(ResetAngle),
 	DeleteColl(DeleteColl),
 	ReviveColl(ReviveColl),
 	DefaultChangeState(DefaultChangeState),
@@ -54,7 +56,7 @@ void TomatoBossTackleState::Update(void)
 		time++;
 
 		// ‰ñ“]‚ÌXV
-		moveDir = (playerPos - pos).Normalized();
+		moveDir = (*playerPos.at(GetTarget()) - pos).Normalized();
 		angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
 		collOperator->SetViewPos(Vector3::XZonly(pos.x, pos.z));
@@ -86,7 +88,7 @@ void TomatoBossTackleState::Update(void)
 
 void TomatoBossTackleState::Exit(void)
 {
-	resetAngle();
+	ResetAngle();
 	ReviveColl();
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {

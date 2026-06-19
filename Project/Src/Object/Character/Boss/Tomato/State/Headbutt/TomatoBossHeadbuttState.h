@@ -25,8 +25,10 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		const float MOVE_SPEED, const float ATTACK_TIME,
-		Vector3& pos, Vector3& angle, const Vector3& playerPos,
+		Vector3& pos, Vector3& angle,
+		const std::vector<const Vector3*> playerPos,
 		TomatoHeadbuttCollOperator* collOperator,
+		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DeleteColl,
 		const std::function<void(void)> ReviveColl,
 		const std::function<void(void)> DefaultChangeState,
@@ -66,12 +68,13 @@ private:
 	Vector3& angle;
 
 	// プレイヤーの座標の読み取り
-	const Vector3& playerPos;
+	const std::vector<const Vector3*> playerPos;
 
 	// コリジョンオペレーターのポインタ
 	TomatoHeadbuttCollOperator* collOperator;
 
-	// XZのコライダを消す
+	const std::function<int(void)> GetTarget;
+		// XZのコライダを消す
 	const std::function<void(void)> DeleteColl;
 
 	// XZのコライダを復活させる
