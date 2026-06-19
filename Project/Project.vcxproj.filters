@@ -75,6 +75,7 @@
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\UI\HitUI\HitUI.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="Src\Object\UI\HitUI\HitUI.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\UI\UIDefine.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />

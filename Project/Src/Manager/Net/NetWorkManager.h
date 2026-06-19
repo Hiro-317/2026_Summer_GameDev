@@ -310,12 +310,14 @@ private:
 		case MSG_DATA_TYPE::PlayerAnimeType: { MsgDataRecv<MsgDataPlayerAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerHp: { MsgDataRecv<MsgDataPlayerHp>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerMissNotice: { MsgDataRecv<MsgDataPlayerMissNotice>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerState: { MsgDataRecv<MsgDataPlayerState>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerCollOperator: { MsgDataRecv<MsgDataPlayerCollOperator>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTrans: { MsgDataRecv<MsgDataBossTrans>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossInform: { MsgDataRecv<MsgDataBossInform>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
 		}
 
 		// パケットの解放
@@ -388,6 +390,7 @@ private:
 					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHp: { delete static_cast<MsgDataPlayerHp*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
 					}

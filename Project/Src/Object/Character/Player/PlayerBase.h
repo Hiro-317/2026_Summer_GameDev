@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../../Manager/Net/NetWorkManager.h"
+
 #include "../CharacterBase.h"
 
 #include "CommonPlayerState/TripleAttack/PlayerTripleAttackStDefine.h"
@@ -9,6 +11,7 @@ class PlayerBase : public CharacterBase
 {
 public:
 	PlayerBase(
+
 		short HP_MAX,
 		short ATTACK_POWER,
 		short DEFENSE_POWER,
@@ -48,9 +51,14 @@ public:
 		return ret;
 	}
 
+	void SetBossPos(const Vector3* bossPos) { this->bossPos = bossPos; }
+
 	virtual void PlayerLoad(void) = 0;
 
-	const Vector3& GetInterestPos(void)const { return INTEREST_POS; }
+	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
+	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
+
+	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
@@ -69,7 +77,6 @@ private:
 	void CharacterUiDraw(void)override;
 	void CharacterRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
-
 
 protected:
 
@@ -160,7 +167,7 @@ protected:
 	// ƒ_ƒ[ƒWó‘Ô`````````````````````````
 	
 	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const unsigned char DAMAGE_INVI_TIME = (unsigned char)GetParameter("Damage", "DamageInviTime");
+	const unsigned char DODGE_INVI_TIME = (unsigned char)GetParameter("Damage", "DamageInviTime");
 	 
 	// `````````````````````````ƒ_ƒ[ƒWó‘Ô
 
@@ -180,6 +187,7 @@ protected:
 
 		DAMAGE,			// ƒ_ƒ[ƒW
 		DEATH,			// “|‚³‚ê‚é
+		OTHER_WATCH,
 
 		MAX
 	};
@@ -204,5 +212,11 @@ protected:
 
 	// ’‹“_À•W
 	Vector3 interestPos;
+
+	// ©gˆÈŠO‚ÌƒvƒŒƒCƒ„[‚ÌÀ•W
+	std::vector<const Transform*>otherPlayerTrans;
+
+	// ƒ{ƒX‚ÌÀ•W‚Ìƒ|ƒCƒ“ƒ^
+	const Vector3* bossPos;
 
 };

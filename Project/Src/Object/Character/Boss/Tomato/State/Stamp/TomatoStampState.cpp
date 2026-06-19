@@ -2,18 +2,21 @@
 
 #include "../../../../../ActorBase.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../../Manager/Sound/SoundManager.h"
 
 TomatoStampState::TomatoStampState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	TomatoStampCollOperator* collOperator,
 	Vector3& pos, const bool& isGround,
+	const std::function<int(void)> PlayerNum, 
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> offCollider,
 	const std::function<void(void)> onCollider,
 	const std::function<void(void)> SetCoolTime
 ) :CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), collOperator(collOperator), isGround(isGround),
+	PlayerNum(PlayerNum),
 	DefaultChangeState(DefaultChangeState),
 	offCollider(offCollider),
 	onCollider(onCollider),
@@ -35,6 +38,9 @@ void TomatoStampState::Enter(void)
 	attackCnt = 0;
 	isAttack = true;
 	SetCoolTime();
+	
+	SoundManager::GetIns().Play("StampJump");
+	
 	if (Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackC));
 	}
@@ -59,8 +65,9 @@ void TomatoStampState::Update(void)
 	else {
 		if (attackCnt <= ATTACK_DURATION) {
 			if (attackCnt == 0) {
+				SoundManager::GetIns().Play("StampLand");
 				if (Net::GetIns().IsHost()) {
-					collOperator->CollSet(true);
+					collOperator->CollSet(PlayerNum(), true);
 				}
 			}
 			attackCnt++;
@@ -86,7 +93,7 @@ void TomatoStampState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {
-		collOperator->CollSet(false);
+		collOperator->CollSet(PlayerNum(), false);
 	}
 }
 

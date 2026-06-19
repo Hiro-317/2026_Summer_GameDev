@@ -11,7 +11,8 @@ public:
 	/// <param name="stats">ステータス</param>
 	TomatoTackleCollOperator(
 		const float TO_PLAYER_DISTANCE,
-		const CharacterStats stats,
+		MSG_SENDER_ID operatorSenderId,
+		const CharacterStats& stats,
 		const ParameterLoad& collParam
 	);
 	~TomatoTackleCollOperator()override = default;
@@ -52,7 +53,9 @@ private:
 
 #pragma region 受け取る参照変数
 
-	const CharacterStats stats;
+	const MSG_SENDER_ID operatorSenderId;
+
+	const CharacterStats& stats;
 
 #pragma endregion
 

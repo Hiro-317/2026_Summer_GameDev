@@ -1,7 +1,8 @@
 #pragma once
 #include <map>
-
 #include "PlayerFactory.h"
+
+#include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../ActorBase.h"
 
 
@@ -16,8 +17,8 @@ public:
 
 	void Load(void)override;
 	void Init(void)override;
-	void ReceptionUpdate(void)override;
 	void Update(void)override;
+	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
 	void Draw(void)override;
 	void AlphaDraw(void)override;
@@ -25,6 +26,12 @@ public:
 	void Release(void)override;
 
 	const PlayerBase* GetPlayerIns(const MSG_SENDER_ID id) { return playerInfo[(int)id].instance; }
+	const bool IsPlayerAllDeath(void) {
+		for (const PlayerInfo& info : playerInfo) {
+			if (!info.instance->GetIsDeath()) { return false; }
+		}
+		return true;
+	}
 
 	// 状態遷移後1度行う初期化処理
 	std::vector<ColliderBase*> GetCollider(void)const override {
@@ -37,7 +44,14 @@ public:
 		return ret;
 	}
 
+	// ボスの座標のポインタをセット
+	void SetBossPos(const Vector3* bossPos) {
+		for (PlayerInfo& info : playerInfo) { info.instance->SetBossPos(bossPos); } 
+	}
+
 private:
+
+	const int PLAYER_MAX = Net::GetIns().GetConnectStatus().EntryCount();
 
 	std::vector<PlayerInfo> playerInfo;
 };

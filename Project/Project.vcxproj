@@ -167,6 +167,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
@@ -240,6 +241,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />

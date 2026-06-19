@@ -21,6 +21,14 @@ void TomatoBossStage::Load(void)
 
 	sky.scale = Vector3(4.0f);
 
+	for (int index = 0; index < MV1GetFrameNum(trans.model); index++) {
+		std::string name = MV1GetFrameName(trans.model, index);
+		if (name.find("Rock") != std::string::npos) {
+
+			MV1SetFrameVisible(trans.model, index, false);
+		}
+	}
+
 #pragma region 基底クラスにある機能の挙動設定
 
 	// 動的オブジェクトとしての挙動を有効にする

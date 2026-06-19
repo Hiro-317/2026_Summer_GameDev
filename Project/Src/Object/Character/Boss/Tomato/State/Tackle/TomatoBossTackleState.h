@@ -18,7 +18,7 @@ public:
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
-	/// <param name="resetAngle">角度を戻す</param>
+	/// <param name="ResetAngle">角度を戻す</param>
 	/// <param name="DeleteColl">XZのコライダを消す</param>
 	/// <param name="ReviveColl">XZのコライダを復活させる</param>
 	/// <param name="DefaultChangeState">戻すステート</param>
@@ -26,9 +26,11 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Vector3& angle, const Vector3& playerPos,
+		Vector3& pos, Vector3& angle,
+		const std::vector<const Vector3*> playerPos,
 		TomatoTackleCollOperator* collOperator,
-		const std::function<void(void)> resetAngle,
+		const std::function<int(void)> GetTarget,
+		const std::function<void(void)> ResetAngle,
 		const std::function<void(void)> DeleteColl,
 		const std::function<void(void)> ReviveColl,
 		const std::function<void(void)> DefaultChangeState,
@@ -59,6 +61,12 @@ private:
 	// 回転量
 	const float ROTATION_POW;
 
+	// チャージ
+	static constexpr int CHARGE_POW = 180;
+
+	// 強制突進タイム
+	static constexpr int FORCE_MOVE_TIME = 200;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -70,13 +78,16 @@ private:
 	Vector3& angle;
 
 	// プレイヤーの座標の読み取り
-	const Vector3& playerPos;
+	const std::vector<const Vector3*> playerPos;
 
 	// コリジョンオペレーター
 	TomatoTackleCollOperator* collOperator;
 
+	// ターゲットを得る
+	const std::function<int(void)> GetTarget;
+
 	// 角度を戻す
-	const std::function<void(void)> resetAngle;
+	const std::function<void(void)> ResetAngle;
 
 	// XZのコライダを消す
 	const std::function<void(void)> DeleteColl;

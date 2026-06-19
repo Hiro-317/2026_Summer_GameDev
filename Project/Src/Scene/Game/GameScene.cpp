@@ -74,9 +74,19 @@ void GameScene::Load(void)
 
 	ObjAdd(new PlayerManager());
 
-	ObjAdd(new TomatoBoss(ObjSerch<PlayerManager>()->GetPlayerIns(MSG_SENDER_ID::P1)->GetTrans().pos));
+	// 接続されているプレイヤー数座標を取得する
+	std::vector<const Vector3*> pos;
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		pos.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
+	}
+
+	ObjAdd(new TomatoBoss(pos));
 
 	ObjAdd(new TomatoBossStage());
+
+	// プレイヤーにボスの座標をわたす
+	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<TomatoBoss>()->GetTrans().pos);
 }
 
 void GameScene::Init(void)
@@ -93,6 +103,7 @@ void GameScene::Init(void)
 		ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
 		Vector3::YZonly(250, -550), Deg2Rad(4.0f)
 	);
+	focusFlg = false;
 	//Camera::GetIns().ChangeModeFree(Deg2Rad(5.0f), 10.0f);
 }
 
@@ -112,6 +123,25 @@ void GameScene::Update(void)
 
 	// オブジェクト全ての更新処理
 	for (ActorBase* obj : objects) { obj->Update(); }
+
+	Vector3 pos = Vector3();
+
+	// 注目するか
+	if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_FOCUS).down) {
+		focusFlg = !focusFlg;
+		if (focusFlg) {
+			Camera::GetIns().ChangeModeFollowAuto(
+				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans(),
+				&ObjSerch<TomatoBoss>()->GetTrans().pos);
+		}
+		else {
+			Camera::GetIns().ChangeModeFollowRemote(
+				&ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
+				Vector3::YZonly(250, -550), Deg2Rad(4.0f)
+			);
+		}
+	}
 
 	// 当たり判定
 	collision->Check();
@@ -133,7 +163,7 @@ void GameScene::Update(void)
 	}
 
 	// ゲームオーバー判定
-	if (ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetIsDeath()) {
+	if (ObjSerch<PlayerManager>()->IsPlayerAllDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, 90, 0xffffff, 0x000000);
 		return;
 	}

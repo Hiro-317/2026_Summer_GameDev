@@ -37,28 +37,26 @@ void HitUI::SubRelease(void)
     damageUiList.clear();
 }
 
-/// <summary>
-/// ダメージ値の設定
-/// </summary>
-/// <param name="damage">表示するダメージ値</param>
-/// <param name="isCritical">会心ならば true / 非会心ならば false</param>
 void HitUI::DamageSetting(const short damage, const bool isCritical)
 {
+    // ダメージ値の設定
     AddPopup(
         std::to_string(damage),
-        isCritical ? 0xffff00 : 0xffffff
+        isCritical ? 0xffff00 : 0xffffff    // 会心ならば：黄色 / 非会心ならば：白色
     );
 }
 
-// ミス！を表示する関数
 void HitUI::MissSetting()
 {
+    // ミス！を設定
     AddPopup(
-        "\u30DF\u30B9\uFF01",
-        0x00ffff
+        "\u30DF\u30B9\uFF01",   // ミス！
+        0x00ffff                // 水色
     );
 }
 
+
+// 描画するテキストと色を設定し、描画を開始する
 void HitUI::AddPopup(const std::string& text, int color)
 {
     AddDamageUiInfo info;

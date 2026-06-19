@@ -11,6 +11,7 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 	const Vector3& playerAngle,
 
 	const short ATTACK_RATE_PERCENT,
+	MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& playerStats
 ) :
 	ActorBase(),
@@ -22,6 +23,7 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
 
+	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
 
 	isFindAttackTarget(false),
@@ -50,7 +52,7 @@ void PlayerSimpleAttackCollOperator::Load(void)
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
-	CreateAttackSkill(ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
+	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 }
 
 void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)

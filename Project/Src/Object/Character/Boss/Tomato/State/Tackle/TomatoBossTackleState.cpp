@@ -1,14 +1,17 @@
 #include "TomatoBossTackleState.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../../Manager/Sound/SoundManager.h"
 
 TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Vector3& angle, const Vector3& playerPos,
+	Vector3& pos, Vector3& angle,
+	const std::vector<const Vector3*> playerPos,
 	TomatoTackleCollOperator* collOperator,
-	const std::function<void(void)> resetAngle,
+	const std::function<int(void)> GetTarget,
+	const std::function<void(void)> ResetAngle,
 	const std::function<void(void)> DeleteColl,
 	const std::function<void(void)> ReviveColl,
 	const std::function<void(void)> DefaultChangeState,
@@ -18,7 +21,8 @@ TomatoBossTackleState::TomatoBossTackleState(
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
-	resetAngle(resetAngle),
+	GetTarget(GetTarget),
+	ResetAngle(ResetAngle),
 	DeleteColl(DeleteColl),
 	ReviveColl(ReviveColl),
 	DefaultChangeState(DefaultChangeState),
@@ -35,6 +39,9 @@ void TomatoBossTackleState::Enter(void)
 	collOperator->ResetStageHit();
 	collOperator->SetDrawArea(true);
 	SetCoolTime();
+	
+	SoundManager::GetIns().Play("TackleCharge");
+
 	if (Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackB));
 	}
@@ -45,12 +52,12 @@ void TomatoBossTackleState::Update(void)
 	angle.x += rotPow;
 
 	// ˆê•b‚Ì—­‚ß
-	if (time < 180) {
+	if (time < CHARGE_POW) {
 		
 		time++;
 
 		// ‰ñ“]‚ÌXV
-		moveDir = (playerPos - pos).Normalized();
+		moveDir = (*playerPos.at(GetTarget()) - pos).Normalized();
 		angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
 		collOperator->SetViewPos(Vector3::XZonly(pos.x, pos.z));
@@ -65,12 +72,13 @@ void TomatoBossTackleState::Update(void)
 			collOperator->CollSet(true);
 		}
 
-		if (time < 190) {
+		if (time < FORCE_MOVE_TIME) {
 			time++;
+			SoundManager::GetIns().Play("TackleMove");
 			collOperator->ResetStageHit();
-			return;
 		}
-		if (collOperator->GetStageHit()) {
+		else if (collOperator->GetStageHit()) {
+			SoundManager::GetIns().Play("TackleRock");
 			DefaultChangeState();
 			return;
 		}
@@ -81,7 +89,7 @@ void TomatoBossTackleState::Update(void)
 
 void TomatoBossTackleState::Exit(void)
 {
-	resetAngle();
+	ResetAngle();
 	ReviveColl();
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {

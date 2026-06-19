@@ -233,20 +233,20 @@ protected:
 #pragma endregion パラメーター外部ファイル管理に関する関数
 
 	// 攻撃スキル詳細生成
-	void CreateAttackSkill(short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		skillStats.emplace_back(new SkillStats(SKILL_POWER, characterStats, tag));
+	void CreateAttackSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, characterStats, tag));
 		ColliderToSetSkill();
 	}
 	// バフ/デバフスキル詳細生成
-	void CreateModifierSkill(short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		skillStats.emplace_back(new SkillStats(SKILL_POWER, SKILL_TIME, tag));
+	void CreateModifierSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, SKILL_TIME, tag));
 		ColliderToSetSkill();
 	}
 
 	// コライダーにスキル詳細を設定
 	void ColliderToSetSkill(void) {
-		for (SkillStats*& skill : skillStats) {
-			for (ColliderBase*& coll : collider) {
+		for (const SkillStats* skill : skillStats) {
+			for (ColliderBase* coll : collider) {
 				if (skill->COLL_TAG == coll->GetTag() || skill->COLL_TAG == COLLIDER_TAG::NON) { coll->SetSkillStats(skill); }
 			}
 		}

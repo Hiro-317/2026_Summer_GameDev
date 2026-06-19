@@ -20,8 +20,10 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Vector3& angle, const Vector3& playerPos,
-		const std::function<void(void)> resetAngle,
+		Vector3& pos, Vector3& angle, 
+		const std::vector<const Vector3*> playerPos,
+		const std::function<int(void)> GetTarget,
+		const std::function<void(void)> ResetAngle,
 		const std::function<void(void)> headbuttChangeState
 	);
 	~TomatoBossMoveState()override = default;
@@ -60,10 +62,11 @@ private:
 	Vector3& angle;
 
 	// プレイヤーの座標の読み取り
-	const Vector3& playerPos;
+	const std::vector<const Vector3*> playerPos;
 
-	// 角度を戻すポインタ
-	const std::function<void(void)> resetAngle;
+	const std::function<int(void)> GetTarget;
+		// 角度を戻すポインタ
+	const std::function<void(void)> ResetAngle;
 
 	// 頭突きに移行するポインタ
 	const std::function<void(void)> headbuttChangeState;

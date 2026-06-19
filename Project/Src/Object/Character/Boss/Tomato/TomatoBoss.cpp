@@ -25,7 +25,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../UI/HitUI/HitUI.h"
 
-TomatoBoss::TomatoBoss(const Vector3& playerPos) :
+TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
 	CharacterBase(
 		"TomatoBossParameter",
 		"TomatoBossHP",
@@ -44,6 +44,15 @@ TomatoBoss::TomatoBoss(const Vector3& playerPos) :
 	isOwnOperator = true;
 
 	rockHit = false;
+
+	targetNum = 0;
+
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		damaged.emplace_back(0);
+	}
+
+	mostDamaged = 0;
 }
 
 void TomatoBoss::CharacterLoad(void)
@@ -133,9 +142,9 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, playerPos, characterStats, *collParam));
-	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, characterStats, *collParam));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, playerPos, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 
 	// まとめて読み込み処理
 	for (ActorBase*& c : subObjArray) { c->Load(); }
@@ -155,6 +164,7 @@ void TomatoBoss::CharacterLoad(void)
 			trans.pos, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
+			[&]() { return targetNum; },
 			// 頭突きへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::HEADBUTT); },
 			// 移動への状態遷移関数のポインタ
@@ -182,6 +192,7 @@ void TomatoBoss::CharacterLoad(void)
 			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoHeadbuttCollOperator>(),
+			[&]() { return targetNum; },
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
@@ -203,6 +214,7 @@ void TomatoBoss::CharacterLoad(void)
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
+			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// 移動後攻撃に状態遷移関数のポインタ
@@ -222,6 +234,7 @@ void TomatoBoss::CharacterLoad(void)
 			trans.pos, trans.angle, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoTackleCollOperator>(),
+			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// XZコライダを消す
@@ -245,6 +258,8 @@ void TomatoBoss::CharacterLoad(void)
 			SubObjSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り
 			trans.pos, isGround,
+			// 最与ダメプレイヤーをターゲットにする
+			[&]() { return targetNum; },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// 攻撃時に当たり判定を消すように
@@ -263,7 +278,8 @@ void TomatoBoss::CharacterLoad(void)
 	// HPバー生成
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
-			characterStats,
+			characterStats.hp,
+			characterStats.hpMax.Value(),
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
@@ -293,19 +309,19 @@ void TomatoBoss::CharacterUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	static int i = 0;
+	// ボスのHPがゼロになったとき
 	if (characterStats.hp <= 0) {
-		if (i == 0) {
-			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, 120);
+		// 初めて入ったら画面揺れ
+		if (gameOverCnt == 0) {
+			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, GAMECLEAR_CHANGE_TIME);
 		}
-		i++;
-		trans.scale += Vector3(0.75f)*i;
-		coolTime = 10000;
+		gameOverCnt++;
+		trans.scale += Vector3(0.75f) * (float)gameOverCnt++;
 		ChangeState((int)STATE::IDLE);
 
-		if (i > 120) {
+		if (gameOverCnt > GAMECLEAR_CHANGE_TIME) {
 
-			i = 0;
+			gameOverCnt = 0;
 			isDeath = true;
 		}
 	}
@@ -325,15 +341,23 @@ void TomatoBoss::ReceptionUpdate(void)
 		ChangeState((int)dataPtr->inform);
 		delete dataPtr;
 	}
-	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>(operatorSenderId))
-	{
-		SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
+	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>()) {
 		characterStats.hp -= dataPtr->damage;
-		if (dataPtr->clitical) {
-			GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+
+		if (dataPtr->header.senderId == Net::GetIns().GetSenderId()) {
+			SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
+			if (dataPtr->clitical) {
+				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+			}
+			GameScene::HitStop(4);
+			SetInviCounter(150);
 		}
-		GameScene::HitStop(4);
-		SetInviCounter(150);
+
+		delete dataPtr;
+	}
+	while (MsgDataBossTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTarget>(operatorSenderId)) {
+
+		targetNum = (int)dataPtr->targetNum;
 
 		delete dataPtr;
 	}
@@ -401,15 +425,36 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			bool isClitical = false;
 			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
 
-			SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
+			// ホストならそのままUI描画
+			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
+				SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
+			}
+
+			// ダメージ減らす
 			characterStats.hp -= damage;
+
+			// ダメージとクリティカル情報を送信する
+			Net::GetIns().Send(MsgDataBossHit(damage, isClitical), other.GetSkillStats().operatorSenderId);
+
+			// 与ダメを足す
+			damaged[static_cast<int>(other.GetSkillStats().operatorSenderId)] += damage;
+
+			// 与ダメの最大値を探す
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				if (mostDamaged < damaged.at(id)) {
+					mostDamaged = damaged.at(id);
+					targetNum = id;
+					Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
+				}
+			}
+			// クリティカルなら揺らす
 			if (isClitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
 			}
 			GameScene::HitStop(4);
 			SetInviCounter(150);
-			
-			Net::GetIns().Send(MsgDataBossHit(damage, isClitical));
+
 			break;
 		}
 		}

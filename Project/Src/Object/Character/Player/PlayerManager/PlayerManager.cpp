@@ -1,6 +1,5 @@
 #include "PlayerManager.h"
 
-#include "../../../../Manager/Net/NetWorkManager.h"
 
 PlayerManager::PlayerManager()
 {
@@ -14,11 +13,21 @@ void PlayerManager::Load(void)
 {
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		
 		playerInfo.emplace_back(PlayerFactory::CreatePlayer((MSG_SENDER_ID)id));
 	}
+	
+
+	std::vector<Vector3> pos;
 	for (PlayerInfo& info : playerInfo) {
 		info.instance->Load();
+		
+		// 自身以外のプレイヤーの座標を渡す
+		if (info.instance->GetOperatorSenderId() != Net::GetIns().GetSenderId()) {
+			playerInfo.at((int)Net::GetIns().GetSenderId()).instance->SetOtherPlayerTrans(&info.instance->GetTrans());
+		}
 	}
+
 }
 
 void PlayerManager::Init(void)
@@ -32,13 +41,6 @@ void PlayerManager::Update(void)
 {
 	for (PlayerInfo& info : playerInfo) {
 		info.instance->Update();
-	}
-}
-
-void PlayerManager::SendUpdate(void)
-{
-	for (PlayerInfo& info : playerInfo) {
-		info.instance->SendUpdate();
 	}
 }
 
@@ -63,6 +65,13 @@ void PlayerManager::Release()
 	}
 }
 
+void PlayerManager::AlphaDraw(void)
+{
+	for (PlayerInfo& info : playerInfo) {
+		info.instance->AlphaDraw();
+	}
+}
+
 void PlayerManager::ReceptionUpdate(void)
 {
 	for (PlayerInfo& info : playerInfo) {
@@ -70,9 +79,9 @@ void PlayerManager::ReceptionUpdate(void)
 	}
 }
 
-void PlayerManager::AlphaDraw(void)
+void PlayerManager::SendUpdate(void)
 {
 	for (PlayerInfo& info : playerInfo) {
-		info.instance->AlphaDraw();
+		info.instance->SendUpdate();
 	}
 }

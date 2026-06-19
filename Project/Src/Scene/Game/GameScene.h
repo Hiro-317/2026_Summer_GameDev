@@ -47,8 +47,12 @@ public:
 	static void Shake(ShakeKinds kinds = ShakeKinds::DIAG, ShakeSize size = ShakeSize::MEDIUM, int time = 20);
 
 private:
+
 	// 当たり判定管理クラス
 	CollisionManager* collision;
+
+	// カメラ状態変更フラグ
+	bool focusFlg;
 
 #pragma region 画面演出用
 	// ヒットストップカウンター

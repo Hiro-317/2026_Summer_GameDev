@@ -41,6 +41,8 @@ enum class MSG_DATA_TYPE
 	PlayerHp,
     // <ホスト>プレイヤー：被ダメ
     PlayerDamage,
+    // <ホスト>プレイヤー：ミスUIパケット
+    PlayerMissNotice,
     // <クライアント>プレイヤー：状態
     PlayerState,
     // <クライアント>当たり判定情報送信構造体
@@ -52,6 +54,8 @@ enum class MSG_DATA_TYPE
     BossInform,
     // <ホスト/クライアント>ボス : HPとクリティカル情報
     BossHit,
+    // <ホスト>ボスのターゲット情報
+    BossTarget,
 
 	Max
 };
@@ -515,6 +519,33 @@ struct MsgDataPlayerHp
     }
 };
 
+// <ホスト>ミスUI送信構造体
+struct MsgDataPlayerMissNotice
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerMissNotice;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // ミスを描画する
+    MSG_SENDER_ID playerNo;
+
+    MsgDataPlayerMissNotice(MSG_SENDER_ID playerNo) :
+        header(DATA_TYPE),
+        playerNo(playerNo)
+    {
+    }
+    MsgDataPlayerMissNotice(void) :
+        header(DATA_TYPE),
+        playerNo()
+    {
+    }
+};
+
 // <ホスト>被ダメ送信構造体
 struct MsgDataPlayerState
 {
@@ -684,6 +715,32 @@ struct MsgDataBossHit
         header(DATA_TYPE),
         damage(),
         clitical()
+    {
+    }
+};
+
+// <ホスト>ボスターゲット情報送信構造体
+struct MsgDataBossTarget
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossTarget;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    unsigned char targetNum;
+
+    MsgDataBossTarget(unsigned char targetNum) :
+        header(DATA_TYPE),
+        targetNum(targetNum)
+    {
+    }
+    MsgDataBossTarget(void) :
+        header(DATA_TYPE),
+        targetNum()
     {
     }
 };
