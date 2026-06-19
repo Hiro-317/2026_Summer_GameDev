@@ -246,16 +246,20 @@ void MultiLobbyScene::Update(void)
 
 		case MsgDataConnectInform::INFORM_TYPE::Connect: {
 
-			// 現状の選択キャラを送る
-			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			if (Net::GetIns().IsHost()) {
+				// 現状の選択キャラを送る
+				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 
-				if (id == (int)dataPtr->header.senderId) { continue; }
+					if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+					if (id == (int)dataPtr->header.senderId) { continue; }
 
-				Net::GetIns().Send(
-					MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
-					(MSG_SENDER_ID)id,
-					dataPtr->header.senderId
-				);
+					Net::GetIns().Send(
+						MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
+						(MSG_SENDER_ID)id,
+						dataPtr->header.senderId
+					);
+
+				}
 			}
 
 			// ボタンごとの選択状態を更新
@@ -298,7 +302,7 @@ void MultiLobbyScene::Update(void)
 	}
 
 	// 選択キャラの受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true, true)) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true)) {
 
 		// 受け取ったキャラタイプを保存する
 		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);

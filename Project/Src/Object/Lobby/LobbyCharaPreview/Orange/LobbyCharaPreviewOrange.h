@@ -5,10 +5,12 @@
 class LobbyCharaPreviewOrange : public LobbyCharaPreviewBase
 {
 public:
-	LobbyCharaPreviewOrange(const Vector3& pos) : LobbyCharaPreviewBase(pos) {}
+	LobbyCharaPreviewOrange(const Vector3& pos, unsigned char operatorNumber) : LobbyCharaPreviewBase(pos, operatorNumber) {}
 	~LobbyCharaPreviewOrange()override = default;;
 
-	void Load(void)override {
+private:
+
+	void CharacterLoad(void)override {
 		// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
 		trans.Load("Charactor/Orange/OrangeModel");
 

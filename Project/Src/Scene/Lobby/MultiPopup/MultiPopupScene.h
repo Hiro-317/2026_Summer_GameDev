@@ -58,6 +58,10 @@ private:
 	const std::string CONTROLLER_ENTER_KEY_PATH = DIRECTORY_PATH + "NowSelectController.png";
 	const std::string KEYBOARD_ENTER_KEY_PATH = DIRECTORY_PATH + "NowSelectKeyboard.png";
 
+	// ‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚Ìã‚É•\¦‚·‚éŒˆ’èƒL[
+	const std::string CONTROLLER_EXIT_KEY_PATH = DIRECTORY_PATH + "ExitController.png";
+	const std::string KEYBOARD_EXIT_KEY_PATH = DIRECTORY_PATH + "ExitKeyboard.png";
+
 	// ````````````````````````````‰æ‘œ‚ÌƒpƒX
 
 	// Še‰æ‘œ‚Ì•`‰æÀ•W`````````````````````````
@@ -74,6 +78,9 @@ private:
 	// ‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚Ìã‚É•\¦‚·‚éŒˆ’èƒL[‚Ì‘Š‘ÎÀ•W
 	const Vector2I ENTER_KEY_LOCAL_POS = Vector2I(0, 195);
 	const float ENTER_KEY_LOCAL_POS_EASING_RATE = 100.0f;
+
+	// ‰æ–Ê¶ã‚É”z’u‚·‚é‚Æ‚¶‚éƒL[
+	const Vector2I EXIT_KEY_POS = Vector2I(288, 131);
 
 	// `````````````````````````Še‰æ‘œ‚Ì•`‰æÀ•W
 
@@ -98,6 +105,9 @@ private:
 
 	// ‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚Ìã‚É•\¦‚·‚éŒˆ’èƒL[
 	int enterKeyImage[2];
+
+	// ‰æ–Ê¶ã‚É”z’u‚·‚é‚Æ‚¶‚éƒL[
+	int exitKeyImage[2];
 
 	// ``````````````````‰æ‘œƒnƒ“ƒhƒ‹
 

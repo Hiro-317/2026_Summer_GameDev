@@ -69,12 +69,12 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 	case CHARA_TYPE::None: { return; }	// 未選択
 
 	case CHARA_TYPE::Orange: {	// オレンジ
-		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId]);
+		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 
 	case CHARA_TYPE::Tomato: {	// トマト
-		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId]);
+		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 

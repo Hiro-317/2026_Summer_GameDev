@@ -23,6 +23,13 @@ public:
 	const CHARA_TYPE GetCharaType(void) { return selectCharaType; }
 private:
 
+#pragma region 定数定義
+
+	const Vector2I EXIT_IMAGE_POS = Vector2I(174, 77);
+
+#pragma endregion
+
+
 	// 枠の画像
 	int frameImage;
 
@@ -32,8 +39,12 @@ private:
 	// 決定キーの画像
 	int enterImage[2];
 
-	// 矢印の拡大演出カウンター
+	// とじるキーの画像
+	int exitImage[2];
+
+	// 拡大演出カウンター
 	float easingCounter;
+	// 拡大演出の最終的な倍率
 	float easingRate;
 
 	// 選択中キャラのプレビューオブジェクト配列

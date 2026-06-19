@@ -1,12 +1,17 @@
 #include "LobbyCharaPreviewBase.h"
 
+#include "../../../Manager/Net/NetWorkManager.h"
+
 #include "../../Common/AnimationController/AnimationController.h"
 
-LobbyCharaPreviewBase::LobbyCharaPreviewBase(const Vector3& pos) :
+LobbyCharaPreviewBase::LobbyCharaPreviewBase(const Vector3& pos, unsigned char operatorNumber) :
 	ActorBase(),
 
 	anime(nullptr),
-	playAnimeType(0)
+	playAnimeType(0),
+
+	OPERATOR_IMAGE_PATH("Data/Image/Lobby/P" + std::to_string(operatorNumber) + ".png"),
+	operatorImage(-1)
 {
 	trans.pos = pos;
 }
@@ -15,6 +20,13 @@ void LobbyCharaPreviewBase::AnimationControllerCreate(void)
 {
 	// 生成していなければアニメーションコントローラーを生成
 	if (anime == nullptr) { anime = new AnimationController(trans.model); }
+}
+
+void LobbyCharaPreviewBase::Load(void)
+{
+	operatorImage = LoadGraph(OPERATOR_IMAGE_PATH.c_str());
+
+	CharacterLoad();
 }
 
 void LobbyCharaPreviewBase::SubInit(void)
@@ -36,6 +48,11 @@ void LobbyCharaPreviewBase::Update(void)
 	if (anime) { anime->Update(); }
 }
 
+void LobbyCharaPreviewBase::SubDraw(void)
+{
+	DrawBillboard3D((trans.pos + Vector3::Yonly(600.0f)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+}
+
 void LobbyCharaPreviewBase::SubRelease(void)
 {
 	// アニメーションコントローラーを削除
@@ -44,6 +61,8 @@ void LobbyCharaPreviewBase::SubRelease(void)
 		delete anime;
 		anime = nullptr;
 	}
+
+	DeleteGraph(operatorImage);
 }
 
 void LobbyCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType)

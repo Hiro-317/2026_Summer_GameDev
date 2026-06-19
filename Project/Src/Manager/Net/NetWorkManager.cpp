@@ -78,7 +78,9 @@ void NetWorkManager::HostingUpdate(void)
             Send(MsgDataConnectStatus(connectStatus));
 
             // 新規接続としてキューに情報を保持する
-            msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)connectInfo.back().senderId].emplace_back(new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect));
+            MsgDataConnectInform* connectInform = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect);
+            connectInform->header.senderId = connectInfo.back().senderId;
+            msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)connectInfo.back().senderId].emplace_back(connectInform);
 
             break;
         }
@@ -138,7 +140,9 @@ void NetWorkManager::ConnectingUpdate(void)
         if (event.type == ENET_EVENT_TYPE_CONNECT) {
             state = NetState::Connected;
             // 新規接続としてキューに情報を保持する
-            msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect));
+            MsgDataConnectInform* connectInform = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect);
+            connectInform->header.senderId = HOST_SENDER_ID;
+            msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(connectInform);
             break;
         }
         if (event.type == ENET_EVENT_TYPE_DISCONNECT) { DisconnectionComplete(); break; }
@@ -166,6 +170,12 @@ void NetWorkManager::ConnectedUpdate(void)
                     if (it->peer != event.peer) { continue; }
                     // 接続状況を更新
                     connectStatus.LostMember(it->senderId);
+
+                    // 切断があったことを保存する
+                    MsgDataConnectInform* connectInform = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Disconnect);
+                    connectInform->header.senderId = it->senderId;
+                    msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)it->senderId].emplace_back(connectInform);
+
                     // 接続情報を消去
                     connectInfo.erase(it);
                     // 新しい接続状況を送る
@@ -174,8 +184,15 @@ void NetWorkManager::ConnectedUpdate(void)
                 }
             }
             else {
-                
+
+                // 切断があったことを保存する
+                MsgDataConnectInform* connectInform = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Disconnect);
+                connectInform->header.senderId = HOST_SENDER_ID;
+                msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(connectInform);
+
+                break;
             }
+
             continue;
         }
 

@@ -18,6 +18,7 @@ MultiPopupScene::MultiPopupScene() :
 	selectFrameImage(-1),
 	selectArrowImage(-1),
 	enterKeyImage(-1,-1),
+	exitKeyImage(-1,-1),
 
 	selectEasingCounter(0.0f),
 	selectEasing(0.0f)
@@ -45,6 +46,10 @@ void MultiPopupScene::Load(void)
 	// 選択中のボタンの上に表示する決定キー
 	enterKeyImage[(int)false] = LoadGraph(KEYBOARD_ENTER_KEY_PATH.c_str());
 	enterKeyImage[(int)true] = LoadGraph(CONTROLLER_ENTER_KEY_PATH.c_str());
+
+	// 画面左上に配置するとじるキー
+	exitKeyImage[(int)false] = LoadGraph(KEYBOARD_EXIT_KEY_PATH.c_str());
+	exitKeyImage[(int)true] = LoadGraph(CONTROLLER_EXIT_KEY_PATH.c_str());
 
 #pragma endregion
 }
@@ -158,11 +163,11 @@ void MultiPopupScene::Draw(void)
 	// ポップアップフレーム
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1, 0, popupFrameImage, true);
 
-	//static Vector2I tempPos = Vector2I();
-	//if (CheckHitKey(KEY_INPUT_UP) == 1) { tempPos.y--; }
-	//if (CheckHitKey(KEY_INPUT_DOWN) == 1) { tempPos.y++; }
-	//if (CheckHitKey(KEY_INPUT_LEFT) == 1) { tempPos.x--; }
-	//if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x++; }
+	static Vector2I tempPos = Vector2I();
+	if (CheckHitKey(KEY_INPUT_UP) == 1) { tempPos.y--; }
+	if (CheckHitKey(KEY_INPUT_DOWN) == 1) { tempPos.y++; }
+	if (CheckHitKey(KEY_INPUT_LEFT) == 1) { tempPos.x--; }
+	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x++; }
 	
 	// 選択肢
 	for (int i = 0; i < (int)SELECT::Max; i++) {
@@ -183,6 +188,9 @@ void MultiPopupScene::Draw(void)
 		enterKeyImage[(int)Key::GetIns().LastInputKinds()],
 		true
 	);
+
+	// 画面左上に配置するとじるキー
+	DrawRotaGraph(EXIT_KEY_POS.x, EXIT_KEY_POS.y, 1 + selectEasing, 0, exitKeyImage[(int)Key::GetIns().LastInputKinds()], true);
 
 }
 

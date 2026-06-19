@@ -14,6 +14,7 @@ CharaSelectPreviewManager::CharaSelectPreviewManager() :
 
 	frameImage(-1), arrowImage(-1),
 	enterImage(-1, -1),
+	exitImage(-1, -1),
 
 
 	easingCounter(0.0f), easingRate(0.0f)
@@ -22,11 +23,21 @@ CharaSelectPreviewManager::CharaSelectPreviewManager() :
 
 void CharaSelectPreviewManager::Load(void)
 {
+#pragma region 画像の読み込み
+	// 枠
 	frameImage = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectFrame.png");
+
+	// 矢印
 	arrowImage = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectArrow.png");
 
+	// 決定キー
 	enterImage[(int)true] = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectEnterController.png");
 	enterImage[(int)false] = LoadGraph("Data/Image/Lobby/CharaSelect/CharaSelectEnterKeyboard.png");
+
+	// とじるキー
+	exitImage[(int)true] = LoadGraph("Data/Image/Lobby/ExitController.png");
+	exitImage[(int)false] = LoadGraph("Data/Image/Lobby/ExitKeyboard.png");
+#pragma endregion
 
 	// プレビュー生成ラムダ関数
 	auto CharaPreviewCreate = [&](CHARA_TYPE type)->CharaSelectPreviewBase* {
@@ -98,6 +109,9 @@ void CharaSelectPreviewManager::Draw(void)
 
 	// 決定キーの描画
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y - 48, 1 + easingRate, 0, enterImage[(int)Key::GetIns().LastInputKinds()], true);
+
+	// とじるキーの描画
+	DrawRotaGraph(EXIT_IMAGE_POS.x, EXIT_IMAGE_POS.y, 1 + easingRate, 0, exitImage[(int)Key::GetIns().LastInputKinds()], true);
 
 }
 
