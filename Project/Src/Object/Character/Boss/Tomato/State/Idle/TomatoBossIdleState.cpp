@@ -38,7 +38,7 @@ void TomatoBossIdleState::Enter(void)
 
 void TomatoBossIdleState::Update(void)
 {
-	if (cnt > 0) {
+	if (cnt > 0 || !Net::GetIns().IsHost()) {
 		cnt--;
 		return;
 	}
