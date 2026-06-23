@@ -231,7 +231,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 	if (state == (int)STATE::DEATH) { return; }
 
 	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK:		// ボスの攻撃
+	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
 		// ダメージ状態に遷移
 		ChangeState((int)STATE::DAMAGE);
 		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
@@ -241,12 +241,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		// ダメージ値分HPを減らす
 		characterStats.hp -= damage;
 		break;
-
-	case COLLIDER_TAG::STAGE:
-		if (other.GetShape() == ColliderBase::SHAPE::BOX) {
-
-			shadowPos.emplace(ownTag, trans.pos);
-		}
+	}
 	}
 }
 
