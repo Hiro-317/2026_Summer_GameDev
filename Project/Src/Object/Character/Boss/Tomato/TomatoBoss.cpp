@@ -459,10 +459,16 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			break;
 		}
 		}
-		if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
-			if (other.GetTag() == COLLIDER_TAG::STAGE) {
+	}
+	if (ownTag == COLLIDER_TAG::BOSS) {
+		if (other.GetTag() == COLLIDER_TAG::STAGE) {
+			if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 
 				rockHit = true;
+			}
+			if (other.GetShape() == ColliderBase::SHAPE::BOX) {
+
+				shadowPos.emplace(ownTag, trans.pos);
 			}
 		}
 	}

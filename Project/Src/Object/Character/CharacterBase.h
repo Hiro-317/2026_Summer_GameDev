@@ -87,6 +87,9 @@ protected:
 	// 死んだかどうか
 	bool isDeath;
 
+	// 影が出るキャラと座標
+	std::map<COLLIDER_TAG, Vector3> shadowPos;
+
 	// ステートの追加
 	void AddState(int stateNum, CharacterStateBase* stateIns) { stateMap.emplace(stateNum, stateIns); }
 

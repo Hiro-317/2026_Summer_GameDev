@@ -241,8 +241,13 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		// ダメージ値分HPを減らす
 		characterStats.hp -= damage;
 		break;
-	}
 
+	case COLLIDER_TAG::STAGE:
+		if (other.GetShape() == ColliderBase::SHAPE::BOX) {
+
+			shadowPos.emplace(ownTag, trans.pos);
+		}
+	}
 }
 
 void PlayerBase::CharacterRelease(void)
