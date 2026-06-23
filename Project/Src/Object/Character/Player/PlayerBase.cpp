@@ -312,7 +312,7 @@ void PlayerBase::AnimePlay(int type, bool loop)
 }
 void PlayerBase::ReceptionUpdate(void)
 {
-	// 座標・角度
+	// 座標・角度の同期
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
@@ -369,6 +369,7 @@ void PlayerBase::ReceptionUpdate(void)
 void PlayerBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost() || isOwnOperator) {
+		// 自身の座標と角度を
 		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
 	} 
 }

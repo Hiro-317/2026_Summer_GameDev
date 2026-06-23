@@ -9,17 +9,20 @@ PlayerManager::~PlayerManager()
 {
 }
 
+// ロード
 void PlayerManager::Load(void)
 {
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 		
+		// プレイヤーを生成
 		playerInfo.emplace_back(PlayerFactory::CreatePlayer((MSG_SENDER_ID)id));
 	}
 	
-
 	std::vector<Vector3> pos;
+
 	for (PlayerInfo& info : playerInfo) {
+		// プレイヤーのロード
 		info.instance->Load();
 		
 		// 自身以外のプレイヤーの座標を渡す
@@ -30,6 +33,7 @@ void PlayerManager::Load(void)
 
 }
 
+// 初期化処理
 void PlayerManager::Init(void)
 {
 	for (PlayerInfo& info : playerInfo) {
@@ -37,6 +41,7 @@ void PlayerManager::Init(void)
 	}
 }
 
+// 更新処理
 void PlayerManager::Update(void)
 {
 	for (PlayerInfo& info : playerInfo) {
@@ -44,6 +49,7 @@ void PlayerManager::Update(void)
 	}
 }
 
+// 描画処理
 void PlayerManager::Draw(void)
 {
 	for (PlayerInfo& info : playerInfo) {
@@ -51,6 +57,7 @@ void PlayerManager::Draw(void)
 	}
 }
 
+// UI描画処理
 void PlayerManager::UiDraw(void)
 {
 	for (PlayerInfo& info : playerInfo) {
@@ -58,6 +65,7 @@ void PlayerManager::UiDraw(void)
 	}
 }
 
+// 解放処理
 void PlayerManager::Release()
 {
 	for (PlayerInfo& info : playerInfo) {

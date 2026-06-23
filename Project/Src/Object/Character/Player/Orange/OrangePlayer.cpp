@@ -24,11 +24,13 @@
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 	PlayerBase(
 		operatorSenderId,
+
 		"OrangeParameter", 
 		"PlayerHP",
 		"PlayerAttackPower",
 		"PlayerDefensePower",
 		"PlayerMoveSpeed",
+
 		"Data/Parameter/Character/Player/Orange/", 
 		"Orange/OrangeModel")
 {
