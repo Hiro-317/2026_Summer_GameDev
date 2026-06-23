@@ -20,6 +20,17 @@ public:
 		std::string modelPath
 	);
 
+	/// <summary>
+	/// プレイヤーベースのコンストラクタ
+	/// </summary>
+	/// <param name="operatorSenderId">誰が操作権を持つか</param>
+	/// <param name="fileName">パラメーターのパス</param>
+	/// <param name="hpParameterID">HPパラメーターの名前</param>
+	/// <param name="attackPowerParameterID">攻撃力パラメーターの名前</param>
+	/// <param name="defensePowerParameterID">防御力パラメーターの名前</param>
+	/// <param name="moveSpeedParameterID">移動速度パラメーターの名前</param>
+	/// <param name="parameterPath">外部からパラメーターを読み込むためのファイルパス</param>
+	/// <param name="modelPath">プレイヤーモデルのファイルパス</param>
 	PlayerBase(
 		MSG_SENDER_ID operatorSenderId,
 
@@ -51,15 +62,19 @@ public:
 		return ret;
 	}
 
+	// ボスの座標取得
 	void SetBossPos(const Vector3* bossPos) { this->bossPos = bossPos; }
 
+	// ロード
 	virtual void PlayerLoad(void) = 0;
 
 	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
 	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
 
+	// 自身以外のプレイヤー座標を取得
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
+	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	virtual void ReceptionUpdate(void)override;
@@ -80,7 +95,10 @@ private:
 
 protected:
 
+	// ステート遷移関数
 	void ChangeState(int state)override;
+
+	// モデルアニメーションプレイ関数
 	void AnimePlay(int type, bool loop = true)override;
 
 #pragma region 定数定義
@@ -173,7 +191,7 @@ protected:
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～移動状態
 	 
-	// 状態の種類瀕死
+	// 状態の種類
 	enum class STATE
 	{
 		NONE = -1,

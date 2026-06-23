@@ -24,11 +24,13 @@
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 	PlayerBase(
 		operatorSenderId,
+
 		"OrangeParameter", 
 		"PlayerHP",
 		"PlayerAttackPower",
 		"PlayerDefensePower",
 		"PlayerMoveSpeed",
+
 		"Data/Parameter/Character/Player/Orange/", 
 		"Orange/OrangeModel")
 {
@@ -154,8 +156,9 @@ void OrangePlayer::PlayerLoad(void)
 
 	// O’iUŒ‚ó‘Ô‚ğ’Ç‰Á‚·‚é
 	AddState(
-		(int)STATE::SKILL_1,
-		new PlayerTripleAttackState(
+		(int)STATE::SKILL_1,	// stateNum
+
+		new PlayerTripleAttackState(	// stateIns
 			// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
