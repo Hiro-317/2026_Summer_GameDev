@@ -91,4 +91,7 @@ private:
 	Vector3 moveDir;
 
 	float time;
+
+	// プレイヤーターゲット
+	int target;
 };

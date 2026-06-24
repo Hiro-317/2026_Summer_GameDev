@@ -14,11 +14,11 @@ MultiPopupScene::MultiPopupScene() :
 	select(SELECT::None),
 
 	popupFrameImage(-1),
-	selectImage(-1,-1),
+	selectImage{ -1, -1 },
 	selectFrameImage(-1),
 	selectArrowImage(-1),
-	enterKeyImage(-1,-1),
-	exitKeyImage(-1,-1),
+	enterKeyImage{ -1,-1 },
+	exitKeyImage{ -1, -1 },
 
 	selectEasingCounter(0.0f),
 	selectEasing(0.0f)

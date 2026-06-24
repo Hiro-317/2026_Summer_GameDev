@@ -31,6 +31,7 @@ TomatoBossIdleState::TomatoBossIdleState(
 void TomatoBossIdleState::Enter(void)
 {
 	cnt = CoolTime();
+	target = GetTarget();
 	if (Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeIdle));
 	}
@@ -38,11 +39,11 @@ void TomatoBossIdleState::Enter(void)
 
 void TomatoBossIdleState::Update(void)
 {
-	if (cnt > 0) {
+	if (cnt > 0 || !Net::GetIns().IsHost()) {
 		cnt--;
 		return;
 	}
-	float distance = (*playerPos.at(GetTarget()) - pos).Length();
+	float distance = (*playerPos.at(target) - pos).Length();
 	int luck = GetRand(10000);
 
 	if (luck <= 4000) {

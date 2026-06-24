@@ -9,12 +9,12 @@
 #include "CharaSelectPreview/Unknow/UnknowCharaSelectPreview.h"
 
 CharaSelectPreviewManager::CharaSelectPreviewManager() :
-	charaPreview(nullptr, nullptr),
+	charaPreview{nullptr, nullptr},
 	selectCharaType(CHARA_TYPE::None),
 
 	frameImage(-1), arrowImage(-1),
-	enterImage(-1, -1),
-	exitImage(-1, -1),
+	enterImage{ -1, -1 },
+	exitImage{ -1, -1 },
 
 
 	easingCounter(0.0f), easingRate(0.0f)
