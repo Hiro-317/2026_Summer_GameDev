@@ -25,6 +25,7 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
 		Vector3& pos, const bool& isGround,
+		const std::vector<const Vector3*> playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
@@ -75,6 +76,9 @@ private:
 
 	// 設置判定の読み取り
 	const bool& isGround;
+
+	// プレイヤーの座標
+	const std::vector<const Vector3*> playerPos;
 
 	// コリジョンオペレーター
 	TomatoStampCollOperator* collOperator;

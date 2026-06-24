@@ -142,7 +142,7 @@ void TomatoBoss::CharacterLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, playerPos, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, operatorSenderId, characterStats, *collParam));
 	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 
@@ -258,6 +258,8 @@ void TomatoBoss::CharacterLoad(void)
 			SubObjSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り
 			trans.pos, isGround,
+			// プレイヤーの座標ポインタ
+			playerPos,
 			// 最与ダメプレイヤーをターゲットにする
 			[&]() { return targetNum; },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -470,10 +472,6 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 
 				rockHit = true;
-			}
-			if (other.GetShape() == ColliderBase::SHAPE::BOX) {
-
-				shadowPos.emplace(ownTag, trans.pos);
 			}
 		}
 	}
