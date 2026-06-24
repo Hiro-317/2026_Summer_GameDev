@@ -7,7 +7,7 @@
 #include "Orange/LobbyCharaPreviewOrange.h"
 
 LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
-	charaPreview(nullptr, nullptr, nullptr, nullptr)
+	charaPreview{ nullptr, nullptr, nullptr, nullptr }
 {
 }
 

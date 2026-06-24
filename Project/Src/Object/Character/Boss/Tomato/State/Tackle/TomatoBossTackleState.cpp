@@ -36,6 +36,7 @@ void TomatoBossTackleState::Enter(void)
 	time = 0;
 	rotPow = ROTATION_POW;
 	DeleteColl();
+	target = GetTarget();
 	collOperator->ResetStageHit();
 	collOperator->SetDrawArea(true);
 	SetCoolTime();
@@ -57,7 +58,7 @@ void TomatoBossTackleState::Update(void)
 		time++;
 
 		// ‰ñ“]‚ÌXV
-		moveDir = (*playerPos.at(GetTarget()) - pos).Normalized();
+		moveDir = (*playerPos.at(target) - pos).Normalized();
 		angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
 		collOperator->SetViewPos(Vector3::XZonly(pos.x, pos.z));

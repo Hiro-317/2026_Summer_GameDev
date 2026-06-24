@@ -29,7 +29,8 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 
 void TomatoBossHeadbuttState::Enter(void)
 {
-	moveDir = (*playerPos.at(GetTarget()) - pos).Normalized();
+	target = GetTarget();
+	moveDir = (*playerPos.at(target) - pos).Normalized();
 	time = -100;
 	DeleteColl();
 	collOperator->SetDrawArea(true);

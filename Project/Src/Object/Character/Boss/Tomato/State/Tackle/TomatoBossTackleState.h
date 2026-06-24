@@ -108,4 +108,7 @@ private:
 	float rotPow;
 
 	int time;
+
+	// プレイヤーターゲット
+	int target;
 };
