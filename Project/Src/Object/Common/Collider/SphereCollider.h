@@ -16,6 +16,13 @@ public:
 	float GetRadius(void)const { return radius; }
 	void SetRadius(float radius) { this->radius = radius; }
 
+	AABB GetAABB(void) const override {
+		Vector3 p = GetPos();
+		Vector3 r = radius;
+
+		return AABB(p - r, p + r);
+	}
+
 	void DrawDebug(unsigned int color = 0xffffff)override {
 		DrawSphere3D(GetPos().ToVECTOR(), radius, 12, color, color, true);
 	}

@@ -3,82 +3,43 @@
 #include<cmath>
 #include <algorithm>
 
-void CollisionManager::Add(ColliderBase* collider)
-{
-	if (!collider) { return; }
-
-	// タグを見分けて適した配列に格納
-	switch (collider->GetTag())
-	{
-		// 未設定（例外処理）
-	case COLLIDER_TAG::NON:  break;
-
-		//プレイヤー系
-	case COLLIDER_TAG::PLAYER:
-	case COLLIDER_TAG::PLAYER_ATTACK:
-	case COLLIDER_TAG::PLAYER_COMMON:
-
-		playerColliders.emplace_back(collider);
-		break;
-
-		// エネミー系
-	case COLLIDER_TAG::BOSS:
-	case COLLIDER_TAG::ENEMY:
-
-		enemyColliders.emplace_back(collider);
-		break;
-
-		// ステージ系
-	case COLLIDER_TAG::STAGE:
-		stageColliders.emplace_back(collider);
-		break;
-
-	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
-	case COLLIDER_TAG::BOSS_ATTACK:
-
-		enemyPlayerOnlyColliders.emplace_back(collider);
-		break;
-
-	case COLLIDER_TAG::BOSS_ATTACK_AREA:
-
-		enemyAttackAreaColliders.emplace_back(collider);
-		break;
-
-		// それ以外
-	default:
-		otherColliders.emplace_back(collider);
-		break;
-	}
-}
-
 void CollisionManager::Check(void)
 {
-	// プレイヤー系×ステージ系
-	Matching(playerColliders, stageColliders);
+	// チャンク分け
+	BuildChunks();
 
-	// エネミー系×ステージ系
-	Matching(enemyColliders, stageColliders);
+	// ①プレイヤー系 × ステージ系
+	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::Stage);
 
-	// それ以外×ステージ系
-	Matching(otherColliders, stageColliders);
-	
-	// プレイヤー系×エネミー系
-	Matching(playerColliders, enemyColliders);
-	
-	// プレイヤー系×それ以外
-	Matching(playerColliders, otherColliders);
+	// ②エネミー系 × ステージ系
+	Matching(COLLIDER_GROUP::Enemy, COLLIDER_GROUP::Stage);
 
-	// エネミー系×それ以外
-	Matching(enemyColliders, otherColliders);
 
-	// それ以外×それ以外
-	Matching(otherColliders);
+	// ③プレイヤー系 × エネミー系
+	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::Enemy);
 
-	// プレイヤー系×プレイヤーにだけ当たるエネミー
-	Matching(playerColliders, enemyPlayerOnlyColliders);
 
-	// ステージ系×ステージにだけ当たるエネミー
-	Matching(stageColliders, enemyAttackAreaColliders);
+	// ④プレイヤー系 × プレイヤー系にだけ当たるコライダー
+	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::PlayerOnly);
+
+	// ⑤エネミー系 × エネミー系にだけ当たるコライダー
+	Matching(COLLIDER_GROUP::Enemy, COLLIDER_GROUP::EnemyOnly);
+
+	// ⑥ステージ系 × ステージ系にだけ当たるコライダー
+	Matching(COLLIDER_GROUP::Stage, COLLIDER_GROUP::StageOnly);
+
+
+	// ⑦その他 × ステージ系
+	Matching(COLLIDER_GROUP::Other, COLLIDER_GROUP::Stage);
+
+	// ⑧その他 × プレイヤー系
+	Matching(COLLIDER_GROUP::Other, COLLIDER_GROUP::Player);
+
+	// ⑨その他 × エネミー系
+	Matching(COLLIDER_GROUP::Other, COLLIDER_GROUP::Enemy);
+
+	// ⑩その他 × その他
+	Matching(COLLIDER_GROUP::Other);
 }
 
 void CollisionManager::Matching(std::vector<ColliderBase*>& as, std::vector<ColliderBase*>& bs)
@@ -114,6 +75,68 @@ void CollisionManager::Matching(std::vector<ColliderBase*>& s)
 			if (IsHit(s[a], s[b])) {
 				s[a]->CallOnCollision(s[a]->GetTag(), *s[b]);
 				s[b]->CallOnCollision(s[b]->GetTag(), *s[a]);
+			}
+		}
+	}
+}
+
+void CollisionManager::Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB)
+{
+	ColliderGroupData& a = groupColliders[(int)groupA];
+	ColliderGroupData& b = groupColliders[(int)groupB];
+
+	// 動的A × 動的B
+	MatchingChunks(a.dynamicChunks, b.dynamicChunks);
+
+	// 動的A × 静的B
+	MatchingChunks(a.dynamicChunks, b.staticChunks);
+
+	// 静的A × 動的B
+	MatchingChunks(a.staticChunks, b.dynamicChunks);
+
+	// 静的A × 静的Bは基本不要
+}
+
+void CollisionManager::Matching(COLLIDER_GROUP group)
+{
+	ColliderGroupData& g = groupColliders[(int)group];
+
+	// 動的同士
+	MatchingChunks(g.dynamicChunks);
+
+	// 動的 × 静的
+	MatchingChunks(g.dynamicChunks, g.staticChunks);
+
+	// 静的同士は基本不要
+}
+
+void CollisionManager::MatchingChunks(ChunkMap& aChunks, ChunkMap& bChunks)
+{
+	for (auto& pair : aChunks) {
+		const ChunkIndex& index = pair.first;
+		ChunkData& aChunk = pair.second;
+
+		auto it = bChunks.find(index);
+		if (it == bChunks.end()) { continue; }
+
+		ChunkData& bChunk = it->second;
+
+		for (ColliderBase* a : aChunk.colliders) {
+			for (ColliderBase* b : bChunk.colliders) {
+				CheckPairOnce(a, b);
+			}
+		}
+	}
+}
+
+void CollisionManager::MatchingChunks(ChunkMap& chunks)
+{
+	for (auto& pair : chunks) {
+		ChunkData& chunk = pair.second;
+
+		for (size_t i = 0; i < chunk.colliders.size(); i++) {
+			for (size_t j = i + 1; j < chunk.colliders.size(); j++) {
+				CheckPairOnce(chunk.colliders[i], chunk.colliders[j]);
 			}
 		}
 	}

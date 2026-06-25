@@ -25,6 +25,9 @@ public:
 		XZ_CIRCLE,
 	};
 
+	// 最小/最大 座標 構造体
+	struct AABB { Vector3 min, max; };
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -39,7 +42,7 @@ public:
 		dynamicFlg(true),
 		pushFlg(true),
 		pushWeight(0),
-		type(type),
+		tag(type),
 		shape(SHAPE::NON),
 		OnCollision(nullptr),
 		skillStats(nullptr)
@@ -90,7 +93,7 @@ public:
 	unsigned char GetPushWeight(void)const { return pushWeight; }
 
 	// 当たり判定のタイプ
-	COLLIDER_TAG GetTag(void)const { return type; }
+	COLLIDER_TAG GetTag(void)const { return tag; }
 
 	// 当たり判定の形状
 	SHAPE GetShape(void)const { return shape; }
@@ -100,6 +103,9 @@ public:
 
 	// 接地判定の呼び出し
 	void CallOnGrounded(void) { OnGrounded(); }
+
+	// 自分が占有している範囲(チャンク分けに使用)
+	virtual AABB GetAABB(void) const = 0;
 
 	// スキル情報参照
 	const SkillStats& GetSkillStats(void)const { return *skillStats; }
@@ -147,7 +153,7 @@ private:
 	
 
 	// 当たり判定タイプ（何と当たったかを見分ける用）
-	COLLIDER_TAG type;
+	COLLIDER_TAG tag;
 
 	// 当たり判定形状
 	SHAPE shape;

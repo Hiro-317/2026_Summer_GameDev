@@ -16,6 +16,15 @@ public:
 	float GetRadius(void)const { return radius; }
 	void SetRadius(float radius) { this->radius = radius; }
 
+	AABB GetAABB(void) const override {
+		Vector3 p = GetPos();
+
+		return AABB(
+			Vector3(p.x - radius, p.y, p.z - radius),
+			Vector3(p.x + radius, p.y, p.z + radius)
+		);
+	}
+
 	void DrawDebug(unsigned int color = 0xffffff)override {}
 
 private:
