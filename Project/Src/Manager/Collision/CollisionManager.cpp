@@ -8,6 +8,8 @@ void CollisionManager::Check(void)
 	// チャンク分け
 	BuildChunks();
 
+	checkedPairs.clear();
+
 	// ①プレイヤー系 × ステージ系
 	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::Stage);
 
@@ -40,44 +42,6 @@ void CollisionManager::Check(void)
 
 	// ⑩その他 × その他
 	Matching(COLLIDER_GROUP::Other);
-}
-
-void CollisionManager::Matching(std::vector<ColliderBase*>& as, std::vector<ColliderBase*>& bs)
-{
-	for (ColliderBase*& a : as) {
-		if (!a) { continue; }
-		if (!a->GetJudge()) { continue; }
-
-		for (ColliderBase*& b : bs) {
-			if (!b) { continue; }
-			if (!b->GetJudge()) { continue; }
-
-			if (IsHit(a, b)) {
-				a->CallOnCollision(a->GetTag(), *b);
-				b->CallOnCollision(b->GetTag(), *a);
-			}
-		}
-	}
-}
-
-void CollisionManager::Matching(std::vector<ColliderBase*>& s)
-{
-	unsigned short size = (unsigned short)s.size();
-
-	for (unsigned short a = 0; a < (size - 1); a++) {
-		if (!s[a]) { continue; }
-		if (!s[a]->GetJudge()) { continue; }
-
-		for (unsigned short b = a + 1; b < size; b++) {
-			if (!s[b]) { continue; }
-			if (!s[b]->GetJudge()) { continue; }
-
-			if (IsHit(s[a], s[b])) {
-				s[a]->CallOnCollision(s[a]->GetTag(), *s[b]);
-				s[b]->CallOnCollision(s[b]->GetTag(), *s[a]);
-			}
-		}
-	}
 }
 
 void CollisionManager::Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB)
@@ -142,8 +106,26 @@ void CollisionManager::MatchingChunks(ChunkMap& chunks)
 	}
 }
 
+void CollisionManager::CheckPairOnce(ColliderBase* a, ColliderBase* b)
+{
+	if (!a || !b) { return; }
+	if (a == b) { return; }
+
+	ColliderPairKey key(a, b);
+	if (checkedPairs.find(key) != checkedPairs.end()) { return; }
+	checkedPairs.insert(key);
+
+	if (IsHit(a, b)) {
+		a->CallOnCollision(a->GetTag(), *b);
+		b->CallOnCollision(b->GetTag(), *a);
+	}
+}
+
 bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 {
+	// 当たり判定フラグを確認
+	if (!a->GetJudge() || !b->GetJudge()) { return false; }
+
 	// ローカル変数で各形状を保持（ゲット関数の呼び出しを1回で済ませるため）
 	const SHAPE aShape = a->GetShape(), bShape = b->GetShape();
 

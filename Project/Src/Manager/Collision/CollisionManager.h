@@ -279,34 +279,17 @@ private:
 		}
 	}
 
-	void CheckPairOnce(ColliderBase* a, ColliderBase* b)
-	{
-		if (!a || !b) { return; }
-		if (a == b) { return; }
-
-		ColliderPairKey key(a, b);
-		if (checkedPairs.find(key) != checkedPairs.end()) { return; }
-		checkedPairs.insert(key);
-
-		if (IsHit(a, b)) {
-			a->CallOnCollision(a->GetTag(), *b);
-			b->CallOnCollision(b->GetTag(), *a);
-		}
-	}
-
 #pragma endregion
 
 
 #pragma region “–‚½‚è”»’è—p
-	void Matching(std::vector<ColliderBase*>& as, std::vector<ColliderBase*>& bs);
-	void Matching(std::vector<ColliderBase*>& s);
-
 	void Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB);
 	void Matching(COLLIDER_GROUP group);
 
 	void MatchingChunks(ChunkMap& aChunks, ChunkMap& bChunks);
 	void MatchingChunks(ChunkMap& chunks);
 
+	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
 
 	bool IsHit(ColliderBase* a, ColliderBase* b);
 
