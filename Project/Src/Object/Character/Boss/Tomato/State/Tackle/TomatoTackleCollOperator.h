@@ -23,10 +23,10 @@ public:
 
 	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
-	void SetPos(Vector3 pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); }
-	void SetViewPos(Vector3 pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
-	void SetAngle(Vector3 angle) { collBack.angle = angle; collFront.angle = angle; }
-	void SetScale(Vector3 scale) { collFront.scale = Vector3(SCALE.x * scale.x, SCALE.y, SCALE.z); }
+	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); }
+	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
+	void SetAngle(const Vector3& angle) { collBack.angle = angle; collFront.angle = angle; }
+	void SetScale(const Vector3& scale) { collFront.scale = Vector3(SCALE.x * scale.x, SCALE.y, SCALE.z); }
 
 	bool GetStageHit(void) { return stageHit; }
 	void ResetStageHit(void) { stageHit = false; }

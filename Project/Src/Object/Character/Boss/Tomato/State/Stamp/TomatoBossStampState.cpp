@@ -1,10 +1,11 @@
-#include "TomatoStampState.h"
+#include "TomatoBossStampState.h"
 
 #include "../../../../../ActorBase.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
-TomatoStampState::TomatoStampState(
+
+TomatoBossStampState::TomatoBossStampState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	TomatoStampCollOperator* collOperator,
@@ -28,7 +29,7 @@ TomatoStampState::TomatoStampState(
 	isAttack = true;
 }
 
-void TomatoStampState::Enter(void)
+void TomatoBossStampState::Enter(void)
 {
 	attackPos = Vector3();
 	attackDistRate = Vector3();
@@ -47,7 +48,7 @@ void TomatoStampState::Enter(void)
 	}
 }
 
-void TomatoStampState::Update(void)
+void TomatoBossStampState::Update(void)
 {
 	if (!isGround || isAttack) {
 		if (isAttack) {
@@ -90,7 +91,7 @@ void TomatoStampState::Update(void)
 	}
 }
 
-void TomatoStampState::Exit(void)
+void TomatoBossStampState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {
@@ -98,6 +99,6 @@ void TomatoStampState::Exit(void)
 	}
 }
 
-void TomatoStampState::AlwaysUpdate(void)
+void TomatoBossStampState::AlwaysUpdate(void)
 {
 }

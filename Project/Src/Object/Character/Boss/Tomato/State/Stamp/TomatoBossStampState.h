@@ -7,7 +7,7 @@
 #include "../../../../../../Common/Vector3.h"
 #include "../../../../../Common/Collider/ColliderBase.h"
 
-class TomatoStampState : public CharacterStateBase
+class TomatoBossStampState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -20,7 +20,7 @@ public:
 	/// <param name="DefaultChangeState">攻撃後の遷移先</param>
 	/// <param name="offCollider">攻撃時のエネミー自体の当たり判定を消すように</param>
 	/// <param name="onCollider">攻撃時のエネミー自体の当たり判定をつけるように</param>
-	TomatoStampState(
+	TomatoBossStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
@@ -32,7 +32,7 @@ public:
 		const std::function<void(void)> SetCoolTime
 	);
 
-	~TomatoStampState()override = default;
+	~TomatoBossStampState()override = default;
 
 	//// 自分の状態に遷移する条件関数
 	//void OwnStateConditionUpdate(void);
