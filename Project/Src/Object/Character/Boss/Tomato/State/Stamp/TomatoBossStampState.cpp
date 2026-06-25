@@ -1,15 +1,15 @@
-#include "TomatoStampState.h"
+#include "TomatoBossStampState.h"
 
 #include "../../../../../ActorBase.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
-TomatoStampState::TomatoStampState(
+
+TomatoBossStampState::TomatoBossStampState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	TomatoStampCollOperator* collOperator,
 	Vector3& pos, const bool& isGround,
-	const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> offCollider,
@@ -17,7 +17,6 @@ TomatoStampState::TomatoStampState(
 	const std::function<void(void)> SetCoolTime
 ) :CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), collOperator(collOperator), isGround(isGround),
-	playerPos(playerPos),
 	GetTarget(GetTarget),
 	DefaultChangeState(DefaultChangeState),
 	offCollider(offCollider),
@@ -30,18 +29,17 @@ TomatoStampState::TomatoStampState(
 	isAttack = true;
 }
 
-void TomatoStampState::Enter(void)
+void TomatoBossStampState::Enter(void)
 {
-	attackPos = collOperator->GetAttackPos();
+	attackPos = Vector3();
 	attackDistRate = Vector3();
-	target = GetTarget();
-	collOperator->SetPos(*playerPos.at(target));
 	collOperator->SetDrawArea(true);
 	nowAttackTime = 0;
 	prevPos = pos.y - 0.5f;
 	attackCnt = 0;
 	isAttack = true;
 	SetCoolTime();
+	target = GetTarget();
 
 	SoundManager::GetIns().Play("StampJump");
 	
@@ -50,7 +48,7 @@ void TomatoStampState::Enter(void)
 	}
 }
 
-void TomatoStampState::Update(void)
+void TomatoBossStampState::Update(void)
 {
 	if (!isGround || isAttack) {
 		if (isAttack) {
@@ -71,7 +69,7 @@ void TomatoStampState::Update(void)
 			if (attackCnt == 0) {
 				SoundManager::GetIns().Play("StampLand");
 				if (Net::GetIns().IsHost()) {
-					collOperator->CollSet(true);
+					collOperator->CollSet(target, true);
 				}
 			}
 			attackCnt++;
@@ -93,14 +91,14 @@ void TomatoStampState::Update(void)
 	}
 }
 
-void TomatoStampState::Exit(void)
+void TomatoBossStampState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
 	if (Net::GetIns().IsHost()) {
-		collOperator->CollSet(false);
+		collOperator->CollSet(target, false);
 	}
 }
 
-void TomatoStampState::AlwaysUpdate(void)
+void TomatoBossStampState::AlwaysUpdate(void)
 {
 }
