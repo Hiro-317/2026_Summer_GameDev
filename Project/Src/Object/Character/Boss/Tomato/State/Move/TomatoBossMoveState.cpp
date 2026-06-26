@@ -23,6 +23,7 @@ TomatoBossMoveState::TomatoBossMoveState(
 
 void TomatoBossMoveState::Enter(void)
 {
+	target = GetTarget();
 	if(Net::GetIns().IsHost()){
 		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeMove));
 	}
@@ -31,14 +32,14 @@ void TomatoBossMoveState::Enter(void)
 void TomatoBossMoveState::Update(void)
 {
 	// 回転の更新
-	moveDir = (*playerPos.at(GetTarget()) - pos).Normalized();
+	moveDir = (*playerPos.at(target) - pos).Normalized();
 	angle.y = atan2f(moveDir.x, moveDir.z);
 	angle.x += ROTATION_POW;
 
 	// 位置の更新
 	pos += moveDir * MOVE_SPEED;
 
-	if ((*playerPos.at(GetTarget()) - pos).Length() <= 350.0f) {
+	if ((*playerPos.at(target) - pos).Length() <= 350.0f) {
 		headbuttChangeState();
 	}
 }

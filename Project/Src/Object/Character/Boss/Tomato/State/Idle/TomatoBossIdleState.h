@@ -75,4 +75,7 @@ private:
 #pragma endregion
 
 	int cnt;
+
+	// プレイヤーターゲット
+	int target;
 };

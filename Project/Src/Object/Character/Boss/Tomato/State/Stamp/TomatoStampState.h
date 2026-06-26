@@ -25,7 +25,7 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
 		Vector3& pos, const bool& isGround,
-		const std::function<int(void)> PlayerNum,
+		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
 		const std::function<void(void)> onCollider,
@@ -70,6 +70,9 @@ private:
 	// 直前の座標
 	float prevPos;
 
+	// プレイヤーターゲット
+	int target;
+
 	// 設置判定の読み取り
 	const bool& isGround;
 
@@ -77,7 +80,7 @@ private:
 	TomatoStampCollOperator* collOperator;
 
 	// 攻撃対象のプレイヤー番号
-	const std::function<int(void)> PlayerNum;
+	const std::function<int(void)> GetTarget;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

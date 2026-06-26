@@ -17,7 +17,7 @@ private:
 	// コンストラクタ / デストラクタ
 	SceneManager(void) :
 		scenes(),
-		selectCharaType(CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None)
+		selectCharaType{ CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None }
 	{
 	}
 	~SceneManager(void) = default;

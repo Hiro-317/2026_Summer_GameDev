@@ -75,4 +75,6 @@ private:
 
 	Vector3 moveDir;
 
+	// プレイヤーターゲット
+	int target;
 };

@@ -329,6 +329,7 @@ void TomatoBoss::CharacterUpdate(void)
 
 void TomatoBoss::ReceptionUpdate(void)
 {
+	// 座標/角度の同期
 	while (MsgDataBossTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTrans>(operatorSenderId)) {
 
 		// 座標/角度を同期
@@ -336,12 +337,16 @@ void TomatoBoss::ReceptionUpdate(void)
 		trans.angle = dataPtr->angle;
 		delete dataPtr;
 	}
+	// エリアの同期
 	while (MsgDataBossInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossInform>(operatorSenderId)) {
-
+		
+		// 受け取ったステートにチェンジ
 		ChangeState((int)dataPtr->inform);
 		delete dataPtr;
 	}
+	// ダメージ受信
 	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>()) {
+
 		characterStats.hp -= dataPtr->damage;
 
 		if (dataPtr->header.senderId == Net::GetIns().GetSenderId()) {
