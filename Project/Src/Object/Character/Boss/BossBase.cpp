@@ -104,7 +104,7 @@ void BossBase::CharacterInit(void)
 	trans.pos = INIT_POS;
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
-	state = (int)STATE::IDLE;
+	ChangeState(static_cast<int>(STATE::IDLE));
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 }
