@@ -10,7 +10,8 @@ void CollisionManager::Check(void)
 {
 	// チャンク分け
 	BuildChunks();
-	isHitCounter = 0;
+
+	// 二重判定防止の判定記録配列をリセット
 	checkedPairs.clear();
 
 	// ①プレイヤー系 × ステージ系
@@ -131,7 +132,6 @@ void CollisionManager::CheckPairOnce(ColliderBase* a, ColliderBase* b)
 
 bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 {
-	isHitCounter++;
 	// 当たり判定フラグを確認
 	if (!a->GetJudge() || !b->GetJudge()) { return false; }
 

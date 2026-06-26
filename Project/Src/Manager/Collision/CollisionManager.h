@@ -261,6 +261,7 @@ private:
 	// グループ別の格納配列
 	ColliderGroupData groupColliders[(int)COLLIDER_GROUP::Max];
 
+	// 二重判定防止の判定記録
 	std::unordered_set<ColliderPairKey, ColliderPairKeyHash> checkedPairs;
 
 #pragma region チャンク分け用
