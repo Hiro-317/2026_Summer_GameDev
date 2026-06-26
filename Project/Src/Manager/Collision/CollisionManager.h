@@ -145,10 +145,8 @@ private:
 		// コライダー本体
 		std::vector<ColliderBase*> colliders;
 
-		// 静的コライダーのチャンク分け参照
 		ChunkMap staticChunks;
 
-		// 動的コライダーのチャンク分け参照
 		ChunkMap dynamicChunks;
 	};
 
@@ -198,8 +196,28 @@ public:
 	// オブジェクト追加
 	void Add(std::vector<ColliderBase*> collider) { for (ColliderBase*& c : collider) { Add(c); } }
 
+	// チャンク分け(初期化時)
+	void InitBuildChunks(void) {
+		for (ColliderGroupData& group : groupColliders) {
+
+			group.staticChunks.clear();
+			group.dynamicChunks.clear();
+
+			for (ColliderBase* collider : group.colliders) {
+				// 安全処理
+				if (!collider) { continue; }
+
+				if (collider->GetDynamicFlg()) { RegisterToChunks(group.dynamicChunks, collider); }
+				else { RegisterToChunks(group.staticChunks, collider); }
+			}
+		}
+	}
+
 	// 判定実行
 	void Check(void);
+
+	// チャンク描画
+	void DrawChunkGrid(void) const;
 
 	// 解放
 	void Clear(void) {
@@ -220,7 +238,7 @@ private:
 #pragma region チャンク分け用
 
 	// 重なるチャンクインデックス(ChunkIndex)一覧を取得する
-	void GetOverlappedChunks(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
+	void GetOverlappedChunks3D(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
 		out.clear();
 
 		ChunkIndex minIndex = {
@@ -252,7 +270,7 @@ private:
 
 		// 重なるチャンクインデックスを取得
 		std::vector<ChunkIndex> indexes;
-		GetOverlappedChunks(collider->GetAABB(), indexes);
+		GetOverlappedChunks3D(collider->GetAABB(), indexes);
 
 		// 取得したチャンクインデックスすべてに登録
 		for (const ChunkIndex& index : indexes) {
@@ -260,21 +278,22 @@ private:
 		}
 	}
 
-	// チャンク分け
+	// チャンク分け(更新時)
 	void BuildChunks(void) {
 		for (ColliderGroupData& group : groupColliders) {
 
-			group.staticChunks.clear();
+			// 動的コライダーチャンク分け配列をリセット
 			group.dynamicChunks.clear();
 
 			for (ColliderBase* collider : group.colliders) {
 				// 安全処理
 				if (!collider) { continue; }
 
-				// 動的
-				if (collider->GetDynamicFlg()) { RegisterToChunks(group.dynamicChunks, collider); }
-				// 静的
-				else { RegisterToChunks(group.staticChunks, collider); }
+				// 静的コライダーは変更なし
+				if (!collider->GetDynamicFlg()) { continue; }
+
+				// 動的コライダーチャンク分け配列に割り当てなおす
+				RegisterToChunks(group.dynamicChunks, collider);
 			}
 		}
 	}

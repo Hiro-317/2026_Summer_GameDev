@@ -3,6 +3,9 @@
 #include<cmath>
 #include <algorithm>
 
+#include "../Camera/Camera.h"
+#include "../../Application/Application.h"
+
 void CollisionManager::Check(void)
 {
 	// É`ÉÉÉìÉNï™ÇØ
@@ -861,4 +864,57 @@ bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleColli
 bool CollisionManager::BoxToModel(BoxCollider* box, ModelCollider* model)
 {
 	return false;
+}
+
+
+
+void CollisionManager::DrawChunkGrid(void) const
+{
+	if (!App::GetIns().IsDrawDebug()) { return; }
+
+	const unsigned int color = GetColor(255, 255, 255);
+
+	// ÉJÉÅÉâé¸ï”Ç«Ç±Ç‹Ç≈ï`Ç≠Ç©
+	const float drawRange = 3000.0f;
+
+	const Vector3 camPos = Camera::GetIns().GetPos();
+
+	int minX = ToChunkIndex(camPos.x - drawRange, CHUNK_SIZE);
+	int maxX = ToChunkIndex(camPos.x + drawRange, CHUNK_SIZE);
+
+	int minY = ToChunkIndex(camPos.y - drawRange, CHUNK_SIZE);
+	int maxY = ToChunkIndex(camPos.y + drawRange, CHUNK_SIZE);
+
+	int minZ = ToChunkIndex(camPos.z - drawRange, CHUNK_SIZE);
+	int maxZ = ToChunkIndex(camPos.z + drawRange, CHUNK_SIZE);
+
+	for (int x = minX; x <= maxX; x++) {
+		for (int y = minY; y <= maxY; y++) {
+			DrawLine3D(
+				VGet(x * CHUNK_SIZE, y * CHUNK_SIZE, minZ * CHUNK_SIZE),
+				VGet(x * CHUNK_SIZE, y * CHUNK_SIZE, (maxZ + 1) * CHUNK_SIZE),
+				color
+			);
+		}
+	}
+
+	for (int z = minZ; z <= maxZ; z++) {
+		for (int y = minY; y <= maxY; y++) {
+			DrawLine3D(
+				VGet(minX * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
+				VGet((maxX + 1) * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
+				color
+			);
+		}
+	}
+
+	for (int x = minX; x <= maxX; x++) {
+		for (int z = minZ; z <= maxZ; z++) {
+			DrawLine3D(
+				VGet(x * CHUNK_SIZE, minY * CHUNK_SIZE, z * CHUNK_SIZE),
+				VGet(x * CHUNK_SIZE, (maxY + 1) * CHUNK_SIZE, z * CHUNK_SIZE),
+				color
+			);
+		}
+	}
 }
