@@ -10,7 +10,7 @@ void CollisionManager::Check(void)
 {
 	// チャンク分け
 	BuildChunks();
-
+	isHitCounter = 0;
 	checkedPairs.clear();
 
 	// ①プレイヤー系 × ステージ系
@@ -53,13 +53,16 @@ void CollisionManager::Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB)
 	ColliderGroupData& b = groupColliders[(int)groupB];
 
 	// 動的A × 動的B
-	MatchingChunks(a.dynamicChunks, b.dynamicChunks);
+	MatchingChunks(a.dynamicChunks3D, b.dynamicChunks3D);
+	MatchingChunks(a.dynamicChunksXZ, b.dynamicChunksXZ);
 
 	// 動的A × 静的B
-	MatchingChunks(a.dynamicChunks, b.staticChunks);
+	MatchingChunks(a.dynamicChunks3D, b.staticChunks3D);
+	MatchingChunks(a.dynamicChunksXZ, b.staticChunksXZ);
 
 	// 静的A × 動的B
-	MatchingChunks(a.staticChunks, b.dynamicChunks);
+	MatchingChunks(a.staticChunks3D, b.dynamicChunks3D);
+	MatchingChunks(a.staticChunksXZ, b.dynamicChunksXZ);
 
 	// 静的A × 静的Bは基本不要
 }
@@ -69,10 +72,12 @@ void CollisionManager::Matching(COLLIDER_GROUP group)
 	ColliderGroupData& g = groupColliders[(int)group];
 
 	// 動的同士
-	MatchingChunks(g.dynamicChunks);
+	MatchingChunks(g.dynamicChunks3D);
+	MatchingChunks(g.dynamicChunksXZ);
 
 	// 動的 × 静的
-	MatchingChunks(g.dynamicChunks, g.staticChunks);
+	MatchingChunks(g.dynamicChunks3D, g.staticChunks3D);
+	MatchingChunks(g.dynamicChunksXZ, g.staticChunksXZ);
 
 	// 静的同士は基本不要
 }
@@ -126,6 +131,7 @@ void CollisionManager::CheckPairOnce(ColliderBase* a, ColliderBase* b)
 
 bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 {
+	isHitCounter++;
 	// 当たり判定フラグを確認
 	if (!a->GetJudge() || !b->GetJudge()) { return false; }
 

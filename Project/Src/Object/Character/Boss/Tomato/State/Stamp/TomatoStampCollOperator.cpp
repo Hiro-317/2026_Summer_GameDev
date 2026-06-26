@@ -32,7 +32,7 @@ void TomatoStampCollOperator::Load(void)
 	trans.pos = *playerPos.at(0);
 
 	// 動的オブジェクトとしての挙動を無効にする
-	SetDynamicFlg(false);
+	SetDynamicFlg(true);
 
 	// 重力を無効にする
 	SetGravityFlg(false);

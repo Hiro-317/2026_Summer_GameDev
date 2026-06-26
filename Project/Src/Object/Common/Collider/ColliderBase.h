@@ -28,6 +28,8 @@ public:
 	// 最小/最大 座標 構造体
 	struct AABB { Vector3 min, max; };
 
+	enum class CHUNK_SPACE { XYZ, XZ, };
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -97,6 +99,8 @@ public:
 
 	// 当たり判定の形状
 	SHAPE GetShape(void)const { return shape; }
+
+	virtual CHUNK_SPACE GetChunkSpace(void)const { return CHUNK_SPACE::XYZ; }
 
 	// 判定通知の呼び出し
 	void CallOnCollision(COLLIDER_TAG ownTag, const ColliderBase& other) { OnCollision(ownTag,other); }
