@@ -29,7 +29,7 @@ public:
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
-	void SetPos(const Vector3& pos){ trans.pos; }
+	void SetPos(const Vector3& pos){ trans.pos = pos; }
 	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
 	// UŒ‚I—¹

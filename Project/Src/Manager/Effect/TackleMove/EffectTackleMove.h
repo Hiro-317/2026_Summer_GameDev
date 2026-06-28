@@ -5,8 +5,8 @@
 class EffectTackleMove : public EffectBase {
 public:
 
-	EffectTackleMove(const ParameterLoad& parameter, EFFECT_NAME name, const Transform* follow = nullptr, const Vector3& local = Vector3(),
-	const bool followRotX = true, const bool followRotY = true, const bool followRotZ = true);
+	EffectTackleMove(const ParameterLoad& parameter, EFFECT_NAME name, const Vector3& local, const Transform* follow,
+	bool followRotX, bool followRotY, bool followRotZ);
 
 	~EffectTackleMove() = default;
 };

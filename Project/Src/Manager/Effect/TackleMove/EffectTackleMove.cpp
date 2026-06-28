@@ -1,8 +1,8 @@
 #include "EffectTackleMove.h"
 
 
-EffectTackleMove::EffectTackleMove(const ParameterLoad& parameter, EFFECT_NAME name, const Transform* follow, const Vector3& local,
-	const bool followRotX, const bool followRotY, const bool followRotZ)
+EffectTackleMove::EffectTackleMove(const ParameterLoad& parameter, EFFECT_NAME name, const Vector3& local, const Transform* follow,
+	bool followRotX, bool followRotY, bool followRotZ)
 	: EffectBase(parameter)
 {
 	info.follow = follow;

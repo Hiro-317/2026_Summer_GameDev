@@ -197,7 +197,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos,
+			&trans, playerPos,
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoTackleCollOperator>(),
 			[&]() { return targetNum; },
@@ -277,7 +277,7 @@ void TomatoBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubObjSerch<TomatoHeadbuttCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<TomatoHeadbuttCollOperator>()->SetViewPos(dataPtr->pos);
 			SubObjSerch<TomatoHeadbuttCollOperator>()->SetAngle(dataPtr->angle);
 			SubObjSerch<TomatoHeadbuttCollOperator>()->SetScale(dataPtr->scale);
 			break;
@@ -290,7 +290,7 @@ void TomatoBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubObjSerch<TomatoTackleCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<TomatoTackleCollOperator>()->SetViewPos(dataPtr->pos);
 			SubObjSerch<TomatoTackleCollOperator>()->SetAngle(dataPtr->angle);
 			SubObjSerch<TomatoTackleCollOperator>()->SetScale(dataPtr->scale);
 			break;

@@ -16,8 +16,8 @@ public:
 
 	void Update(void);
 
-	void CreateEffect(EFFECT_NAME name, const Transform* follow, const Vector3& local);
-	void CreateEffect(EFFECT_NAME name, const Transform& trans);
+	void CreateEffect(EFFECT_NAME name, const Vector3& local = Vector3(), const Transform* follow = nullptr,
+		bool followRotX = true, bool followRotY = true, bool followRotZ = true);
 	void StopEffect(EFFECT_NAME name);
 	void StopEffectAll(void);
 

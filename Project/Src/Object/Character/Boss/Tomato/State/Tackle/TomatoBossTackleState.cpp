@@ -2,12 +2,13 @@
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../../Manager/Effect/EffectManager.h"
 
 TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Vector3& angle,
+	Transform* trans,
 	const std::vector<const Vector3*> playerPos,
 	TomatoTackleCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
@@ -19,7 +20,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 ) 
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
-	pos(pos), angle(angle), playerPos(playerPos),
+	trans(trans), playerPos(playerPos),
 	collOperator(collOperator),
 	GetTarget(GetTarget),
 	ResetAngle(ResetAngle),
@@ -48,7 +49,7 @@ void TomatoBossTackleState::Enter(void)
 
 void TomatoBossTackleState::Update(void)
 {
-	angle.x += rotPow;
+	trans->angle.x += rotPow;
 
 	// 一秒の溜め
 	if (time < CHARGE_POW) {
@@ -56,13 +57,13 @@ void TomatoBossTackleState::Update(void)
 		time++;
 
 		// 回転の更新
-		moveDir = (*playerPos.at(target) - pos).Normalized();
-		angle.y = atan2f(moveDir.x, moveDir.z);
+		moveDir = (*playerPos.at(target) - trans->pos).Normalized();
+		trans->angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
 
 		// 予測線の更新
-		auto p = Vector3::XZonly(pos.x, pos.z);
-		auto a = Vector3::Yonly(angle.y);
+		auto p = Vector3::XZonly(trans->pos.x, trans->pos.z);
+		auto a = Vector3::Yonly(trans->angle.y);
 		auto s = Vector3::Xonly(((float)time - 180.0f) / 180.0f + 1.0f);
 
 		collOperator->SetViewPos(p);
@@ -73,8 +74,12 @@ void TomatoBossTackleState::Update(void)
 		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, p, s, a));
 	}
 	else {
+		// エフェクトの再生
+		if (time == CHARGE_POW) {
+			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::TACKLE_MOVE, Vector3(), trans, false);
+		}
 		// 位置の更新
-		pos += moveDir * MOVE_SPEED;
+		trans->pos += moveDir * MOVE_SPEED;
 
 		collOperator->CollSet(true);
 		
@@ -89,8 +94,8 @@ void TomatoBossTackleState::Update(void)
 			return;
 		}
 	}
-	angle.x += rotPow;
-	collOperator->SetPos(Vector3::XZonly(pos.x, pos.z));
+	trans->angle.x += rotPow;
+	collOperator->SetPos(Vector3::XZonly(trans->pos.x, trans->pos.z));
 }
 
 void TomatoBossTackleState::Exit(void)
@@ -100,6 +105,7 @@ void TomatoBossTackleState::Exit(void)
 	collOperator->SetDrawArea(false);
 	collOperator->CollSet(false);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
+	EffectManager::GetIns()->StopEffect(EFFECT_NAME::TACKLE_MOVE);
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

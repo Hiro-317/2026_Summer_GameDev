@@ -7,13 +7,13 @@ class EffectFactory {
 
 public:
 
-	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Transform* trans = nullptr, const Vector3& local = Vector3(),
-	const bool followRotX = true, const bool followRotY = true, const bool followRotZ = true) {
+	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Vector3& local, const Transform* trans,
+	bool followRotX, bool followRotY, bool followRotZ) {
 
 		EffectBase* res{};
 
 		switch (name){
-		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, trans, local, followRotX, followRotY, followRotZ); break; }
+		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		default: { break; }
 		}
 		return res;

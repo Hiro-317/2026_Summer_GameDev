@@ -25,9 +25,10 @@ void EffectManager::Update(void) {
 	}
 }
 
-void EffectManager::CreateEffect(EFFECT_NAME name, const Transform* follow, const Vector3& local) {
+void EffectManager::CreateEffect(EFFECT_NAME name, const Vector3& local, const Transform* follow,
+	bool followRotX, bool followRotY, bool followRotZ) {
 
-	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, follow, local));
+	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, local, follow, followRotX, followRotY, followRotZ));
 }
 
 void EffectManager::StopEffect(EFFECT_NAME name) {
