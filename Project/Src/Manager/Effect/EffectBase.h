@@ -7,24 +7,28 @@
 #include "../../Object/Common/Transform.h"
 #include "../../Object/Common/DataLoad/ParameterLoad.h"
 
+
+// エフェクトの種類
 enum class EFFECT_NAME {
 
 	NON = -1,
 
 	TACKLE_MOVE,
+	STAMP_LAND,
 
 	MAX
 };
 
+// エフェクト再生に必要な情報構造体
 struct EFFECT_INFO
 {
 	EFFECT_NAME name = EFFECT_NAME::NON;
 	Transform trans{ Vector3() };
 	const Transform* follow = nullptr;
 	int speed = -1;
-	bool followRotX = true;
-	bool followRotY = true;
-	bool followRotZ = true;
+	bool followRotX;
+	bool followRotY;
+	bool followRotZ;
 };
 
 class EffectBase {
@@ -34,23 +38,34 @@ public:
 
 	virtual ~EffectBase() = default;
 
+	// 更新
 	virtual void Update(void)
 	{
+		// 描画開始
 		if (playHandle == -1) {
 			playHandle = PlayEffekseer3DEffect(info.trans.model);
 		}
+		// 描画が終わっているなら消す
 		if (IsEffekseer3DEffectPlaying(playHandle) == -1) {
+			playHandle = -1;
 			end = true;
 			return;
 		}
+		// 追従するなら
 		if (info.follow != nullptr) {
+			// 座標の更新
 			Vector3 pos = info.follow->pos + info.trans.pos.TransMat(MatrixAllMultZXY({ info.follow->angle }));
 			SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.y, pos.z);
-			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
 
+			// 角度の更新
 			if (info.followRotX || info.followRotY || info.followRotZ) {
+
+				// 角度も追従するなら更新
 				Vector3 angle = info.follow->angle + info.trans.angle;
+				// 追従しない分もあるので保留
 				Vector3 temp = info.trans.angle;
+
+				// 追従するものだけ書き換え
 				if (info.followRotX) {
 					temp.x = angle.x;
 				}
@@ -60,22 +75,33 @@ public:
 				if (info.followRotZ) {
 					temp.z = angle.z;
 				}
+				// 更新
 				SetRotationPlayingEffekseer3DEffect(playHandle, temp.x, temp.y, temp.z);
 			}
+			else {
+				// 角度の追従しないなら初期値を入れる
+				SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+			}
 		}
+		// 追従しないなら
 		else {
+			// 初期値を代入
 			SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
 			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
 		}
+		// サイズの更新
 		SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 	}
+
 	virtual void Release(void) 
 	{
+		// 消す
 		DeleteEffekseerEffect(info.trans.model);
 	}
 
 	virtual void StopEffect(void)
 	{
+		// エフェクトを止め消す
 		StopEffekseer3DEffect(playHandle);
 		playHandle = -1;
 		Release();

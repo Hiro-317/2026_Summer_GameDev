@@ -3,6 +3,7 @@
 #include "../../../../../ActorBase.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../../Manager/Effect/EffectManager.h"
 
 
 TomatoBossStampState::TomatoBossStampState(
@@ -69,6 +70,7 @@ void TomatoBossStampState::Update(void)
 			if (attackCnt == 0) {
 				SoundManager::GetIns().Play("StampLand");
 				collOperator->CollSet(true);
+				EffectManager::GetIns()->CreateEffect(EFFECT_NAME::STAMP_LAND, collOperator->GetAttackPos());
 			}
 			attackCnt++;
 		}

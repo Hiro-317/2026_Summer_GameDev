@@ -2,6 +2,7 @@
 
 #include "EffectBase.h"
 #include "TackleMove/EffectTackleMove.h"
+#include "StampLand/EffectStampLand.h"
 
 class EffectFactory {
 
@@ -14,6 +15,7 @@ public:
 
 		switch (name){
 		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
+		case EFFECT_NAME::STAMP_LAND: { res = new EffectStampLand(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		default: { break; }
 		}
 		return res;

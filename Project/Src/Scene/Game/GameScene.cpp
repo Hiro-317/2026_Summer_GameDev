@@ -195,11 +195,20 @@ void GameScene::Draw(void)
 	Camera::GetIns().Apply();
 
 	Effekseer_Sync3DSetting();
+
 #pragma endregion
 
 #pragma region 描画処理（メイン）
+
 	// オブジェクト全ての描画処理
 	for (ActorBase* obj : objects) { obj->Draw(); }
+
+#pragma region エフェクト描画
+
+	DrawEffekseer3D();
+
+#pragma endregion
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -216,12 +225,6 @@ void GameScene::Draw(void)
 
 	// 揺れの数値分座標をずらして描画
 	DrawGraph(s.x, s.y, mainScreen, true);
-#pragma endregion
-
-#pragma region エフェクト描画
-
-	DrawEffekseer3D();
-
 #pragma endregion
 
 #pragma region UI描画（画面演出をかけないもの）
