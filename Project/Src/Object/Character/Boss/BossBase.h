@@ -125,11 +125,11 @@ protected:
 		IDLE,			// ‘Ò‹@ó‘Ô
 		MOVE,			// ˆÚ“®ó‘Ô
 
-		ATTACK_1,
-		ATTACK_2,
-		ATTACK_3,
-		ATTACK_4,
-		ATTACK_5,
+		ATTACK_A,
+		ATTACK_B,
+		ATTACK_C,
+		ATTACK_D,
+		ATTACK_E,
 
 		DEATH,
 

@@ -50,8 +50,10 @@ enum class MSG_DATA_TYPE
 
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
-    // <ホスト>ボス : イベント (ステート遷移など)
-    BossInform,
+    // <ホスト>ボス : 攻撃予測線描画(フラグのみ)
+    BossAttackDrawFlg,
+    // <ホスト>ボス : 攻撃予測線描画
+    BossAttackDraw,
     // <ホスト/クライアント>ボス : HPとクリティカル情報
     BossHit,
     // <ホスト>ボスのターゲット情報
@@ -628,26 +630,29 @@ struct MsgDataBossTrans
     MsgDataHeader header;
     Vector3 pos;
     Vector3 angle;
+    Vector3 scale;
 
-    MsgDataBossTrans(const Vector3& pos, const Vector3& angle) :
+    MsgDataBossTrans(const Vector3& pos, const Vector3& angle, const Vector3& scale) :
         header(DATA_TYPE),
         pos(pos),
-        angle(angle)
+        angle(angle),
+        scale(scale)
     {
     }
     MsgDataBossTrans(void) :
         header(DATA_TYPE),
         pos(),
-        angle()
+        angle(),
+        scale()
     {
     }
 };
 
 // <ホスト>ボスイベント送信構造体
-struct MsgDataBossInform
+struct MsgDataBossAttackDrawFlg
 {
     // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossInform;
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossAttackDrawFlg;
 
     // データの送信チャンネル
     static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
@@ -660,33 +665,85 @@ struct MsgDataBossInform
     {
         None = -1,
 
-        // アイドルステートへ遷移
-        ChangeIdle,
-        // ムーブステートへ遷移
-        ChangeMove,
-        
-        // 攻撃Aステートへ遷移
+        // 攻撃Aステート
         ChangeAttackA,
-        // 攻撃Bステートへ遷移
+        // 攻撃Bステート
         ChangeAttackB,
-        // 攻撃Cステートへ遷移
+        // 攻撃Cステート
         ChangeAttackC,
-        // 攻撃Dステートへ遷移
+        // 攻撃Dステート
         ChangeAttackD,
-        // 攻撃Eステートへ遷移
+        // 攻撃Eステート
         ChangeAttackE,
     };
 
     INFORM_TYPE inform;
+    bool flg;
 
-    MsgDataBossInform(INFORM_TYPE inform) :
+    // つけるときはinfoだけ入れてくれればよい
+    MsgDataBossAttackDrawFlg(INFORM_TYPE inform, bool flg = true) :
         header(DATA_TYPE),
-        inform(inform)
+        inform(inform),
+        flg(flg)
     {
     }
-    MsgDataBossInform(void) :
+    MsgDataBossAttackDrawFlg(void) :
         header(DATA_TYPE),
-        inform(INFORM_TYPE::None)
+        inform(INFORM_TYPE::None),
+        flg()
+    {
+    }
+};
+
+// <ホスト>ボスイベント送信構造体
+struct MsgDataBossAttackDraw
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossAttackDraw;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // システムイベント列挙型定義
+    enum class INFORM_TYPE
+    {
+        None = -1,
+
+        // 攻撃Aステート
+        ChangeAttackA,
+        // 攻撃Bステート
+        ChangeAttackB,
+        // 攻撃Cステート
+        ChangeAttackC,
+        // 攻撃Dステート
+        ChangeAttackD,
+        // 攻撃Eステート
+        ChangeAttackE,
+    };
+
+    INFORM_TYPE inform;
+    Vector3 pos;
+    Vector3 angle;
+    Vector3 scale;
+
+    // 消すときはinfoだけ入れてくれればよい
+    MsgDataBossAttackDraw(INFORM_TYPE inform, Vector3 pos = Vector3(), Vector3 scale = Vector3(), Vector3 angle = Vector3()) :
+        header(DATA_TYPE),
+        inform(inform),
+        pos(pos),
+        angle(angle),
+        scale(scale)
+    {
+    }
+    MsgDataBossAttackDraw(void) :
+        header(DATA_TYPE),
+        inform(INFORM_TYPE::None),
+        pos(),
+        angle(),
+        scale()
     {
     }
 };

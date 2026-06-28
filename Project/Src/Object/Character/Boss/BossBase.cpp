@@ -104,7 +104,7 @@ void BossBase::CharacterInit(void)
 	trans.pos = INIT_POS;
 
 	// 初期状態を移動状態にする
-	state = (int)STATE::IDLE;
+	ChangeState((int)STATE::IDLE);
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
 }
@@ -248,13 +248,6 @@ void BossBase::ReceptionUpdate(void)
 		trans.angle = dataPtr->angle;
 		delete dataPtr;
 	}
-	// エリアの同期
-	while (MsgDataBossInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossInform>(operatorSenderId)) {
-
-		// 受け取ったステートにチェンジ
-		ChangeState((int)dataPtr->inform);
-		delete dataPtr;
-	}
 
 	// アニメーション
 	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId)) {
@@ -290,6 +283,6 @@ void BossBase::ReceptionUpdate(void)
 void BossBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.angle));
+		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.angle, trans.scale));
 	}
 }

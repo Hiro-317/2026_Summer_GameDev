@@ -24,9 +24,6 @@ TomatoBossMoveState::TomatoBossMoveState(
 void TomatoBossMoveState::Enter(void)
 {
 	target = GetTarget();
-	if(Net::GetIns().IsHost()){
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeMove));
-	}
 }
 
 void TomatoBossMoveState::Update(void)

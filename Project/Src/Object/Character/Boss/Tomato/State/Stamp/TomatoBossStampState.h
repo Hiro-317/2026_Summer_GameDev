@@ -24,7 +24,8 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
-		Vector3& pos, const bool& isGround,
+		Vector3& pos, const bool& isGround, 
+		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
@@ -78,6 +79,9 @@ private:
 
 	// コリジョンオペレーター
 	TomatoStampCollOperator* collOperator;
+
+	// プレイヤーの座標の取得
+	const std::vector<const Vector3*>playerPos;
 
 	// 攻撃対象のプレイヤー番号
 	const std::function<int(void)> GetTarget;

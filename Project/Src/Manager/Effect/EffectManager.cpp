@@ -30,11 +30,6 @@ void EffectManager::CreateEffect(EFFECT_NAME name, const Transform* follow, cons
 	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, follow, local));
 }
 
-void EffectManager::CreateEffect(EFFECT_NAME name, const Transform& trans) {
-
-	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, trans));
-}
-
 void EffectManager::StopEffect(EFFECT_NAME name) {
 
 	for (auto info = effectInfo.begin(); info != effectInfo.end();) {

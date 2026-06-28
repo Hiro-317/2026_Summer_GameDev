@@ -10,6 +10,7 @@ TomatoBossStampState::TomatoBossStampState(
 	const std::function<bool(void)>& isOwnState,
 	TomatoStampCollOperator* collOperator,
 	Vector3& pos, const bool& isGround,
+	const std::vector<const Vector3*>playerPos,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> offCollider,
@@ -17,6 +18,7 @@ TomatoBossStampState::TomatoBossStampState(
 	const std::function<void(void)> SetCoolTime
 ) :CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), collOperator(collOperator), isGround(isGround),
+	playerPos(playerPos),
 	GetTarget(GetTarget),
 	DefaultChangeState(DefaultChangeState),
 	offCollider(offCollider),
@@ -31,6 +33,8 @@ TomatoBossStampState::TomatoBossStampState(
 
 void TomatoBossStampState::Enter(void)
 {
+	target = GetTarget();
+	collOperator->SetPos(*playerPos.at(target)); 
 	attackPos = Vector3();
 	attackDistRate = Vector3();
 	collOperator->SetDrawArea(true);
@@ -39,13 +43,9 @@ void TomatoBossStampState::Enter(void)
 	attackCnt = 0;
 	isAttack = true;
 	SetCoolTime();
-	target = GetTarget();
 
 	SoundManager::GetIns().Play("StampJump");
-	
-	if (Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackC));
-	}
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB));
 }
 
 void TomatoBossStampState::Update(void)
@@ -68,9 +68,7 @@ void TomatoBossStampState::Update(void)
 		if (attackCnt <= ATTACK_DURATION) {
 			if (attackCnt == 0) {
 				SoundManager::GetIns().Play("StampLand");
-				if (Net::GetIns().IsHost()) {
-					collOperator->CollSet(target, true);
-				}
+				collOperator->CollSet(true);
 			}
 			attackCnt++;
 		}
@@ -87,16 +85,18 @@ void TomatoBossStampState::Update(void)
 		nowAttackTime++;
 		pos += attackDistRate;
 
-		collOperator->SetScale(1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE);
+		// —\‘ªü‚ÌXV
+		float scale = 1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE;
+		collOperator->SetScale(scale);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB, attackPos, Vector3::Xonly(scale)));
 	}
 }
 
 void TomatoBossStampState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
-	if (Net::GetIns().IsHost()) {
-		collOperator->CollSet(target, false);
-	}
+	collOperator->CollSet(false);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB, false));
 }
 
 void TomatoBossStampState::AlwaysUpdate(void)

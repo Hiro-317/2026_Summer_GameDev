@@ -38,11 +38,7 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
 
 		playerPos)
 {
-
 	coolTime = 120;
-
-	this->operatorSenderId = Net::HOST_SENDER_ID;
-	isOwnOperator = true;
 
 	rockHit = false;
 }
@@ -91,9 +87,9 @@ void TomatoBoss::PlayerLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, operatorSenderId, characterStats, *collParam));
 	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 
 #pragma endregion
 
@@ -113,13 +109,13 @@ void TomatoBoss::PlayerLoad(void)
 			[&]() { return coolTime; },
 			[&]() { return targetNum; },
 			// 頭突きへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_1); },
+			[&]() { ChangeState((int)STATE::ATTACK_A); },
 			// 移動への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::MOVE); },
 			// スタンプへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_2); },
+			[&]() { ChangeState((int)STATE::ATTACK_B); },
 			// 突進への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_3); },
+			[&]() { ChangeState((int)STATE::ATTACK_C); },
 			// 岩に当たっているか
 			[&]() { return rockHit; },
 			// 岩の当たり判定戻し
@@ -127,12 +123,30 @@ void TomatoBoss::PlayerLoad(void)
 			)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_1),
+		static_cast<int>(STATE::MOVE),
+		new TomatoBossMoveState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::MOVE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::MOVE); },
+			// 移動量と回転量
+			MOVE_SPEED, ROTATION_POW,
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos, trans.angle, playerPos,
+			[&]() { return targetNum; },
+			// 角度を戻す
+			[&]() { trans.angle.x = 0; },
+			// 移動後攻撃に状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_A); }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_A),
 		new TomatoBossHeadbuttState(
 			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_1); },
+			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
 			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_1); },
+			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// 移動量と攻撃時間
 			MOVE_SPEED, 20.0f,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
@@ -151,34 +165,16 @@ void TomatoBoss::PlayerLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::MOVE),
-		new TomatoBossMoveState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::MOVE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::MOVE); },
-			// 移動量と回転量
-			MOVE_SPEED, ROTATION_POW,
-			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos,
-			[&]() { return targetNum; },
-			// 角度を戻す
-			[&]() { trans.angle.x = 0; },
-			// 移動後攻撃に状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_1); }
-			)
-	);
-	AddState(
-		static_cast<int>(STATE::ATTACK_2),
+		static_cast<int>(STATE::ATTACK_B),
 		new TomatoBossStampState(
 			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_2); },
+			[&]() { state = static_cast<int>(STATE::ATTACK_B); },
 			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_2); },
+			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoStampCollOperator>(),
-			// 自分の座標の読み取り
-			trans.pos, isGround,
+			// 自分の座標の読み取り、プレイヤーの座標の読み取り
+			trans.pos, isGround, playerPos,
 			// 最与ダメプレイヤーをターゲットにする
 			[&]() { return targetNum; },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -192,12 +188,12 @@ void TomatoBoss::PlayerLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_3),
+		static_cast<int>(STATE::ATTACK_C),
 		new TomatoBossTackleState(
 			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_3); },
+			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
 			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_3); },
+			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、プレイヤーの座標の読み取り
@@ -266,5 +262,69 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 				rockHit = true;
 			}
 		}
+	}
+}
+
+void TomatoBoss::ReceptionUpdate(void)
+{
+	BossBase::ReceptionUpdate();
+
+	// エリアの同期
+	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(operatorSenderId)) {
+
+		// 受け取ったステートの描画
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
+		{
+			SubObjSerch<TomatoHeadbuttCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<TomatoHeadbuttCollOperator>()->SetAngle(dataPtr->angle);
+			SubObjSerch<TomatoHeadbuttCollOperator>()->SetScale(dataPtr->scale);
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
+		{
+			SubObjSerch<TomatoStampCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<TomatoStampCollOperator>()->SetScale(dataPtr->scale.x);
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
+		{
+			SubObjSerch<TomatoTackleCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<TomatoTackleCollOperator>()->SetAngle(dataPtr->angle);
+			SubObjSerch<TomatoTackleCollOperator>()->SetScale(dataPtr->scale);
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
+	}
+	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(operatorSenderId)) {
+
+		// 受け取ったステートの描画
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
+		{
+			SubObjSerch<TomatoHeadbuttCollOperator>()->SetDrawArea(dataPtr->flg);
+			break;
+		}
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
+		{
+			SubObjSerch<TomatoStampCollOperator>()->SetDrawArea(dataPtr->flg);
+			break;
+		}
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
+		{
+			SubObjSerch<TomatoTackleCollOperator>()->SetDrawArea(dataPtr->flg);
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
 	}
 }

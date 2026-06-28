@@ -23,6 +23,7 @@ public:
 	}
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	virtual void ReceptionUpdate(void)override;
 
 private:
 

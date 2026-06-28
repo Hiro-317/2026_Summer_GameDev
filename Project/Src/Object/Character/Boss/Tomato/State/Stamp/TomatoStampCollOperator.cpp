@@ -12,7 +12,6 @@ TomatoStampCollOperator::TomatoStampCollOperator
 )	: 
 	ATTACK_RADIUS(ATTACK_RADIUS),
 	ground(isGround),
-	playerPos(playerPos),
 	operatorSenderId(operatorSenderId),
 	stats(stats),
 	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
@@ -60,10 +59,6 @@ void TomatoStampCollOperator::Load(void)
 
 	collBack.scale = SCALE;
 	collFront.scale = Vector3(0);
-}
-
-void TomatoStampCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
-{
 }
 
 void TomatoStampCollOperator::SubUpdate(void)

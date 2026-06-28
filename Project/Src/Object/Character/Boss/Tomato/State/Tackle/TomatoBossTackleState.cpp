@@ -38,14 +38,12 @@ void TomatoBossTackleState::Enter(void)
 	DeleteColl();
 	target = GetTarget();
 	collOperator->ResetStageHit();
-	collOperator->SetDrawArea(true);
 	SetCoolTime();
 	
 	SoundManager::GetIns().Play("TackleCharge");
 
-	if (Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackB));
-	}
+	collOperator->SetDrawArea(true);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC));
 }
 
 void TomatoBossTackleState::Update(void)
@@ -61,18 +59,25 @@ void TomatoBossTackleState::Update(void)
 		moveDir = (*playerPos.at(target) - pos).Normalized();
 		angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
-		collOperator->SetViewPos(Vector3::XZonly(pos.x, pos.z));
-		collOperator->SetAngle(Vector3::Yonly(angle.y));
-		collOperator->SetScale(Vector3::Xonly(((float)time - 180.0f) / 180.0f + 1.0f));
+
+		// 予測線の更新
+		auto p = Vector3::XZonly(pos.x, pos.z);
+		auto a = Vector3::Yonly(angle.y);
+		auto s = Vector3::Xonly(((float)time - 180.0f) / 180.0f + 1.0f);
+
+		collOperator->SetViewPos(p);
+		collOperator->SetAngle(a);
+		collOperator->SetScale(s);
+
+		// 送信
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, p, s, a));
 	}
 	else {
 		// 位置の更新
 		pos += moveDir * MOVE_SPEED;
 
-		if (Net::GetIns().IsHost()) {
-			collOperator->CollSet(true);
-		}
-
+		collOperator->CollSet(true);
+		
 		if (time < FORCE_MOVE_TIME) {
 			time++;
 			SoundManager::GetIns().Play("TackleMove");
@@ -93,9 +98,8 @@ void TomatoBossTackleState::Exit(void)
 	ResetAngle();
 	ReviveColl();
 	collOperator->SetDrawArea(false);
-	if (Net::GetIns().IsHost()) {
-		collOperator->CollSet(false);
-	}
+	collOperator->CollSet(false);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

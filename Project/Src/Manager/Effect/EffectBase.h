@@ -19,10 +19,12 @@ enum class EFFECT_NAME {
 struct EFFECT_INFO
 {
 	EFFECT_NAME name = EFFECT_NAME::NON;
-	int handle = -1;
 	Transform trans{ Vector3() };
 	const Transform* follow = nullptr;
 	int speed = -1;
+	bool followRotX = true;
+	bool followRotY = true;
+	bool followRotZ = true;
 };
 
 class EffectBase {
@@ -43,9 +45,23 @@ public:
 		}
 		if (info.follow != nullptr) {
 			Vector3 pos = info.follow->pos + info.trans.pos.TransMat(MatrixAllMultZXY({ info.follow->angle }));
-			Vector3 angle = info.follow->angle + info.trans.angle;
 			SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.y, pos.z);
-			SetRotationPlayingEffekseer3DEffect(playHandle, angle.x, angle.y, angle.z);
+			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+
+			if (info.followRotX || info.followRotY || info.followRotZ) {
+				Vector3 angle = info.follow->angle + info.trans.angle;
+				Vector3 temp = info.trans.angle;
+				if (info.followRotX) {
+					temp.x = angle.x;
+				}
+				if (info.followRotY) {
+					temp.y = angle.y;
+				}
+				if (info.followRotZ) {
+					temp.z = angle.z;
+				}
+				SetRotationPlayingEffekseer3DEffect(playHandle, temp.x, temp.y, temp.z);
+			}
 		}
 		else {
 			SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
