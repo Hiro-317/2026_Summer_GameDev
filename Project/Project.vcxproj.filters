@@ -252,6 +252,7 @@
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
+    <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

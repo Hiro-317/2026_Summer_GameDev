@@ -5,6 +5,8 @@
 #include <cmath>
 #include <unordered_set>
 
+#include "ChunkStDefine.h"
+
 #include"../../Object/Common/Collider/LineCollider.h"
 #include"../../Object/Common/Collider/SphereCollider.h"
 #include"../../Object/Common/Collider/CapsuleCollider.h"
@@ -14,13 +16,7 @@
 
 class CollisionManager
 {
-
-#pragma region 定義
-
 private:
-
-	// チャンクサイズ
-	static constexpr float CHUNK_SIZE = 500.0f;
 
 #pragma region コライダーグループ定義
 
@@ -103,141 +99,17 @@ private:
 
 #pragma endregion
 
-#pragma region チャンク管理構造体定義
-
-	// チャンク座標
-	struct ChunkIndex {
-		int x = 0, y = 0, z = 0;
-
-		bool operator==(const ChunkIndex& other) const {
-			return x == other.x && y == other.y && z == other.z;
-		}
-	};
-
-	// unordered_map 用ハッシュ
-	struct ChunkIndexHash {
-		std::size_t operator()(const ChunkIndex& index) const {
-			std::size_t h1 = std::hash<int>()(index.x);
-			std::size_t h2 = std::hash<int>()(index.y);
-			std::size_t h3 = std::hash<int>()(index.z);
-
-			return h1 ^ (h2 << 1) ^ (h3 << 2);
-		}
-	};
-
-	// 1チャンクに所属するデータ
-	struct ChunkData {
-		std::vector<ColliderBase*> colliders;
-	};
-
-	// チャンク管理マップ
-	using ChunkMap = std::unordered_map<ChunkIndex, ChunkData, ChunkIndexHash>;
-
-	// 座標からチャンク番号に変換する関数
-	static int ToChunkIndex(float pos, float chunkSize) {
-		return static_cast<int>(std::floor(pos / chunkSize));
-	}
-
-#pragma endregion
-
-	// 1グループが持つデータ
-	struct ColliderGroupData {
-		// コライダー本体
-		std::vector<ColliderBase*> colliders;
-
-		// 静的コライダー参照
-		ChunkMap staticChunks3D;
-
-		// 動的コライダー参照
-		ChunkMap dynamicChunks3D;
-
-		// 静的コライダー参照（Y座標を無視して判定をとるコライダー用　例 : XZCircleColliderなど）
-		ChunkMap staticChunksXZ;
-
-		// 動的コライダー参照（Y座標を無視して判定をとるコライダー用　例 : XZCircleColliderなど）
-		ChunkMap dynamicChunksXZ;
-	};
-
-	struct ColliderPairKey {
-		ColliderBase* a = nullptr;
-		ColliderBase* b = nullptr;
-
-		ColliderPairKey(ColliderBase* lhs, ColliderBase* rhs) {
-			if (lhs < rhs) { a = lhs; b = rhs; }
-			else { a = rhs; b = lhs; }
-		}
-
-		bool operator==(const ColliderPairKey& other) const {
-			return a == other.a && b == other.b;
-		}
-	};
-
-	struct ColliderPairKeyHash {
-		std::size_t operator()(const ColliderPairKey& key) const {
-			return std::hash<ColliderBase*>()(key.a) ^ (std::hash<ColliderBase*>()(key.b) << 1);
-		}
-	};
-
-#pragma endregion
-
 public:
 	CollisionManager() : groupColliders() {}
 	~CollisionManager() = default;
 
 	// オブジェクト追加
-	void Add(ColliderBase* collider) {
-
-		// 安全処理
-		if (!collider) { return; }
-
-		// グループを一時変数として定義（「その他」で初期化）
-		COLLIDER_GROUP group = COLLIDER_GROUP::Other;
-
-		// グループリストに記述が存在すれば、取得
-		if (TAG_TO_GROUP_LIST.contains(collider->GetTag())) {
-			group = TAG_TO_GROUP_LIST.at(collider->GetTag());
-		}
-
-		// 最終的なグループで格納
-		groupColliders[(int)group].colliders.emplace_back(collider);
-	}
+	void Add(ColliderBase* collider);
 	// オブジェクト追加
-	void Add(std::vector<ColliderBase*> collider) { for (ColliderBase*& c : collider) { Add(c); } }
+	void Add(std::vector<ColliderBase*> collider);
 
 	// チャンク分け(初期化時)
-	void InitBuildChunks(void) {
-		for (ColliderGroupData& group : groupColliders) {
-
-			group.staticChunks3D.clear();
-			group.dynamicChunks3D.clear();
-			group.staticChunksXZ.clear();
-			group.dynamicChunksXZ.clear();
-
-			for (ColliderBase* collider : group.colliders) {
-				// 安全処理
-				if (!collider) { continue; }
-
-				if (collider->GetDynamicFlg()) {
-					if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XYZ) {
-						RegisterToChunks3D(group.dynamicChunks3D, collider);
-						RegisterToChunksXZ(group.dynamicChunksXZ, collider);
-					}
-					else if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XZ) {
-						RegisterToChunksXZ(group.dynamicChunksXZ, collider);
-					}
-				}
-				else {
-					if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XYZ) {
-						RegisterToChunks3D(group.staticChunks3D, collider);
-						RegisterToChunksXZ(group.staticChunksXZ, collider);
-					}
-					else if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XZ) {
-						RegisterToChunksXZ(group.staticChunksXZ, collider);
-					}
-				}
-			}
-		}
-	}
+	void InitBuildChunks(void);
 
 	// 判定実行
 	void Check(void);
@@ -261,7 +133,7 @@ private:
 	// グループ別の格納配列
 	ColliderGroupData groupColliders[(int)COLLIDER_GROUP::Max];
 
-	// 二重判定防止の判定記録
+	// 重複判定防止の判定記録
 	std::unordered_set<ColliderPairKey, ColliderPairKeyHash> checkedPairs;
 
 #pragma region チャンク分け用
@@ -290,6 +162,7 @@ private:
 			}
 		}
 	}
+	// 重なるチャンクインデックス(ChunkIndex)一覧を取得する（XZチャンク用）
 	void GetOverlappedChunksXZ(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
 		out.clear();
 
@@ -371,37 +244,91 @@ private:
 
 #pragma endregion
 
+#pragma region 判定の振り分け
 
-#pragma region 当たり判定用
+	// 指定のグループ同士を判定(2グループ指定)
 	void Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB);
+	// 指定のグループを総当たりで判定(1グループ指定)
 	void Matching(COLLIDER_GROUP group);
 
+	// チャンクを振り分けて判定実行
 	void MatchingChunks(ChunkMap& aChunks, ChunkMap& bChunks);
+	// チャンクを振り分けて判定実行
 	void MatchingChunks(ChunkMap& chunks);
 
+	// 重複判定チェック
 	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
 
+	// 形状の振り分け
 	bool IsHit(ColliderBase* a, ColliderBase* b);
 
+#pragma endregion
+
+#pragma region 各形状の実判定
+
+	// 同形状同士～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+	// 線分×線分
 	bool LineToLine(LineCollider* a, LineCollider* b);
+
+	// 球体×球体
 	bool SphereToSphere(SphereCollider* a, SphereCollider* b);
+
+	// カプセル×カプセル
 	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b);
+
+	// ボックス×ボックス
 	bool BoxToBox(BoxCollider* a, BoxCollider* b);
+
+	// モデル×モデル
 	bool ModelToModel(ModelCollider* a, ModelCollider* b);
+
+	// XZ平面上の円形×XZ平面上の円形
 	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b);
 
+	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～同形状同士
+
+
+	// 別形状同士～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+	// 線分×球体
 	bool LineToSphere(LineCollider* line, SphereCollider* sphere);
+
+	// 線分×カプセル
 	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule);
+
+	// 線分×ボックス
 	bool LineToBox(LineCollider* line, BoxCollider* box);
+
+	// 線分×モデル
 	bool LineToModel(LineCollider* line, ModelCollider* model);
+
+	// 球体×カプセル
 	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule);
+
+	// 球体×ボックス
 	bool SphereToBox(SphereCollider* sphere, BoxCollider* box);
+
+	// 球体×モデル
 	bool SphereToModel(SphereCollider* sphere, ModelCollider* model);
+
+	// 球体×XZ平面上の円形
 	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle);
+
+	// カプセル×ボックス
 	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box);
+
+	// カプセル×モデル
 	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model);
+
+	// カプセル×XZ平面上の円形
 	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle);
+
+	// ボックス×モデル
 	bool BoxToModel(BoxCollider* box, ModelCollider* model);
+
+	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～別形状同士
+
 #pragma endregion
 
 #pragma region ユーティリティ
