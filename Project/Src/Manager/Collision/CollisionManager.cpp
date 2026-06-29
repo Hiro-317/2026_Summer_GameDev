@@ -832,29 +832,29 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box)
 // 球体×モデル
 bool CollisionManager::SphereToModel(SphereCollider* sphere, ModelCollider* model)
 {
-	// まず球のAABBを作る
-	ColliderBase::AABB sphereAABB = sphere->GetAABB();
+	//// まず球のAABBを作る
+	//ColliderBase::AABB sphereAABB = sphere->GetAABB();
 
-	// モデル内部チャンクから近い三角形だけ取得
-	const auto& triangles = model->GetNearTriangles(sphereAABB);
+	//// モデル内部チャンクから近い三角形だけ取得
+	//const auto& triangles = model->GetNearTriangles(sphereAABB);
 
-	for (const auto* tri : triangles) {
-		// 三角形AABBと球AABBが離れてたらスキップ
-		if (!AABBToAABB(sphereAABB, tri->aabb)) { continue; }
+	//for (const auto* tri : triangles) {
+	//	// 三角形AABBと球AABBが離れてたらスキップ
+	//	if (!AABBToAABB(sphereAABB, tri->aabb)) { continue; }
 
-		// 球中心から三角形への最近点を求める
-		Vector3 closest = ClosestPointOnTriangle(
-			sphere->GetPos(),
-			tri->p0,
-			tri->p1,
-			tri->p2
-		);
+	//	// 球中心から三角形への最近点を求める
+	//	Vector3 closest = ClosestPointOnTriangle(
+	//		sphere->GetPos(),
+	//		tri->p0,
+	//		tri->p1,
+	//		tri->p2
+	//	);
 
-		Vector3 diff = sphere->GetPos() - closest;
+	//	Vector3 diff = sphere->GetPos() - closest;
 
-		// 当たった
-		if (diff.LengthSq() <= sphere->GetRadius() * sphere->GetRadius()) { return true; }
-	}
+	//	// 当たった
+	//	if (diff.LengthSq() <= sphere->GetRadius() * sphere->GetRadius()) { return true; }
+	//}
 
 	return false;
 }
