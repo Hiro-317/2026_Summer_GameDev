@@ -1,10 +1,5 @@
 #pragma once
 
-#include <unordered_map>
-#include<vector>
-#include <cmath>
-#include <unordered_set>
-
 #include "ChunkStDefine.h"
 
 #include"../../Object/Common/Collider/LineCollider.h"

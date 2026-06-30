@@ -1,10 +1,10 @@
 #include"CollisionManager.h"
 
-#include<cmath>
 #include <algorithm>
 
-#include "../Camera/Camera.h"
 #include "../../Application/Application.h"
+
+#include "../Camera/Camera.h"
 
 #pragma region ‰Šú‰»Œn
 
