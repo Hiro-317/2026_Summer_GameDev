@@ -172,10 +172,12 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\Orange\OrangePlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\TomatoPlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
@@ -247,10 +249,12 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
-    <ClInclude Include="Src\Object\Character\Player\Orange\OrangePlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\TomatoPlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />

@@ -1,23 +1,23 @@
 #include "OrangePlayer.h"
 
-#include "../../../../Application/Application.h"
+#include "../../../../../Application/Application.h"
 
-#include "../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../Manager/Font/FontManager.h"
-#include "../../../../Manager/Camera/Camera.h"
+#include "../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../Manager/Font/FontManager.h"
+#include "../../../../../Manager/Camera/Camera.h"
 
-#include "../CommonPlayerState/Move/PlayerMoveState.h"
-#include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
-#include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
-#include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
-#include "../CommonPlayerState/Damage/PlayerDamageState.h"
-#include "../CommonPlayerState/Death/PlayerDeathState.h"
-#include "../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
+#include "../../CommonPlayerState/Move/PlayerMoveState.h"
+#include "../../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
+#include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+#include "../../CommonPlayerState/Dodge/PlayerDodgeState.h"
+#include "../../CommonPlayerState/Damage/PlayerDamageState.h"
+#include "../../CommonPlayerState/Death/PlayerDeathState.h"
+#include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
-#include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
-#include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../UI/HitUI/HitUI.h"
+#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
+#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../../UI/HitUI/HitUI.h"
 
 
 
@@ -43,6 +43,7 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma region モデル
 
+	// 影を消す（消さなかったら、変な色合いになるので）
 	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 

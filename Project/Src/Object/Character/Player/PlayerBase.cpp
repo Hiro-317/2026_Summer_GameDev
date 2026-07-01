@@ -101,7 +101,7 @@ void PlayerBase::CharacterLoad(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	//ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
@@ -198,13 +198,13 @@ void PlayerBase::CharacterUiDraw(void)
 			};
 
 		// 加速度をデバッグ表示
-		debugDrwStr("プレイヤー～～～～～～");
-		debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
-		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
-		debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
-		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
-		debugDrwStr("HP：" + std::to_string(characterStats.hp));
-		debugDrwStr("～～～～～～('#；ω;`)");
+		//debugDrwStr("プレイヤー～～～～～～");
+		//debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
+		//debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
+		//debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
+		//debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
+		//debugDrwStr("HP：" + std::to_string(characterStats.hp));
+		//debugDrwStr("～～～～～～('#；ω;`)");
 	}
 }
 

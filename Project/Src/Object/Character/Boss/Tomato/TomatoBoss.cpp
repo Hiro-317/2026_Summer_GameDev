@@ -38,7 +38,7 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
 {
 	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
 
-	coolTime = 120;
+	coolTime = 120000;
 
 	this->operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = true;

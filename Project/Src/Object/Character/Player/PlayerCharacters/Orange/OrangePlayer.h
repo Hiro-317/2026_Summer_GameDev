@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../PlayerBase.h"
-#include "../CommonPlayerState/Death/PlayerDeathState.h"
+#include "../../PlayerBase.h"
 
-#include "../../../../Common/Vector2.h"
+#include "../../../../../Common/Vector2.h"
 
 class PlayerTripleAttackCollOperator;
 
