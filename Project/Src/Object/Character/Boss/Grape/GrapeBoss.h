@@ -34,68 +34,21 @@ private:
 	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate");
 
 	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_START_POS_X =
+	const Vector3 CAPSULE_COLLIDER_START_POS =
 		Vector3::Xonly(
 			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
 	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_END_POS_X =
+	const Vector3 CAPSULE_COLLIDER_END_POS =
 		-Vector3::Xonly(
 			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
 
-	// カプセルコライダーのローカルXZ始点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_START_POS_XZ =
-		Vector3::XZonly(
-			(MODEL_SIZE.x * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS,
-			(MODEL_SIZE.z * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-	// カプセルコライダーのローカルXZ終点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_END_POS_XZ =
-		-Vector3::XZonly(
-			(MODEL_SIZE.x * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS,
-			(MODEL_SIZE.z * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-
-	// カプセルコライダーのローカルZ始点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_START_POS_Z =
-		Vector3::Zonly(
-			(MODEL_SIZE.z * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-	// カプセルコライダーのローカルZ終点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_END_POS_Z =
-		-Vector3::Zonly(
-			(MODEL_SIZE.z * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-
-	// カプセルコライダーのローカルZX始点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_START_POS_ZX =
-		Vector3::XZonly(
-			-((MODEL_SIZE.x * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-				- CAPSULE_COLLIDER_RADIUS),
-			(MODEL_SIZE.z * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-	// カプセルコライダーのローカルZX終点座標（モデルの中心点からのオフセット）
-	const Vector3 CAPSULE_COLLIDER_END_POS_ZX =
-		-Vector3::XZonly(
-			-((MODEL_SIZE.x * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-				- CAPSULE_COLLIDER_RADIUS),
-			(MODEL_SIZE.z * 0.45f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-
 	// カプセルコライダーの絶対に当たらないおおよその距離
 	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE =
-		(CAPSULE_COLLIDER_START_POS_X - CAPSULE_COLLIDER_END_POS_X).Length()
+		(CAPSULE_COLLIDER_START_POS - CAPSULE_COLLIDER_END_POS).Length()
 		+ CAPSULE_COLLIDER_RADIUS;
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
@@ -112,9 +65,6 @@ private:
 
 	// 移動量
 	const float MOVE_SPEED = GetParameter("Move", "Speed");
-
-	// 回転量
-	const float ROTATION_POW = GetParameter("Move", "RotationPower");
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～移動状態
 
@@ -157,4 +107,6 @@ private:
 
 	// ゲームクリア時のカウントダウン
 	int gameOverCnt;
+
+	
 };

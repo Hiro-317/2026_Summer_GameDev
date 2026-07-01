@@ -47,7 +47,7 @@ void GrapeBoss::PlayerLoad(void)
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
-			CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
+			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
 			CAPSULE_COLLIDER_RADIUS,
 			CAPSULE_COLLIDER_ENOUGH_DISTANCE
 		)
@@ -92,13 +92,5 @@ void GrapeBoss::PlayerLoad(void)
 
 void GrapeBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	BossBase::OnCollision(ownTag, other);
-	if (ownTag == COLLIDER_TAG::BOSS) {
-		if (other.GetTag() == COLLIDER_TAG::STAGE) {
-			if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 
-				rockHit = true;
-			}
-		}
-	}
 }
