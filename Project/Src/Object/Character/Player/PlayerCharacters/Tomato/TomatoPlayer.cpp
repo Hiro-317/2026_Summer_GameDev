@@ -88,7 +88,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DAMAGE; },
 			// 座標
-			trans.pos,
+			trans.angle,
 			// 無敵時間のセット関数
 			[&]() { SetInviCounter(60); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）

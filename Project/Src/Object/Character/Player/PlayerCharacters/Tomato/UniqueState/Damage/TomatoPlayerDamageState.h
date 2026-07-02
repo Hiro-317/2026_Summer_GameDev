@@ -38,7 +38,7 @@ private:
 
 #pragma region 変数
 	// プレイヤーの座標
-	Vector3& pos;
+	Vector3& angle;
 #pragma endregion
 
 #pragma region 関数ポインタ
