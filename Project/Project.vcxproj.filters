@@ -33,7 +33,6 @@
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
@@ -85,6 +84,11 @@
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -209,7 +213,6 @@
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
-    <ClInclude Include="Src\Object\Character\Player\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\CharacterBase.h" />
@@ -265,6 +268,11 @@
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

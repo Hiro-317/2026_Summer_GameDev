@@ -101,7 +101,7 @@ void PlayerBase::CharacterLoad(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	//ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
@@ -135,6 +135,7 @@ void PlayerBase::CharacterUpdate(void)
 	interestPos = trans.pos + INTEREST_POS;
 
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
@@ -197,13 +198,13 @@ void PlayerBase::CharacterUiDraw(void)
 			};
 
 		// 加速度をデバッグ表示
-		debugDrwStr("プレイヤー～～～～～～");
-		debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
-		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
-		debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
-		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
-		debugDrwStr("HP：" + std::to_string(characterStats.hp));
-		debugDrwStr("～～～～～～('#；ω;`)");
+		//debugDrwStr("プレイヤー～～～～～～");
+		//debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
+		//debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
+		//debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
+		//debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
+		//debugDrwStr("HP：" + std::to_string(characterStats.hp));
+		//debugDrwStr("～～～～～～('#；ω;`)");
 	}
 }
 
@@ -259,8 +260,10 @@ void PlayerBase::CharacterRelease(void)
 
 void PlayerBase::ChangeState(int state)
 {
+	// 状態遷移
 	CharacterBase::ChangeState(state);
 
+	// 遷移するステート(状態)を送信
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
 
 	// ホストだったら操作者PC以外に伝達する
@@ -312,7 +315,7 @@ void PlayerBase::AnimePlay(int type, bool loop)
 }
 void PlayerBase::ReceptionUpdate(void)
 {
-	// 座標・角度
+	// 座標・角度の同期
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
@@ -369,6 +372,7 @@ void PlayerBase::ReceptionUpdate(void)
 void PlayerBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost() || isOwnOperator) {
+		// 自身の座標と角度を
 		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
 	} 
 }

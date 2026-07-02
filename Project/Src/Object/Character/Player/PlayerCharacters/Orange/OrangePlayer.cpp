@@ -1,34 +1,36 @@
 #include "OrangePlayer.h"
 
-#include "../../../../Application/Application.h"
+#include "../../../../../Application/Application.h"
 
-#include "../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../Manager/Font/FontManager.h"
-#include "../../../../Manager/Camera/Camera.h"
+#include "../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../Manager/Font/FontManager.h"
+#include "../../../../../Manager/Camera/Camera.h"
 
-#include "../CommonPlayerState/Move/PlayerMoveState.h"
-#include "../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
-#include "../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
-#include "../CommonPlayerState/Dodge/PlayerDodgeState.h"
-#include "../CommonPlayerState/Damage/PlayerDamageState.h"
-#include "../CommonPlayerState/Death/PlayerDeathState.h"
-#include "../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
+#include "../../CommonPlayerState/Move/PlayerMoveState.h"
+#include "../../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
+#include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+#include "../../CommonPlayerState/Dodge/PlayerDodgeState.h"
+#include "../../CommonPlayerState/Damage/PlayerDamageState.h"
+#include "../../CommonPlayerState/Death/PlayerDeathState.h"
+#include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
-#include "../../../UI/PlayerSkillUI/PlayerSkillUI.h"
-#include "../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../UI/HitUI/HitUI.h"
+#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
+#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../../UI/HitUI/HitUI.h"
 
 
 
 OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 	PlayerBase(
 		operatorSenderId,
+
 		"OrangeParameter", 
 		"PlayerHP",
 		"PlayerAttackPower",
 		"PlayerDefensePower",
 		"PlayerMoveSpeed",
+
 		"Data/Parameter/Character/Player/Orange/", 
 		"Orange/OrangeModel")
 {
@@ -41,6 +43,7 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma region モデル
 
+	// 影を消す（消さなかったら、変な色合いになるので）
 	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
@@ -154,8 +157,9 @@ void OrangePlayer::PlayerLoad(void)
 
 	// 三段攻撃状態を追加する
 	AddState(
-		(int)STATE::SKILL_1,
-		new PlayerTripleAttackState(
+		(int)STATE::SKILL_1,	// stateNum
+
+		new PlayerTripleAttackState(	// stateIns
 			// 自分の状態に遷移する関数
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// 自分の状態かどうかを返す関数
@@ -270,17 +274,20 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma region UIの登録と設定
 
+	// HPUIの座標設定
 	int number = 0;
 	if (isOwnOperator) {
 		number = 0;
 	}
 	else {
+		// 操作者だけ一番上に表示、それ以外の人のHPは下に描画
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
 			number++;
 			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
 		}
 	}
+
 	// HPの登録
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
@@ -297,6 +304,7 @@ void OrangePlayer::PlayerLoad(void)
 			)
 	);
 
+	// 自分が操作者かどうか
 	if (isOwnOperator) {
 
 		// スタミナのUI登録
