@@ -20,3 +20,7 @@ void GrapeBossStraight::SubUpdate(void)
 {
 	trans.pos += moveDir * MOVE_SPEED;
 }
+
+void GrapeBossStraight::SubDraw(void)
+{
+}

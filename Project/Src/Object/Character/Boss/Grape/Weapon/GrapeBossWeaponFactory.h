@@ -58,5 +58,6 @@ public:
 		default:
 			break;
 		}
+		return res;
 	}
 };
