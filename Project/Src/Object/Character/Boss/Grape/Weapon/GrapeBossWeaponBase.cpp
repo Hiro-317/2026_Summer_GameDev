@@ -1,11 +1,12 @@
 #include "GrapeBossWeaponBase.h"
 
-
-GrapeBossWeaponBase::GrapeBossWeaponBase(std::string parameterPath, int model) : ActorBase(parameterPath)
+void GrapeBossWeaponBase::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
-	trans.Duplicate(model);
+	// ƒXƒLƒ‹‚Ì•t—^
+	CreateAttackSkill(operatorSenderId, 50, &stats);
 }
 
-GrapeBossWeaponBase::~GrapeBossWeaponBase()
+void GrapeBossWeaponBase::SubDraw(void)
 {
+	trans.Draw();
 }

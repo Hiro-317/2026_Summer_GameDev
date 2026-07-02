@@ -85,7 +85,7 @@ void TomatoBoss::PlayerLoad(void)
 #pragma endregion
 
 
-#pragma region プレイヤーが抱える下位クラスを生成する
+#pragma region トマトが抱える下位クラスを生成する
 
 	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
 	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, operatorSenderId, characterStats, *collParam));

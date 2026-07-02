@@ -1,10 +1,11 @@
 #include "GrapeBossWeaponManager.h"
 
-#include "Straight/GrapeBossStraight.h"
+#include "GrapeBossWeaponFactory.h"
 
 
 GrapeBossWeaponManager::GrapeBossWeaponManager()
 {
+	// 複製ハンドル
 	bombModel = MV1LoadModel("Data/Model/Charactor/Grape/Bomb.mv1");
 }
 
@@ -12,52 +13,27 @@ GrapeBossWeaponManager::~GrapeBossWeaponManager()
 {
 }
 
-void GrapeBossWeaponManager::Init() 
+void GrapeBossWeaponManager::Init(const MSG_SENDER_ID id, const CharacterStats& stats)
 {
+	// 初期化用の数
 	int weaponNumber = 0;
+
+	// 武器の種類数とその中身の数まで回す
 	for (int i = 0; i < (int)WeaponType::Max; i++) {
 		for (int j = 0; j < WeponDuplicateNum[i]; j++) {
 
-			weapons[weaponNumber].type = (WeaponType)i;
-			switch ((WeaponType)i)
-			{
-			case GrapeBossWeaponManager::WeaponType::Straight:
-			{
-				weapons[weaponNumber].weaponIns = new GrapeBossStraight(bombModel);
-				break;
-			}
-			case GrapeBossWeaponManager::WeaponType::KickBomb:
-			{
-				weapons[weaponNumber].weaponIns = new GrapeBossStraight(bombModel);
-				break;
-			}
-			case GrapeBossWeaponManager::WeaponType::StampBomb:
-			{
-				weapons[weaponNumber].weaponIns = new GrapeBossStraight(bombModel);
-				break;
-			}
-			case GrapeBossWeaponManager::WeaponType::SingleBomb:
-			{
-				weapons[weaponNumber].weaponIns = new GrapeBossStraight(bombModel);
-				break;
-			}
-			case GrapeBossWeaponManager::WeaponType::StalkerBomb:
-			{
-				weapons[weaponNumber].weaponIns = new GrapeBossStraight(bombModel);
-				break;
-			}
-			case GrapeBossWeaponManager::WeaponType::RandomBomb:
-			{
-				weapons[weaponNumber].weaponIns = new GrapeBossStraight(bombModel);
-				break;
-			}
-			default:
-				break;
-			}
+			// 作ってもらった武器を格納
+			weapons[weaponNumber] = GrapeBossWeaponFactory::Create(bombModel, i);
+
+			// 数の更新
 			weaponNumber++;
 		}
 	}
+	// 複製用ハンドルの消去
 	MV1DeleteModel(bombModel);
+
+	// 武器の初期化
+	for (auto& i : weapons) i.weaponIns->Load(id, stats);
 }
 
 void GrapeBossWeaponManager::Update()
@@ -72,14 +48,8 @@ void GrapeBossWeaponManager::Draw()
 
 void GrapeBossWeaponManager::Release() 
 {
-	int weaponNumber = 0;
-	for (int i = 0; i < (int)WeaponType::Max; i++) {
-		for (int j = 0; j < WeponDuplicateNum[i]; j++) {
+	for (auto& i : weapons) i.weaponIns->Release();
 
-			weapons[weaponNumber].weaponIns->Release();
-			delete weapons[weaponNumber].weaponIns;
-			weaponNumber++;
-		}
-	}
+	// 外枠の消去
 	delete weapons;
 }

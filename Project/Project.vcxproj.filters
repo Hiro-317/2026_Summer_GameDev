@@ -83,8 +83,8 @@
     <ClCompile Include="Src\Object\Character\Boss\Tomato\State\Death\TomatoBossDeathState.cpp" />
     <ClCompile Include="Src\Manager\Effect\StampLand\EffectStampLand.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -264,6 +264,7 @@
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

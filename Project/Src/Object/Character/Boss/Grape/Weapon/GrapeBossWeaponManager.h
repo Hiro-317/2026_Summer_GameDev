@@ -1,4 +1,5 @@
 #pragma once
+#include "GrapeBossWeaponBase.h"
 
 static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {
 	int ret = 0;
@@ -6,77 +7,28 @@ static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {
 	return ret;
 }
 
-#include "GrapeBossWeaponBase.h"
+struct BombType {
+
+	WeaponType type = WeaponType::None;
+	GrapeBossWeaponBase* weaponIns = nullptr;
+};
 
 class GrapeBossWeaponManager{
 public:
 
-#pragma region 定数定義
-
-	// 種類の列挙型定義
-	enum class WeaponType {
-		None=-1,
-
-		// 直線投擲
-		Straight,
-
-		// 爆弾投下（蹴り攻撃と同時に身の回りに落とす爆弾）
-		KickBomb,
-
-		// 爆弾投下（スタンプ攻撃と同時に身の回りに落とす爆弾）
-		StampBomb,
-
-		// 爆弾投下（プレイヤーに向かって降らせる爆弾）
-		SingleBomb,
-
-		// 爆弾投下（1体のプレイヤーに一定時間降らせ続ける爆弾）
-		StalkerBomb,
-
-		// 爆弾投下（ランダムに地上に大量投下する爆弾）
-		RandomBomb,
-
-		Max
-	};
-
-	static constexpr int WeponDuplicateNum[(int)WeaponType::Max] = {
-		// 直線投擲
-		3,
-
-		// 爆弾投下（蹴り攻撃と同時に身の回りに落とす爆弾）
-		7,
-
-		// 爆弾投下（スタンプ攻撃と同時に身の回りに落とす爆弾）
-		10,
-
-		// 爆弾投下（プレイヤーに向かって降らせる爆弾）
-		1,
-
-		// 爆弾投下（1体のプレイヤーに一定時間降らせ続ける爆弾）
-		5,
-
-		// 爆弾投下（ランダムに地上に大量投下する爆弾）
-		20
-	};
-
-#pragma endregion
-
 	GrapeBossWeaponManager();
 	~GrapeBossWeaponManager();
 
-	void Init(void);
+	void Init(const MSG_SENDER_ID id, const CharacterStats& stats);
 	void Update(void);
 	void Draw(void);
 	void Release(void);
 
 private:
 
+	// 複製用ハンドル
 	int bombModel;
 
-	struct BombType {
-
-		WeaponType type = WeaponType::None;
-		GrapeBossWeaponBase* weaponIns = nullptr;
-	};
-
+	// 武器の配列
 	BombType weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];
 };
