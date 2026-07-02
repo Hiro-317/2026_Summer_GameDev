@@ -1,6 +1,6 @@
 #include "TomatoPlayerMoveState.h"
 
-#include "../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../../../Manager/Camera/Camera.h"
 
 TomatoPlayerMoveState::TomatoPlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
@@ -70,27 +70,21 @@ void TomatoPlayerMoveState::Update(void)
 		// 移動量を加算
 		accelSum += vec * MOVE_SPEED(isDash);
 
+		// ダッシュしているときはスタミナを減らす
+		if (isDash && --dashStamina < 0) {
+			dashStamina = 0;
 
-		// ダッシュスタミナを更新 / アニメーションを更新
-		if (isDash) {
-
-			// ダッシュしているときはスタミナを減らす
-			if (--dashStamina < 0) {
-				dashStamina = 0;
-
-				// 息切れ
-				isTired = true;
-			}
-
+			// 息切れ
+			isTired = true;
 		}
-		else {
-		}
+		
 		// ダッシュしているときは走るアニメーションにする
 		// ダッシュしていないときは歩くアニメーションにする
 		angle.x += Deg2Rad(MOVE_SPEED_MAX(isDash) * 0.5f);
 	}
 	else {
 		// 待機アニメーションにする
+		angle.x = Deg2Rad(0);
 	}
 
 	// 角度を入力方向に向ける

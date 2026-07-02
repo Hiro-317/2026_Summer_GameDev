@@ -274,17 +274,20 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma region UIの登録と設定
 
+	// HPUIの座標設定
 	int number = 0;
 	if (isOwnOperator) {
 		number = 0;
 	}
 	else {
+		// 操作者だけ一番上に表示、それ以外の人のHPは下に描画
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
 			number++;
 			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
 		}
 	}
+
 	// HPの登録
 	ui_ArrayIns.emplace_back(
 		new CharacterHpUI(
@@ -301,6 +304,7 @@ void OrangePlayer::PlayerLoad(void)
 			)
 	);
 
+	// 自分が操作者かどうか
 	if (isOwnOperator) {
 
 		// スタミナのUI登録

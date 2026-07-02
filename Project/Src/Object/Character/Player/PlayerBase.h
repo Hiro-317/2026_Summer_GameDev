@@ -221,11 +221,27 @@ protected:
 		return nullptr;
 	}
 
-	// ÉXÉLÉãUIÇÃç¿ïWÅ@Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
+	// UIÅ@Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 600, Application::SCREEN_SIZE_Y_HALF + 300);
 	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 120, SKILL1_UI_DRAW_POS.y - 100);
 	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 240, SKILL1_UI_DRAW_POS.y);
-	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å@ÉXÉLÉãUIÇÃç¿ïWÅ@
+
+	// âÊëúÇÃñºëO
+	const std::string HP_FRAME_IMAGE_NAME = "PlayerHpFrame";
+	const std::string HP_IMAGE_NAME = "PlayerHp";
+	const std::string HP_LOST_IMAGE_NAME = "PlayerHpLost";
+
+	// HPÉoÅ[ÇÃâÊëúÉTÉCÉY
+	const Vector2I HP_IMAGE_SIZE = Vector2I(354, 50);
+	const Vector2I HP_GAUGE_OFFSET = Vector2I(10, 0);
+	const Vector2I HP_UI_POS[(int)MSG_SENDER_ID::Max] = {
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + (HP_IMAGE_SIZE.y + 20)),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 20) * 2)),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 20) * 3)),
+	};
+
+	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å@UI
 #pragma endregion íËêîíËã`
 
 	// íçéãì_ç¿ïW

@@ -177,7 +177,9 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\TomatoPlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
@@ -254,7 +256,9 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\TomatoPlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />

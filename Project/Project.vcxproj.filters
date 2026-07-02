@@ -80,7 +80,9 @@
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\TomatoPlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -255,7 +257,9 @@
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\TomatoPlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

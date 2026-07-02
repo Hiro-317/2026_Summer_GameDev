@@ -18,4 +18,10 @@ public:
 
 private:
 
+#pragma region ƒXƒLƒ‹‚P‚Ì’è”’è‹`
+
+	const int SKILL1_COOL_TIME = GetParameter("Skill1", "CoolTime");
+
+#pragma endregion 
+
 };
