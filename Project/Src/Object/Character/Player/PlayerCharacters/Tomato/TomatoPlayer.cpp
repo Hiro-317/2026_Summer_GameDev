@@ -65,7 +65,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
 			// クールタイム
-			120,
+			SKILL1_COOL_TIME,
 			// 移動速度 / 回転速度
 			0.0f, 0.0f, 
 			// 座標 / 角度
