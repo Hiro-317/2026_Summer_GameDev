@@ -11,6 +11,7 @@ struct BombType {
 
 	WeaponType type = WeaponType::None;
 	GrapeBossWeaponBase* weaponIns = nullptr;
+	bool live = false;
 };
 
 class GrapeBossWeaponManager{

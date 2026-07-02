@@ -38,12 +38,20 @@ void GrapeBossWeaponManager::Init(const MSG_SENDER_ID id, const CharacterStats& 
 
 void GrapeBossWeaponManager::Update()
 {
-	for (auto& i : weapons) i.weaponIns->Update();
+	for (auto& i : weapons) {
+		if (i.live) {
+			i.weaponIns->Update();
+		}
+	}
 }
 
 void GrapeBossWeaponManager::Draw()
 {
-	for (auto& i : weapons) i.weaponIns->Draw();
+	for (auto& i : weapons) {
+		if (i.live) {
+			i.weaponIns->Draw();
+		}
+	}
 }
 
 void GrapeBossWeaponManager::Release() 
