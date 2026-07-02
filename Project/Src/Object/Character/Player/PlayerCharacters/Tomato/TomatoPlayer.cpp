@@ -67,7 +67,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// クールタイム
 			SKILL1_COOL_TIME,
 			// 移動速度 / 回転速度
-			0.0f, 0.0f, 
+			60.0f, Deg2Rad(40.0f), 
 			// 座標 / 角度
 			trans.pos, trans.angle,
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）

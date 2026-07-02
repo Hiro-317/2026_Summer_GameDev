@@ -49,6 +49,8 @@ private:
 	// 強制突進タイム
 	static constexpr int FORCE_MOVE_TIME = 200;
 
+	static constexpr float TACKLE_START_ANGLE = 20.0f;
+
 #pragma endregion 
 
 #pragma region 変数定義
@@ -58,6 +60,12 @@ private:
 
 	// 角度の参照
 	Vector3& angle;
+
+	// 向いている方向
+	Vector3 moveDir;
+
+	// 終了までのカウント用
+	int timeCounter;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

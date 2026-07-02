@@ -15,7 +15,8 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	MOVE_SPEED(MOVE_SPEED),
 	ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle),
-	DefaultChangeState(DefaultChangeState)
+	DefaultChangeState(DefaultChangeState),
+	timeCounter(0)
 {
 
 }
@@ -28,18 +29,41 @@ void TomatoPlayerTackleState::OwnStateConditionUpdate(void)
 	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_1).down) {
 		OwnChangeState();
 	}
-
 }
 
 void TomatoPlayerTackleState::Enter(void)
 {
+	// スキルのクールタイムをセット
 	coolTimeCounter = COOL_TIME;
+
+	// 前方方向の取得
+	moveDir.x = sinf(angle.y);
+	moveDir.z = cosf(angle.y);
+	moveDir.Normalize();
+
+	// X軸の角度をゼロに初期化(回転量で突進の開始を判断しているから、初期化しておく)
+	angle.x = 0.0f;
+
+	// カウンターの初期化
+	timeCounter = 30;
 }
 
 void TomatoPlayerTackleState::Update(void)
 {
-	angle.x += Deg2Rad(40.0f);
-	if (angle.x >= 120) {
+	// 回転スタート
+	angle.x += ROTATION_POW;
+
+	// 一定数回転したら突進を開始
+	if (angle.x >= TACKLE_START_ANGLE) {
+		// カウントを開始
+		timeCounter--;
+		// 前方に向かって突進
+		pos += moveDir * MOVE_SPEED;
+	}
+
+	// カウンターがゼロになったら終了
+	if (timeCounter <= 0) {
+		timeCounter = 0;
 		DefaultChangeState();
 	}
 }
