@@ -22,6 +22,10 @@ private:
 
 	const int SKILL1_COOL_TIME = GetParameter("Skill1", "CoolTime");
 
+	const float MOVE_SPEED = 60.0f;
+
+	const float ROTATION_POW = Deg2Rad(40.0f);
+
 #pragma endregion 
 
 };

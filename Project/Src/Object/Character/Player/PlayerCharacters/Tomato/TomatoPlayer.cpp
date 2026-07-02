@@ -2,6 +2,7 @@
 
 #include "UniqueState/Move/TomatoPlayerMoveState.h"
 #include "UniqueState/Tackle/TomatoPlayerTackleState.h"
+#include "UniqueState/Damage/TomatoPlayerDamageState.h"
 #include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
@@ -25,6 +26,10 @@ TomatoPlayer::TomatoPlayer(MSG_SENDER_ID operatorSenderId) :
 
 void TomatoPlayer::PlayerLoad(void)
 {
+	// ‰e‚ðÁ‚·iÁ‚³‚È‚©‚Á‚½‚çA•Ï‚ÈF‡‚¢‚É‚È‚é‚Ì‚Åj
+	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
 #pragma region ó‘ÔÝ’è
 
 	// ˆÚ“®ó‘Ô‚ð’Ç‰Á‚·‚é
@@ -67,13 +72,30 @@ void TomatoPlayer::PlayerLoad(void)
 			// ƒN[ƒ‹ƒ^ƒCƒ€
 			SKILL1_COOL_TIME,
 			// ˆÚ“®‘¬“x / ‰ñ“]‘¬“x
-			60.0f, Deg2Rad(40.0f), 
+			MOVE_SPEED, ROTATION_POW,
 			// À•W / Šp“x
 			trans.pos, trans.angle,
 			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚ÍˆÚ“®ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
+
+	AddState(
+		(int)STATE::DAMAGE,
+		new TomatoPlayerDamageState(
+			// Ž©•ª‚Ìó‘Ô‚ÉŠÖ‚·‚éŠÖ”
+			[&]() { ChangeState((int)STATE::DAMAGE); },
+			// Ž©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ð•Ô‚·ŠÖ”
+			[&]() { return state == (int)STATE::DAMAGE; },
+			// À•W
+			trans.pos,
+			// –³“GŽžŠÔ‚ÌƒZƒbƒgŠÖ”
+			[&]() { SetInviCounter(60); },
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚ÍˆÚ“®ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
 
 	// ‘JˆÚðŒ‚Ì“o˜^ibefore = ‘JˆÚŒ³)(after = ‘JˆÚŒãj
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {

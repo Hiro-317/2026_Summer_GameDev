@@ -89,6 +89,7 @@
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -273,6 +274,7 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">
