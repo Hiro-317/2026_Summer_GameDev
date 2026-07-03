@@ -3,7 +3,8 @@
 #include "GrapeBossWeaponFactory.h"
 
 
-GrapeBossWeaponManager::GrapeBossWeaponManager()
+GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
+	: operatorSenderId(operatorSenderId), stats(stats)
 {
 	// 複製ハンドル
 	bombModel = MV1LoadModel("Data/Model/Charactor/Grape/Bomb.mv1");
@@ -13,7 +14,7 @@ GrapeBossWeaponManager::~GrapeBossWeaponManager()
 {
 }
 
-void GrapeBossWeaponManager::Init(const MSG_SENDER_ID id, const CharacterStats& stats)
+void GrapeBossWeaponManager::Load(void)
 {
 	// 初期化用の数
 	int weaponNumber = 0;
@@ -33,10 +34,10 @@ void GrapeBossWeaponManager::Init(const MSG_SENDER_ID id, const CharacterStats& 
 	MV1DeleteModel(bombModel);
 
 	// 武器の初期化
-	for (auto& i : weapons) i.weaponIns->Load(id, stats);
+	for (auto& i : weapons) i.weaponIns->Load(operatorSenderId, stats);
 }
 
-void GrapeBossWeaponManager::Update()
+void GrapeBossWeaponManager::SubUpdate()
 {
 	for (auto& i : weapons) {
 		if (i.live) {
@@ -45,7 +46,7 @@ void GrapeBossWeaponManager::Update()
 	}
 }
 
-void GrapeBossWeaponManager::Draw()
+void GrapeBossWeaponManager::SubDraw()
 {
 	for (auto& i : weapons) {
 		if (i.live) {
@@ -54,10 +55,7 @@ void GrapeBossWeaponManager::Draw()
 	}
 }
 
-void GrapeBossWeaponManager::Release() 
+void GrapeBossWeaponManager::SubRelease() 
 {
 	for (auto& i : weapons) i.weaponIns->Release();
-
-	// 外枠の消去
-	delete weapons;
 }

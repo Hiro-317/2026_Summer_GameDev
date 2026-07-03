@@ -59,6 +59,13 @@ public:
 	// 行うロード
 	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) = 0;
 
+	// 初期設定用関数
+	void SetStartPos(Vector3 pos) { trans.pos = pos; }
+	void ResetCount(void) { count = 0.0f; }
+
+	// 攻撃が終わったか
+	bool IsEnd(void) { return end; }
+
 	// 予測線の設定(円形)
 	void SetViewScaleCircle(float scale) { collFront.scale = Vector3(scale); };
 	void SetViewPosCircle(void) { collBack.pos = trans.pos; collFront.pos = trans.pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT + 1.0f; };
@@ -70,11 +77,18 @@ public:
 
 protected:
 
-	// 基本描画
+	// 基本
 	void SubDraw(void) override;
 
+	// 予測線
 	Transform collBack;
 	Transform collFront;
+
+	// 行動カウント
+	float count;
+
+	// 終了フラグ
+	bool end;
 
 private:
 #pragma region 定数定義

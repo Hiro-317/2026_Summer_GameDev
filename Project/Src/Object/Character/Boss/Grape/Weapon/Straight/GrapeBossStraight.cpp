@@ -9,7 +9,7 @@ GrapeBossStraight::GrapeBossStraight(int model)
 	// 当たり判定を生成する（球体コライダー）
 	ColliderCreate(
 		new SphereCollider(
-			COLLIDER_TAG::BOSS,
+			COLLIDER_TAG::BOSS_ATTACK,
 			GetParameter("Straight", "Radius")
 			)
 	);
@@ -22,8 +22,8 @@ void GrapeBossStraight::Load(const MSG_SENDER_ID operatorSenderId, const Charact
 {
 	CreateAttackSkill(operatorSenderId, 50, &stats);
 
-	collBack.scale = DEFAULT_VIEW_SCALE;
-	collFront.scale = DEFAULT_VIEW_SCALE - Vector3::Xonly(DEFAULT_VIEW_SCALE.x);
+	collBack.scale = ATTACK_RANGE;
+	collFront.scale = ATTACK_RANGE - Vector3::Xonly(ATTACK_RANGE.x);
 }
 
 void GrapeBossStraight::SubUpdate(void)
