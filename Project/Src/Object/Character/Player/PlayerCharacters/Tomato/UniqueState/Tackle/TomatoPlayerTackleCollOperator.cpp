@@ -56,6 +56,7 @@ void TomatoPlayerTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 	switch (other.GetTag())
 	{
 	case COLLIDER_TAG::BOSS:
+	case COLLIDER_TAG::ENEMY:
 	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 		isHit = true;
 		break;

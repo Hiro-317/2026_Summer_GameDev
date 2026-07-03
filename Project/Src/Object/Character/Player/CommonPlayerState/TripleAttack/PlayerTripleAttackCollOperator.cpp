@@ -66,6 +66,7 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isFindAttackTarget = true;
 			targetPos = &other.GetTransform().pos;
 			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
@@ -79,7 +80,8 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
-				isHit = true;
+		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+			isHit = true;
 			break;
 		default:break;
 		}
