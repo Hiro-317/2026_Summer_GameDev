@@ -20,11 +20,17 @@ private:
 
 #pragma region スキル１の定数定義
 
-	const int SKILL1_COOL_TIME = GetParameter("Skill1", "CoolTime");
+	// クールタイムの時間
+	const int SKILL2_COOL_TIME = GetParameterToInt("Tackle", "CoolTime");
 
-	const float MOVE_SPEED = 60.0f;
+	// 突進速度
+	const float MOVE_SPEED = GetParameter("Tackle", "MoveSpeed");;
+	
+	// 回転速度
+	const float ROTATION_POW = Deg2Rad(GetParameter("Tackle", "RotationPower"));
 
-	const float ROTATION_POW = Deg2Rad(40.0f);
+	// 攻撃倍率
+	const short SKILL2_DAMAGE_RATE = (short)GetParameter("Tackle", "DamageRate");
 
 #pragma endregion 
 

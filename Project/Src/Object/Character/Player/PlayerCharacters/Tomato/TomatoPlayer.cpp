@@ -5,6 +5,8 @@
 #include "UniqueState/Damage/TomatoPlayerDamageState.h"
 #include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
+#include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
+
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
@@ -26,9 +28,19 @@ TomatoPlayer::TomatoPlayer(MSG_SENDER_ID operatorSenderId) :
 
 void TomatoPlayer::PlayerLoad(void)
 {
-	// 影を消す（消さなかったら、変な色合いになるので）
+	// 影を消す（消さなかったら、変な色になるので）
 	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
+	subObjArray.emplace_back(
+		new TomatoPlayerTackleCollOperator(
+			COLLIDER_TAG::PLAYER_ATTACK,
+			SKILL2_DAMAGE_RATE,
+			trans.pos, trans.angle,
+			operatorSenderId,
+			characterStats
+		)
+	);
 
 #pragma region 状態設定
 
@@ -69,8 +81,9 @@ void TomatoPlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
+			*SubObjSerch<TomatoPlayerTackleCollOperator>(),
 			// クールタイム
-			SKILL1_COOL_TIME,
+			SKILL2_COOL_TIME,
 			// 移動速度 / 回転速度
 			MOVE_SPEED, ROTATION_POW,
 			// 座標 / 角度
@@ -152,15 +165,15 @@ void TomatoPlayer::PlayerLoad(void)
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				// 描画座標
-				SKILL1_UI_DRAW_POS,
+				SKILL2_UI_DRAW_POS,
 				// クールタイム変数
 				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
 				// クールタイムの最大値
-				SKILL1_COOL_TIME,
+				SKILL2_COOL_TIME,
 				// UIの色指定
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				// 描画する画像
-				"SkillSlotTripleAttack"
+				"SkillSlotSimpleAttack"
 			)
 		);
 	}

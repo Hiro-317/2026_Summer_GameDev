@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../../../CharacterStateBase.h"
 
+#include "TomatoPlayerTackleCollOperator.h"
+
 class TomatoPlayerTackleState : public CharacterStateBase
 {
 public:
@@ -9,6 +11,7 @@ public:
 	TomatoPlayerTackleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
+		TomatoPlayerTackleCollOperator& collOperator,
 		int COOL_TIME,
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Vector3& angle,
@@ -43,13 +46,11 @@ private:
 	// クールタイム
 	const int COOL_TIME;
 
-	// チャージ
-	static constexpr int CHARGE_POW = 180;
-
-	// 強制突進タイム
-	static constexpr int FORCE_MOVE_TIME = 200;
-
+	// このスタート角度まで回転したら、突進をスタートする
 	static constexpr float TACKLE_START_ANGLE = 20.0f;
+
+	// 突進してから終了までのカウントタイム
+	static constexpr int COUNT_MAX = 20;
 
 #pragma endregion 
 
@@ -60,6 +61,8 @@ private:
 
 	// 角度の参照
 	Vector3& angle;
+
+	TomatoPlayerTackleCollOperator& collOperator;
 
 	// 向いている方向
 	Vector3 moveDir;
