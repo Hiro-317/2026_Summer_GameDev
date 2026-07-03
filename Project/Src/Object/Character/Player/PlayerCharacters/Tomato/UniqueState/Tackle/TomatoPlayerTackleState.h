@@ -34,6 +34,11 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
+	// チャージ攻撃のUIのためのクールタイム計算関数（チャージ攻撃はここで計算して、UIのチャージ演出をここでしている）
+	const int Charge(int& coolTimeCounter, const int COOL_TIME, const int CHARGE_TIME) {
+		return  coolTimeCounter += COOL_TIME / CHARGE_TIME;
+	}
+
 private:
 #pragma region 定数定義
 

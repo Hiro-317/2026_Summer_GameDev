@@ -36,10 +36,8 @@ void TomatoPlayerTackleState::OwnStateConditionUpdate(void)
 
 void TomatoPlayerTackleState::Enter(void)
 {
+	//	当たったかどうかのフラグをリセット
 	collOperator.ResetIsHit();
-
-	// スキルのクールタイムをセット
-	coolTimeCounter = COOL_TIME;
 
 	// 前方方向の取得
 	moveDir.x = sinf(angle.y);
@@ -55,11 +53,14 @@ void TomatoPlayerTackleState::Enter(void)
 
 void TomatoPlayerTackleState::Update(void)
 {
-	// 回転スタート
-	angle.x += ROTATION_POW;
+	// カウンターがゼロになったら終了
+	if (timeCounter <= 0) {
+		DefaultChangeState();
+		return;
+	}
 
 	// 一定数回転したら突進を開始
-	if (angle.x >= TACKLE_START_ANGLE) {
+	if (coolTimeCounter >= COOL_TIME) {
 		// カウントを開始
 		timeCounter--;
 		// 前方に向かって突進
@@ -71,15 +72,21 @@ void TomatoPlayerTackleState::Update(void)
 		// 当たったらタイマーを強制的に終了し、次の処理へ
 		if (collOperator.GetIsHit()) {
 			timeCounter = 0;
+			collOperator.CollOff();
 		}
 	}
 
-	// カウンターがゼロになったら終了
-	if (timeCounter <= 0) {
-		// すべて初期化
-		timeCounter = 0;
+	// ボタンを押し続けている場合攻撃をチャージする
+	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).now) {
+		// これはスキルのUIをチャージ用に動かすための特殊処理処理
+		Charge(coolTimeCounter, COOL_TIME, 60);
+
+		// 回転スタート
+		angle.x += ROTATION_POW;
+	}
+	else if (coolTimeCounter < COOL_TIME) {
+		// チャージが終了しなかったら、強制的に終了させる
 		DefaultChangeState();
-		collOperator.CollOff();
 	}
 }
 
@@ -89,6 +96,9 @@ void TomatoPlayerTackleState::Exit(void)
 	timeCounter = 0;
 	collOperator.CollOff();
 	collOperator.ResetIsHit();
+
+	// スキルのクールタイムをセット
+	coolTimeCounter = COOL_TIME;
 }
 
 void TomatoPlayerTackleState::AlwaysUpdate(void)

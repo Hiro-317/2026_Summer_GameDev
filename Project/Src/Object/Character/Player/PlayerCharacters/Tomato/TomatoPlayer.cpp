@@ -22,7 +22,8 @@ TomatoPlayer::TomatoPlayer(MSG_SENDER_ID operatorSenderId) :
 		"PlayerMoveSpeed",
 
 		"Data/Parameter/Character/Player/Tomato/",
-		"Tomato/Tomato")
+		"Tomato/Tomato"
+	)
 {
 }
 
@@ -173,7 +174,8 @@ void TomatoPlayer::PlayerLoad(void)
 				// UI‚ÌFw’è
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				// •`‰æ‚·‚é‰æ‘œ
-				"SkillSlotSimpleAttack"
+				"SkillSlotSimpleAttack",
+				true
 			)
 		);
 	}

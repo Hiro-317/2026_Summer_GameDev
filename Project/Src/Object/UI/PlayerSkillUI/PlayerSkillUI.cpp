@@ -5,26 +5,22 @@ PlayerSkillUI::PlayerSkillUI(
 	const int& coolTimeCounter, 
 	int COOL_TIME, 
 	SKILL_UI_COLOR color,
-	std::string skillImagePath
+	std::string skillImagePath,
+	const bool isChargeSkill
 ) :
 	pos(pos),
 	COOL_TIME(COOL_TIME),
 	coolTimeRatio(0.0f),
 	offset(0.0f),
-	coolTimeCounter(coolTimeCounter)
+	coolTimeCounter(coolTimeCounter),
+	isChargeSkill(isChargeSkill)
 {
 	// 画像の読み込み
 	UILoadImage("SkillSlotFrame", (int)IMAGE_TYPE::FRAME, FILE_PATH_TYPE::PLAYER_SKILL);
 	UILoadImage(skillImagePath, (int)IMAGE_TYPE::SKILL, FILE_PATH_TYPE::PLAYER_SKILL);
 	UILoadImage(chargeImagePath.find(color)->second.c_str(), (int)IMAGE_TYPE::COLOR_IMAGE1, FILE_PATH_TYPE::PLAYER_SKILL);
 	UILoadImage(chargingImagePath.find(color)->second.c_str(), (int)IMAGE_TYPE::COLOR_IMAGE2, FILE_PATH_TYPE::PLAYER_SKILL);
-}
-
-
-
-PlayerSkillUI::~PlayerSkillUI()
-{
-
+	UILoadImage("ChargeOK", (int)IMAGE_TYPE::CHARGE_OK, FILE_PATH_TYPE::PLAYER_SKILL);
 }
 
 void PlayerSkillUI::SubUpdate()
@@ -36,7 +32,7 @@ void PlayerSkillUI::SubUpdate()
 
 void PlayerSkillUI::SubDraw(void)
 {
-	// スキルUIのフレーム
+	// スキルUIのフレーム画像
 	DrawGraph(
 		pos.x - (IMAGE_SIZE.x / 2),
 		pos.y - (IMAGE_SIZE.y / 2),
@@ -46,7 +42,7 @@ void PlayerSkillUI::SubDraw(void)
 
 	int offset_I = (int)offset;
 	
-	// クールタイムが動いているときこの画像を描画する
+	// クールタイム中、クールタイムの割合に応じてこの画像を描画する
 	DrawRectGraph(
 		pos.x - (IMAGE_SIZE.x / 2),
 		(pos.y + IMAGE_SIZE.y / 2) - offset_I,
@@ -56,7 +52,7 @@ void PlayerSkillUI::SubDraw(void)
 		true
 	);
 
-	// クールタイムがないときこの画像を描画する
+	// スキルが使える場合の時に描画する画像
 	if (coolTimeRatio <= 0.0f) {
 		DrawRotaGraph(
 			pos.x,
@@ -66,9 +62,21 @@ void PlayerSkillUI::SubDraw(void)
 			uiImages.at((int)IMAGE_TYPE::COLOR_IMAGE2),
 			true
 		);
+
+		if (isChargeSkill) {
+			// 溜め攻撃スキルの場合、スキルが使える状態の時に描画する画像
+			DrawRotaGraph(
+				pos.x,
+				pos.y - (IMAGE_SIZE.y / 3) * 2,
+				0.1f,
+				0.0f,
+				uiImages.at((int)IMAGE_TYPE::CHARGE_OK),
+				true
+			);
+		}
 	}
 
-	// スキルによって変わる画像の画像
+	// スキルの特徴を示す画像
 	DrawRotaGraph(
 		pos.x,
 		pos.y,
@@ -81,4 +89,9 @@ void PlayerSkillUI::SubDraw(void)
 
 void PlayerSkillUI::SubRelease(void)
 { 
+	for(int image : uiImages) {
+		DeleteGraph(image);
+	}
+
+	uiImages.clear();
 }

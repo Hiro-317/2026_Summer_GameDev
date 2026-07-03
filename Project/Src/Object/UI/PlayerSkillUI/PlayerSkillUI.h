@@ -12,8 +12,6 @@
 
 class PlayerSkillUI : public UI_Base
 {
-private:
-	const Vector2I IMAGE_SIZE = Vector2I(150, 129);
 public:
 
 	// UIの色
@@ -26,6 +24,7 @@ public:
 		MAX
 	};
 
+
 	/// <summary>
 	/// スキルUI生成
 	/// </summary>
@@ -35,16 +34,17 @@ public:
 	/// <param name="color">UIの色</param>
 	/// <param name="skillImagePath">スキルの画像パス</param>
 	/// <param name="imageSizeRate">スキルの画像サイズ倍率</param>
+	/// <param name="isChargeSkill">チャージ攻撃かどうか</param>
 	PlayerSkillUI(
 		Vector2I pos, 
 		const int& coolTimeCounter, 
 		int COOL_TIME, 
 		SKILL_UI_COLOR color,
-		std::string skillImagePath
+		std::string skillImagePath,
+		const bool isChargeSkill = true
 	);
 
-
-	~PlayerSkillUI();	// デストラクタ
+	~PlayerSkillUI() = default;	// デストラクタ
 
 	void Load(void)override {}
 	void SubInit(void) override {}
@@ -52,10 +52,8 @@ public:
 	void SubDraw(void) override;	// 描画処理
 	void SubRelease(void) override;	// 解放処理
 	
-	// クールタイムのゲッター関数
-	const bool GetIsCoolTimeNow(int STATE_TAG) { return (coolTimeCounter > 0); }
-
 private:
+
 	// 画像をタイプ別に分ける
 	enum class IMAGE_TYPE
 	{
@@ -63,10 +61,12 @@ private:
 		SKILL,
 		COLOR_IMAGE1,
 		COLOR_IMAGE2,
+		CHARGE_OK,
 
 		MAX
 	};
 
+#pragma region 画像パス
 	// チャージ中の色別に分けた画像
 	std::map<SKILL_UI_COLOR, std::string> chargingImagePath =
 	{
@@ -82,8 +82,12 @@ private:
 		{ SKILL_UI_COLOR::BLUE, "SkillSlotBlueCharge" },
 		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharge" }
 	};
+#pragma endregion 
 
+	// スキルの画像サイズ
+	const Vector2I IMAGE_SIZE = Vector2I(150, 129);
 
+#pragma region 変数定義
 	Vector2I pos;		// 描画位置
 
 	float coolTimeRatio;		// クールタイム割合変数
@@ -91,5 +95,8 @@ private:
 
 	const int COOL_TIME;		// クールタイムの最大値
 	const int& coolTimeCounter;	// クールタイムカウンター用変数
+
+	const bool isChargeSkill;	// チャージスキルかどうかのフラグ
+#pragma endregion 
 };
 
