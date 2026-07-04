@@ -1,8 +1,8 @@
-#include "TomatoPlayerTackleCollOperator.h"
+#include "TomatoPlayerHeadButtCollOperator.h"
 
 #include "../../../../../../Common/Collider/SphereCollider.h"
 
-TomatoPlayerTackleCollOperator::TomatoPlayerTackleCollOperator(
+TomatoPlayerHeadButtCollOperator::TomatoPlayerHeadButtCollOperator(
 	COLLIDER_TAG COLL_TAG,
 	const short ATTACK_RATE_PERCENT,
 	const Vector3& playerPos, const Vector3& playerAngle,
@@ -19,7 +19,7 @@ TomatoPlayerTackleCollOperator::TomatoPlayerTackleCollOperator(
 {
 }
 
-void TomatoPlayerTackleCollOperator::Load(void)
+void TomatoPlayerHeadButtCollOperator::Load(void)
 {
 #pragma region 基底クラスにある機能の挙動設定
 
@@ -45,20 +45,21 @@ void TomatoPlayerTackleCollOperator::Load(void)
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 }
 
-void TomatoPlayerTackleCollOperator::Update(void)
+void TomatoPlayerHeadButtCollOperator::Update(void)
 {
 	// 座標と角度をプレイヤーの座標に追従
 	trans.pos = playerPos;
 	trans.angle = playerAngle;
 }
 
-void TomatoPlayerTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void TomatoPlayerHeadButtCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 	switch (other.GetTag())
 	{
 	case COLLIDER_TAG::BOSS:
 	case COLLIDER_TAG::ENEMY:
 	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		isHit = true;
 		break;
 	default:break;

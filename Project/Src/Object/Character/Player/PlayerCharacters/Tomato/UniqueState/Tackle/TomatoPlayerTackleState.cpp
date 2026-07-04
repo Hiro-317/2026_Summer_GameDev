@@ -61,6 +61,8 @@ void TomatoPlayerTackleState::Update(void)
 
 	// 一定数回転したら突進を開始
 	if (coolTimeCounter >= COOL_TIME) {
+		// 突進中も回転を続ける
+		angle.x += ROTATION_POW;
 		// カウントを開始
 		timeCounter--;
 		// 前方に向かって突進

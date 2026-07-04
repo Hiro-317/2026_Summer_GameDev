@@ -89,9 +89,4 @@ void PlayerSkillUI::SubDraw(void)
 
 void PlayerSkillUI::SubRelease(void)
 { 
-	for(int image : uiImages) {
-		DeleteGraph(image);
-	}
-
-	uiImages.clear();
 }

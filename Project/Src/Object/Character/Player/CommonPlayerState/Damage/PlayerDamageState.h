@@ -18,11 +18,10 @@ public:
 	PlayerDamageState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		unsigned char INVI_TIME,
 		const std::function<void(void)> PlayDamageAnime,
 		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(unsigned char)> SetInviCounter,
-		const std::function<void()> DefaultChangeState
+		const std::function<void(void)> InviStart,
+		const std::function<void(void)> DefaultChangeState
 	);
 
 	// デストラクタ
@@ -38,13 +37,6 @@ public:
 
 private:
 
-#pragma region 定数
-
-	// 無敵時間(フレーム数)
-	const unsigned char INVI_TIME;
-
-#pragma endregion
-
 #pragma region 関数ポインタ
 	// アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayDamageAnime;
@@ -52,7 +44,7 @@ private:
 	const std::function<bool(void)> IsAnimeEnd;
 
 	// 無敵時間のセット関数
-	const std::function<void(unsigned char)> SetInviCounter;
+	const std::function<void(void)> InviStart;
 
 	// ダメージ状態終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

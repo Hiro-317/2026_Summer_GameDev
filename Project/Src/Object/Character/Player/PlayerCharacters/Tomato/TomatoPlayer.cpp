@@ -2,10 +2,12 @@
 
 #include "UniqueState/Move/TomatoPlayerMoveState.h"
 #include "UniqueState/Tackle/TomatoPlayerTackleState.h"
+#include "UniqueState/HeadButt/TomatoPlayerHeadButtState.h"
 #include "UniqueState/Damage/TomatoPlayerDamageState.h"
 #include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
 #include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
+#include "UniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -33,6 +35,8 @@ void TomatoPlayer::PlayerLoad(void)
 	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
+#pragma region 下位オブジェクトの生成
+	// 突進攻撃の当たり判定を生成
 	subObjArray.emplace_back(
 		new TomatoPlayerTackleCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
@@ -42,6 +46,17 @@ void TomatoPlayer::PlayerLoad(void)
 			characterStats
 		)
 	);
+
+	subObjArray.emplace_back(
+		new TomatoPlayerHeadButtCollOperator(
+			COLLIDER_TAG::PLAYER_ATTACK,
+			SKILL1_DAMAGE_RATE,
+			trans.pos, trans.angle,
+			operatorSenderId,
+			characterStats
+		)
+	);
+#pragma endregion 
 
 #pragma region 状態設定
 
@@ -74,19 +89,42 @@ void TomatoPlayer::PlayerLoad(void)
 			bossPos
 		)
 	);
-
+	
+	// スキル1
 	AddState(
 		(int)STATE::SKILL_1,
-		new TomatoPlayerTackleState(
+		new TomatoPlayerHeadButtState(
 			// 自分の状態に遷移する関数
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
+			// 頭突き攻撃の当たり判定発生管理用クラス
+			*SubObjSerch<TomatoPlayerHeadButtCollOperator>(),
+			// クールタイム
+			SKILL1_COOL_TIME,
+			// 頭突き中の時間 / 頭突きの速度
+			HEAD_BUTT_ATTACK_TIME, HEAD_BUTT_SPEED,
+			// 座標 / 角度
+			trans.pos, trans.angle,
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	// スキル2
+	AddState(
+		(int)STATE::SKILL_2,
+		new TomatoPlayerTackleState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::SKILL_2); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_2; },
+			// 突進攻撃の当たり判定発生管理用クラス
 			*SubObjSerch<TomatoPlayerTackleCollOperator>(),
 			// クールタイム
 			SKILL2_COOL_TIME,
 			// 移動速度 / 回転速度
-			MOVE_SPEED, ROTATION_POW,
+			TACKLE_SPEED, ROTATION_POW,
 			// 座標 / 角度
 			trans.pos, trans.angle,
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
@@ -118,6 +156,8 @@ void TomatoPlayer::PlayerLoad(void)
 
 	// 移動状態 -> スキル1 の遷移を登録
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
+	// 移動状態 -> スキル2 の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 
 #pragma endregion 
 
@@ -162,17 +202,33 @@ void TomatoPlayer::PlayerLoad(void)
 			)
 		);
 
-		// スキル1UIの登録
+		// スキル2UIの登録
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				// 描画座標
 				SKILL2_UI_DRAW_POS,
 				// クールタイム変数
-				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
 				// クールタイムの最大値
 				SKILL2_COOL_TIME,
 				// UIの色指定
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				// 描画する画像
+				"SkillSlotSimpleAttack",
+				true
+			)
+		);
+		// スキル1UIの登録
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				// 描画座標
+				SKILL1_UI_DRAW_POS,
+				// クールタイム変数
+				dynamic_cast<TomatoPlayerHeadButtState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				// クールタイムの最大値
+				SKILL1_COOL_TIME,
+				// UIの色指定
+				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
 				// 描画する画像
 				"SkillSlotSimpleAttack",
 				true

@@ -24,7 +24,6 @@ public:
 		MAX
 	};
 
-
 	/// <summary>
 	/// スキルUI生成
 	/// </summary>

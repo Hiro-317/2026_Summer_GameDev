@@ -222,14 +222,12 @@ void OrangePlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::DAMAGE); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DAMAGE; },
-			// 定数（ダメージを受けた時の無敵時間）
-			DODGE_INVI_TIME,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 無敵時間のセット関数
-			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
+			[&]() { SetInviCounter(DODGE_INVI_TIME); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
