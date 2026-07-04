@@ -202,6 +202,22 @@ void TomatoPlayer::PlayerLoad(void)
 			)
 		);
 
+		// スキル1UIの登録
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				// 描画座標
+				SKILL1_UI_DRAW_POS,
+				// クールタイム変数
+				dynamic_cast<TomatoPlayerHeadButtState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				// クールタイムの最大値
+				SKILL1_COOL_TIME,
+				// UIの色指定
+				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+				// 描画する画像
+				"SkillSlotSimpleAttack"
+			)
+		);
+
 		// スキル2UIの登録
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
@@ -218,22 +234,7 @@ void TomatoPlayer::PlayerLoad(void)
 				true
 			)
 		);
-		// スキル1UIの登録
-		ui_ArrayIns.emplace_back(
-			new PlayerSkillUI(
-				// 描画座標
-				SKILL1_UI_DRAW_POS,
-				// クールタイム変数
-				dynamic_cast<TomatoPlayerHeadButtState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-				// クールタイムの最大値
-				SKILL1_COOL_TIME,
-				// UIの色指定
-				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
-				// 描画する画像
-				"SkillSlotSimpleAttack",
-				true
-			)
-		);
+
 	}
 
 
