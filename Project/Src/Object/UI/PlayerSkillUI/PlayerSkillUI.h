@@ -40,7 +40,7 @@ public:
 		int COOL_TIME, 
 		SKILL_UI_COLOR color,
 		std::string skillImagePath,
-		const bool isChargeSkill = true
+		const bool isChargeSkill = false
 	);
 
 	~PlayerSkillUI() = default;	// デストラクタ

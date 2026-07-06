@@ -3,6 +3,7 @@
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
 
+#include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
 
 #include "../../UI/HitUI/HitUI.h"
@@ -64,6 +65,23 @@ PlayerBase::PlayerBase(
 void PlayerBase::CharacterLoad(void)
 {
 	PlayerLoad();
+
+
+
+	// 観戦モード
+	AddState(
+		(int)STATE::OTHER_WATCH,
+		new OtherPlayerWatchState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::OTHER_WATCH; },
+			// 他プレイヤーの座標
+			otherPlayerTrans,
+			// ボスの座標
+			bossPos
+		)
+	);
 
 #pragma region モデル
 	// モデルを読み込む
@@ -327,12 +345,23 @@ void PlayerBase::ReceptionUpdate(void)
 				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
 				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
 			}
+
+			diff = (trans.angle, dataPtr->angle).Length();
+
+			// 誤差が小さいなら無視
+			if (diff > 0.5f) {
+				// 誤差が大きい場合、少しずつホストから送られた角度を寄せる（補間）
+				trans.angle = trans.angle * 0.9f + dataPtr->angle * 0.1f;
+			}
+
 		}
 		// 他人のキャラなら、そのまま同期
-		else { trans.pos = dataPtr->pos; }
+		else { 
+			trans.pos = dataPtr->pos; 
+			trans.angle = dataPtr->angle;
+		}
 
-		// 角度を同期
-		trans.angle = dataPtr->angle;
+
 		delete dataPtr;
 	}
 

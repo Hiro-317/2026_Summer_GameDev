@@ -12,7 +12,6 @@
 #include "../../CommonPlayerState/Dodge/PlayerDodgeState.h"
 #include "../../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
-#include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
@@ -243,16 +242,6 @@ void OrangePlayer::PlayerLoad(void)
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
-		)
-	);
-
-	AddState(
-		(int)STATE::OTHER_WATCH,
-		new OtherPlayerWatchState(
-			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
-			[&]() { return state == (int)STATE::OTHER_WATCH; },
-			otherPlayerTrans,
-			bossPos
 		)
 	);
 

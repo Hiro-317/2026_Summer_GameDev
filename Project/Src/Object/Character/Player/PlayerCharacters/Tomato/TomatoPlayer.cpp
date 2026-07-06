@@ -4,7 +4,6 @@
 #include "UniqueState/Tackle/TomatoPlayerTackleState.h"
 #include "UniqueState/HeadButt/TomatoPlayerHeadButtState.h"
 #include "UniqueState/Damage/TomatoPlayerDamageState.h"
-#include "../../CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 
 #include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
 #include "UniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
@@ -72,21 +71,6 @@ void TomatoPlayer::PlayerLoad(void)
 			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
 			// 参照（移動量 / 横軸加速度の最大値 / 角度）
 			accelSum, ACCEL_MAX, trans.angle, characterStats
-		)
-	);
-
-	// 観戦モード
-	AddState(
-		(int)STATE::OTHER_WATCH,
-		new OtherPlayerWatchState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::OTHER_WATCH; },
-			// 他プレイヤーの座標
-			otherPlayerTrans,
-			// ボスの座標
-			bossPos
 		)
 	);
 	
@@ -201,7 +185,7 @@ void TomatoPlayer::PlayerLoad(void)
 				DASH_STAMINA_MAX
 			)
 		);
-
+		
 		// スキル1UIの登録
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
@@ -234,6 +218,9 @@ void TomatoPlayer::PlayerLoad(void)
 				true
 			)
 		);
+
+		// スキル3UIの登録
+
 
 	}
 

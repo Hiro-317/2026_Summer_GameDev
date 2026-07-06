@@ -37,6 +37,7 @@ void TomatoPlayerHeadButtState::OwnStateConditionUpdate(void)
 
 void TomatoPlayerHeadButtState::Enter(void)
 {
+	// Œü‚¢‚Ä‚¢‚é•ûŒü‚ðŽæ“¾
 	moveDir.x = sinf(angle.y);
 	moveDir.z = cosf(angle.y);
 	moveDir.Normalize();

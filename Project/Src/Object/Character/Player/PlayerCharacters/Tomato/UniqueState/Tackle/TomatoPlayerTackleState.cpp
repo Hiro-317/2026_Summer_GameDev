@@ -1,6 +1,7 @@
 #include "TomatoPlayerTackleState.h"
 
 #include "../../../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../../../Manager/Sound/SoundManager.h"
 
 TomatoPlayerTackleState::TomatoPlayerTackleState(
 	const std::function<void(void)>& ownChangeState,
@@ -61,6 +62,9 @@ void TomatoPlayerTackleState::Update(void)
 
 	// 一定数回転したら突進を開始
 	if (coolTimeCounter >= COOL_TIME) {
+		SoundManager::GetIns().Stop("TackleCharge");
+		SoundManager::GetIns().Play("TackleMove");
+
 		// 突進中も回転を続ける
 		angle.x += ROTATION_POW;
 		// カウントを開始
@@ -85,8 +89,11 @@ void TomatoPlayerTackleState::Update(void)
 
 		// 回転スタート
 		angle.x += ROTATION_POW;
+	
+		SoundManager::GetIns().Play("TackleCharge");
 	}
 	else if (coolTimeCounter < COOL_TIME) {
+		SoundManager::GetIns().Stop("TackleCharge");
 		// チャージが終了しなかったら、強制的に終了させる
 		DefaultChangeState();
 	}
