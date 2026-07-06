@@ -130,6 +130,8 @@ protected:
 		ATTACK_C,
 		ATTACK_D,
 		ATTACK_E,
+		ATTACK_F,
+		ATTACK_G,
 
 		DEATH,
 

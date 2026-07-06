@@ -99,9 +99,6 @@ private:
 	// トマトの向いている向き
 	Vector3 moveDir;
 
-	// 岩に当たったか
-	bool rockHit;
-
 	// 攻撃のクールタイム
 	int coolTime;
 

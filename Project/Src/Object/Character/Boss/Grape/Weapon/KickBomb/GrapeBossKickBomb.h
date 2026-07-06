@@ -24,6 +24,6 @@ protected:
 private:
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æ
-	const Vector3 ATTACK_RANGE = GetParameter("Straight", "Range");
+	const float ATTACK_RANGE = GetParameter("KickBomb", "Range");
 
 };

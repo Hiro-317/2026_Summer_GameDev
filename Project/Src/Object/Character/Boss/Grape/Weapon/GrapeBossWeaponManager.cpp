@@ -3,15 +3,13 @@
 #include "GrapeBossWeaponFactory.h"
 
 
+GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
+
 GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
 	: operatorSenderId(operatorSenderId), stats(stats)
 {
 	// •¡»ƒnƒ“ƒhƒ‹
 	bombModel = MV1LoadModel("Data/Model/Charactor/Grape/Bomb.mv1");
-}
-
-GrapeBossWeaponManager::~GrapeBossWeaponManager()
-{
 }
 
 void GrapeBossWeaponManager::Load(void)

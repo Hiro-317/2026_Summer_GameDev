@@ -1,17 +1,17 @@
-#include "GrapeBossKickBomb.h"
+#include "GrapeBossStampBomb.h"
 
 #include "../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
 
-GrapeBossKickBomb::GrapeBossKickBomb(int model)
+GrapeBossStampBomb::GrapeBossStampBomb(int model)
 	: GrapeBossWeaponBase("path", model)
 {
 	// 当たり判定を生成する（XZコライダー）
 	ColliderCreate(
 		new XZCircleCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			GetParameter("KickBomb", "Radius")
+			ATTACK_RANGE
 		)
 	);
 
@@ -19,14 +19,14 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model)
 	ColliderCreate(
 		new SphereCollider(
 			COLLIDER_TAG::BOSS_ATTACK_AREA,
-			GetParameter("KickBomb", "Radius")
+			GetParameter("StampBomb", "Radius")
 		)
 	);
 
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 }
 
-void GrapeBossKickBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
+void GrapeBossStampBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
 	CreateAttackSkill(operatorSenderId, 50, &stats);
 
@@ -34,7 +34,7 @@ void GrapeBossKickBomb::Load(const MSG_SENDER_ID operatorSenderId, const Charact
 	collFront.scale = Vector3(0.0f);
 }
 
-void GrapeBossKickBomb::SubUpdate(void)
+void GrapeBossStampBomb::SubUpdate(void)
 {
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
@@ -43,7 +43,6 @@ void GrapeBossKickBomb::SubUpdate(void)
 	}
 	// ついてるなら爆発カウントを進める
 	else {
-
 		count++;
 		// カウントに応じて状態を変える
 		if (BOMBER_COUNT <= count) {

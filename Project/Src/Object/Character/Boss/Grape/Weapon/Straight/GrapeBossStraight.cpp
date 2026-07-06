@@ -28,5 +28,6 @@ void GrapeBossStraight::Load(const MSG_SENDER_ID operatorSenderId, const Charact
 
 void GrapeBossStraight::SubUpdate(void)
 {
+	// is•ûŒü‚É“®‚©‚·
 	trans.pos += moveDir * MOVE_SPEED;
 }

@@ -20,23 +20,21 @@ class GrapeBossWeaponManager : public ActorBase{
 public:
 
 	GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats);
-	~GrapeBossWeaponManager();
+	~GrapeBossWeaponManager() = default;
 
 	// ほしいボムタイプの配列で返す
-	std::vector<BombType> GetWeapons(WeaponType type) {
-
-		// 返り値の設定
-		std::vector<BombType> res;
+	BombType* GetWeapons(WeaponType type) {
 
 		// 配列分出す
 		for (auto weapon : weapons) {
 			// 配列内のタイプとほしいものが同じなら
 			if (weapon.type == type) {
 				// 格納
-				res.emplace_back(weapon);
+				return &weapon;
 			}
 		}
-		return res;
+		// ないならぬるぽ
+		return nullptr;
 	}
 
 	void Load(void) override;
@@ -48,6 +46,8 @@ protected:
 	void SubRelease(void) override;
 
 private:
+
+	static GrapeBossWeaponManager* ins;
 
 #pragma region 参照値
 
