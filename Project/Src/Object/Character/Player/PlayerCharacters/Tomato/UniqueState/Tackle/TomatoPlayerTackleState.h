@@ -40,6 +40,7 @@ public:
 	}
 
 private:
+
 #pragma region 定数定義
 
 	// 移動量
@@ -57,6 +58,9 @@ private:
 	// 突進してから終了までのカウントタイム
 	static constexpr int COUNT_MAX = 20;
 
+	// チャージ時間
+	static constexpr int CHARGE_TIME = 60;
+
 #pragma endregion 
 
 #pragma region 変数定義
@@ -72,8 +76,11 @@ private:
 	// 向いている方向
 	Vector3 moveDir;
 
-	// 終了までのカウント用
+	// タックル終了までのカウント用
 	int timeCounter;
+
+	// チャージ用カウンタ
+	int chargeCounter;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

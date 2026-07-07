@@ -27,6 +27,8 @@ public:
 	void Load(void)override;
 	// 更新処理
 	void Update(void)override;
+	// 描画処理
+	void SubAlphaDraw(void)override;
 
 	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
@@ -75,4 +77,7 @@ private:
 
 	// 攻撃のヒット管理のフラグ
 	bool isHit;
+
+	// 攻撃範囲描画フラグ
+	bool isDrawArea;
 };

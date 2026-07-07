@@ -2,6 +2,7 @@
 
 #include "../../../../../../../Manager/Input/KeyManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../../../Manager/Camera/Camera.h"
 
 TomatoPlayerTackleState::TomatoPlayerTackleState(
 	const std::function<void(void)>& ownChangeState,
@@ -19,7 +20,8 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle),
 	DefaultChangeState(DefaultChangeState),
-	timeCounter(0)
+	timeCounter(0),
+	chargeCounter(0)
 {
 
 }
@@ -40,7 +42,7 @@ void TomatoPlayerTackleState::Enter(void)
 	//	当たったかどうかのフラグをリセット
 	collOperator.ResetIsHit();
 
-	// 前方方向の取得
+	// 突進方向の取得
 	moveDir.x = sinf(angle.y);
 	moveDir.z = cosf(angle.y);
 	moveDir.Normalize();
@@ -50,10 +52,13 @@ void TomatoPlayerTackleState::Enter(void)
 
 	// カウンターの初期化
 	timeCounter = COUNT_MAX;
+	coolTimeCounter = chargeCounter;
 }
 
 void TomatoPlayerTackleState::Update(void)
 {
+	coolTimeCounter = chargeCounter;
+
 	// カウンターがゼロになったら終了
 	if (timeCounter <= 0) {
 		DefaultChangeState();
@@ -61,12 +66,13 @@ void TomatoPlayerTackleState::Update(void)
 	}
 
 	// 一定数回転したら突進を開始
-	if (coolTimeCounter >= COOL_TIME) {
+	if (chargeCounter >= COOL_TIME) {
+		// チャージの効果音を消して、タックルの効果音を再生
 		SoundManager::GetIns().Stop("TackleCharge");
 		SoundManager::GetIns().Play("TackleMove");
 
 		// 突進中も回転を続ける
-		angle.x += ROTATION_POW;
+		//angle.x += ROTATION_POW;
 		// カウントを開始
 		timeCounter--;
 		// 前方に向かって突進
@@ -85,15 +91,42 @@ void TomatoPlayerTackleState::Update(void)
 	// ボタンを押し続けている場合攻撃をチャージする
 	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).now) {
 		// これはスキルのUIをチャージ用に動かすための特殊処理処理
-		Charge(coolTimeCounter, COOL_TIME, 60);
+		Charge(chargeCounter, COOL_TIME, CHARGE_TIME);
 
 		// 回転スタート
-		angle.x += ROTATION_POW;
+		//angle.x += ROTATION_POW;
 	
+		// チャージの効果音を再生
 		SoundManager::GetIns().Play("TackleCharge");
+
+		// コントローラーの入力を取得
+		moveDir = Key::GetIns().GetLeftStickVec().ToVector3XZ();
+
+		// 入力がなければ次にキーボードの入力を取得
+		if (moveDir == 0.0f) {
+			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).now) { moveDir.x++; }
+			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).now) { moveDir.x--; }
+			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).now) { moveDir.z++; }
+			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { moveDir.z--; }
+		}
+
+		// 正規化
+		moveDir.Normalize();
+
+		// 移動方向をカメラで回転させる
+		moveDir.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
+
+		// 角度を入力方向に向ける
+		if (moveDir != 0.0f) { angle.y = atan2f(moveDir.x, moveDir.z); }
+
+		moveDir.x = sinf(angle.y);
+		moveDir.z = cosf(angle.y);
+		moveDir.Normalize();
 	}
-	else if (coolTimeCounter < COOL_TIME) {
+	else if (chargeCounter < COOL_TIME) {
+		// チャージの効果音を消す
 		SoundManager::GetIns().Stop("TackleCharge");
+
 		// チャージが終了しなかったら、強制的に終了させる
 		DefaultChangeState();
 	}
@@ -108,6 +141,7 @@ void TomatoPlayerTackleState::Exit(void)
 
 	// スキルのクールタイムをセット
 	coolTimeCounter = COOL_TIME;
+	chargeCounter = 0;
 }
 
 void TomatoPlayerTackleState::AlwaysUpdate(void)
