@@ -11,7 +11,6 @@ public:
 
 	BossBase(
 
-		const std::string fileName,
 		const std::string hpParameterID,
 		const std::string attackPowerParameterID,
 		const std::string defensePowerParameterID,

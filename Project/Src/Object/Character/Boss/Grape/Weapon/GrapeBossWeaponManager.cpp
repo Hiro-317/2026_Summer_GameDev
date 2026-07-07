@@ -38,13 +38,20 @@ void GrapeBossWeaponManager::Load(void)
 void GrapeBossWeaponManager::SubUpdate()
 {
 	for (auto& i : weapons) {
+		// ¶‚«‚Ä‚¢‚é‚à‚Ì‚Ì‚ÝXV
 		if (i.live) {
 			i.weaponIns->Update();
+
+			// I—¹‚µ‚Ä‚¢‚é‚È‚çŽE‚·
+			if (i.weaponIns->IsEnd()) {
+				
+				i.live = false;
+			}
 		}
 	}
 }
 
-void GrapeBossWeaponManager::SubDraw()
+void GrapeBossWeaponManager::SubAlphaDraw()
 {
 	for (auto& i : weapons) {
 		if (i.live) {

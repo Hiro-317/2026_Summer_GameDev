@@ -19,9 +19,12 @@ public:
 	GrapeBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, const std::vector<const Vector3*>playerPos,
+		Vector3& pos, Vector3& angle, 
+		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> CoolTime,
 		const std::function<int(void)> GetTarget,
+		const std::function<void(void)> PlayIdleAnim,
+		const std::function<void(void)> PlayWalkAnim,
 		const std::function<void(void)> moveChangeState,
 		const std::function<void(void)> headbuttChangeState,
 		const std::function<void(void)> stampChangeState,
@@ -48,6 +51,8 @@ private:
 
 	// 座標の参照
 	Vector3& pos;
+	// 角度の参照
+	Vector3& angle;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;
@@ -55,6 +60,11 @@ private:
 	const std::function<int(void)> GetTarget;
 	// クールタイムの参照
 	const std::function<int(void)> CoolTime;
+
+	// アイドルアニメーション
+	const std::function<void(void)> PlayIdleAnim;
+	// 回転時アニメーション
+	const std::function<void(void)> PlayWalkAnim;
 
 	// 頭突きへ
 	const std::function<void(void)> headbuttChangeState;

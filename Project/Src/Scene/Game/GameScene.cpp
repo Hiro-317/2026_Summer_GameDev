@@ -23,6 +23,7 @@
 #include "../../Object/Character/Player/PlayerManager/PlayerManager.h"
 
 #include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
+#include "../../Object/Character/Boss/Grape/GrapeBoss.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
@@ -81,12 +82,12 @@ void GameScene::Load(void)
 		pos.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
 	}
 
-	ObjAdd(new TomatoBoss(pos));
+	ObjAdd(new GrapeBoss(pos));
 
 	ObjAdd(new TomatoBossStage());
 
 	// プレイヤーにボスの座標をわたす
-	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<TomatoBoss>()->GetTrans().pos);
+	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<GrapeBoss>()->GetTrans().pos);
 }
 
 void GameScene::Init(void)
@@ -132,7 +133,7 @@ void GameScene::Update(void)
 		if (focusFlg) {
 			Camera::GetIns().ChangeModeFollowAuto(
 				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans(),
-				&ObjSerch<TomatoBoss>()->GetTrans().pos);
+				&ObjSerch<GrapeBoss>()->GetTrans().pos);
 		}
 		else {
 			Camera::GetIns().ChangeModeFollowRemote(
@@ -157,7 +158,7 @@ void GameScene::Update(void)
 	}
 	
 	// ゲームクリア判定
-	if (ObjSerch<TomatoBoss>()->GetIsDeath()) {
+	if (ObjSerch<GrapeBoss>()->GetIsDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xff0000, 0x000000);
 		return;
 	}

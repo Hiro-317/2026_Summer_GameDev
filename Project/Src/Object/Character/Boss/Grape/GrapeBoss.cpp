@@ -13,6 +13,7 @@
 
 #include "State/Idle/GrapeBossIdleState.h"
 #include "State/Move/GrapeBossMoveState.h"
+#include "State/Straight/GrapeBossStraightState.h"
 #include "State/Death/GrapeBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -25,12 +26,11 @@
 
 GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos) :
 	BossBase(
-		"GrapeBossParameter",
-		"GrapeBossHP",
-		"GrapeBossAttackPower",
-		"GrapeBossDefensePower",
-		"GrapeBossMoveSpeed",
-		"Data/Parameter/Character/Boss/Tomato/",
+		"HP",
+		"AttackPower",
+		"DefensePower",
+		"MoveSpeed",
+		"Data/Parameter/Character/Boss/Grape/",
 		"Grape/Grape",
 
 		playerPos)
@@ -44,6 +44,17 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos) :
 
 void GrapeBoss::PlayerLoad(void)
 {
+	// ƒAƒjƒ[ƒVƒ‡ƒ“````````````````````````````
+
+// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ğ¶¬‚·‚é
+	CreateAnimationController();
+
+	// ŠeíƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚·‚é
+	for (int i = 0; i < (int)ANIME_TYPE::MAX; i++) {
+		AddAnimation(i, ANIME_SPEED_TABLE[i], ANIME_PATH_TABLE[i].c_str());
+	}
+
+	// ```````````````````````````````````
 
 #pragma region “–‚½‚è”»’èî•ñİ’è
 
@@ -77,10 +88,12 @@ void GrapeBoss::PlayerLoad(void)
 			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// ©•ª‚ÌÀ•WAƒvƒŒƒCƒ„[‚ÌÀ•W‚Ì“Ç‚İæ‚è
-			trans.pos, playerPos,
+			trans.pos, trans.angle, playerPos,
 			// ƒN[ƒ‹ƒ^ƒCƒ€
 			[&]() { return coolTime; },
 			[&]() { return targetNum; },
+			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
+			[&]() { AnimePlay((int)ANIME_TYPE::WALK, true); },
 			// ˆÚ“®‚Ö‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^
 			[&]() { ChangeState((int)STATE::MOVE); },
 			// “ª“Ë‚«‚Ö‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^
@@ -109,6 +122,33 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::ATTACK_A); }
 		)
 	);
+
+	AddState(
+		static_cast<int>(STATE::ATTACK_A),
+		new GrapeBossStraightState(
+			// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
+			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
+			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
+			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
+			// ©•ª‚ÌÀ•W‚ÆŠp“x
+			trans.pos, trans.angle,
+			// UŒ‚‚Ìí—Ş‚ğî•ñ
+			[&]() { return SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight); },
+			// ƒvƒŒƒCƒ„[‚ÌÀ•W
+			playerPos,
+			// ƒvƒŒƒCƒ„[‚Ìƒ^[ƒQƒbƒg”Ô†
+			[&]() { return targetNum; },
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŠÖ”‚Ìƒ|ƒCƒ“ƒ^
+			[&]() { AnimePlay((int)ANIME_TYPE::OVERHAND, false); },
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡‚ğæ“¾‚·‚éŠÖ”‚Ìƒ|ƒCƒ“ƒ^ 
+			[&]() { return GetAnimeRatio(); },
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌI—¹ƒtƒ‰ƒO‚ğæ“¾‚·‚éŠÖ”‚Ìƒ|ƒCƒ“ƒ^
+			[&]() { return IsAnimeEnd(); },
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚ÍˆÚ“®ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
+			[&]() { ChangeState((int)STATE::IDLE); }
+		)
+	);
+
 	AddState(
 		static_cast<int>(STATE::DEATH),
 		new GrapeBossDeathState(
@@ -118,11 +158,10 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return state == static_cast<int>(STATE::DEATH); },
 			// ƒ{ƒX‚ÌƒTƒCƒY
 			trans.scale, MODEL_SCALE,
-			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^
+			// €‚ñ‚¾ƒtƒ‰ƒO‚ğ—§‚Ä‚é
 			[&]() { isDeath = true; }
 		)
 	);
-
 
 #pragma endregion
 

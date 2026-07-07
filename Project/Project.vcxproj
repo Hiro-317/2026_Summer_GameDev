@@ -163,11 +163,6 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\GrapeBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.cpp" />
@@ -251,11 +246,6 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\GrapeBoss.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.h" />

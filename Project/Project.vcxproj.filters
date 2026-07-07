@@ -85,11 +85,6 @@
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.cpp" />
@@ -274,11 +269,6 @@
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.h" />

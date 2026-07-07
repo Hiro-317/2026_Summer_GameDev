@@ -5,7 +5,7 @@
 
 
 GrapeBossRandomBomb::GrapeBossRandomBomb(int model)
-	: GrapeBossWeaponBase("path", model)
+	: GrapeBossWeaponBase(model)
 {
 	// 当たり判定を生成する（XZコライダー）
 	ColliderCreate(

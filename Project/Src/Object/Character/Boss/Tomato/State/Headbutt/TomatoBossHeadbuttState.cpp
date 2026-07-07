@@ -31,7 +31,7 @@ void TomatoBossHeadbuttState::Enter(void)
 {
 	target = GetTarget();
 	moveDir = (*playerPos.at(target) - pos).Normalized();
-	time = -100;
+	time = START_CNT;
 	DeleteColl();
 	SetCoolTime();
 	collOperator->SetDrawArea(true);

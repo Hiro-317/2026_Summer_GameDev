@@ -51,7 +51,7 @@ class GrapeBossWeaponBase : public ActorBase
 {
 public:
 
-	GrapeBossWeaponBase(std::string parameterPath, int model);
+	GrapeBossWeaponBase(int model);
 	~GrapeBossWeaponBase() = default;
 
 	// ‹K’è—p‚ÌLoad

@@ -4,15 +4,23 @@
 
 
 GrapeBossStraight::GrapeBossStraight(int model)
-	: GrapeBossWeaponBase("param", model)
+	: GrapeBossWeaponBase(model)
 {
 	// 当たり判定を生成する（球体コライダー）
 	ColliderCreate(
 		new SphereCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			GetParameter("Straight", "Radius")
+			GetParameter("Straight", "Radius") * ATTACK_SIZE
 			)
 	);
+	ColliderCreate(
+		new SphereCollider(
+			COLLIDER_TAG::BOSS_ATTACK_AREA,
+			GetParameter("Straight", "AreaRadius") * ATTACK_SIZE
+			)
+	);
+
+	trans.scale = Vector3(ATTACK_SIZE);
 
 	// 重力無視
 	SetGravityFlg(false);
@@ -22,8 +30,16 @@ void GrapeBossStraight::Load(const MSG_SENDER_ID operatorSenderId, const Charact
 {
 	CreateAttackSkill(operatorSenderId, 50, &stats);
 
-	collBack.scale = ATTACK_RANGE;
-	collFront.scale = ATTACK_RANGE - Vector3::Xonly(ATTACK_RANGE.x);
+	collBack.scale = Vector3::XZonly(ATTACK_SIZE, ATTACK_SIZE);
+	collFront.scale = Vector3::Zonly(ATTACK_SIZE);
+}
+
+void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+	if (ownTag == COLLIDER_TAG::BOSS_ATTACK_AREA) {
+
+		end = true;
+	}
 }
 
 void GrapeBossStraight::SubUpdate(void)

@@ -71,8 +71,6 @@ private:
 
 	// UŒ‚```````````````````````````````
 
-	// ƒXƒ^ƒ“ƒv”ÍˆÍ
-	const float STAMP_RADIUS = GetParameter("Attack", "StampRad");
 
 	// `````````````````````````````````
 
@@ -89,6 +87,63 @@ private:
 
 	// ƒQ[ƒ€ƒNƒŠƒA‚Ì•ÏXŠÔ
 	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìí—Ş
+	enum class ANIME_TYPE
+	{
+		NONE = -1,
+
+		IDLE,
+		WALK,
+		RUN,
+
+		OVERHAND,
+		KICK,
+		JUMP_START,
+		JUMPING,
+		STAMP, 
+		DOWNTHROW,
+
+		MAX
+	};
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ^ƒCƒv‚²‚Æ‚ÌÄ¶‘¬“x
+	const float ANIME_SPEED_TABLE[(int)ANIME_TYPE::MAX] =
+	{
+		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+		GetParameter("Anime", "WalkAnimeSpeed"),	// WALK
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+
+		GetParameter("Anime", "OverhandAnimeSpeed"),	// OVERHAND
+		GetParameter("Anime", "KickAnimeSpeed"),	// KICK
+		GetParameter("Anime", "JumpStartAnimeSpeed"),	// JUMP_START
+		GetParameter("Anime", "JumpingAnimeSpeed"),	// JUMPING
+		GetParameter("Anime", "StampAnimeSpeed"),	// STAMP
+		GetParameter("Anime", "DownThrowAnimeSpeed"),	// DOWNTHROW
+	};
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒHƒ‹ƒ_‚Ü‚Å‚ÌƒpƒX
+	const std::string ANIME_FOLDER_COMMON_PATH = "Data/Model/Charactor/Grape/CommonAnime/";
+	const std::string ANIME_FOLDER_BOSS_PATH = "Data/Model/Charactor/Grape/BossAnime/";
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ^ƒCƒv‚²‚Æ‚ÌƒpƒX
+	const std::string ANIME_PATH_TABLE[(int)ANIME_TYPE::MAX] =
+	{
+		ANIME_FOLDER_COMMON_PATH + "Idle.mv1",		// IDLE
+		ANIME_FOLDER_COMMON_PATH + "Walk.mv1",		// WALK
+		ANIME_FOLDER_COMMON_PATH + "Run.mv1",		// RUN
+
+		ANIME_FOLDER_BOSS_PATH + "OverhandThrow.mv1",	// OVERHAND
+		ANIME_FOLDER_COMMON_PATH + "Kick.mv1",		// KICK
+		ANIME_FOLDER_BOSS_PATH + "JumpStart.mv1",	// JUMP_START
+		ANIME_FOLDER_BOSS_PATH + "Jumping.mv1",	// JUMPING
+		ANIME_FOLDER_BOSS_PATH + "Stamp.mv1",	// STAMP
+		ANIME_FOLDER_BOSS_PATH + "DownThrow.mv1",	// DOWNTHROW
+	};
+
+	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
 
 #pragma endregion ’è”’è‹`
 

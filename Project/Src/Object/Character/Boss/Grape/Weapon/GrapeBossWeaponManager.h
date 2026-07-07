@@ -42,7 +42,7 @@ public:
 protected:
 
 	void SubUpdate(void) override;
-	void SubDraw(void) override;
+	void SubAlphaDraw(void) override;
 	void SubRelease(void) override;
 
 private:
