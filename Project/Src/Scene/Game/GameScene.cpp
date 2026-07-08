@@ -85,6 +85,9 @@ void GameScene::Load(void)
 
 	ObjAdd(new TomatoBossStage());
 
+	// 当たり判定のチャンク分け(初期化時)を行う
+	collision->InitBuildChunks();
+
 	// プレイヤーにボスの座標をわたす
 	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<TomatoBoss>()->GetTrans().pos);
 }
@@ -211,6 +214,7 @@ void GameScene::Draw(void)
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
+	collision->DrawChunkGrid();
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	Camera::GetIns().DrawDebug();

@@ -1,126 +1,247 @@
 #include"CollisionManager.h"
 
-#include<cmath>
 #include <algorithm>
 
+#include "../../Application/Application.h"
+
+#include "../Camera/Camera.h"
+
+#pragma region 初期化系
+
+// コライダーを追加（単体）
 void CollisionManager::Add(ColliderBase* collider)
 {
+	// 安全処理
 	if (!collider) { return; }
 
-	// タグを見分けて適した配列に格納
-	switch (collider->GetTag())
-	{
-		// 未設定（例外処理）
-	case COLLIDER_TAG::NON:  break;
+	// グループを一時変数として定義（「その他」で初期化）
+	COLLIDER_GROUP group = COLLIDER_GROUP::Other;
 
-		//プレイヤー系
-	case COLLIDER_TAG::PLAYER:
-	case COLLIDER_TAG::PLAYER_ATTACK:
-	case COLLIDER_TAG::PLAYER_COMMON:
+	// グループリストに記述が存在すれば、取得
+	if (TAG_TO_GROUP_LIST.contains(collider->GetTag())) {
+		group = TAG_TO_GROUP_LIST.at(collider->GetTag());
+	}
 
-		playerColliders.emplace_back(collider);
-		break;
+	// 最終的なグループで格納
+	groupColliders[(int)group].colliders.emplace_back(collider);
+}
 
-		// エネミー系
-	case COLLIDER_TAG::BOSS:
-	case COLLIDER_TAG::ENEMY:
+// コライダーを追加（複数）
+void CollisionManager::Add(std::vector<ColliderBase*> collider)
+{
+	// 指定されたコライダーを順番に単体追加関数を使用して追加していく
+	for (ColliderBase*& c : collider) { Add(c); }
+}
 
-		enemyColliders.emplace_back(collider);
-		break;
+// 現状抱えているコライダーすべてのチャンク分けを実行
+void CollisionManager::InitBuildChunks(void)
+{
+	// すべてのグループを範囲for文で参照していく
+	for (ColliderGroupData& group : groupColliders) {
 
-		// ステージ系
-	case COLLIDER_TAG::STAGE:
-		stageColliders.emplace_back(collider);
-		break;
+		// チャンク分け情報を完全リセット～～～
+		group.staticChunks3D.clear();
+		group.dynamicChunks3D.clear();
+		group.staticChunksXZ.clear();
+		group.dynamicChunksXZ.clear();
+		// ～～～チャンク分け情報を完全リセット
 
-	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
-	case COLLIDER_TAG::BOSS_ATTACK:
+		// 抱えるコライダーを1つずつ範囲for文で参照していく
+		for (ColliderBase* collider : group.colliders) {
+			// 安全処理
+			if (!collider) { continue; }
 
-		enemyPlayerOnlyColliders.emplace_back(collider);
-		break;
-
-	case COLLIDER_TAG::BOSS_ATTACK_AREA:
-
-		enemyAttackAreaColliders.emplace_back(collider);
-		break;
-
-		// それ以外
-	default:
-		otherColliders.emplace_back(collider);
-		break;
+			// 動的コライダーの場合
+			if (collider->GetDynamicFlg()) {
+				// チャンクスペースがデフォルト(3D空間)
+				if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XYZ) {
+					RegisterToChunks3D(group.dynamicChunks3D, collider);
+					RegisterToChunksXZ(group.dynamicChunksXZ, collider);
+				}
+				// チャンクスペースが特殊(XZのみのチャンク分け)
+				else if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XZ) {
+					RegisterToChunksXZ(group.dynamicChunksXZ, collider);
+				}
+			}
+			// 静的コライダーの場合
+			else {
+				// チャンクスペースがデフォルト(3D空間)
+				if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XYZ) {
+					RegisterToChunks3D(group.staticChunks3D, collider);
+					RegisterToChunksXZ(group.staticChunksXZ, collider);
+				}
+				// チャンクスペースが特殊(XZのみのチャンク分け)
+				else if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XZ) {
+					RegisterToChunksXZ(group.staticChunksXZ, collider);
+				}
+			}
+		}
 	}
 }
+
+#pragma endregion
+
+#pragma region 判定実行
 
 void CollisionManager::Check(void)
 {
-	// プレイヤー系×ステージ系
-	Matching(playerColliders, stageColliders);
+	// チャンク分け
+	BuildChunks();
 
-	// エネミー系×ステージ系
-	Matching(enemyColliders, stageColliders);
+	// 二重判定防止の判定記録配列をリセット
+	checkedPairs.clear();
 
-	// それ以外×ステージ系
-	Matching(otherColliders, stageColliders);
-	
-	// プレイヤー系×エネミー系
-	Matching(playerColliders, enemyColliders);
-	
-	// プレイヤー系×それ以外
-	Matching(playerColliders, otherColliders);
+	// ①プレイヤー系 × ステージ系
+	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::Stage);
 
-	// エネミー系×それ以外
-	Matching(enemyColliders, otherColliders);
+	// ②エネミー系 × ステージ系
+	Matching(COLLIDER_GROUP::Enemy, COLLIDER_GROUP::Stage);
 
-	// それ以外×それ以外
-	Matching(otherColliders);
 
-	// プレイヤー系×プレイヤーにだけ当たるエネミー
-	Matching(playerColliders, enemyPlayerOnlyColliders);
+	// ③プレイヤー系 × エネミー系
+	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::Enemy);
 
-	// ステージ系×ステージにだけ当たるエネミー
-	Matching(stageColliders, enemyAttackAreaColliders);
+
+	// ④プレイヤー系 × プレイヤー系にだけ当たるコライダー
+	Matching(COLLIDER_GROUP::Player, COLLIDER_GROUP::PlayerOnly);
+
+	// ⑤エネミー系 × エネミー系にだけ当たるコライダー
+	Matching(COLLIDER_GROUP::Enemy, COLLIDER_GROUP::EnemyOnly);
+
+	// ⑥ステージ系 × ステージ系にだけ当たるコライダー
+	Matching(COLLIDER_GROUP::Stage, COLLIDER_GROUP::StageOnly);
+
+
+	// ⑦その他 × ステージ系
+	Matching(COLLIDER_GROUP::Other, COLLIDER_GROUP::Stage);
+
+	// ⑧その他 × プレイヤー系
+	Matching(COLLIDER_GROUP::Other, COLLIDER_GROUP::Player);
+
+	// ⑨その他 × エネミー系
+	Matching(COLLIDER_GROUP::Other, COLLIDER_GROUP::Enemy);
+
+	// ⑩その他 × その他
+	Matching(COLLIDER_GROUP::Other);
 }
 
-void CollisionManager::Matching(std::vector<ColliderBase*>& as, std::vector<ColliderBase*>& bs)
+#pragma endregion
+
+#pragma region 判定振り分け
+
+// 指定のグループ同士を判定(2グループ指定)
+void CollisionManager::Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB)
 {
-	for (ColliderBase*& a : as) {
-		if (!a) { continue; }
-		if (!a->GetJudge()) { continue; }
+	ColliderGroupData& a = groupColliders[(int)groupA];
+	ColliderGroupData& b = groupColliders[(int)groupB];
 
-		for (ColliderBase*& b : bs) {
-			if (!b) { continue; }
-			if (!b->GetJudge()) { continue; }
+	// 動的A × 動的B（3Dチャンク）
+	MatchingChunks(a.dynamicChunks3D, b.dynamicChunks3D);
+	// 動的A × 動的B（XZチャンク）
+	MatchingChunks(a.dynamicChunksXZ, b.dynamicChunksXZ);
 
-			if (IsHit(a, b)) {
-				a->CallOnCollision(a->GetTag(), *b);
-				b->CallOnCollision(b->GetTag(), *a);
+	// 動的A × 静的B（3Dチャンク）
+	MatchingChunks(a.dynamicChunks3D, b.staticChunks3D);
+	// 動的A × 静的B（XZチャンク）
+	MatchingChunks(a.dynamicChunksXZ, b.staticChunksXZ);
+
+	// 静的A × 動的B（3Dチャンク）
+	MatchingChunks(a.staticChunks3D, b.dynamicChunks3D);
+	// 静的A × 動的B（XZチャンク）
+	MatchingChunks(a.staticChunksXZ, b.dynamicChunksXZ);
+
+	// 静的A × 静的Bは基本不要
+}
+
+// 指定のグループを総当たりで判定(1グループ指定)
+void CollisionManager::Matching(COLLIDER_GROUP group)
+{
+	// グループを取得
+	ColliderGroupData& g = groupColliders[(int)group];
+
+	// 動的同士（3Dチャンク）
+	MatchingChunks(g.dynamicChunks3D);
+	// 動的同士（XZチャンク）
+	MatchingChunks(g.dynamicChunksXZ);
+
+	// 動的 × 静的（3Dチャンク）
+	MatchingChunks(g.dynamicChunks3D, g.staticChunks3D);
+	// 動的 × 静的（XZチャンク）
+	MatchingChunks(g.dynamicChunksXZ, g.staticChunksXZ);
+
+	// 静的同士は基本不要
+}
+
+// チャンクを振り分けて判定実行
+void CollisionManager::MatchingChunks(ChunkMap& aChunks, ChunkMap& bChunks)
+{
+	// 1つ目のチャンクマップ(aChunks)を基準とし、ループして全参照
+	for (auto& aChunk : aChunks) {
+
+		// そのチャンク座標(aChunk.first) が 2つ目のチャンクマップ(bChunks)に存在するかをチェック
+		auto bChunk = bChunks.find(aChunk.first);
+		// なければこのループは終了
+		if (bChunk == bChunks.end()) { continue; }
+
+		// あれば互いにそのチャンクに含まれるコライダー同士、総当たりで判定実行
+		for (ColliderBase* a : aChunk.second.colliders) {
+			for (ColliderBase* b : bChunk->second.colliders) {
+				CheckPairOnce(a, b);
 			}
 		}
 	}
 }
 
-void CollisionManager::Matching(std::vector<ColliderBase*>& s)
+// チャンクを振り分けて判定実行
+void CollisionManager::MatchingChunks(ChunkMap& chunks)
 {
-	unsigned short size = (unsigned short)s.size();
+	// 全ループ
+	for (auto& chunk : chunks) {
 
-	for (unsigned short a = 0; a < (size - 1); a++) {
-		if (!s[a]) { continue; }
-		if (!s[a]->GetJudge()) { continue; }
+		// そのチャンクに含まれるコライダーを取得
+		auto& colliders = chunk.second.colliders;
 
-		for (unsigned short b = a + 1; b < size; b++) {
-			if (!s[b]) { continue; }
-			if (!s[b]->GetJudge()) { continue; }
-
-			if (IsHit(s[a], s[b])) {
-				s[a]->CallOnCollision(s[a]->GetTag(), *s[b]);
-				s[b]->CallOnCollision(s[b]->GetTag(), *s[a]);
+		// 順番に先頭から総当たりで判定実行
+		for (size_t i = 0; i < colliders.size(); i++) {
+			for (size_t j = i + 1; j < colliders.size(); j++) {
+				CheckPairOnce(colliders[i], colliders[j]);
 			}
 		}
 	}
 }
 
+// 重複判定チェック
+void CollisionManager::CheckPairOnce(ColliderBase* a, ColliderBase* b)
+{
+	// 安全処理
+	if (!a || !b) { return; }
+
+	// 同じもの同士は判定しない
+	if (a == b) { return; }
+
+	// 2つセットの構造体を生成
+	ColliderPairKey key(a, b);
+
+	// このセットが重複判定チェック配列に存在する(このループ中既にこの組み合わせでの判定を行った)かどうかをチェックする
+	if (checkedPairs.find(key) != checkedPairs.end()) { return; }
+
+	// このセットがまだこのループ中判定を行っていなかった場合、重複判定チェック配列に登録する
+	checkedPairs.insert(key);
+
+	// 判定を実行する
+	if (IsHit(a, b)) {
+		// 当たっていればお互いのコールバック関数を呼ぶ
+		a->CallOnCollision(a->GetTag(), *b);
+		b->CallOnCollision(b->GetTag(), *a);
+	}
+}
+
+// 形状の振り分け
 bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 {
+	// 当たり判定フラグを確認
+	if (!a->GetJudge() || !b->GetJudge()) { return false; }
+
 	// ローカル変数で各形状を保持（ゲット関数の呼び出しを1回で済ませるため）
 	const SHAPE aShape = a->GetShape(), bShape = b->GetShape();
 
@@ -219,11 +340,17 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b)
 	return false;
 }
 
+#pragma endregion
+
+#pragma region 各形状の実判定
+
+// 線分×線分
 bool CollisionManager::LineToLine(LineCollider* a, LineCollider* b)
 {
 	return false;
 }
 
+// 球体×球体
 bool CollisionManager::SphereToSphere(SphereCollider* a, SphereCollider* b)
 {
 #pragma region 必要情報を求める
@@ -259,6 +386,7 @@ bool CollisionManager::SphereToSphere(SphereCollider* a, SphereCollider* b)
 	return true;
 }
 
+// カプセル×カプセル
 bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b)
 {
 #pragma region 必要情報を取得
@@ -343,6 +471,7 @@ bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b)
 	return true;
 }
 
+// ボックス×ボックス
 bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b)
 {
 #pragma region 必要情報を取得
@@ -368,11 +497,13 @@ bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b)
 	return true;
 }
 
+// モデル×モデル
 bool CollisionManager::ModelToModel(ModelCollider* a, ModelCollider* b)
 {
 	return false;
 }
 
+// XZ平面上の円形×XZ平面上の円形
 bool CollisionManager::XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b)
 {
 #pragma region 必要情報を取得
@@ -401,6 +532,7 @@ bool CollisionManager::XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider*
 	return true;
 }
 
+// 線分×球体
 bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere)
 {
 #pragma region 必要情報を取得
@@ -450,6 +582,7 @@ bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere)
 	return true;
 }
 
+// 線分×カプセル
 bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsule)
 {
 #pragma region 必要情報を取得
@@ -501,6 +634,7 @@ bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsul
 	return true;
 }
 
+// 線分×ボックス
 bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box)
 {
 	// 押し出し方向（固定）
@@ -557,11 +691,13 @@ bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box)
 	return true;
 }
 
+// 線分×モデル
 bool CollisionManager::LineToModel(LineCollider* line, ModelCollider* model)
 {
 	return false;
 }
 
+// 球体×カプセル
 bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule)
 {
 #pragma region 必要情報を取得
@@ -637,6 +773,7 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 	return true;
 }
 
+// 球体×ボックス
 bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box)
 {
 #pragma region 必要情報を取得
@@ -692,11 +829,37 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box)
 	return true;
 }
 
+// 球体×モデル
 bool CollisionManager::SphereToModel(SphereCollider* sphere, ModelCollider* model)
 {
+	//// まず球のAABBを作る
+	//ColliderBase::AABB sphereAABB = sphere->GetAABB();
+
+	//// モデル内部チャンクから近い三角形だけ取得
+	//const auto& triangles = model->GetNearTriangles(sphereAABB);
+
+	//for (const auto* tri : triangles) {
+	//	// 三角形AABBと球AABBが離れてたらスキップ
+	//	if (!AABBToAABB(sphereAABB, tri->aabb)) { continue; }
+
+	//	// 球中心から三角形への最近点を求める
+	//	Vector3 closest = ClosestPointOnTriangle(
+	//		sphere->GetPos(),
+	//		tri->p0,
+	//		tri->p1,
+	//		tri->p2
+	//	);
+
+	//	Vector3 diff = sphere->GetPos() - closest;
+
+	//	// 当たった
+	//	if (diff.LengthSq() <= sphere->GetRadius() * sphere->GetRadius()) { return true; }
+	//}
+
 	return false;
 }
 
+// 球体×XZ平面上の円形
 bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle)
 {
 #pragma region 必要情報を取得
@@ -725,6 +888,7 @@ bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider
 	return true;
 }
 
+// カプセル×ボックス
 bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box)
 {
 #pragma region 必要情報の取得
@@ -795,11 +959,13 @@ bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box)
 	return true;
 }
 
+// カプセル×モデル
 bool CollisionManager::CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model)
 {
 	return false;
 }
 
+// カプセル×XZ平面上の円形
 bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle)
 {
 #pragma region 必要情報を取得
@@ -853,7 +1019,66 @@ bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleColli
 	return true;
 }
 
+// ボックス×モデル
 bool CollisionManager::BoxToModel(BoxCollider* box, ModelCollider* model)
 {
 	return false;
 }
+
+#pragma endregion
+
+#pragma region デバッグ描画
+
+// チャンクのグリッド線描画
+void CollisionManager::DrawChunkGrid(void) const
+{
+	if (!App::GetIns().IsDrawDebug()) { return; }
+
+	const unsigned int color = GetColor(255, 255, 255);
+
+	// カメラ周辺どこまで描くか
+	const float drawRange = 3000.0f;
+
+	const Vector3 camPos = Camera::GetIns().GetPos();
+
+	int minX = ToChunkIndex(camPos.x - drawRange, CHUNK_SIZE);
+	int maxX = ToChunkIndex(camPos.x + drawRange, CHUNK_SIZE);
+
+	int minY = ToChunkIndex(camPos.y - drawRange, CHUNK_SIZE);
+	int maxY = ToChunkIndex(camPos.y + drawRange, CHUNK_SIZE);
+
+	int minZ = ToChunkIndex(camPos.z - drawRange, CHUNK_SIZE);
+	int maxZ = ToChunkIndex(camPos.z + drawRange, CHUNK_SIZE);
+
+	for (int x = minX; x <= maxX; x++) {
+		for (int y = minY; y <= maxY; y++) {
+			DrawLine3D(
+				VGet(x * CHUNK_SIZE, y * CHUNK_SIZE, minZ * CHUNK_SIZE),
+				VGet(x * CHUNK_SIZE, y * CHUNK_SIZE, (maxZ + 1) * CHUNK_SIZE),
+				color
+			);
+		}
+	}
+
+	for (int z = minZ; z <= maxZ; z++) {
+		for (int y = minY; y <= maxY; y++) {
+			DrawLine3D(
+				VGet(minX * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
+				VGet((maxX + 1) * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
+				color
+			);
+		}
+	}
+
+	for (int x = minX; x <= maxX; x++) {
+		for (int z = minZ; z <= maxZ; z++) {
+			DrawLine3D(
+				VGet(x * CHUNK_SIZE, minY * CHUNK_SIZE, z * CHUNK_SIZE),
+				VGet(x * CHUNK_SIZE, (maxY + 1) * CHUNK_SIZE, z * CHUNK_SIZE),
+				color
+			);
+		}
+	}
+}
+
+#pragma endregion

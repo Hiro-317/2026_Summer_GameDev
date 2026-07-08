@@ -52,6 +52,24 @@ public:
 		// �ŋߓ_
 		return s + se * t;
 	}
+
+	AABB GetAABB(void) const override {
+		Vector3 s = GetStartPos();
+		Vector3 e = GetEndPos();
+
+		return AABB(
+			Vector3(
+				(std::min)(s.x, e.x) - radius,
+				(std::min)(s.y, e.y) - radius,
+				(std::min)(s.z, e.z) - radius
+			),
+			Vector3(
+				(std::max)(s.x, e.x) + radius,
+				(std::max)(s.y, e.y) + radius,
+				(std::max)(s.z, e.z) + radius
+			)
+		);
+	}
 #pragma endregion
 
 	void DrawDebug(unsigned int color = 0xffffff)override {

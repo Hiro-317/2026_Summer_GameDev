@@ -233,6 +233,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
+    <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
     <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
     <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />
     <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
