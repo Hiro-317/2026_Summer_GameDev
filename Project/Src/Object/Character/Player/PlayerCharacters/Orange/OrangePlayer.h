@@ -15,6 +15,9 @@ public:
 
 	void PlayerLoad(void)override;
 
+	// “–‚½‚è”»’èˆ—
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
 private:
