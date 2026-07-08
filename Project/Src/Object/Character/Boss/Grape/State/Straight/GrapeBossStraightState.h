@@ -27,7 +27,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		Vector3& pos, Vector3& angle,
-		const std::function<BombType*(void)> bombType,
+		BombType* bombType,
 		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayAttackAnim,
@@ -50,7 +50,7 @@ public:
 private:
 #pragma region 定数定義
 
-	static constexpr float HEIGHT = 50.0f;
+	static constexpr float HEIGHT = 200.0f;
 
 #pragma endregion
 
@@ -63,7 +63,7 @@ private:
 	Vector3& angle;
 
 	// ボムの参照
-	const std::function<BombType*(void)> bombType;
+	BombType* bombType;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;

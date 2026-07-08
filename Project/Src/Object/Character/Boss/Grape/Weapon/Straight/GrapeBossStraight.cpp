@@ -22,6 +22,8 @@ GrapeBossStraight::GrapeBossStraight(int model)
 
 	trans.scale = Vector3(ATTACK_SIZE);
 
+	SetJudge(false);
+	SetPushFlg(false);
 	// èdóÕñ≥éã
 	SetGravityFlg(false);
 }

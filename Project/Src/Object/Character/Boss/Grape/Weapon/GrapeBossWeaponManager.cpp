@@ -10,10 +10,7 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 {
 	// 複製ハンドル
 	bombModel = MV1LoadModel("Data/Model/Charactor/Grape/Bomb.mv1");
-}
 
-void GrapeBossWeaponManager::Load(void)
-{
 	// 初期化用の数
 	int weaponNumber = 0;
 
@@ -30,7 +27,10 @@ void GrapeBossWeaponManager::Load(void)
 	}
 	// 複製用ハンドルの消去
 	MV1DeleteModel(bombModel);
+}
 
+void GrapeBossWeaponManager::Load(void)
+{
 	// 武器の初期化
 	for (auto& i : weapons) i.weaponIns->Load(operatorSenderId, stats);
 }
@@ -46,6 +46,8 @@ void GrapeBossWeaponManager::SubUpdate()
 			if (i.weaponIns->IsEnd()) {
 				
 				i.live = false;
+				i.weaponIns->ResetEnd();
+				i.weaponIns->SetColliderFlg(false);
 			}
 		}
 	}

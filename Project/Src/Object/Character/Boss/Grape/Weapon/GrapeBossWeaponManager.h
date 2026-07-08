@@ -26,7 +26,7 @@ public:
 	BombType* GetWeapons(WeaponType type) {
 
 		// 配列分出す
-		for (auto weapon : weapons) {
+		for (auto& weapon : weapons) {
 			// 配列内のタイプとほしいものが同じなら
 			if (weapon.type == type) {
 				// 格納
@@ -38,6 +38,20 @@ public:
 	}
 
 	void Load(void) override;
+
+	// 状態遷移後1度行う初期化処理
+	std::vector<ColliderBase*> GetCollider(void)const override {
+		std::vector<ColliderBase*> ret = {};
+		// 自身のコライダーを返却用一時変数に格納
+		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
+
+		// 抱える下位クラスの返却用一時変数に格納
+		for (auto& subObj : weapons) {
+			for (ColliderBase*& coll : subObj.weaponIns->GetCollider()) { ret.emplace_back(coll); }
+		}
+		// 最終的な返却用一時変数を返却
+		return ret;
+	}
 
 protected:
 

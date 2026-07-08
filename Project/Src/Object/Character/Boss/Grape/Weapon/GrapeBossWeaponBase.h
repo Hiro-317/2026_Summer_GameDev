@@ -63,6 +63,10 @@ public:
 	void SetStartPos(Vector3 pos) { trans.pos = pos; }
 	void ResetCount(void) { count = 0.0f; }
 
+	// コライダーのオン/オフ
+	void SetColliderFlg(bool flg) { SetJudge(flg); }
+	void ResetEnd(void) { end = false; }
+
 	// 攻撃が終わったか
 	bool IsEnd(void) { return end; }
 

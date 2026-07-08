@@ -9,7 +9,7 @@ GrapeBossStraightState::GrapeBossStraightState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
 	Vector3& pos, Vector3& angle,
-	const std::function<BombType*(void)> bombType,
+	BombType* bombType,
 	const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
@@ -39,7 +39,7 @@ void GrapeBossStraightState::Enter(void)
 void GrapeBossStraightState::Update(void)
 {
 	// 正面から30度ずらした一発目
-	Vector3 ang = angle.y - Deg2Rad(30.0f);
+	float ang = angle.y - Deg2Rad(30.0f);
 
 	// アニメーションの再生割合で生成
 	if (first) {
@@ -48,14 +48,15 @@ void GrapeBossStraightState::Update(void)
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::Straight]; i++) {
 
 				// キャストさせる
-				auto ins = dynamic_cast<GrapeBossStraight*>(bombType()[i].weaponIns);
+				auto ins = dynamic_cast<GrapeBossStraight*>(bombType[i].weaponIns);
 
 				// スタート位置の設定
 				ins->SetStartPos(Vector3(pos.x, HEIGHT, pos.z));
 				// 進む向きを設定（ここのためにキャスト）
-				ins->SetStartDir(ang);
+				ins->SetStartDir(Vector3(sinf(ang), 0.0f, cosf(ang)));
 				// 起動
-				bombType()[i].live = true;
+				bombType[i].live = true;
+				ins->SetColliderFlg(true);
 
 				//次の周のため角度をずらす
 				ang += Deg2Rad(30.0f);

@@ -133,7 +133,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の座標と角度
 			trans.pos, trans.angle,
 			// 攻撃の種類を情報
-			[&]() { return SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight); },
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
 			// プレイヤーの座標
 			playerPos,
 			// プレイヤーのターゲット番号
