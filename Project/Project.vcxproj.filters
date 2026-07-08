@@ -252,6 +252,8 @@
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Tomato\LobbyCharaPreviewTomato.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

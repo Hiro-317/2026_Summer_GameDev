@@ -5,6 +5,7 @@
 #include "../../../Scene/SceneManager/SceneManager.h"
 
 #include "Orange/LobbyCharaPreviewOrange.h"
+#include "Tomato/LobbyCharaPreviewTomato.h"
 
 LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
 	charaPreview{ nullptr, nullptr, nullptr, nullptr }
@@ -48,6 +49,38 @@ void LobbyCharaPreviewManager::Release(void)
 	}
 }
 
+void LobbyCharaPreviewManager::ReloadChara(void)
+{
+	// キャラプレビューの解放
+	if (charaPreview[(int)MSG_SENDER_ID::P1] != nullptr) {
+		charaPreview[(int)MSG_SENDER_ID::P1]->Release();
+		delete charaPreview[(int)MSG_SENDER_ID::P1];
+		charaPreview[(int)MSG_SENDER_ID::P1] = nullptr;
+	}
+
+	// キャラプレビューの生成
+	switch (SceneManager::GetIns().GetSelectCharaType(MSG_SENDER_ID::P1)) {
+
+	case CHARA_TYPE::None: { return; }	// 未選択
+
+	case CHARA_TYPE::Orange: {	// オレンジ
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+		break;
+	}
+
+	case CHARA_TYPE::Tomato: {	// トマト
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewTomato(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+		break;
+	}
+
+	default: { return; }	// 例外
+	}
+
+	// キャラプレビューのロードと初期化
+	charaPreview[(int)MSG_SENDER_ID::P1]->Load();
+	charaPreview[(int)MSG_SENDER_ID::P1]->Init();
+}
+
 void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 {
 	// 送信元IDのチェック
@@ -74,7 +107,7 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 	}
 
 	case CHARA_TYPE::Tomato: {	// トマト
-		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
+		charaPreview[(int)senderId] = new LobbyCharaPreviewTomato(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 

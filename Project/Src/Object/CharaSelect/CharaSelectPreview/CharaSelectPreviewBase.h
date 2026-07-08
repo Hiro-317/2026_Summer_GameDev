@@ -11,6 +11,7 @@ class CharaSelectPreviewBase : public ActorBase
 {
 public:
 	CharaSelectPreviewBase();
+	CharaSelectPreviewBase(const std::string& parameterPath);
 	virtual ~CharaSelectPreviewBase()override = default;
 
 	// å—vŠÖ”Ä’è‹``````````

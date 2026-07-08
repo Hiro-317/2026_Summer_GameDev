@@ -141,7 +141,7 @@ void LobbyScene::Update(void)
 			SceneManager::GetIns().PushScene(
 				std::make_shared<CharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId()); }
+					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(); }
 				)
 			);
 

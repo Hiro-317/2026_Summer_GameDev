@@ -2,10 +2,12 @@
 
 #include "../../Application/Application.h"
 
+#include "../../Scene/SceneManager/SceneManager.h"
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Input/KeyManager.h"
 
 #include "CharaSelectPreview/Orange/OrangeCharaSelectPreview.h"
+#include "CharaSelectPreview/Tomato/TomatoCharaSelectPreview.h"
 #include "CharaSelectPreview/Unknow/UnknowCharaSelectPreview.h"
 
 CharaSelectPreviewManager::CharaSelectPreviewManager() :
@@ -43,8 +45,8 @@ void CharaSelectPreviewManager::Load(void)
 	auto CharaPreviewCreate = [&](CHARA_TYPE type)->CharaSelectPreviewBase* {
 		switch (type) {
 		case CHARA_TYPE::Orange: { return new OrangeCharaSelectPreview(); }
-		case CHARA_TYPE::Tomato: { return new UnknowCharaSelectPreview(); }
-		default: { return nullptr; }
+		case CHARA_TYPE::Tomato: { return new TomatoCharaSelectPreview(); }
+		default: { return new UnknowCharaSelectPreview(); }
 		}
 		};
 	// 各プレビューの生成
@@ -56,7 +58,9 @@ void CharaSelectPreviewManager::Load(void)
 
 void CharaSelectPreviewManager::Init(void)
 {
-	selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1);
+	MSG_SENDER_ID sederId = Net::GetIns().GetSenderId();
+	selectCharaType = SceneManager::GetIns().GetSelectCharaType(sederId == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : sederId);
+	if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
 
 	// 各キャラタイププレビューの初期化処理
 	for (CharaSelectPreviewBase* cp : charaPreview) { cp->Init(); }

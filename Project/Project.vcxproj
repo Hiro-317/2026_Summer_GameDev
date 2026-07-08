@@ -256,6 +256,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
@@ -281,6 +282,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Tomato\LobbyCharaPreviewTomato.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyStage\LobbyStage.h" />
     <ClInclude Include="Src\Object\SkyDome\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />

@@ -53,10 +53,10 @@ void CharaSelectScene::Update(void)
 		// 現在CharaSelectPreviewManagerクラスで選択されているキャラを取得
 		CHARA_TYPE nowSelect = ObjSerch<CharaSelectPreviewManager>()->GetCharaType();
 
-		if (nowSelect != CHARA_TYPE::Orange) { return; }
+		if (nowSelect == CHARA_TYPE::None) { return; }
 
 		// 選択中のキャラで、SceneManagerが抱えているキャラ選択情報を書き換える
-		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), nowSelect);
+		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId() == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : Net::GetIns().GetSenderId(), nowSelect);
 
 		// キャラ変更情報を送信
 		Net::GetIns().Send(MsgDataCharaSelect((int)nowSelect));

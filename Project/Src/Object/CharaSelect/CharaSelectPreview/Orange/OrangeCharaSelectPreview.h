@@ -6,7 +6,7 @@ class OrangeCharaSelectPreview : public CharaSelectPreviewBase
 {
 public:
 	OrangeCharaSelectPreview() :
-		CharaSelectPreviewBase()
+		CharaSelectPreviewBase("Data/Parameter/Character/Player/Orange/")
 	{
 	}
 	~OrangeCharaSelectPreview()override = default;
@@ -28,10 +28,10 @@ private:
 
 		CHARA_NAME = "ƒŠƒ‚ƒlƒ“";
 
-		HP = 600;
-		ATTACK = 200;
-		DEFENCE = 400;
-		SPEED = 10;
+		HP = GetParameter("OrangeParameter", "PlayerHP");
+		ATTACK = GetParameter("OrangeParameter", "PlayerAttackPower");
+		DEFENCE = GetParameter("OrangeParameter", "PlayerDefensePower");
+		SPEED = GetParameter("OrangeParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");

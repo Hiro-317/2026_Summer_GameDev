@@ -14,6 +14,13 @@ CharaSelectPreviewBase::CharaSelectPreviewBase() :
 	playAnimeType(0)
 {
 }
+CharaSelectPreviewBase::CharaSelectPreviewBase(const std::string& parameterPath) :
+	ActorBase(parameterPath),
+
+	anime(nullptr),
+	playAnimeType(0)
+{
+}
 
 void CharaSelectPreviewBase::Load(void)
 {

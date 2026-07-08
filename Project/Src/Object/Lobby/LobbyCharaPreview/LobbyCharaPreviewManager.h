@@ -22,6 +22,8 @@ public:
 	void Release(void)override;
 
 	// SceneManagerの持つ情報をもとに指定のIDのキャラプレビューを更新する
+	void ReloadChara(void);
+	// SceneManagerの持つ情報をもとに指定のIDのキャラプレビューを更新する
 	void ReloadChara(MSG_SENDER_ID senderId);
 
 private:
