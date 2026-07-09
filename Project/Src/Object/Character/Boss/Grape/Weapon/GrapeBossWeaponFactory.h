@@ -3,6 +3,7 @@
 
 #include "Straight/GrapeBossStraight.h"
 #include "KickBomb/GrapeBossKickBomb.h"
+#include "StampBomb/GrapeBossStampBomb.h"
 
 
 class GrapeBossWeaponFactory {
@@ -33,7 +34,7 @@ public:
 		}
 		case WeaponType::StampBomb:
 		{
-			res.weaponIns = new GrapeBossStraight(model);
+			res.weaponIns = new GrapeBossStampBomb(model);
 			break;
 		}
 		case WeaponType::SingleBomb:

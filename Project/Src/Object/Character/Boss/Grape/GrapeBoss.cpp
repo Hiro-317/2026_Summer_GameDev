@@ -16,6 +16,8 @@
 #include "State/KickDown/GrapeBossKickDownState.h"
 #include "State/KickDown/GrapeKickDownCollOperator.h"
 #include "State/Straight/GrapeBossStraightState.h"
+#include "State/Stamp/GrapeBossStampState.h"
+#include "State/Stamp/GrapeStampCollOperator.h"
 #include "State/Death/GrapeBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -75,6 +77,7 @@ void GrapeBoss::PlayerLoad(void)
 
 	subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
 	subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
+	subObjArray.push_back(new GrapeStampCollOperator(operatorSenderId, characterStats));
 
 #pragma endregion
 
@@ -125,12 +128,12 @@ void GrapeBoss::PlayerLoad(void)
 	);
 
 	AddState(
-		static_cast<int>(STATE::ATTACK_A),
+		static_cast<int>(STATE::ATTACK_C),
 		new GrapeBossKickDownState(
 			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
+			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
 			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
+			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 自分の座標と角度
 			trans.pos, trans.angle, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
@@ -170,6 +173,42 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::IDLE); }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_A),
+		new GrapeBossStampState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
+			// 自分の座標と角度
+			trans.pos, trans.angle, isGround,
+			// 攻撃の種類の情報
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
+			// プレイヤーの座標
+			playerPos,
+			SubObjSerch<GrapeStampCollOperator>(),
+			// ジャンプ始めアニメーションのタイプ
+			(int)ANIME_TYPE::JUMP_START,
+			(int)ANIME_TYPE::STAMP,
+			// プレイヤーのターゲット番号
+			[&]() { return targetNum; },
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::JUMP_START, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::JUMP_LOOP, true); },
+			[&]() { AnimePlay((int)ANIME_TYPE::STAMP, false); },
+			// アニメーションのスタンプタイプ
+			[&]() { return GetAnimePlayType(); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::IDLE); },
+			[&]() { SetJudge(false); },
+			[&]() { SetJudge(true); },
+			[&]() { coolTime = 120; }
 		)
 	);
 

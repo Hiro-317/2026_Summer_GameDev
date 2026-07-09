@@ -24,6 +24,11 @@ protected:
 private:
 
 	// 攻撃範囲の描画
-	const float ATTACK_RANGE = GetParameter("StampBomb", "Range");
+	const float ATTACK_RANGE = GetParameter("KickBomb", "Range");
 
+	// 攻撃サイズ倍率
+	const float ATTACK_SIZE = GetParameter("KickBomb", "Size");
+
+	// モデルのサイズ
+	const float MODEL_RADIUS = GetParameter("KickBomb", "Radius");
 };

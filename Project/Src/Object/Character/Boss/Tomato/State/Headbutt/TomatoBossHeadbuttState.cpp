@@ -43,13 +43,13 @@ void TomatoBossHeadbuttState::Update(void)
 	time++;
 	if (time < 0) {
 
-		Vector3 a = Vector3::Yonly(atan2f(moveDir.x, moveDir.z));
+		angle.y = atan2f(moveDir.x, moveDir.z);
 		Vector3 s = Vector3::Xonly(((float)time + 100.0f) / 100.0f);
 
 		collOperator->SetScale(s);
 		collOperator->SetViewPos(pos);
-		collOperator->SetAngle(a);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, a));
+		collOperator->SetAngle(angle);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle));
 		return;
 	}
 	if (time == 0) {
