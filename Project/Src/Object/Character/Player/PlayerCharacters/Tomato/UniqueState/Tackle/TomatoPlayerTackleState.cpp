@@ -72,7 +72,7 @@ void TomatoPlayerTackleState::Update(void)
 		SoundManager::GetIns().Play("TackleMove");
 
 		// 突進中も回転を続ける
-		//angle.x += ROTATION_POW;
+		angle.x += ROTATION_POW;
 		// カウントを開始
 		timeCounter--;
 		// 前方に向かって突進
@@ -94,7 +94,7 @@ void TomatoPlayerTackleState::Update(void)
 		Charge(chargeCounter, COOL_TIME, CHARGE_TIME);
 
 		// 回転スタート
-		//angle.x += ROTATION_POW;
+		angle.x += ROTATION_POW;
 	
 		// チャージの効果音を再生
 		SoundManager::GetIns().Play("TackleCharge");

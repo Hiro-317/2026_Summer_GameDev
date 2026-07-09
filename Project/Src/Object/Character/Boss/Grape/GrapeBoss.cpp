@@ -188,5 +188,5 @@ void GrapeBoss::PlayerLoad(void)
 
 void GrapeBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-
+	BossBase::OnCollision(ownTag, other);
 }

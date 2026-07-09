@@ -56,8 +56,8 @@ void PlayerMoveState::Update(void)
 		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { vec.z--; }
 	}
 
-	// ダッシュフラグを立てる
-	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now && vec > 0.0f;
+	// ダッシュフラグを立てる(移動中じゃなければ、ダッシュフラグは変えない)
+	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now && vec != 0.0f;
 
 	// 移動量の最大値を更新する
 	ACCEL_MAX = MOVE_SPEED_MAX(isDash);

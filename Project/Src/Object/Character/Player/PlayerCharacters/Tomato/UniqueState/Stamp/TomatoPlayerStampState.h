@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../../../CharacterStateBase.h"
 
-#include "../Tackle/TomatoPlayerTackleCollOperator.h"
+#include "TomatoPlayerStampCollOperator.h"
 
 class TomatoPlayerStampState : public CharacterStateBase
 {
@@ -11,10 +11,10 @@ public:
 	TomatoPlayerStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		//TomatoPlayerTackleCollOperator& collOperator,
+		TomatoPlayerStampCollOperator& collOperator,
 		int COOL_TIME,
-		float JUMP_POWER,
-		Vector3& pos, Vector3& angle,
+		float JUMP_POWER, float STAMP_FALL_SPEED, 
+		Vector3& pos, Vector3& angle, Vector3& accelSum,
 		const std::function<void(void)> ChangeIsGravity,
 		const std::function<bool(void)> IsGround,
 		const std::function<void(void)> DefaultChangeState
@@ -43,38 +43,54 @@ public:
 
 private:
 
-#pragma region 定数定義
+	// ジャンプ中の移動処理
+	void JumpMove(void);
+
+#pragma region 受け取る定数定義
 
 	// ジャンプ力
 	const float JUMP_POWER;
 
+	// スタンプ攻撃の落下速度
+	const float STAMP_FALL_SPEED;
+
 	// クールタイム
 	const int COOL_TIME;
 
+	// ジャンプ中の移動速度
+	const float JUMP_MOVE_SPEED = 3.0f;
+
+	// ジャンプ速度の減衰量（重力）
+	const float VELOCITY_DEC = 0.6f;
+
 #pragma endregion 
 
-#pragma region 変数定義
+#pragma region 受け取る用
 
 	// 座標の参照
 	Vector3& pos;
-
 	// 角度の参照
 	Vector3& angle;
+	// 加速度の参照
+	Vector3& accelSum;
 
-	//TomatoPlayerTackleCollOperator& collOperator;
+	// 当たり判定管理クラス
+	TomatoPlayerStampCollOperator& collOperator;
 
-	// 向いている方向
-	Vector3 moveDir;
-
-	// タックル終了までのカウント用
-	int timeCounter;
-
+	// プレイヤーの重力のオンオフ切り替え関数
 	const std::function<void(void)> ChangeIsGravity;
+
+	// プレイヤーが地面に接着しているかどうか
 	const std::function<bool(void)> IsGround;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
-
 #pragma endregion 
 
+
+	// ジャンプ速度
+	float VelocityY;
+
+	// 攻撃終了判定用
+	bool isEnd;
 };

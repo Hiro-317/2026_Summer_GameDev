@@ -8,6 +8,7 @@
 
 #include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
 #include "UniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
+#include "UniqueState/Stamp/TomatoPlayerStampCollOperator.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -37,6 +38,18 @@ void TomatoPlayer::PlayerLoad(void)
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
 #pragma region 下位オブジェクトの生成
+
+	// 頭突き攻撃の当たり判定を生成
+	subObjArray.emplace_back(
+		new TomatoPlayerHeadButtCollOperator(
+			COLLIDER_TAG::PLAYER_ATTACK,
+			SKILL1_DAMAGE_RATE,
+			trans.pos, trans.angle,
+			operatorSenderId,
+			characterStats
+		)
+	);
+
 	// 突進攻撃の当たり判定を生成
 	subObjArray.emplace_back(
 		new TomatoPlayerTackleCollOperator(
@@ -48,15 +61,17 @@ void TomatoPlayer::PlayerLoad(void)
 		)
 	);
 
+	// スタンプ攻撃の当たり判定を生成
 	subObjArray.emplace_back(
-		new TomatoPlayerHeadButtCollOperator(
+		new TomatoPlayerStampCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			SKILL1_DAMAGE_RATE,
+			SKILL3_DAMAGE_RATE,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
 		)
 	);
+
 #pragma endregion 
 
 #pragma region 状態設定
@@ -125,12 +140,14 @@ void TomatoPlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::SKILL_3); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
+			// スタンプ攻撃の当たり判定発生管理用クラス
+			*SubObjSerch<TomatoPlayerStampCollOperator>(),
 			// クールタイム
 			SKILL3_COOL_TIME,
 			// 移動速度 
-			STAMP_JUMP_POWER,
+			STAMP_JUMP_POWER, STAMP_FALL_SPEED,
 			// 座標 / 角度
-			trans.pos, trans.angle,
+			trans.pos, trans.angle, accelSum,
 			[&]() { GetGravityFlg() ? SetGravityFlg(false) : SetGravityFlg(true); },
 			[&]() { return  isGround; },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）

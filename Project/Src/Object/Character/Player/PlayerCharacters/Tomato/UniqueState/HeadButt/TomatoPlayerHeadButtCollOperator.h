@@ -33,9 +33,9 @@ public:
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// 攻撃の判定を発生させる
-	void CollOn(void) { if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true); }
+	void CollOn(void) { if (!isHit)SetJudge(true); }
 	// 攻撃の判定を消す
-	void CollOff(void) { ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false); }
+	void CollOff(void) { SetJudge(false); }
 
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }

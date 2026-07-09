@@ -55,7 +55,11 @@ private:
 
 	const int SKILL3_COOL_TIME = 10;
 
-	const float STAMP_JUMP_POWER = 10;
+	const short SKILL3_DAMAGE_RATE = 100;
+
+	const float STAMP_JUMP_POWER = 30.0f;
+
+	const float STAMP_FALL_SPEED = 60.0f;
 
 #pragma endregion 
 };

@@ -51,7 +51,7 @@ void TomatoPlayerMoveState::Update(void)
 	}
 
 	// ダッシュフラグを立てる
-	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now;
+	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now && vec != 0.0f;
 
 	// 移動量の最大値を更新する
 	ACCEL_MAX = MOVE_SPEED_MAX(isDash);
