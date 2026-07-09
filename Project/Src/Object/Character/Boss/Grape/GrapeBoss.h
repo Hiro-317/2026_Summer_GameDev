@@ -98,13 +98,16 @@ private:
 		IDLE,
 		WALK,
 		RUN,
+		DAMAGE,
+		DOWN,
+		DEATH,
 
-		OVERHAND,
-		KICK,
+		KICKDOWN,
+		FORWARD_THROW,
+		TOSS,
 		JUMP_START,
-		JUMPING,
+		JUMP_LOOP,
 		STAMP, 
-		DOWNTHROW,
 
 		MAX
 	};
@@ -115,32 +118,16 @@ private:
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "WalkAnimeSpeed"),	// WALK
 		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
 
-		GetParameter("Anime", "OverhandAnimeSpeed"),	// OVERHAND
 		GetParameter("Anime", "KickAnimeSpeed"),	// KICK
+		GetParameter("Anime", "OverhandAnimeSpeed"),	// OVERHAND
+		GetParameter("Anime", "DownThrowAnimeSpeed"),	// DOWNTHROW
 		GetParameter("Anime", "JumpStartAnimeSpeed"),	// JUMP_START
 		GetParameter("Anime", "JumpingAnimeSpeed"),	// JUMPING
 		GetParameter("Anime", "StampAnimeSpeed"),	// STAMP
-		GetParameter("Anime", "DownThrowAnimeSpeed"),	// DOWNTHROW
-	};
-
-	// ÉAÉjÉÅÅ[ÉVÉáÉìÇÃÉtÉHÉãÉ_Ç‹Ç≈ÇÃÉpÉX
-	const std::string ANIME_FOLDER_COMMON_PATH = "Data/Model/Charactor/Grape/CommonAnime/";
-	const std::string ANIME_FOLDER_BOSS_PATH = "Data/Model/Charactor/Grape/BossAnime/";
-
-	// ÉAÉjÉÅÅ[ÉVÉáÉìÇÃÉ^ÉCÉvÇ≤Ç∆ÇÃÉpÉX
-	const std::string ANIME_PATH_TABLE[(int)ANIME_TYPE::MAX] =
-	{
-		ANIME_FOLDER_COMMON_PATH + "Idle.mv1",		// IDLE
-		ANIME_FOLDER_COMMON_PATH + "Walk.mv1",		// WALK
-		ANIME_FOLDER_COMMON_PATH + "Run.mv1",		// RUN
-
-		ANIME_FOLDER_BOSS_PATH + "OverhandThrow.mv1",	// OVERHAND
-		ANIME_FOLDER_COMMON_PATH + "Kick.mv1",		// KICK
-		ANIME_FOLDER_BOSS_PATH + "JumpStart.mv1",	// JUMP_START
-		ANIME_FOLDER_BOSS_PATH + "Jumping.mv1",	// JUMPING
-		ANIME_FOLDER_BOSS_PATH + "Stamp.mv1",	// STAMP
-		ANIME_FOLDER_BOSS_PATH + "DownThrow.mv1",	// DOWNTHROW
 	};
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`ÉAÉjÉÅÅ[ÉVÉáÉì

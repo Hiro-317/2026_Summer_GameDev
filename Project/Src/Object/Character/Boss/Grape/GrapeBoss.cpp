@@ -31,7 +31,7 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos) :
 		"DefensePower",
 		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Grape/",
-		"Grape/Grape",
+		"Grape/GrapeModel",
 
 		playerPos)
 {
@@ -50,9 +50,7 @@ void GrapeBoss::PlayerLoad(void)
 	CreateAnimationController();
 
 	// ŠeíƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚·‚é
-	for (int i = 0; i < (int)ANIME_TYPE::MAX; i++) {
-		AddAnimation(i, ANIME_SPEED_TABLE[i], ANIME_PATH_TABLE[i].c_str());
-	}
+	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED_TABLE);
 
 	// ```````````````````````````````````
 
@@ -139,7 +137,7 @@ void GrapeBoss::PlayerLoad(void)
 			// ƒvƒŒƒCƒ„[‚Ìƒ^[ƒQƒbƒg”Ô†
 			[&]() { return targetNum; },
 			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŠÖ”‚Ìƒ|ƒCƒ“ƒ^
-			[&]() { AnimePlay((int)ANIME_TYPE::OVERHAND, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::FORWARD_THROW, false); },
 			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡‚ğæ“¾‚·‚éŠÖ”‚Ìƒ|ƒCƒ“ƒ^ 
 			[&]() { return GetAnimeRatio(); },
 			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌI—¹ƒtƒ‰ƒO‚ğæ“¾‚·‚éŠÖ”‚Ìƒ|ƒCƒ“ƒ^
