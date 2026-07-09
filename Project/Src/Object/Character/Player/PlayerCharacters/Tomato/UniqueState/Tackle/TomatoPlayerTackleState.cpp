@@ -11,6 +11,8 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	int COOL_TIME,
 	float MOVE_SPEED, float ROTATION_POW,
 	Vector3& pos, Vector3& angle,
+	const std::function<void(void)> ChargeAttackBuff,
+	const std::function<void(void)> ChargeAttackBuffDelete,
 	const std::function<void(void)> DefaultChangeState
 	) : 
 	CharacterStateBase(ownChangeState, isOwnState),
@@ -19,6 +21,8 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	MOVE_SPEED(MOVE_SPEED),
 	ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle),
+	ChargeAttackBuff(ChargeAttackBuff),
+	ChargeAttackBuffDelete(ChargeAttackBuffDelete),
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
 	chargeCounter(0)
@@ -65,27 +69,9 @@ void TomatoPlayerTackleState::Update(void)
 		return;
 	}
 
-	// 一定数回転したら突進を開始
+	// チャージ終了したら突進を開始
 	if (chargeCounter >= COOL_TIME) {
-		// チャージの効果音を消して、タックルの効果音を再生
-		SoundManager::GetIns().Stop("TackleCharge");
-		SoundManager::GetIns().Play("TackleMove");
-
-		// 突進中も回転を続ける
-		angle.x += ROTATION_POW;
-		// カウントを開始
-		timeCounter--;
-		// 前方に向かって突進
-		pos += moveDir * MOVE_SPEED;
-
-		// 当たり判定をオンにする
-		collOperator.CollOn();
-
-		// 当たったらタイマーを強制的に終了し、次の処理へ
-		if (collOperator.GetIsHit()) {
-			timeCounter = 0;
-			collOperator.CollOff();
-		}
+		Tackle();
 	}
 
 	// ボタンを押し続けている場合攻撃をチャージする
@@ -123,12 +109,8 @@ void TomatoPlayerTackleState::Update(void)
 		moveDir.z = cosf(angle.y);
 		moveDir.Normalize();
 	}
-	else if (chargeCounter < COOL_TIME) {
-		// チャージの効果音を消す
-		SoundManager::GetIns().Stop("TackleCharge");
-
-		// チャージが終了しなかったら、強制的に終了させる
-		DefaultChangeState();
+	else if(chargeCounter < COOL_TIME) {
+		Tackle();
 	}
 }
 
@@ -150,5 +132,33 @@ void TomatoPlayerTackleState::AlwaysUpdate(void)
 	if (!IsOwnState()) {
 		// 攻撃のクールタイムを減らす
 		if (coolTimeCounter > 0) { coolTimeCounter--; }
+	}
+}
+
+void TomatoPlayerTackleState::Tackle(void)
+{
+	// チャージの効果音を消して、タックルの効果音を再生
+	SoundManager::GetIns().Stop("TackleCharge");
+	SoundManager::GetIns().Play("TackleMove");
+
+	// 突進中も回転を続ける
+	angle.x += ROTATION_POW;
+	// カウントを開始
+	timeCounter--;
+	// 前方に向かって突進
+	pos += moveDir * MOVE_SPEED;
+
+	// チャージできていたら、バフをかけて攻撃力を増やす
+	if (chargeCounter >= COOL_TIME) {
+		ChargeAttackBuff();
+	}
+
+	// 当たり判定をオンにする
+	collOperator.CollOn();
+
+	// 当たったらタイマーを強制的に終了し、次の処理へ
+	if (collOperator.GetIsHit()) {
+		timeCounter = 0;
+		collOperator.CollOff();
 	}
 }

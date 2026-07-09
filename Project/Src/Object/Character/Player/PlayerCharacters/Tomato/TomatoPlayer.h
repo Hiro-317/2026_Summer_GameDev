@@ -53,13 +53,13 @@ private:
 
 #pragma region ÉXÉLÉã3ÇÃíËêîíËã`
 
-	const int SKILL3_COOL_TIME = 10;
+	const int SKILL3_COOL_TIME = GetParameterToInt("Stamp", "CoolTime");
 
-	const short SKILL3_DAMAGE_RATE = 100;
+	const short SKILL3_DAMAGE_RATE = GetParameterToInt("Stamp", "DamageRate");
 
-	const float STAMP_JUMP_POWER = 30.0f;
+	const float STAMP_JUMP_POWER = GetParameterToInt("Stamp", "JumpPower");
 
-	const float STAMP_FALL_SPEED = 60.0f;
+	const float STAMP_FALL_SPEED = GetParameterToInt("Stamp", "FallSpeed");
 
 #pragma endregion 
 };

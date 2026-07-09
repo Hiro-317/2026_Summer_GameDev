@@ -58,7 +58,7 @@ private:
 	const int COOL_TIME;
 
 	// ジャンプ中の移動速度
-	const float JUMP_MOVE_SPEED = 3.0f;
+	const float JUMP_MOVE_SPEED = 4.0f;
 
 	// ジャンプ速度の減衰量（重力）
 	const float VELOCITY_DEC = 0.6f;

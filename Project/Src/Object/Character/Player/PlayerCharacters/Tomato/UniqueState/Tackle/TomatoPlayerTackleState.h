@@ -15,6 +15,8 @@ public:
 		int COOL_TIME,
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Vector3& angle,
+		const std::function<void(void)> ChargeAttackBuff,
+		const std::function<void(void)> ChargeAttackBuffDelete,
 		const std::function<void(void)> DefaultChangeState
 	);
 
@@ -40,6 +42,8 @@ public:
 	}
 
 private:
+
+	void Tackle(void);
 
 #pragma region 定数定義
 
@@ -81,6 +85,10 @@ private:
 
 	// チャージ用カウンタ
 	int chargeCounter;
+
+	// チャージした時、ダメージを増やすための関数のポインタ
+	const std::function<void(void)> ChargeAttackBuff;
+	const std::function<void(void)> ChargeAttackBuffDelete;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

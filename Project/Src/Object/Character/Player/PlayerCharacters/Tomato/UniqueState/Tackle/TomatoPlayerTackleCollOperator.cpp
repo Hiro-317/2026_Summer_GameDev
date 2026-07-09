@@ -44,7 +44,7 @@ void TomatoPlayerTackleCollOperator::Load(void)
 	// スキルのダメージ量の設定
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
-	playerStats.attackPower.Value();
+	playerStats;
 }
 
 void TomatoPlayerTackleCollOperator::Update(void)
@@ -52,6 +52,7 @@ void TomatoPlayerTackleCollOperator::Update(void)
 	// 座標と角度をプレイヤーの座標に追従
 	trans.pos = playerPos;
 	trans.angle = playerAngle;
+
 }
 
 void TomatoPlayerTackleCollOperator::SubAlphaDraw(void)

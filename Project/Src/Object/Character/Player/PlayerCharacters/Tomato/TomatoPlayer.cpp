@@ -128,6 +128,9 @@ void TomatoPlayer::PlayerLoad(void)
 			TACKLE_SPEED, ROTATION_POW,
 			// 座標 / 角度
 			trans.pos, trans.angle,
+			// チャージ後の突進の攻撃力を増やす関数のポインタ.
+			[&]() { characterStats.attackPower.AddModifier(ModifierData(ModifierType::TackleChargeMaxBuff, 30, 60)); },
+			[&]() { characterStats.attackPower.DeleteModifier(ModifierType::TackleChargeMaxBuff); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -183,6 +186,9 @@ void TomatoPlayer::PlayerLoad(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	// 移動状態 -> スキル3 の遷移を登録
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+
+
+
 
 #pragma endregion 
 

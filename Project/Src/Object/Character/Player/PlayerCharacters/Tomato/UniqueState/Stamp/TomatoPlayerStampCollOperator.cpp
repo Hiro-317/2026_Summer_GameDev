@@ -35,7 +35,7 @@ void TomatoPlayerStampCollOperator::Load(void)
 #pragma endregion
 
 	// コライダー生成
-	ColliderCreate(new SphereCollider(COLL_TAG, 500.0f));
+	ColliderCreate(new SphereCollider(COLL_TAG, 300.0f));
 
 	// 初期化処理
 	SetJudge(false);

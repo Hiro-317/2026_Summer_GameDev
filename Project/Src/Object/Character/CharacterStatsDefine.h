@@ -92,6 +92,15 @@ public:
 		modifier.emplace_back(add);
 	}
 
+	void DeleteModifier(ModifierType type) {
+		auto it = std::find_if(
+			modifier.begin(),
+			modifier.end(),
+			[type](const ModifierData& mod) { return mod.type == type; }
+		);
+		if (it != modifier.end()) { modifier.erase(it); }
+	}
+
 	// バフ/デバフ の効果時間の更新
 	void ModifinerTimeUpdate(void) {
 		modifier.erase(
