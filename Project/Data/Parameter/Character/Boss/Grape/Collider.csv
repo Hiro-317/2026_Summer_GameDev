@@ -1,0 +1,3 @@
+ModelToColliderRate,1.05
+CollisionPushWeight,255
+CollisionSphereRad,200

@@ -1,26 +1,21 @@
 #pragma once
-
 #include "EffectBase.h"
+
 #include "TackleMove/EffectTackleMove.h"
+#include "StampLand/EffectStampLand.h"
 
 class EffectFactory {
 
 public:
 
-	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Transform& trans) {
+	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Vector3& local, const Transform* trans,
+	bool followRotX, bool followRotY, bool followRotZ) {
+
 		EffectBase* res{};
 
 		switch (name){
-		default: { break; }
-		}
-		return res;
-	}
-
-	static EffectBase* CreateEffect(const ParameterLoad& parameter, EFFECT_NAME name, const Transform* trans, const Vector3& local) {
-		EffectBase* res{};
-
-		switch (name){
-		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, trans, local); break; }
+		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
+		case EFFECT_NAME::STAMP_LAND: { res = new EffectStampLand(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		default: { break; }
 		}
 		return res;

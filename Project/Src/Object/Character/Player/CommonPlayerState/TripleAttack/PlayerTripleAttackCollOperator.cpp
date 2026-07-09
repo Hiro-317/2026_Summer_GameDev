@@ -38,7 +38,7 @@ void PlayerTripleAttackCollOperator::Load(void)
 #pragma region 基底クラスにある機能の挙動設定
 
 	// 動的オブジェクトとしての挙動を無効にする
-	SetDynamicFlg(false);
+	SetDynamicFlg(true);
 
 	// 重力を無効にする
 	SetGravityFlg(false);
@@ -66,6 +66,7 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
+		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isFindAttackTarget = true;
 			targetPos = &other.GetTransform().pos;
 			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
@@ -79,7 +80,8 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
-				isHit = true;
+		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+			isHit = true;
 			break;
 		default:break;
 		}

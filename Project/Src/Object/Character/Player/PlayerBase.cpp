@@ -3,6 +3,7 @@
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
 
+#include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
 
 #include "../../UI/HitUI/HitUI.h"
@@ -65,6 +66,23 @@ void PlayerBase::CharacterLoad(void)
 {
 	PlayerLoad();
 
+
+
+	// 観戦モード
+	AddState(
+		(int)STATE::OTHER_WATCH,
+		new OtherPlayerWatchState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::OTHER_WATCH; },
+			// 他プレイヤーの座標
+			otherPlayerTrans,
+			// ボスの座標
+			bossPos
+		)
+	);
+
 #pragma region モデル
 	// モデルを読み込む
 
@@ -101,7 +119,7 @@ void PlayerBase::CharacterLoad(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	//ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
@@ -135,6 +153,7 @@ void PlayerBase::CharacterUpdate(void)
 	interestPos = trans.pos + INTEREST_POS;
 
 	for (ActorBase*& c : subObjArray) { c->Update(); }
+
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
@@ -197,53 +216,17 @@ void PlayerBase::CharacterUiDraw(void)
 			};
 
 		// 加速度をデバッグ表示
-		debugDrwStr("プレイヤー～～～～～～");
-		debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
-		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
-		debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
-		debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
-		debugDrwStr("HP：" + std::to_string(characterStats.hp));
-		debugDrwStr("～～～～～～('#；ω;`)");
+		//debugDrwStr("プレイヤー～～～～～～");
+		//debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
+		//debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
+		//debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
+		//debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
+		//debugDrwStr("HP：" + std::to_string(characterStats.hp));
+		//debugDrwStr("～～～～～～('#；ω;`)");
 	}
 }
 
-void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
-{
-	if (!Net::GetIns().IsHost()) { return; }
-	if (GetInviCounter() > 0) { return; }
 
-	// 回避中の無敵処理
-	if (state == (int)STATE::SKILL_3) {
-		switch (other.GetTag()) {
-		case COLLIDER_TAG::BOSS_ATTACK:
-			// 回避成功時の無敵時間
-			SetInviCounter(DODGE_INVI_TIME);
-
-			// ホストが操作者だった場合表示「ミス！」を出現させる
-			if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
-			// ホスト以外が回避した場合、クライアント側に回避した通知を送る
-			else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); } 
-			break;
-		}
-		return;
-	}
-
-	if (state == (int)STATE::DEATH) { return; }
-
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
-		// ダメージ状態に遷移
-		ChangeState((int)STATE::DAMAGE);
-		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-		// ダメージ値分HPを減らす
-		characterStats.hp -= damage;
-		break;
-	}
-	}
-}
 
 void PlayerBase::CharacterRelease(void)
 {
@@ -259,8 +242,10 @@ void PlayerBase::CharacterRelease(void)
 
 void PlayerBase::ChangeState(int state)
 {
+	// 状態遷移
 	CharacterBase::ChangeState(state);
 
+	// 遷移するステート(状態)を送信
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
 
 	// ホストだったら操作者PC以外に伝達する
@@ -312,7 +297,7 @@ void PlayerBase::AnimePlay(int type, bool loop)
 }
 void PlayerBase::ReceptionUpdate(void)
 {
-	// 座標・角度
+	// 座標・角度の同期
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
@@ -324,12 +309,23 @@ void PlayerBase::ReceptionUpdate(void)
 				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
 				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
 			}
+
+			diff = (trans.angle, dataPtr->angle).Length();
+
+			// 誤差が小さいなら無視
+			if (diff > 0.5f) {
+				// 誤差が大きい場合、少しずつホストから送られた角度を寄せる（補間）
+				trans.angle = trans.angle * 0.9f + dataPtr->angle * 0.1f;
+			}
+
 		}
 		// 他人のキャラなら、そのまま同期
-		else { trans.pos = dataPtr->pos; }
+		else { 
+			trans.pos = dataPtr->pos; 
+			trans.angle = dataPtr->angle;
+		}
 
-		// 角度を同期
-		trans.angle = dataPtr->angle;
+
 		delete dataPtr;
 	}
 
@@ -369,6 +365,7 @@ void PlayerBase::ReceptionUpdate(void)
 void PlayerBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost() || isOwnOperator) {
+		// 自身の座標と角度を
 		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
 	} 
 }

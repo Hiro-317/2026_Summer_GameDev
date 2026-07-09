@@ -1,8 +1,8 @@
 #pragma once
-#include "../../CharacterBase.h"
+#include "../BossBase.h"
 
 
-class TomatoBoss : public CharacterBase
+class TomatoBoss : public BossBase
 {
 public:
 	TomatoBoss(const std::vector<const Vector3*> playerPos);
@@ -21,31 +21,13 @@ public:
 		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
 		return ret;
 	}
-	void ReceptionUpdate(void)override;
-	void SendUpdate(void)override;
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	virtual void ReceptionUpdate(void)override;
 
 private:
 
 #pragma region ’è”’è‹`
-
-	// ƒ‚ƒfƒ‹``````````````````````````````
-
-	// ƒXƒP[ƒ‹
-	const Vector3 MODEL_SCALE = GetParameterToVector3("Model","Scale");
-
-	// ƒTƒCƒY
-	const Vector3 MODEL_SIZE = GetParameterToVector3("Model","Size") * MODEL_SCALE;
-
-	// ’†S“_‚ÌƒYƒŒ
-	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("Model","CenterDiff") * MODEL_SCALE;
-
-	// Šp“x‚ÌƒYƒŒ
-	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("Model","LocalRot") * (DX_PI_F / 180.0f);
-
-	// `````````````````````````````````
-
 
 	// “–‚½‚è”»’èî•ñ`````````````````````````````````````````
 
@@ -117,11 +99,6 @@ private:
 		(CAPSULE_COLLIDER_START_POS_X - CAPSULE_COLLIDER_END_POS_X).Length()
 		+ CAPSULE_COLLIDER_RADIUS;
 
-	// ƒvƒŒƒCƒ„[‚É‚¾‚¯s‚¤(XZ•½–Ê‚Ì‚İ‚ğQÆ‚·‚é)‰Ÿ‚µo‚µ‚Ì‹——£
-	const float TO_PLAYER_DISTANCE = 250.0f;
-
-	// ‰Ÿ‚µo‚µ‚ğs‚¤Û‚Ìd‚³
-	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("Collider", "CollisionPushWeight");
 	// ````````````````````````````````````````````````
 
 
@@ -131,20 +108,6 @@ private:
 	const Vector3 INIT_POS = GetParameterToVector3("Init", "Pos");
 
 	// ``````````````````````````•Ï”‰Šú‰»Œn
-
-	// ó‘Ô‚Ìí—Ş
-	enum class STATE
-	{
-		NONE = -1,
-		
-		IDLE,
-		MOVE,
-		HEADBUTT,
-		TACKLE,
-		STAMP,
-
-		MAX
-	};
 
 	// ˆÚ“®ó‘Ô`````````````````````````````
 
@@ -161,6 +124,13 @@ private:
 
 	// ƒXƒ^ƒ“ƒv”ÍˆÍ
 	const float STAMP_RADIUS = GetParameter("Attack", "StampRad");
+
+	// “ª“Ë‚«UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int HEADBUTT_COOLTIME = GetParameter("Attack", "HeadbuttCoolTime");
+	// ƒXƒ^ƒ“ƒvUŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int STAMP_COOLTIME = GetParameter("Attack", "StampCoolTime");
+	// ƒ^ƒbƒNƒ‹UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int TACKLE_COOLTIME = GetParameter("Attack", "TackleCoolTime");
 
 	// `````````````````````````````````
 
@@ -180,30 +150,9 @@ private:
 
 #pragma endregion ’è”’è‹`
 
-
-	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ
-	std::vector<ActorBase*> subObjArray;
-	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ‚Ì’†‚©‚ç“Á’è‚ÌƒIƒuƒWƒFƒNƒg‚ğ’T‚·
-	template<typename SubClass = ActorBase>
-	SubClass* SubObjSerch(void) {
-		for (ActorBase* obj : subObjArray) {
-			if (dynamic_cast<SubClass*>(obj)) { return dynamic_cast<SubClass*>(obj); }
-		}
-		return nullptr;
-	}
-
 	// ƒƒCƒ“ˆ—``````````````
-	void CharacterLoad(void)override;
-	void CharacterInit(void)override;
-	void CharacterUpdate(void)override;
-	void CharacterDraw(void)override;
-	void CharacterAlphaDraw(void)override;
-	void CharacterUiDraw(void)override;
-	void CharacterRelease(void)override;
+	void PlayerLoad(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
-
-	// ƒvƒŒƒCƒ„[‚ÌÀ•W‚ÌQÆ(“Ç‚İæ‚èê—p)
-	const std::vector<const Vector3*> playerPos;
 
 	// ƒgƒ}ƒg‚ÌŒü‚¢‚Ä‚¢‚éŒü‚«
 	Vector3 moveDir;
@@ -214,16 +163,6 @@ private:
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	int coolTime;
 
-	// ƒRƒ‰ƒCƒ_[‚Ì“–‚½‚è”»’è•`‰æ‚Ìƒpƒ‰ƒ[ƒ^[
-	ParameterLoad* collParam;
-
-	// ƒvƒŒƒCƒ„[‚Ì—^ƒ_ƒƒJƒEƒ“ƒg
-	std::vector<int> damaged;
-	
-	// ƒvƒŒƒCƒ„[‚ÌÅ—^ƒ_ƒ/‚»‚Ì”Ô†
-	int mostDamaged;
-	int targetNum;
-	
 	// ƒQ[ƒ€ƒNƒŠƒA‚ÌƒJƒEƒ“ƒgƒ_ƒEƒ“
 	int gameOverCnt;
 };

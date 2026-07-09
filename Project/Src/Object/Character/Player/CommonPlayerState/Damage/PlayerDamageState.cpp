@@ -3,17 +3,15 @@
 PlayerDamageState::PlayerDamageState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	const unsigned char INVI_TIME,
 	const std::function<void(void)> PlayDamageAnime,
 	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(unsigned char)> SetInviCounter,
+	const std::function<void()> InviStart,
 	const std::function<void()> DefaultChangeState
 ) :
 	CharacterStateBase(ownChangeState,isOwnState),
-	INVI_TIME(INVI_TIME),
 	PlayDamageAnime(PlayDamageAnime),
 	IsAnimeEnd(IsAnimeEnd),
-	SetInviCounter(SetInviCounter),
+	InviStart(InviStart),
 	DefaultChangeState(DefaultChangeState)
 {
 }
@@ -25,7 +23,7 @@ void PlayerDamageState::Enter(void)
 	PlayDamageAnime();
 
 	// 無敵カウンターを設定
-	SetInviCounter(INVI_TIME);
+	InviStart();
 }
 
 // 更新処理

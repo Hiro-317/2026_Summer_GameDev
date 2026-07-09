@@ -315,7 +315,8 @@ private:
 		case MSG_DATA_TYPE::PlayerCollOperator: { MsgDataRecv<MsgDataPlayerCollOperator>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTrans: { MsgDataRecv<MsgDataBossTrans>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::BossInform: { MsgDataRecv<MsgDataBossInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossAttackDrawFlg: { MsgDataRecv<MsgDataBossAttackDrawFlg>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossAttackDraw: { MsgDataRecv<MsgDataBossAttackDraw>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
 		}

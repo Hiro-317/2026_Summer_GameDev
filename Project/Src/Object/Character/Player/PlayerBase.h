@@ -20,6 +20,17 @@ public:
 		std::string modelPath
 	);
 
+	/// <summary>
+	/// ƒvƒŒƒCƒ„[ƒx[ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	/// </summary>
+	/// <param name="operatorSenderId">’N‚ª‘€ìŒ ‚ğ‚Â‚©</param>
+	/// <param name="fileName">ƒpƒ‰ƒ[ƒ^[‚ÌƒpƒX</param>
+	/// <param name="hpParameterID">HPƒpƒ‰ƒ[ƒ^[‚Ì–¼‘O</param>
+	/// <param name="attackPowerParameterID">UŒ‚—Íƒpƒ‰ƒ[ƒ^[‚Ì–¼‘O</param>
+	/// <param name="defensePowerParameterID">–hŒä—Íƒpƒ‰ƒ[ƒ^[‚Ì–¼‘O</param>
+	/// <param name="moveSpeedParameterID">ˆÚ“®‘¬“xƒpƒ‰ƒ[ƒ^[‚Ì–¼‘O</param>
+	/// <param name="parameterPath">ŠO•”‚©‚çƒpƒ‰ƒ[ƒ^[‚ğ“Ç‚İ‚Ş‚½‚ß‚Ìƒtƒ@ƒCƒ‹ƒpƒX</param>
+	/// <param name="modelPath">ƒvƒŒƒCƒ„[ƒ‚ƒfƒ‹‚Ìƒtƒ@ƒCƒ‹ƒpƒX</param>
 	PlayerBase(
 		MSG_SENDER_ID operatorSenderId,
 
@@ -51,16 +62,18 @@ public:
 		return ret;
 	}
 
+	// ƒ{ƒX‚ÌÀ•Wæ“¾
 	void SetBossPos(const Vector3* bossPos) { this->bossPos = bossPos; }
 
+	// ƒ[ƒh
 	virtual void PlayerLoad(void) = 0;
 
 	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
 	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
 
+	// ©gˆÈŠO‚ÌƒvƒŒƒCƒ„[À•W‚ğæ“¾
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
@@ -80,7 +93,10 @@ private:
 
 protected:
 
+	// ƒXƒe[ƒg‘JˆÚŠÖ”
 	void ChangeState(int state)override;
+
+	// ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒvƒŒƒCŠÖ”
 	void AnimePlay(int type, bool loop = true)override;
 
 #pragma region ’è”’è‹`
@@ -173,7 +189,7 @@ protected:
 
 	// `````````````````````````````ˆÚ“®ó‘Ô
 	 
-	// ó‘Ô‚Ìí—Ş•m€
+	// ó‘Ô‚Ìí—Ş
 	enum class STATE
 	{
 		NONE = -1,
@@ -203,11 +219,27 @@ protected:
 		return nullptr;
 	}
 
-	// ƒXƒLƒ‹UI‚ÌÀ•W@````````````````````````````````
+	// UI@````````````````````````````````
 	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 600, Application::SCREEN_SIZE_Y_HALF + 300);
 	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 120, SKILL1_UI_DRAW_POS.y - 100);
 	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 240, SKILL1_UI_DRAW_POS.y);
-	// ````````````````````````````````@ƒXƒLƒ‹UI‚ÌÀ•W@
+
+	// ‰æ‘œ‚Ì–¼‘O
+	const std::string HP_FRAME_IMAGE_NAME = "PlayerHpFrame";
+	const std::string HP_IMAGE_NAME = "PlayerHp";
+	const std::string HP_LOST_IMAGE_NAME = "PlayerHpLost";
+
+	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
+	const Vector2I HP_IMAGE_SIZE = Vector2I(354, 50);
+	const Vector2I HP_GAUGE_OFFSET = Vector2I(10, 0);
+	const Vector2I HP_UI_POS[(int)MSG_SENDER_ID::Max] = {
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + (HP_IMAGE_SIZE.y + 20)),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 20) * 2)),
+		Vector2I(0, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 20) * 3)),
+	};
+
+	// ````````````````````````````````@UI
 #pragma endregion ’è”’è‹`
 
 	// ’‹“_À•W

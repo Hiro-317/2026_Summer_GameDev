@@ -73,6 +73,12 @@ struct Transform
 	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); }
 
 	/// <summary>
+	/// モデルを複製
+	/// </summary>
+	/// <param name="model">モデルのハンドル（Data/Model/～～.mv1）</param>
+	void Duplicate(int model) { this->model = MV1DuplicateModel(model); }
+
+	/// <summary>
 	/// エフェクトをロード
 	/// </summary>
 	/// <param name="path">モデルのパス（Data/Effect/～～.efk）</param>

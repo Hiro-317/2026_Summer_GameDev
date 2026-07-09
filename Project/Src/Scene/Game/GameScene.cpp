@@ -23,6 +23,7 @@
 #include "../../Object/Character/Player/PlayerManager/PlayerManager.h"
 
 #include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
+#include "../../Object/Character/Boss/Grape/GrapeBoss.h"
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
@@ -81,12 +82,15 @@ void GameScene::Load(void)
 		pos.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
 	}
 
-	ObjAdd(new TomatoBoss(pos));
+	ObjAdd(new GrapeBoss(pos));
 
 	ObjAdd(new TomatoBossStage());
 
+	// 当たり判定のチャンク分け(初期化時)を行う
+	collision->InitBuildChunks();
+
 	// プレイヤーにボスの座標をわたす
-	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<TomatoBoss>()->GetTrans().pos);
+	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<GrapeBoss>()->GetTrans().pos);
 }
 
 void GameScene::Init(void)
@@ -132,7 +136,7 @@ void GameScene::Update(void)
 		if (focusFlg) {
 			Camera::GetIns().ChangeModeFollowAuto(
 				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans(),
-				&ObjSerch<TomatoBoss>()->GetTrans().pos);
+				&ObjSerch<GrapeBoss>()->GetTrans().pos);
 		}
 		else {
 			Camera::GetIns().ChangeModeFollowRemote(
@@ -157,7 +161,7 @@ void GameScene::Update(void)
 	}
 	
 	// ゲームクリア判定
-	if (ObjSerch<TomatoBoss>()->GetIsDeath()) {
+	if (ObjSerch<GrapeBoss>()->GetIsDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xff0000, 0x000000);
 		return;
 	}
@@ -195,13 +199,23 @@ void GameScene::Draw(void)
 	Camera::GetIns().Apply();
 
 	Effekseer_Sync3DSetting();
+
 #pragma endregion
 
 #pragma region 描画処理（メイン）
+
 	// オブジェクト全ての描画処理
 	for (ActorBase* obj : objects) { obj->Draw(); }
+
+#pragma region エフェクト描画
+
+	DrawEffekseer3D();
+
+#pragma endregion
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
+	collision->DrawChunkGrid();
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	Camera::GetIns().DrawDebug();
@@ -216,12 +230,6 @@ void GameScene::Draw(void)
 
 	// 揺れの数値分座標をずらして描画
 	DrawGraph(s.x, s.y, mainScreen, true);
-#pragma endregion
-
-#pragma region エフェクト描画
-
-	DrawEffekseer3D();
-
 #pragma endregion
 
 #pragma region UI描画（画面演出をかけないもの）

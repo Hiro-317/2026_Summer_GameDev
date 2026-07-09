@@ -26,7 +26,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Vector3& angle,
+		Transform* trans,
 		const std::vector<const Vector3*> playerPos,
 		TomatoTackleCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
@@ -71,11 +71,8 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// 座標の参照
-	Vector3& pos;
-
-	// 角度の参照
-	Vector3& angle;
+	// ボスの情報の参照
+	Transform* trans;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;

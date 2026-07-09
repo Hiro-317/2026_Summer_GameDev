@@ -78,6 +78,24 @@ public:
 		};
 	}
 
+	AABB GetAABB(void) const override {
+		Vector3 s = GetStartPos();
+		Vector3 e = GetEndPos();
+
+		return {
+			{
+				(std::min)(s.x, e.x),
+				(std::min)(s.y, e.y),
+				(std::min)(s.z, e.z)
+			},
+			{
+				(std::max)(s.x, e.x),
+				(std::max)(s.y, e.y),
+				(std::max)(s.z, e.z)
+			}
+		};
+	}
+
 	void DrawDebug(unsigned int color = 0xffffff)override {
 		DrawLine3D(GetStartPos().ToVECTOR(), GetEndPos().ToVECTOR(), color);
 	}

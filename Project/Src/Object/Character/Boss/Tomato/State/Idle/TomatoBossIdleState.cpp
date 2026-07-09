@@ -32,14 +32,11 @@ void TomatoBossIdleState::Enter(void)
 {
 	cnt = CoolTime();
 	target = GetTarget();
-	if (Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeIdle));
-	}
 }
 
 void TomatoBossIdleState::Update(void)
 {
-	if (cnt > 0 || !Net::GetIns().IsHost()) {
+	if (cnt > 0) {
 		cnt--;
 		return;
 	}

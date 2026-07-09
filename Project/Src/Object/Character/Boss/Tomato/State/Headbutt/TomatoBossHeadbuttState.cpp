@@ -31,22 +31,25 @@ void TomatoBossHeadbuttState::Enter(void)
 {
 	target = GetTarget();
 	moveDir = (*playerPos.at(target) - pos).Normalized();
-	time = -100;
+	time = START_CNT;
 	DeleteColl();
-	collOperator->SetDrawArea(true);
 	SetCoolTime();
-	if (Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataBossInform(MsgDataBossInform::INFORM_TYPE::ChangeAttackA));
-	}
+	collOperator->SetDrawArea(true);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
 }
 
 void TomatoBossHeadbuttState::Update(void)
 {
 	time++;
 	if (time < 0) {
-		collOperator->SetScale(((float)time + 100.0f) / 100.0f);
+
+		Vector3 a = Vector3::Yonly(atan2f(moveDir.x, moveDir.z));
+		Vector3 s = Vector3::Xonly(((float)time + 100.0f) / 100.0f);
+
+		collOperator->SetScale(s);
 		collOperator->SetViewPos(pos);
-		collOperator->SetAngle(Vector3::Yonly(atan2f(moveDir.x, moveDir.z)));
+		collOperator->SetAngle(a);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, a));
 		return;
 	}
 	if (time == 0) {
@@ -70,9 +73,8 @@ void TomatoBossHeadbuttState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
 	ReviveColl();
-	if (Net::GetIns().IsHost()) {
-		collOperator->CollSet(false);
-	}
+	collOperator->CollSet(false);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 }
 
 void TomatoBossHeadbuttState::AlwaysUpdate(void)
