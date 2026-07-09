@@ -6,12 +6,16 @@ PlayerDeathState::PlayerDeathState(
 	Vector3& pos, Vector3& angle,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> PlayDeathAnime,
+	const std::function<void(void)> PlayerDeathSetting,
+	const std::function<void(void)> PlayerIsDeathTrue,
 	const std::function<void(void)> DefaultChangeState
 ):
 	CharacterStateBase(ownChangeState,isOwnState),
 	pos(pos), angle(angle),
 	IsAnimeEnd(IsAnimeEnd),
 	PlayDeathAnime(PlayDeathAnime),
+	PlayerDeathSetting(PlayerDeathSetting),
+	PlayerIsDeathTrue(PlayerIsDeathTrue),
 	DefaultChangeState(DefaultChangeState)
 {
 }
@@ -24,10 +28,12 @@ void PlayerDeathState::Enter(void)
 void PlayerDeathState::Update(void)
 {
 	if (IsAnimeEnd()) {
+		PlayerDeathSetting();
 		DefaultChangeState();
 	}
 }
 
 void PlayerDeathState::Exit(void)
 {
+	PlayerIsDeathTrue();
 }

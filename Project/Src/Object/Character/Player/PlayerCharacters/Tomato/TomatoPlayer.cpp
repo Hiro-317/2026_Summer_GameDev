@@ -5,6 +5,7 @@
 #include "UniqueState/HeadButt/TomatoPlayerHeadButtState.h"
 #include "UniqueState/Stamp/TomatoPlayerStampState.h"
 #include "UniqueState/Damage/TomatoPlayerDamageState.h"
+#include "UniqueState/Death/TomatoPlayerDeathState.h"
 
 #include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
 #include "UniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
@@ -174,6 +175,18 @@ void TomatoPlayer::PlayerLoad(void)
 		)
 	);
 
+	// Ž€–Só‘Ô‚ð’Ç‰Á‚·‚é
+	AddState(
+		(int)STATE::DEATH,
+		new TomatoPlayerDeathState(
+			[&]() { ChangeState((int)STATE::DEATH); },
+			[&]() { return state == (int)STATE::DEATH; },
+			trans.pos, trans.angle,
+			[&]() { PlayerDeathSetting(); },
+			[&]() { SetIsDeath(true); },
+			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
+		)
+	);
 
 	// ‘JˆÚðŒ‚Ì“o˜^ibefore = ‘JˆÚŒ³)(after = ‘JˆÚŒãj
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
@@ -283,7 +296,7 @@ void TomatoPlayer::PlayerLoad(void)
 		);
 	}
 
-	ui_ArrayIns.emplace_back(new HitUI());
+	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 }
 
 void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)

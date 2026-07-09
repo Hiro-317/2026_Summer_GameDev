@@ -66,8 +66,6 @@ void PlayerBase::CharacterLoad(void)
 {
 	PlayerLoad();
 
-
-
 	// 観戦モード
 	AddState(
 		(int)STATE::OTHER_WATCH,
@@ -150,14 +148,17 @@ void PlayerBase::CharacterInit(void)
 
 void PlayerBase::CharacterUpdate(void)
 {
+	// 自身が死亡していたら更新処理は行わない
+	if (GetIsDeath()) { return; }
+
 	interestPos = trans.pos + INTEREST_POS;
 
+	// 下位クラスの更新処理
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
-		isDeath = true;
 	}
 
 #ifdef _DEBUG		// クールタイム用
@@ -167,10 +168,6 @@ void PlayerBase::CharacterUpdate(void)
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
 		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
 	}
-	if (state == (int)STATE::DEATH) {
-		// 不動オブジェクトにする
-		SetDynamicFlg(false);
-	}
 #endif // _DEBUG
 }
 
@@ -178,7 +175,7 @@ void PlayerBase::CharacterRemoteUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 	// HPがゼロ以下になったら死亡状態に遷移
-	if (characterStats.hp <= 0) { isDeath = true; }
+	//if (characterStats.hp <= 0) { GetIsDeath() = true; }
 }
 
 void PlayerBase::CharacterDraw(void)
@@ -302,7 +299,7 @@ void PlayerBase::ReceptionUpdate(void)
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
 			// ホストから送られた座標と今の自分の座標の距離を測る
-			float diff = (trans.pos, dataPtr->pos).Length();
+			float diff = (trans.pos - dataPtr->pos).Length();
 
 			// 誤差が小さいなら無視
 			if (diff > 0.5f) {
@@ -310,7 +307,8 @@ void PlayerBase::ReceptionUpdate(void)
 				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
 			}
 
-			diff = (trans.angle, dataPtr->angle).Length();
+			// ホストから送られた角度と今の自分の角度のずれを測る
+			diff = (trans.angle - dataPtr->angle).Length();
 
 			// 誤差が小さいなら無視
 			if (diff > 0.5f) {

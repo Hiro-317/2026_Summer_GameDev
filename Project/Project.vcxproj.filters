@@ -98,6 +98,8 @@
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Stamp\TomatoPlayerStampState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Stamp\TomatoPlayerStampCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\PeachPlayer\PeachPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Death\TomatoPlayerDeathState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -294,6 +296,8 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Stamp\TomatoPlayerStampState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Stamp\TomatoPlayerStampCollOperator.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\PeachPlayer\PeachPlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Death\TomatoPlayerDeathState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

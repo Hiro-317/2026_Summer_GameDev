@@ -24,16 +24,15 @@ OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 	PlayerBase(
 		operatorSenderId,
 
-		"OrangeParameter", 
+		"OrangeParameter",
 		"PlayerHP",
 		"PlayerAttackPower",
 		"PlayerDefensePower",
 		"PlayerMoveSpeed",
 
-		"Data/Parameter/Character/Player/Orange/", 
+		"Data/Parameter/Character/Player/Orange/",
 		"Orange/OrangeModel")
 {
-
 }
 
 
@@ -241,6 +240,8 @@ void OrangePlayer::PlayerLoad(void)
 			trans.pos, trans.angle,
 			[&]() { return IsAnimeEnd(); },
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			[&]() { PlayerDeathSetting(); },
+			[&]() { SetIsDeath(true); },
 			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
 		)
 	);
@@ -336,7 +337,7 @@ void OrangePlayer::PlayerLoad(void)
 		);
 	}
 
-	ui_ArrayIns.emplace_back(new HitUI());
+	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 
 #pragma endregion 
 }
@@ -396,6 +397,10 @@ void OrangePlayer::ReceptionUpdate(void)
 			break;
 		}
 		case PlayerBase::STATE::SKILL_3: {
+			break;
+		}
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
 			break;
 		}
 

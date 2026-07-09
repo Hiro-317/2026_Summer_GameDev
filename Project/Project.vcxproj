@@ -187,8 +187,10 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\PeachPlayer\PeachPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Death\TomatoPlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
@@ -284,8 +286,10 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\PeachPlayer\PeachPlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Death\TomatoPlayerDeathState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.h" />

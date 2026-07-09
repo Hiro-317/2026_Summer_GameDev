@@ -74,7 +74,6 @@ public:
 	// ©gˆÈŠO‚ÌƒvƒŒƒCƒ„[À•W‚ğæ“¾
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
-
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
 
@@ -98,6 +97,8 @@ protected:
 
 	// ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒvƒŒƒCŠÖ”
 	void AnimePlay(int type, bool loop = true)override;
+
+	void PlayerDeathSetting(void) { SetJudge(false); SetIsDraw(false); }
 
 #pragma region ’è”’è‹`
 	// ƒ‚ƒfƒ‹``````````````````````````````

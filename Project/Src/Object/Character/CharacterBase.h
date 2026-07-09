@@ -39,12 +39,12 @@ public:
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
 	bool GetIsDeath(void)const { return isDeath; }
+	void SetIsDeath(bool flg) { isDeath = flg; }
 
 	const CharacterStats& GetCharacterStats(void)const { return characterStats; }
 
 	void Load(void)override;
 	void UiDraw(void)override;
-
 
 private:
 
@@ -76,6 +76,9 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
 
+	// 死んだかどうか
+	bool isDeath;
+
 protected:
 
 	// UI管理用インスタンス
@@ -83,9 +86,6 @@ protected:
 
 	// ステート管理用変数
 	int state;
-
-	// 死んだかどうか
-	bool isDeath;
 
 	// 影が出るキャラと座標
 	std::map<COLLIDER_TAG, Vector3> shadowPos;
