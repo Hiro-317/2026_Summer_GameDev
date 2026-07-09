@@ -71,8 +71,6 @@ private:
 
 	// UŒ‚```````````````````````````````
 
-	// ƒXƒ^ƒ“ƒv”ÍˆÍ
-	const float STAMP_RADIUS = GetParameter("Attack", "StampRad");
 
 	// `````````````````````````````````
 
@@ -90,6 +88,50 @@ private:
 	// ƒQ[ƒ€ƒNƒŠƒA‚Ì•ÏXŠÔ
 	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
 
+	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìí—Ş
+	enum class ANIME_TYPE
+	{
+		NONE = -1,
+
+		IDLE,
+		WALK,
+		RUN,
+		DAMAGE,
+		DOWN,
+		DEATH,
+
+		KICKDOWN,
+		FORWARD_THROW,
+		TOSS,
+		JUMP_START,
+		JUMP_LOOP,
+		STAMP, 
+
+		MAX
+	};
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ^ƒCƒv‚²‚Æ‚ÌÄ¶‘¬“x
+	const float ANIME_SPEED_TABLE[(int)ANIME_TYPE::MAX] =
+	{
+		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+		GetParameter("Anime", "WalkAnimeSpeed"),	// WALK
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+
+		GetParameter("Anime", "KickAnimeSpeed"),	// KICK
+		GetParameter("Anime", "OverhandAnimeSpeed"),	// OVERHAND
+		GetParameter("Anime", "DownThrowAnimeSpeed"),	// DOWNTHROW
+		GetParameter("Anime", "JumpStartAnimeSpeed"),	// JUMP_START
+		GetParameter("Anime", "JumpingAnimeSpeed"),	// JUMPING
+		GetParameter("Anime", "StampAnimeSpeed"),	// STAMP
+	};
+
+	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
+
 #pragma endregion ’è”’è‹`
 
 	// ƒƒCƒ“ˆ—``````````````
@@ -98,9 +140,6 @@ private:
 
 	// ƒgƒ}ƒg‚ÌŒü‚¢‚Ä‚¢‚éŒü‚«
 	Vector3 moveDir;
-
-	// Šâ‚É“–‚½‚Á‚½‚©
-	bool rockHit;
 
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	int coolTime;

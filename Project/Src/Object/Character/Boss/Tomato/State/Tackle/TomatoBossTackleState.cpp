@@ -85,6 +85,7 @@ void TomatoBossTackleState::Update(void)
 		
 		if (time < FORCE_MOVE_TIME) {
 			time++;
+			SoundManager::GetIns().Stop("TackleCharge");
 			SoundManager::GetIns().Play("TackleMove");
 			collOperator->ResetStageHit();
 		}

@@ -1,12 +1,18 @@
 #include "GrapeBossWeaponBase.h"
 
-void GrapeBossWeaponBase::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
+
+GrapeBossWeaponBase::GrapeBossWeaponBase(int model)
+	: ActorBase("Data/Parameter/Character/Boss/Grape/Weapons/"), collBack(0), collFront(0)
 {
-	// ƒXƒLƒ‹‚Ì•t—^
-	CreateAttackSkill(operatorSenderId, 50, &stats);
+	trans.Duplicate(model);
 }
 
 void GrapeBossWeaponBase::SubDraw(void)
 {
 	trans.Draw();
+
+	SetUseLighting(false);
+	collFront.Draw();
+	collBack.Draw();
+	SetUseLighting(true);
 }

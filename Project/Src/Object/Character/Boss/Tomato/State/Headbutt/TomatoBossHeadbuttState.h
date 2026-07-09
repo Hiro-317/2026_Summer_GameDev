@@ -57,6 +57,8 @@ private:
 
 	const float ATTACK_TIME;
 
+	static constexpr int START_CNT = -100;
+
 #pragma endregion
 
 #pragma region ó‚¯æ‚éQÆ•Ï”EŠÖ”

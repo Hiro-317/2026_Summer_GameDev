@@ -8,18 +8,18 @@ class GrapeBossWeaponFactory {
 
 public:
 
+	// インスタンスの生産
 	static BombType Create(int model, int type) {
 
+		// 返り値用
 		BombType res;
 
+		// タイプの取得
 		res.type = (WeaponType)type;
+
+		// タイプに応じて生産
 		switch ((WeaponType)type)
 		{
-		case WeaponType::None:
-		{
-			res.weaponIns = new GrapeBossStraight(model);
-			break;
-		}
 		case WeaponType::Straight:
 		{
 			res.weaponIns = new GrapeBossStraight(model);
@@ -50,14 +50,11 @@ public:
 			res.weaponIns = new GrapeBossStraight(model);
 			break;
 		}
-		case WeaponType::Max:
-		{
-			res.weaponIns = new GrapeBossStraight(model);
-			break;
-		}
 		default:
 			break;
 		}
+
+		// 生産品を返す
 		return res;
 	}
 };

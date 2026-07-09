@@ -51,15 +51,53 @@ class GrapeBossWeaponBase : public ActorBase
 {
 public:
 
-	GrapeBossWeaponBase(std::string parameterPath, int model) { trans.Duplicate(model);	}
+	GrapeBossWeaponBase(int model);
 	~GrapeBossWeaponBase() = default;
 
 	// 規定用のLoad
 	virtual void Load(void) override {};
 	// 行うロード
-	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats);
+	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) = 0;
+
+	// 初期設定用関数
+	void SetStartPos(Vector3 pos) { trans.pos = pos; }
+	void ResetCount(void) { count = 0.0f; }
+
+	// コライダーのオン/オフ
+	void SetColliderFlg(bool flg) { SetJudge(flg); }
+	void ResetEnd(void) { end = false; }
+
+	// 攻撃が終わったか
+	bool IsEnd(void) { return end; }
+
+	// 予測線の設定(円形)
+	void SetViewScaleCircle(float scale) { collFront.scale = Vector3(scale); };
+	void SetViewPosCircle(void) { collBack.pos = trans.pos; collFront.pos = trans.pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT + 1.0f; };
+
+	// 予測線の設定(直線)
+	void SetViewScaleLine(float scale) { collFront.scale = Vector3::Xonly(scale); };
+	void SetViewPosLine(Vector3 pos) { collBack.pos = pos; collFront.pos = pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT + 1.0f; };
+	void SetViewAngleLine(Vector3 angle) { collBack.angle = angle; collFront.angle = angle; };
 
 protected:
 
+	// 基本
 	void SubDraw(void) override;
+
+	// 予測線
+	Transform collBack;
+	Transform collFront;
+
+	// 行動カウント
+	float count;
+
+	// 終了フラグ
+	bool end;
+
+private:
+#pragma region 定数定義
+
+	static constexpr float VIEW_HEIGHT = 1.0f;
+
+#pragma endregion
 };

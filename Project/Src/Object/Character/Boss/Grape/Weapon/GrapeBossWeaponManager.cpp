@@ -3,18 +3,14 @@
 #include "GrapeBossWeaponFactory.h"
 
 
-GrapeBossWeaponManager::GrapeBossWeaponManager()
+GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
+
+GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
+	: operatorSenderId(operatorSenderId), stats(stats)
 {
 	// 複製ハンドル
 	bombModel = MV1LoadModel("Data/Model/Charactor/Grape/Bomb.mv1");
-}
 
-GrapeBossWeaponManager::~GrapeBossWeaponManager()
-{
-}
-
-void GrapeBossWeaponManager::Init(const MSG_SENDER_ID id, const CharacterStats& stats)
-{
 	// 初期化用の数
 	int weaponNumber = 0;
 
@@ -31,25 +27,42 @@ void GrapeBossWeaponManager::Init(const MSG_SENDER_ID id, const CharacterStats& 
 	}
 	// 複製用ハンドルの消去
 	MV1DeleteModel(bombModel);
+}
 
+void GrapeBossWeaponManager::Load(void)
+{
 	// 武器の初期化
-	for (auto& i : weapons) i.weaponIns->Load(id, stats);
+	for (auto& i : weapons) i.weaponIns->Load(operatorSenderId, stats);
 }
 
-void GrapeBossWeaponManager::Update()
+void GrapeBossWeaponManager::SubUpdate()
 {
-	for (auto& i : weapons) i.weaponIns->Update();
+	for (auto& i : weapons) {
+		// 生きているもののみ更新
+		if (i.live) {
+			i.weaponIns->Update();
+
+			// 終了しているなら殺す
+			if (i.weaponIns->IsEnd()) {
+				
+				i.live = false;
+				i.weaponIns->ResetEnd();
+				i.weaponIns->SetColliderFlg(false);
+			}
+		}
+	}
 }
 
-void GrapeBossWeaponManager::Draw()
+void GrapeBossWeaponManager::SubAlphaDraw()
 {
-	for (auto& i : weapons) i.weaponIns->Draw();
+	for (auto& i : weapons) {
+		if (i.live) {
+			i.weaponIns->Draw();
+		}
+	}
 }
 
-void GrapeBossWeaponManager::Release() 
+void GrapeBossWeaponManager::SubRelease() 
 {
 	for (auto& i : weapons) i.weaponIns->Release();
-
-	// 外枠の消去
-	delete weapons;
 }

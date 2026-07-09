@@ -12,7 +12,6 @@
 
 BossBase::BossBase(
 
-	const std::string fileName,
 	const std::string hpParameterID,
 	const std::string attackPowerParameterID,
 	const std::string defensePowerParameterID,
@@ -24,7 +23,7 @@ BossBase::BossBase(
 	const std::vector<const Vector3*> playerPos
 ) :
 	CharacterBase(
-		fileName,
+		"Parameter",
 		hpParameterID,
 		attackPowerParameterID,
 		defensePowerParameterID,

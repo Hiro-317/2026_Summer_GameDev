@@ -84,6 +84,10 @@
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
@@ -273,6 +277,10 @@
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.h" />

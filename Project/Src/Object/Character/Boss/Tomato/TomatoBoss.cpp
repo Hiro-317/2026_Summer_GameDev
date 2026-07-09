@@ -28,11 +28,10 @@
 
 TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
 	BossBase(
-		"TomatoBossParameter",
-		"TomatoBossHP",
-		"TomatoBossAttackPower",
-		"TomatoBossDefensePower",
-		"TomatoBossMoveSpeed",
+		"HP",
+		"AttackPower",
+		"DefensePower",
+		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Tomato/",
 		"Tomato/Tomato",
 
@@ -161,7 +160,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = 120; }
+			[&]() { coolTime = HEADBUTT_COOLTIME; }
 		)
 	);
 	AddState(
@@ -184,7 +183,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 落下中は当たり判定を再生させる
 			[&]() { SetJudge(true); },
 			// クールタイムの設定
-			[&]() { coolTime = 180; }
+			[&]() { coolTime = STAMP_COOLTIME; }
 		)
 	);
 	AddState(
@@ -210,7 +209,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = 240; }
+			[&]() { coolTime = TACKLE_COOLTIME; }
 			)
 	);
 	AddState(
@@ -222,7 +221,7 @@ void TomatoBoss::PlayerLoad(void)
 			[&]() { return state == static_cast<int>(STATE::DEATH); },
 			// ボスのサイズ
 			trans.scale, MODEL_SCALE,
-			// 攻撃終了後の状態遷移関数のポインタ
+			// 死んだフラグを立てる
 			[&]() { isDeath = true; }
 			)
 	);

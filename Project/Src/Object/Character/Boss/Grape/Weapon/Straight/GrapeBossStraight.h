@@ -8,23 +8,29 @@ public:
 	GrapeBossStraight(int model);
 	~GrapeBossStraight() = default;
 
-	void SetStartPos(Vector3 pos) { trans.pos = pos; }
+	// ‰Šúİ’è—pŠÖ”
 	void SetStartDir(Vector3 dir) { moveDir = dir; }
+
+	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
+
+	// ÚG”»’è
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 protected:
 
 	// ”h¶æ’Ç‰ÁXV
 	virtual void SubUpdate(void) override;
-	// ”h¶æ’Ç‰Á•`‰æ
-	virtual void SubDraw(void) override;
 
 private:
 #pragma region ’è”’è‹`
 
+	// ‹…‘¬
 	const float MOVE_SPEED = GetParameter("Straight", "Speed");
+	// UŒ‚ƒTƒCƒY”{—¦
+	const float ATTACK_SIZE = GetParameter("Straight", "Size");
 
 #pragma endregion
 
-
+	// ˆÚ“®•ûŒü
 	Vector3 moveDir;
 };

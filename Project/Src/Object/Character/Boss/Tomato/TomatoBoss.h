@@ -125,6 +125,13 @@ private:
 	// ƒXƒ^ƒ“ƒv”ÍˆÍ
 	const float STAMP_RADIUS = GetParameter("Attack", "StampRad");
 
+	// “ª“Ë‚«UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int HEADBUTT_COOLTIME = GetParameter("Attack", "HeadbuttCoolTime");
+	// ƒXƒ^ƒ“ƒvUŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int STAMP_COOLTIME = GetParameter("Attack", "StampCoolTime");
+	// ƒ^ƒbƒNƒ‹UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int TACKLE_COOLTIME = GetParameter("Attack", "TackleCoolTime");
+
 	// `````````````````````````````````
 
 

@@ -158,6 +158,10 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\BossBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\GrapeBoss.cpp" />
@@ -247,6 +251,10 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Object\Character\Boss\BossBase.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\Straight\GrapeBossStraight.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\GrapeBoss.h" />
