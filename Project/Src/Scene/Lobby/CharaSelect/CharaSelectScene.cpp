@@ -6,7 +6,7 @@
 
 #include "../../SceneManager/SceneManager.h"
 
-#include "../../../Object/CharaSelect/CharaSelectPreviewManager.h"
+#include "../../../Object/Lobby/CharaSelectScene/CharaSelectPreviewManager.h"
 
 CharaSelectScene::CharaSelectScene(const std::function<void(void)>& LobbyPreviewCharaChange) :
 	LobbyPreviewCharaChange(LobbyPreviewCharaChange)

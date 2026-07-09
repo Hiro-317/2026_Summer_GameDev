@@ -197,8 +197,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
+    <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
+    <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
     <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
@@ -209,6 +209,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
+    <ClCompile Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\SkyDome\SkyDome.cpp" />
@@ -224,6 +225,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\BossSelect\BossSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
@@ -295,11 +297,11 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
     <ClInclude Include="Src\Manager\Camera\Camera.h" />
@@ -321,6 +323,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
@@ -342,6 +345,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
+    <ClInclude Include="Src\Scene\Lobby\BossSelect\BossSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />

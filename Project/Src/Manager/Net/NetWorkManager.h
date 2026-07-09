@@ -304,6 +304,7 @@ private:
 		case MSG_DATA_TYPE::SenderId: { MsgDataSenderIdRecv(event); break; }
 		case MSG_DATA_TYPE::ConnectStatus: { MsgDataConnectStatusRecv(event); break; }
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossSelect: { MsgDataRecv<MsgDataBossSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::CharaSelect: { MsgDataRecv<MsgDataCharaSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::ClientReady: { MsgDataRecv<MsgDataClientReady>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerTrans: { MsgDataRecv<MsgDataPlayerTrans>(event, headerData->senderId); break; }
@@ -396,6 +397,7 @@ private:
 					case MSG_DATA_TYPE::SenderId: { delete static_cast<MsgDataSenderId*>(ptr); break; }
 					case MSG_DATA_TYPE::ConnectStatus: { delete static_cast<MsgDataConnectStatus*>(ptr); break; }
 					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
+					case MSG_DATA_TYPE::BossSelect: { delete static_cast<MsgDataBossSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::CharaSelect: { delete static_cast<MsgDataCharaSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::ClientReady: { delete static_cast<MsgDataClientReady*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerTrans: { delete static_cast<MsgDataPlayerTrans*>(ptr); break; }

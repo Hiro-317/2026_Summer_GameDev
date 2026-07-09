@@ -1,10 +1,10 @@
 #include "CharaSelectPreviewManager.h"
 
-#include "../../Application/Application.h"
+#include "../../../Application/Application.h"
 
-#include "../../Scene/SceneManager/SceneManager.h"
-#include "../../Manager/Net/NetWorkManager.h"
-#include "../../Manager/Input/KeyManager.h"
+#include "../../../Scene/SceneManager/SceneManager.h"
+#include "../../../Manager/Net/NetWorkManager.h"
+#include "../../../Manager/Input/KeyManager.h"
 
 #include "CharaSelectPreview/Orange/OrangeCharaSelectPreview.h"
 #include "CharaSelectPreview/Tomato/TomatoCharaSelectPreview.h"
@@ -116,7 +116,6 @@ void CharaSelectPreviewManager::Draw(void)
 
 	// Ç∆Ç∂ÇÈÉLÅ[ÇÃï`âÊ
 	DrawRotaGraph(EXIT_IMAGE_POS.x, EXIT_IMAGE_POS.y, 1 + easingRate, 0, exitImage[(int)Key::GetIns().LastInputKinds()], true);
-
 }
 
 void CharaSelectPreviewManager::Release(void)

@@ -1,11 +1,11 @@
 #include "CharaSelectPreviewBase.h"
 
-#include "../../../Manager/Net/NetWorkManager.h"
-#include "../../../Manager/Font/FontManager.h"
+#include "../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../Manager/Font/FontManager.h"
 
-#include "../../../Manager/Camera/InstantCamera.h"
+#include "../../../../Manager/Camera/InstantCamera.h"
 
-#include "../../Common/AnimationController/AnimationController.h""
+#include "../../../Common/AnimationController/AnimationController.h""
 
 CharaSelectPreviewBase::CharaSelectPreviewBase() :
 	ActorBase(),

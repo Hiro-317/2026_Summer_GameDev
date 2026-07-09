@@ -24,6 +24,8 @@ enum class MSG_DATA_TYPE
     // <ホスト>システムイベント（シーン遷移など）
     SystemInform,
 
+    // <ホスト>ボスセレクト
+    BossSelect,
     // <ホスト/クライアント>キャラセレクト
 	CharaSelect,
 	// <クライアント>ロビーでの準備完了
@@ -329,6 +331,32 @@ struct MsgDataSystemInform
     MsgDataSystemInform(void) :
         header(DATA_TYPE),
         inform(INFORM_TYPE::None)
+    {
+    }
+};
+
+// <ホスト/クライアント>キャラセレクト送信構造体
+struct MsgDataBossSelect
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossSelect;
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // キャラタイプ
+    int bossType;
+
+    MsgDataBossSelect(int bossType) :
+        header(DATA_TYPE),
+        bossType(bossType)
+    {
+    }
+    MsgDataBossSelect(void) :
+        header(DATA_TYPE),
+        bossType()
     {
     }
 };

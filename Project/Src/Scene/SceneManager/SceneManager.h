@@ -17,7 +17,8 @@ private:
 	// コンストラクタ / デストラクタ
 	SceneManager(void) :
 		scenes(),
-		selectCharaType{ CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None }
+		selectCharaType{ CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None },
+		selectBossType(BOSS_TYPE::None)
 	{
 	}
 	~SceneManager(void) = default;
@@ -106,6 +107,11 @@ public:
 	// 選択キャラリセット
 	void ResetSelectCharaType(void) { for (CHARA_TYPE& type : selectCharaType) { type = CHARA_TYPE::None; } }
 
+	// 選択ボスを保存
+	void SetSelectBossType(BOSS_TYPE selectBossType) { this->selectBossType = selectBossType; }
+	// 保存した選択ボスを取得
+	BOSS_TYPE GetSelectBossType(void) { return selectBossType; }
+
 private:
 
 	// 初期化処理
@@ -122,6 +128,7 @@ private:
 
 	// 選択キャラの保存配列
 	CHARA_TYPE selectCharaType[(int)MSG_SENDER_ID::Max];
+	BOSS_TYPE selectBossType;
 };
 
 using SCENE_ID = SceneManager::SCENE_ID;

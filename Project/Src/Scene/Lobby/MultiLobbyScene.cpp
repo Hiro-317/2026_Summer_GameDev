@@ -8,11 +8,13 @@
 
 #include "../../Scene/SceneManager/SceneManager.h"
 
+#include "BossSelect/BossSelectScene.h"
 #include "CharaSelect/CharaSelectScene.h"
 
 #include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
+#include "../../Object/Lobby/LobbyBossPreview/LobbyBossPreview.h"
 
 MultiLobbyScene::MultiLobbyScene() : 
 	SceneBase(),
@@ -36,6 +38,7 @@ void MultiLobbyScene::Load(void)
 	ObjAdd(new SkyDome());
 	ObjAdd(new LobbyStage());
 	ObjAdd(new LobbyCharaPreviewManager());
+	ObjAdd(new LobbyBossPreview());
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
 	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
@@ -178,6 +181,23 @@ void MultiLobbyScene::Update(void)
 			return;
 		}
 
+		case MultiLobbyScene::CHOICE::BossChange: {	// ボス変更
+
+			// ホスト以外は処理しない
+			if (!IS_HOST) { break; }
+
+			// 専用のシーンを追加する
+			SceneManager::GetIns().PushScene(
+				std::make_shared<BossSelectScene>(
+					// ボス変更シーンから戻ってきたときに、プレビューを更新
+					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
+				)
+			);
+
+			// このシーンの処理は終了
+			return;
+		}
+
 		case MultiLobbyScene::CHOICE::CharaChange: {	// キャラ変更
 
 			// クライアントかつ、準備完了状態だったら、処理をしない
@@ -249,7 +269,6 @@ void MultiLobbyScene::Update(void)
 			if (Net::GetIns().IsHost()) {
 				// 現状の選択キャラを送る
 				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-
 					if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 					if (id == (int)dataPtr->header.senderId) { continue; }
 
@@ -258,8 +277,9 @@ void MultiLobbyScene::Update(void)
 						(MSG_SENDER_ID)id,
 						dataPtr->header.senderId
 					);
-
 				}
+				// 現状の選択ボスを送る
+				Net::GetIns().Send(MsgDataBossSelect((int)SceneManager::GetIns().GetSelectBossType()));
 			}
 
 			// ボタンごとの選択状態を更新
@@ -269,6 +289,12 @@ void MultiLobbyScene::Update(void)
 		}
 
 		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
+			if (!Net::GetIns().IsHost()) {
+				Net::GetIns().Disconnection();
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+				return;
+			}
+
 			// 切断されたID以降の選択キャラをソートして正す
 			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max - 1; id++) {
 				SceneManager::GetIns().SetSelectCharaType(
@@ -299,6 +325,18 @@ void MultiLobbyScene::Update(void)
 
 		delete dataPtr;
 
+	}
+
+	// 選択ボスの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
+
+		// 受け取ったボスタイプを保存する
+		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+
+		// ボスプレビューを更新する
+		ObjSerch<LobbyBossPreview>()->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+
+		delete dataPtr;
 	}
 
 	// 選択キャラの受信
@@ -347,6 +385,10 @@ void MultiLobbyScene::Draw(void)
 {
 	// オブジェクト全ての描画処理
 	for (ActorBase* obj : objects) { obj->Draw(); }
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	for (ActorBase* obj : objects) { obj->UiDraw(); }
 
 	// ボードの描画
 	DrawRotaGraph(BOARD_POS.x, BOARD_POS.y, 1, 0, boardImage, true);
@@ -409,7 +451,11 @@ void MultiLobbyScene::ButtonSelectionStateReload(void)
 			((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
 	}
 
-	if (!IS_HOST) { return; }
+	if (!IS_HOST) {
+		// クライアントの場合、ボス変更ボタンは選択不可状態にする
+		buttonSelectionState[(int)CHOICE::BossChange] = SELECTION_STATE::Disable;
+		return;
+	}
 	// ホストの場合
 
 	// 全クライアントの準備完了フラグを確認する

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../Manager/Net/NetWorkDefine.h"
+#include "../../../Manager/Net/NetWorkDefine.h"
 
-#include "../ActorBase.h"
+#include "../../ActorBase.h"
 #include "CharaSelectPreview/CharaSelectPreviewBase.h"
 
-#include "../CharaTypeDefine.h"
+#include "../../CharaTypeDefine.h"
 
 class CharaSelectPreviewManager : public ActorBase
 {

@@ -9,11 +9,14 @@
 #include "../../Scene/SceneManager/SceneManager.h"
 
 #include "CharaSelect/CharaSelectScene.h"
+#include "BossSelect/BossSelectScene.h"
 #include "MultiPopup/MultiPopupScene.h"
 
 #include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
+#include "../../Object/Lobby/LobbyBossPreview/LobbyBossPreview.h"
+
 
 LobbyScene::LobbyScene()
 {
@@ -21,6 +24,10 @@ LobbyScene::LobbyScene()
 
 void LobbyScene::Load(void)
 {
+	if (SceneManager::GetIns().GetSelectBossType() == BOSS_TYPE::None) {
+		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)((int)BOSS_TYPE::None + 1));
+	}
+
 	// 初期化も含めたオブジェクト生成のラムダ関数
 	auto ObjAdd = [&](ActorBase* newClass)->void {
 		// 配列の末尾に追加
@@ -35,6 +42,7 @@ void LobbyScene::Load(void)
 	ObjAdd(new SkyDome());
 	ObjAdd(new LobbyStage());
 	ObjAdd(new LobbyCharaPreviewManager());
+	ObjAdd(new LobbyBossPreview());
 
 #pragma region 各画像の読み込み
 
@@ -135,6 +143,20 @@ void LobbyScene::Update(void)
 			return;
 		}
 
+		case LobbyScene::CHOICE::BossChange: {	// ボス変更
+
+			// 専用のシーンを追加する
+			SceneManager::GetIns().PushScene(
+				std::make_shared<BossSelectScene>(
+					// ボス変更シーンから戻ってきたときに、プレビューを更新
+					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
+				)
+			);
+
+			// 終了
+			return;
+		}
+
 		case LobbyScene::CHOICE::CharaChange: {	// キャラ変更
 
 			// 専用のシーンを追加する
@@ -171,6 +193,10 @@ void LobbyScene::Draw(void)
 {
 	// オブジェクト全ての描画処理
 	for (ActorBase* obj : objects) { obj->Draw(); }
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	for (ActorBase* obj : objects) { obj->UiDraw(); }
 
 	// ボードの描画
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, 115, 1, 0, boardImage, true);
