@@ -124,7 +124,13 @@ public:
 	void SetDynamicFlg(bool flg) { dynamicFlg = flg; }
 
 	// 当たり判定フラグセット（true = 「判定する」、false = 「判定しない」）
-	void SetJudgeFlg(bool flg) { judgeFlg = flg; }
+	void SetJudgeFlg(bool flg) { 
+		if (tag == COLLIDER_TAG::BOSS_ATTACK) {
+			int ititititi = 0;
+			ititititi++;
+		}
+		judgeFlg = flg; 
+	}
 
 	// 押し出しを行うかどうかのフラグを設定（true = 「押し出す」、false = 「押し出さない」）
 	void SetPushFlg(bool flg) { pushFlg = flg; }

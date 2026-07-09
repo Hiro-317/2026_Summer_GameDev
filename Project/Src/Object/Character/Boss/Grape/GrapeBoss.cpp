@@ -13,6 +13,8 @@
 
 #include "State/Idle/GrapeBossIdleState.h"
 #include "State/Move/GrapeBossMoveState.h"
+#include "State/KickDown/GrapeBossKickDownState.h"
+#include "State/KickDown/GrapeKickDownCollOperator.h"
 #include "State/Straight/GrapeBossStraightState.h"
 #include "State/Death/GrapeBossDeathState.h"
 
@@ -72,6 +74,7 @@ void GrapeBoss::PlayerLoad(void)
 #pragma region プレイヤーが抱える下位クラスを生成する
 
 	subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
+	subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
 
 #pragma endregion
 
@@ -123,14 +126,37 @@ void GrapeBoss::PlayerLoad(void)
 
 	AddState(
 		static_cast<int>(STATE::ATTACK_A),
-		new GrapeBossStraightState(
+		new GrapeBossKickDownState(
 			// 自分の状態に遷移する関数
 			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// 自分の座標と角度
+			trans.pos, trans.angle, MODEL_LOCAL_ROT,
+			// 攻撃の種類の情報
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
+			MODEL_SCALE,
+			SubObjSerch<GrapeKickDownCollOperator>(),
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::KICKDOWN, false); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::IDLE); }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_B),
+		new GrapeBossStraightState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_B); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
+			// 自分の座標と角度
 			trans.pos, trans.angle,
-			// 攻撃の種類を情報
+			// 攻撃の種類の情報
 			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
 			// プレイヤーの座標
 			playerPos,
@@ -183,10 +209,5 @@ void GrapeBoss::PlayerLoad(void)
 
 	ui_ArrayIns.emplace_back(new HitUI());
 #pragma endregion
-
-}
-
-void GrapeBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
-{
 
 }

@@ -47,7 +47,6 @@ void GrapeBossWeaponManager::SubUpdate()
 				
 				i.live = false;
 				i.weaponIns->ResetEnd();
-				i.weaponIns->SetColliderFlg(false);
 			}
 		}
 	}
