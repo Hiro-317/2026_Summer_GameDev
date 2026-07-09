@@ -226,43 +226,7 @@ void PlayerBase::CharacterUiDraw(void)
 	}
 }
 
-void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
-{
-	if (!Net::GetIns().IsHost()) { return; }
-	if (GetInviCounter() > 0) { return; }
 
-	// 回避中の無敵処理
-	if (state == (int)STATE::SKILL_3) {
-		switch (other.GetTag()) {
-		case COLLIDER_TAG::BOSS_ATTACK:
-			// 回避成功時の無敵時間
-			SetInviCounter(DODGE_INVI_TIME);
-
-			// ホストが操作者だった場合表示「ミス！」を出現させる
-			if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
-			// ホスト以外が回避した場合、クライアント側に回避した通知を送る
-			else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); } 
-			break;
-		}
-		return;
-	}
-
-	if (state == (int)STATE::DEATH) { return; }
-
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
-		// ダメージ状態に遷移
-		ChangeState((int)STATE::DAMAGE);
-		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-		// ダメージ値分HPを減らす
-		characterStats.hp -= damage;
-		break;
-	}
-	}
-}
 
 void PlayerBase::CharacterRelease(void)
 {

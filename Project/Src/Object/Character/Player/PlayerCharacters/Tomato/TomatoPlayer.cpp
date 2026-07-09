@@ -3,6 +3,7 @@
 #include "UniqueState/Move/TomatoPlayerMoveState.h"
 #include "UniqueState/Tackle/TomatoPlayerTackleState.h"
 #include "UniqueState/HeadButt/TomatoPlayerHeadButtState.h"
+#include "UniqueState/Stamp/TomatoPlayerStampState.h"
 #include "UniqueState/Damage/TomatoPlayerDamageState.h"
 
 #include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
@@ -11,6 +12,7 @@
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../../UI/HitUI/HitUI.h"
 
 TomatoPlayer::TomatoPlayer(MSG_SENDER_ID operatorSenderId) :
 	PlayerBase(
@@ -117,6 +119,26 @@ void TomatoPlayer::PlayerLoad(void)
 	);
 
 	AddState(
+		(int)STATE::SKILL_3,
+		new TomatoPlayerStampState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::SKILL_3); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_3; },
+			// クールタイム
+			SKILL3_COOL_TIME,
+			// 移動速度 
+			STAMP_JUMP_POWER,
+			// 座標 / 角度
+			trans.pos, trans.angle,
+			[&]() { GetGravityFlg() ? SetGravityFlg(false) : SetGravityFlg(true); },
+			[&]() { return  isGround; },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	AddState(
 		(int)STATE::DAMAGE,
 		new TomatoPlayerDamageState(
 			// 自分の状態に関する関数
@@ -142,6 +164,8 @@ void TomatoPlayer::PlayerLoad(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
 	// 移動状態 -> スキル2 の遷移を登録
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
+	// 移動状態 -> スキル3 の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion 
 
@@ -220,11 +244,44 @@ void TomatoPlayer::PlayerLoad(void)
 		);
 
 		// スキル3UIの登録
-
-
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				// 描画座標
+				SKILL3_UI_DRAW_POS,
+				// クールタイム変数
+				dynamic_cast<TomatoPlayerStampState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+				// クールタイムの最大値
+				SKILL3_COOL_TIME,
+				// UIの色指定
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				// 描画する画像
+				"SkillSlotSimpleAttack"
+			)
+		);
 	}
 
+	ui_ArrayIns.emplace_back(new HitUI());
+}
 
+void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+	if (!Net::GetIns().IsHost()) { return; }
+	if (GetInviCounter() > 0) { return; }
+	if (state == (int)STATE::DEATH) { return; }
+
+	switch (other.GetTag()) {
+	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
+		// ダメージ状態に遷移
+		ChangeState((int)STATE::DAMAGE);
+		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
+		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		// ダメージ値分HPを減らす
+		characterStats.hp -= damage;
+		break;
+	}
+	}
 }
 
 void TomatoPlayer::ReceptionUpdate(void)

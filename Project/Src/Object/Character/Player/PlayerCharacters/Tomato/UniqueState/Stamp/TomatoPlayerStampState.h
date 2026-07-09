@@ -1,25 +1,27 @@
 #pragma once
 #include "../../../../../CharacterStateBase.h"
 
-#include "TomatoPlayerTackleCollOperator.h"
+#include "../Tackle/TomatoPlayerTackleCollOperator.h"
 
-class TomatoPlayerTackleState : public CharacterStateBase
+class TomatoPlayerStampState : public CharacterStateBase
 {
 public:
 
 	// コンストラクタ
-	TomatoPlayerTackleState(
+	TomatoPlayerStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		TomatoPlayerTackleCollOperator& collOperator,
+		//TomatoPlayerTackleCollOperator& collOperator,
 		int COOL_TIME,
-		float MOVE_SPEED, float ROTATION_POW,
+		float JUMP_POWER,
 		Vector3& pos, Vector3& angle,
+		const std::function<void(void)> ChangeIsGravity,
+		const std::function<bool(void)> IsGround,
 		const std::function<void(void)> DefaultChangeState
 	);
 
 	// デストラクタ
-	~TomatoPlayerTackleState()override = default;
+	~TomatoPlayerStampState()override = default;
 
 	// 自分の状態に遷移する条件関数
 	void OwnStateConditionUpdate(void)override;
@@ -43,23 +45,11 @@ private:
 
 #pragma region 定数定義
 
-	// 移動量
-	const float MOVE_SPEED;
-
-	// 回転量
-	const float ROTATION_POW;
+	// ジャンプ力
+	const float JUMP_POWER;
 
 	// クールタイム
 	const int COOL_TIME;
-
-	// このスタート角度まで回転したら、突進をスタートする
-	static constexpr float TACKLE_START_ANGLE = 20.0f;
-
-	// 突進してから終了までのカウントタイム
-	static constexpr int COUNT_MAX = 20;
-
-	// チャージ時間
-	static constexpr int CHARGE_TIME = 60;
 
 #pragma endregion 
 
@@ -71,7 +61,7 @@ private:
 	// 角度の参照
 	Vector3& angle;
 
-	TomatoPlayerTackleCollOperator& collOperator;
+	//TomatoPlayerTackleCollOperator& collOperator;
 
 	// 向いている方向
 	Vector3 moveDir;
@@ -79,8 +69,8 @@ private:
 	// タックル終了までのカウント用
 	int timeCounter;
 
-	// チャージ用カウンタ
-	int chargeCounter;
+	const std::function<void(void)> ChangeIsGravity;
+	const std::function<bool(void)> IsGround;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;

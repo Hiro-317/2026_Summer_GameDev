@@ -19,11 +19,20 @@ static constexpr char MODIFIER_MAX_NUM = 10;
 static constexpr float DEBUFF_MAX = 0.01f;
 
 
+// バフ/デバフ タイプ
+enum class ModifierType
+{
+	None,
+
+	TackleChargeMaxBuff,
+};
+
 // 補正倍率(バフ/デバフ)の構造体
 struct ModifierData
 {
 	// タイプ（同タイプの重複不可）
-	COLLIDER_TAG type;
+	ModifierType type;
+
 	// 増減率(バフ/デバフ)の数値（0.0が基準値）（生成関数を通して基準値を補正 例:80->0.8 -80->-0.8）
 	float rate;
 	// 効果時間（フレーム数）
@@ -41,7 +50,7 @@ struct ModifierData
 	/// <param name="type">タイプ（同タイプの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(COLLIDER_TAG type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
+	ModifierData(ModifierType type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
 };
 
 

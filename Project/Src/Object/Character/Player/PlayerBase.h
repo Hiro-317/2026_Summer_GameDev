@@ -74,8 +74,6 @@ public:
 	// 自身以外のプレイヤー座標を取得
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
-	// 当たり判定処理
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
