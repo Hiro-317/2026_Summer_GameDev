@@ -257,6 +257,21 @@ void PlayerBase::AnimePlay(int type, bool loop)
 
 	CharacterBase::AnimePlay(type, loop);
 }
+void PlayerBase::TargetPlayerNext(void)
+{
+	targetPlayerIndex++;
+
+	if (targetPlayerIndex >= Net::GetIns().GetConnectStatus().EntryCount()) {
+		targetPlayerIndex = 0;
+	}
+
+	if (targetPlayerIndex == (unsigned char)MSG_SENDER_ID::P1) { targetPlayerPos = &trans.pos; }
+	else {
+		if (otherPlayerTrans.size() > targetPlayerIndex - 1) {
+			targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
+		}
+	}
+}
 void PlayerBase::ReceptionUpdate(void)
 {
 	// À•WEŠp“x‚Ì“¯Šú
@@ -309,6 +324,11 @@ void PlayerBase::ReceptionUpdate(void)
 	// HP
 	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(operatorSenderId)) {
 		characterStats.hp = dataPtr->hp;
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(operatorSenderId)) {
+		characterStats.hp += dataPtr->heal;
 		delete dataPtr;
 	}
 

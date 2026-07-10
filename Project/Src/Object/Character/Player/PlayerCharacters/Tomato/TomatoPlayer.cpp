@@ -370,6 +370,8 @@ void TomatoPlayer::ReceptionUpdate(void)
 			// スタンプ
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }
+
+			break;
 		}
 
 		default: { break; }	// 例外

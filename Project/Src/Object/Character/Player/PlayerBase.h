@@ -252,4 +252,13 @@ protected:
 	// ボスの座標のポインタ
 	const Vector3* bossPos;
 
+	// 味方プレイヤー内のターゲット
+	unsigned char targetPlayerIndex;
+
+	// 味方プレイヤー内のターゲット参照座標
+	const Vector3* targetPlayerPos;
+
+	// 味方プレイヤーのターゲットを次へ
+	void TargetPlayerNext(void);
+
 };

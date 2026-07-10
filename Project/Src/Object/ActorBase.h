@@ -237,6 +237,11 @@ protected:
 		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, characterStats, tag));
 		ColliderToSetSkill();
 	}
+	// 回復スキル詳細生成
+	void CreateHealSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, nullptr, tag));
+		ColliderToSetSkill();
+	}
 	// バフ/デバフスキル詳細生成
 	void CreateModifierSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
 		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, SKILL_TIME, tag));

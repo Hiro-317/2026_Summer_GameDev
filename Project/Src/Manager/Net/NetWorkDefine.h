@@ -41,6 +41,8 @@ enum class MSG_DATA_TYPE
 	PlayerHp,
     // <ホスト>プレイヤー：被ダメ
     PlayerDamage,
+    // <ホスト>プレイヤー：HP回復
+    PlayerHeal,
     // <ホスト>プレイヤー：ミスUIパケット
     PlayerMissNotice,
     // <クライアント>プレイヤー：状態
@@ -601,6 +603,32 @@ struct MsgDataPlayerState
     }
 };
 
+// <ホスト>被ダメ送信構造体
+struct MsgDataPlayerHeal
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerHeal;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    short heal;
+
+    MsgDataPlayerHeal(short heal) :
+        header(DATA_TYPE),
+        heal(heal)
+    {
+    }
+    MsgDataPlayerHeal(void) :
+        header(DATA_TYPE),
+        heal()
+    {
+    }
+};
+
 // <ホスト>当たり判定情報送信構造体
 struct MsgDataPlayerCollOperator
 {
@@ -622,6 +650,8 @@ struct MsgDataPlayerCollOperator
         CommonPlayerTripleAttack_2,
         CommonPlayerTripleAttack_3,
         CommonPlayerSimpleAttack,
+
+        CommonPlayerSingleModifier,
 
         TomatoPlayerTackle,
         TomatoPlayerHeadButt,

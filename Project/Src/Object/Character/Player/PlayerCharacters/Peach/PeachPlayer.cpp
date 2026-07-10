@@ -2,6 +2,7 @@
 
 #include "../../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+#include "../../CommonPlayerState/SingleHeal/PlayerSingleModifierState.h"
 #include "../../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 
@@ -11,8 +12,7 @@
 #include "../../../../UI/HitUI/HitUI.h"
 
 PeachPlayer::PeachPlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(
-		operatorSenderId,
+	PlayerBase(operatorSenderId,
 
 		"PeachParameter",
 		"PlayerHP",
@@ -34,26 +34,33 @@ void PeachPlayer::PlayerLoad(void)
 
 #pragma region 下位オブジェクトの生成
 	
-	// キック用の当たり判定オペレーターを生成する
+	// パンチ用の当たり判定オペレーターを生成する
 	subObjArray.emplace_back(
 		new PlayerSimpleAttackCollOperator(
-			SKILL_2_TARGET_SERCH_RANGE,
-			SKILL_2_COLL_TAG,
-			SKILL_2_COLL_SIZE_TABLE,
-			SKILL_2_COLL_LOCAL_POS,
+			SKILL_1_TARGET_SERCH_RANGE,
+			SKILL_1_COLL_TAG,
+			SKILL_1_COLL_SIZE_TABLE,
+			SKILL_1_COLL_LOCAL_POS,
 			trans.pos, trans.angle,
-			SKILL_2_ATTACK_RATE_PERCENT,
+			SKILL_1_ATTACK_RATE_PERCENT,
 			operatorSenderId,
 			characterStats
+		)
+	);
+
+	// 回復用の当たり判定オペレーターを生成する
+	subObjArray.emplace_back(
+		new PlayerSingleModifierCollOperator(
+			COLLIDER_TAG::PLAYER_HEAL,
+			operatorSenderId,
+			150
 		)
 	);
 
 	// アニメーションコントローラーを生成する
 	CreateAnimationController();
 
-	for (int i = 0; i < (int)ANIME_TYPE::MAX; i++) {
-		AddInFbxAnimation(i, 1.0f);
-	}
+	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED);
 	
 #pragma endregion 
 
@@ -78,6 +85,7 @@ void PeachPlayer::PlayerLoad(void)
 		)
 	);
 
+
 	// 攻撃状態を追加する (キック)
 	AddState(
 		(int)STATE::SKILL_1,
@@ -87,7 +95,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
 			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
-			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
+			KEY_TYPE::PLAYER_SKILL_1, SKILL_1_COOL_TIME, SKILL_1_COLL_START_TIME, SKILL_1_COLL_END_TIME, SKILL_1_ATTACK_MOVE_SPEED,
 			// 当たり判定のオペレーター
 			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
 			// 座標 / 角度
@@ -96,6 +104,26 @@ void PeachPlayer::PlayerLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH, false); },
 			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	AddState(
+		(int)STATE::SKILL_2,
+		new PlayerSingleModifierState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::SKILL_2); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_2; },
+			*SubObjSerch<PlayerSingleModifierCollOperator>(),
+			otherPlayerTrans, 0.6f, KEY_TYPE::PLAYER_SKILL_2, 60,
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
+			// アニメーションの再生割合のゲット関数ポインタ
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -144,7 +172,7 @@ void PeachPlayer::PlayerLoad(void)
 	//// 移動状態 -> スキル1 の遷移を登録
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
 	//// 移動状態 -> スキル2 の遷移を登録
-	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	//// 移動状態 -> スキル3 の遷移を登録
 	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
@@ -196,7 +224,18 @@ void PeachPlayer::PlayerLoad(void)
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
 				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-				SKILL_2_COOL_TIME,
+				SKILL_1_COOL_TIME,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				"SkillSlotSimpleAttack"
+			)
+		);
+
+		// スキル1のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL2_UI_DRAW_POS,
+				dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+				60,
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				"SkillSlotSimpleAttack"
 			)
@@ -224,12 +263,51 @@ void PeachPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		characterStats.hp -= damage;
 		break;
 	}
+
+	case COLLIDER_TAG::PLAYER_HEAL: {
+		characterStats.hp += other.GetSkillStats().Power();
+		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
+		break;
+	}
+
 	}
 }
 
 void PeachPlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+
+		switch (dataPtr->collKinds) {
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack: {
+			// 通常攻撃
+			if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
+			else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }
+			break;
+		}
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSingleModifier: {
+			// 回復
+			if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOn(); }
+			else { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOff(); }
+			break;
+		}
+
+		//case MsgDataPlayerCollOperator::COLLIDER_KINDS::はやくしろ: {
+		//	// スタンプ
+		//	if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
+		//	else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }
+
+		//	break;
+		//}
+
+		default: { break; }	// 例外
+		}
+
+		delete dataPtr;
+	}
 }
 
 void PeachPlayer::SendUpdate(void)

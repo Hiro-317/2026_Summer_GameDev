@@ -6,7 +6,7 @@ CollSize1,60
 CollSize2,60
 CollSize3,80
 CollLocalPos,0,0,80
-AttackRatePercent,100
+AttackRatePercent,156
 CollStartTime1,0.4
 CollEndTime1,0.6
 CollStartTime2,0.4
