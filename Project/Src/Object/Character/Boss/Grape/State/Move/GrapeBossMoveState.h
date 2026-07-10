@@ -23,8 +23,8 @@ public:
 		Vector3& pos, Vector3& angle, 
 		const std::vector<const Vector3*> playerPos,
 		const std::function<int(void)> GetTarget,
-		const std::function<void(void)> ResetAngle,
-		const std::function<void(void)> headbuttChangeState
+		const std::function<void(void)> PlayRunAnime,
+		const std::function<void(void)> KickDownChangeState
 	);
 	~GrapeBossMoveState()override = default;
 
@@ -62,11 +62,11 @@ private:
 	const std::vector<const Vector3*> playerPos;
 
 	const std::function<int(void)> GetTarget;
-		// 角度を戻すポインタ
-	const std::function<void(void)> ResetAngle;
+	// 角度を戻すポインタ
+	const std::function<void(void)> PlayRunAnime;
 
-	// 頭突きに移行するポインタ
-	const std::function<void(void)> headbuttChangeState;
+	// キックに移行するポインタ
+	const std::function<void(void)> KickDownChangeState;
 
 #pragma endregion
 

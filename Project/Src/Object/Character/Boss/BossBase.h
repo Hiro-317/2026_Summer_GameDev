@@ -55,6 +55,7 @@ private:
 	void CharacterLoad(void)override;
 	void CharacterInit(void)override;
 	void CharacterUpdate(void)override;
+	void CharacterRemoteUpdate()override;
 	void CharacterDraw(void)override;
 	void CharacterAlphaDraw(void)override;
 	void CharacterUiDraw(void)override;

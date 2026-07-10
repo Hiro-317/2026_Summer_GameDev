@@ -22,6 +22,8 @@ public:
 		return ret;
 	}
 
+	virtual void ReceptionUpdate(void)override;
+
 private:
 
 #pragma region ’è”’è‹`

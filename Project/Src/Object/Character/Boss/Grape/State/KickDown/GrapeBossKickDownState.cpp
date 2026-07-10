@@ -15,7 +15,8 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> DefaultChangeState
+	const std::function<void(void)> DefaultChangeState,
+	const std::function<void(void)> SetCoolTime
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), angle(angle), LOCAL_ROT(LOCAL_ROT),
@@ -25,7 +26,8 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState)
+	DefaultChangeState(DefaultChangeState),
+	SetCoolTime(SetCoolTime)
 {
 }
 
@@ -34,7 +36,7 @@ void GrapeBossKickDownState::Enter(void)
 	PlayAttackAnim();
 	first = true;
 	cnt = 0;
-	
+	SetCoolTime();
 	viewPos = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
 	collOperator->SetPos(viewPos);
 	collOperator->SetDrawArea(true);
@@ -76,6 +78,9 @@ void GrapeBossKickDownState::Update(void)
 				// スタート位置の設定
 				bombType[i].weaponIns->SetStartPos(Vector3(pos.x + posX, HEIGHT, pos.z + posZ));
 				bombType[i].weaponIns->SetViewPosCircle();
+				
+				// 起動を通知
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, Vector3(pos.x + posX, HEIGHT, pos.z + posZ)));
 
 				// 起動
 				bombType[i].live = true;

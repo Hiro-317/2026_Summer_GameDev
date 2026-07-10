@@ -96,7 +96,7 @@ private:
 	const int JUMP_START_ANIM_TYPE;
 	const int STAMP_ANIM_TYPE;
 
-		// プレイヤーの標的番号
+	// プレイヤーの標的番号
 	const std::function<int(void)> GetTarget;
 	
 	// アタックアニメーションの再生

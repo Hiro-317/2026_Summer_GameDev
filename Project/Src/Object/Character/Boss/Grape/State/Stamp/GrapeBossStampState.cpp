@@ -61,6 +61,9 @@ void GrapeBossStampState::Enter(void)
 	PlayJumpStartAnim();
 	first = true;
 	cnt = 0;
+
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC));
+	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, *playerPos.at(target)));
 }
 
 void GrapeBossStampState::Update(void)
@@ -134,6 +137,9 @@ void GrapeBossStampState::Update(void)
 				bombType[i].weaponIns->SetStartPos(Vector3(pos.x + posX, HEIGHT, pos.z + posZ));
 				bombType[i].weaponIns->SetViewPosCircle();
 
+				// 起動を通知
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::StampBomb, i, Vector3(pos.x + posX, HEIGHT, pos.z + posZ)));
+
 				// 起動
 				bombType[i].live = true;
 			}
@@ -151,10 +157,11 @@ void GrapeBossStampState::Update(void)
 			// フレーム位置に攻撃を消去
 			collOperator->CollSet(false);
 			collOperator->SetDrawArea(false);
+			Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 			collOperator->SetScale(0.0f);
+			Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, Vector3(0.0f)));
 		}
 	}
-
 
 	if (nowAttackTime < TIME_RATE) {
 
@@ -167,12 +174,12 @@ void GrapeBossStampState::Update(void)
 		// 予測線の更新
 		float scale = 1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE;
 		collOperator->SetScale(scale);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, Vector3::Xonly(scale)));
 	}
 }
 
 void GrapeBossStampState::Exit(void)
 {
-
 }
 
 void GrapeBossStampState::AlwaysUpdate(void)

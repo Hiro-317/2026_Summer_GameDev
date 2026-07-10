@@ -17,7 +17,7 @@ public:
 
 	void Load(void)override;
 
-	void CollSet(bool flg) { SetJudge(flg); }
+	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
 	Vector3 GetAttackPos(void) { return trans.pos; }
 
