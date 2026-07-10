@@ -66,20 +66,23 @@ void PlayerBase::CharacterLoad(void)
 {
 	PlayerLoad();
 
-	// 観戦モード
-	AddState(
-		(int)STATE::OTHER_WATCH,
-		new OtherPlayerWatchState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::OTHER_WATCH; },
-			// 他プレイヤーの座標
-			otherPlayerTrans,
-			// ボスの座標
-			bossPos
-		)
-	);
+	if(Net::GetIns().GetConnectStatus().EntryCount() != 1) {
+		// 観戦モード
+		AddState(
+			(int)STATE::OTHER_WATCH,
+			new OtherPlayerWatchState(
+				// 自分の状態に遷移する関数
+				[&]() { ChangeState((int)STATE::OTHER_WATCH); },
+				// 自分の状態かどうかを返す関数
+				[&]() { return state == (int)STATE::OTHER_WATCH; },
+				// 他プレイヤーの座標
+				otherPlayerTrans,
+				// ボスの座標
+				bossPos
+			)
+		);
+	}
+
 
 #pragma region モデル
 	// モデルを読み込む

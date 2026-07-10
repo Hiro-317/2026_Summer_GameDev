@@ -1,6 +1,7 @@
 #pragma once
 #include "../PlayerCharacters/Orange/OrangePlayer.h"
 #include "../PlayerCharacters/Tomato/TomatoPlayer.h"
+#include "../PlayerCharacters/Peach/PeachPlayer.h"
 
 #include "../../../CharaTypeDefine.h"
 #include "../../../../Scene/SceneManager/SceneManager.h"
@@ -23,7 +24,7 @@ public:
 		// 取得したキャラを生成
 		switch (chara) {
 		case CHARA_TYPE::Orange: { ret.instance = new OrangePlayer(id); break; }	// オレンジ
-		case CHARA_TYPE::Tomato: { ret.instance = new TomatoPlayer(id); break; }	// トマト
+		case CHARA_TYPE::Tomato: { ret.instance = new PeachPlayer(id); break; }	// トマト
 		default: { ret.instance = nullptr; break; }
 		}
 

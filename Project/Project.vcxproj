@@ -187,7 +187,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerBase.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\PeachPlayer\PeachPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Peach\PeachPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Death\TomatoPlayerDeathState.cpp" />
@@ -286,7 +286,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerBase.h" />
-    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\PeachPlayer\PeachPlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Peach\PeachPlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Death\TomatoPlayerDeathState.h" />

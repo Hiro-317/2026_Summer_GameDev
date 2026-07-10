@@ -20,12 +20,15 @@ TomatoPlayerDeathState::TomatoPlayerDeathState(
 void TomatoPlayerDeathState::Enter(void)
 {
 	animeCounter = 30.0f;
+	angle.x = 60.0f;
 }
 
 void TomatoPlayerDeathState::Update(void)
 {
 	pos.y += animeCounter;
-	animeCounter -= 0.5f;
+	animeCounter -= 0.2f;
+	angle.y -= 0.4f;
+
 	if (animeCounter <= 0.0f) {
 		PlayerDeathSetting();
 		DefaultChangeState();

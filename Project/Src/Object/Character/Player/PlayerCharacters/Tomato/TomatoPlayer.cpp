@@ -184,7 +184,7 @@ void TomatoPlayer::PlayerLoad(void)
 			trans.pos, trans.angle,
 			[&]() { PlayerDeathSetting(); },
 			[&]() { SetIsDeath(true); },
-			[&]() { ChangeState((int)STATE::OTHER_WATCH); }
+			[&]() { (Net::GetIns().GetConnectStatus().EntryCount() == 1) ? ChangeState((int)STATE::MOVE) : ChangeState((int)STATE::OTHER_WATCH); }
 		)
 	);
 
@@ -199,9 +199,6 @@ void TomatoPlayer::PlayerLoad(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	// ˆÚ“®ó‘Ô -> ƒXƒLƒ‹3 ‚Ì‘JˆÚ‚ð“o˜^
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
-
-
-
 
 #pragma endregion 
 
