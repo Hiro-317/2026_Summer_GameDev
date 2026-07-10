@@ -126,7 +126,7 @@ void BossBase::CharacterUpdate(void)
 	// ƒvƒŒƒCƒ„[‚Ì¶‘¶”»’è‚ğ‚·‚é
 	for (int i = 0; i < playerLive.size(); i++) {
 		// ¡€‚ñ‚¾ê‡
-		if (!playerLive.at(i) && nowLive.at(i)) {
+		if (!*playerLive.at(i) && nowLive.at(i)) {
 			// ¶‚«‚Ä‚¢‚é‚ğÁ‚·
 			nowLive[i] = false;
 
