@@ -66,7 +66,6 @@ void TomatoPlayerTackleState::Update(void)
 	// カウンターがゼロになったら終了
 	if (timeCounter <= 0) {
 		DefaultChangeState();
-		
 		return;
 	}
 

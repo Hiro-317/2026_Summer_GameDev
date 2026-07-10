@@ -33,6 +33,21 @@ void PeachPlayer::PlayerLoad(void)
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
 #pragma region 下位オブジェクトの生成
+	
+	// キック用の当たり判定オペレーターを生成する
+	subObjArray.emplace_back(
+		new PlayerSimpleAttackCollOperator(
+			SKILL_2_TARGET_SERCH_RANGE,
+			SKILL_2_COLL_TAG,
+			SKILL_2_COLL_SIZE_TABLE,
+			SKILL_2_COLL_LOCAL_POS,
+			trans.pos, trans.angle,
+			SKILL_2_ATTACK_RATE_PERCENT,
+			operatorSenderId,
+			characterStats
+		)
+	);
+
 	// アニメーションコントローラーを生成する
 	CreateAnimationController();
 
@@ -115,9 +130,11 @@ void PeachPlayer::PlayerLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			[&]() { PlayerDeathSetting(); },
 			[&]() { SetIsDeath(true); },
-			[&]() { Net::GetIns().GetConnectStatus().EntryCount() >= 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
 		)
 	);
+
+	state;
 
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {

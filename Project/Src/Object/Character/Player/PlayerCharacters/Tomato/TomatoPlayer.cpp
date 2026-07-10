@@ -1,15 +1,15 @@
 #include "TomatoPlayer.h"
 
-#include "UniqueState/Move/TomatoPlayerMoveState.h"
-#include "UniqueState/Tackle/TomatoPlayerTackleState.h"
-#include "UniqueState/HeadButt/TomatoPlayerHeadButtState.h"
-#include "UniqueState/Stamp/TomatoPlayerStampState.h"
-#include "UniqueState/Damage/TomatoPlayerDamageState.h"
-#include "UniqueState/Death/TomatoPlayerDeathState.h"
+#include "TomatoUniqueState/Move/TomatoPlayerMoveState.h"
+#include "TomatoUniqueState/Tackle/TomatoPlayerTackleState.h"
+#include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtState.h"
+#include "TomatoUniqueState/Stamp/TomatoPlayerStampState.h"
+#include "TomatoUniqueState/Damage/TomatoPlayerDamageState.h"
+#include "TomatoUniqueState/Death/TomatoPlayerDeathState.h"
 
-#include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
-#include "UniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
-#include "UniqueState/Stamp/TomatoPlayerStampCollOperator.h"
+#include "TomatoUniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
+#include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
+#include "TomatoUniqueState/Stamp/TomatoPlayerStampCollOperator.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -184,7 +184,7 @@ void TomatoPlayer::PlayerLoad(void)
 			trans.pos, trans.angle,
 			[&]() { PlayerDeathSetting(); },
 			[&]() { SetIsDeath(true); },
-			[&]() { (Net::GetIns().GetConnectStatus().EntryCount() == 1) ? ChangeState((int)STATE::MOVE) : ChangeState((int)STATE::OTHER_WATCH); }
+			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
 		)
 	);
 
@@ -319,8 +319,68 @@ void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 void TomatoPlayer::ReceptionUpdate(void)
 {
+	PlayerBase::ReceptionUpdate();
+
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
+
+		switch ((STATE)state) {
+		case PlayerBase::STATE::SKILL_1: {
+			SubObjSerch<TomatoPlayerHeadButtCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_2: {
+			SubObjSerch<TomatoPlayerTackleCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_3: {
+			SubObjSerch<TomatoPlayerStampCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
+			break;
+		}
+
+		default: { break; }
+		}
+
+		delete dataPtr;
+	}
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+
+		switch (dataPtr->collKinds) {
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt: {
+			// 三段攻撃
+			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
+			else { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
+			break;
+		}
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerTackle: {
+			// タックル
+			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOn(); }
+			else { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOff(); }
+			break;
+		}
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerStamp: {
+			// スタンプ
+			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
+			else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }
+		}
+
+		default: { break; }	// 例外
+		}
+
+		delete dataPtr;
+	}
+
 }
 
 void TomatoPlayer::SendUpdate(void)
 {
+	PlayerBase::SendUpdate();
 }

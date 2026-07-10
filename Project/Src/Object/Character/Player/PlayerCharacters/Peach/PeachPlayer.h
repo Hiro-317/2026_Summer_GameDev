@@ -37,6 +37,15 @@ private:
 		MAX
 	};
 
+	const float ANIME_SPEED[(int)ANIME_TYPE::MAX] = {
+		1.0f,
+		1.0f,
+		1.0f,
+		0.5f,
+		0.5f,
+		1.0f
+	};
+
 #pragma region ƒXƒLƒ‹1‚Ì’è”’è‹`
 
 

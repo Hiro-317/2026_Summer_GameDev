@@ -242,7 +242,7 @@ void OrangePlayer::PlayerLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			[&]() { PlayerDeathSetting(); },
 			[&]() { SetIsDeath(true); },
-			[&]() { Net::GetIns().GetConnectStatus().EntryCount() >= 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
 		)
 	);
 

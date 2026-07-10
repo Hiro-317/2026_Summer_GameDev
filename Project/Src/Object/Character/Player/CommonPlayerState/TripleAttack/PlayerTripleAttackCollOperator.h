@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../../ActorBase.h"
+#include "../../../../../Manager/Net/NetWorkManager.h"
 
 #include "PlayerTripleAttackStDefine.h"
 
@@ -46,7 +47,12 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 指定の段の攻撃の判定を発生させる
-	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) { if(!isHit)ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true); }
+	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) {
+		if(!isHit)ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true);
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, (MsgDataPlayerCollOperator::COLLIDER_KINDS)stage));
+		}
+	}
 
 	// 指定の段の攻撃の判定を消す（指定がない場合は全ての段の判定を消す）
 	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::NON) {
@@ -56,6 +62,13 @@ public:
 		}
 		// 指定がある場合はその段の判定を消す
 		else { ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(false); }
+
+		// コライダー消去通知を送信
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_1));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3));
+		}
 	}
 
 	// 攻撃対象をリセットする

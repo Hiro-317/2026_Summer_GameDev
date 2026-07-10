@@ -247,25 +247,6 @@ void PlayerBase::ChangeState(int state)
 
 	// 遷移するステート(状態)を送信
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
-
-	// ホストだったら操作者PC以外に伝達する
-	if (Net::GetIns().IsHost()) {
-
-		// すべてのIDを精査する
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-
-			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
-			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
-
-			// また、この情報の発信源である送信者IDを持つPCにも送らない
-			if (id == (int)operatorSenderId) { continue; }
-
-			// それ以外のこの情報が伝わってないPCに情報を送る
-			Net::GetIns().Send(MsgDataPlayerState(state), operatorSenderId, (MSG_SENDER_ID)id);
-		}
-	}
 }
 
 void PlayerBase::AnimePlay(int type, bool loop)
@@ -273,25 +254,6 @@ void PlayerBase::AnimePlay(int type, bool loop)
 	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
 	// 自身のPC以外のすべてに再生したことを送信する
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
-
-	// ホストだったら操作者PC以外に伝達する
-	if (Net::GetIns().IsHost()) {
-
-		// すべてのIDを精査する
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-
-			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
-			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
-
-			// また、この情報の発信源である送信者IDを持つPCにも送らない
-			if (id == (int)operatorSenderId) { continue; }
-
-			// それ以外のこの情報が伝わってないPCに情報を送る
-			Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop), operatorSenderId, (MSG_SENDER_ID)id);
-		}
-	}
 
 	CharacterBase::AnimePlay(type, loop);
 }
@@ -331,8 +293,8 @@ void PlayerBase::ReceptionUpdate(void)
 	}
 
 	// アニメーション
-	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId)) {
-		AnimePlay(dataPtr->animeType);
+	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId, true)) {
+		AnimePlay(dataPtr->animeType, dataPtr->loop);
 		delete dataPtr;
 	}
 
@@ -353,10 +315,10 @@ void PlayerBase::ReceptionUpdate(void)
 	// 回避した時の「ミス！」表示
 	while (MsgDataPlayerMissNotice* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(operatorSenderId)) 
 	{
-		if (Net::GetIns().IsHost()) { break; }
-		
-		if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
-			SubUiSerch<HitUI>()->MissSetting();
+		if (!Net::GetIns().IsHost()) {
+			if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
+				SubUiSerch<HitUI>()->MissSetting();
+			}
 		}
 		
 		delete dataPtr;
