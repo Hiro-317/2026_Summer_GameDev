@@ -35,8 +35,6 @@ enum class MSG_DATA_TYPE
     PlayerTrans,
     // <ホスト/クライアント>プレイヤー：アニメの種類
     PlayerAnimeType,
-    // <ホスト/クライアント>プレイヤー：アニメーション再生ステップ
-    PlayerAnimeStep,
 	// <ホスト/クライアント>プレイヤー：自分の入力
 	PlayerInput,
 	// <ホスト>プレイヤー：HP
@@ -60,6 +58,8 @@ enum class MSG_DATA_TYPE
     BossHit,
     // <ホスト>ボスのターゲット情報
     BossTarget,
+    // <ホスト>ボス : アニメーションの種類
+    BossAnimeType,
 
 	Max
 };
@@ -826,6 +826,35 @@ struct MsgDataBossTarget
     MsgDataBossTarget(void) :
         header(DATA_TYPE),
         targetNum()
+    {
+    }
+};
+
+// <ホスト>ボスターゲット情報送信構造体
+struct MsgDataBossAnimeType
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossAnimeType;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー
+    MsgDataHeader header;
+
+    int animeType;
+    bool loop;
+
+    MsgDataBossAnimeType(int animeType, bool loop) :
+        header(DATA_TYPE),
+        animeType(animeType),
+        loop(loop)
+    {
+    }
+    MsgDataBossAnimeType() :
+        header(DATA_TYPE),
+        animeType(),
+        loop()
     {
     }
 };

@@ -231,7 +231,7 @@ void BossBase::AnimePlay(int type, bool loop)
 			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 
 			// 情報を送る
-			Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop));
+			Net::GetIns().Send(MsgDataBossAnimeType(type, loop));
 		}
 	}
 
@@ -249,7 +249,7 @@ void BossBase::ReceptionUpdate(void)
 	}
 
 	// アニメーション
-	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId)) {
+	while (MsgDataBossAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAnimeType>(operatorSenderId)) {
 		AnimePlay(dataPtr->animeType);
 		delete dataPtr;
 	}
