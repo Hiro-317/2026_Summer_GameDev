@@ -29,7 +29,7 @@
 #include "../../../UI/HitUI/HitUI.h"
 
 
-GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos) :
+GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
 		"HP",
 		"AttackPower",
@@ -38,7 +38,7 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos) :
 		"Data/Parameter/Character/Boss/Grape/",
 		"Grape/GrapeModel",
 
-		playerPos)
+		playerPos, playerLive)
 {
 
 	coolTime = 120;

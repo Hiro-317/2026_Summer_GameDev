@@ -26,7 +26,7 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../UI/HitUI/HitUI.h"
 
-TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
+TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
 		"HP",
 		"AttackPower",
@@ -35,7 +35,7 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos) :
 		"Data/Parameter/Character/Boss/Tomato/",
 		"Tomato/Tomato",
 
-		playerPos)
+		playerPos, playerLive)
 {
 	coolTime = 120;
 
