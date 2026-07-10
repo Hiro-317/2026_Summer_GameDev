@@ -308,6 +308,8 @@ struct MsgDataSystemInform
 
         // タイトルシーンへ遷移
         ChangeSceneTitle,
+		// ロビーシーンへ遷移
+		ChangeSceneLobby,
         // ゲームシーンへ遷移
         ChangeSceneGame,
         // ゲームポーズ

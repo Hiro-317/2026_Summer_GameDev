@@ -81,6 +81,8 @@ void LobbyScene::Init(void)
 	choice = CHOICE::CharaChange;
 
 	Camera::GetIns().ChangeModeFixedPoint(Vector3(330, 530, -1000), Vector3::Xonly(Deg2Rad(16)));
+
+	Net::GetIns().Disconnection();
 }
 
 void LobbyScene::Update(void)

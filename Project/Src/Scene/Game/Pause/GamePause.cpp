@@ -40,6 +40,9 @@ void GamePause::Update(void)
 	if (isOperator) {
 
 		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+
+			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
+
 			SoundManager::GetIns().PausePlay();
 			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().PopScene();
@@ -50,13 +53,19 @@ void GamePause::Update(void)
 
 		case GamePause::SELECT::YES:
 			if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
-				nowSelect = GamePause::SELECT::NO; Snd::GetIns().Play("SystemSelect");
 
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch);
+
+				nowSelect = GamePause::SELECT::NO;
+				Snd::GetIns().Play("SystemSelect");
 			}
 
 			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby);
+
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::TITLE);
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::LOBBY);
 				return;
 			}
 
@@ -64,9 +73,18 @@ void GamePause::Update(void)
 
 		case GamePause::SELECT::NO:
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) { nowSelect = GamePause::SELECT::YES; Snd::GetIns().Play("SystemSelect"); }
+			if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch);
+
+				nowSelect = GamePause::SELECT::YES;
+				Snd::GetIns().Play("SystemSelect");
+			}
 
 			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
+
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
@@ -81,6 +99,41 @@ void GamePause::Update(void)
 	// 自分以外がポーズ画面を開いたとき(受信処理のみ)
 	else {
 
+		while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
+
+			bool isReturn = false;
+
+			switch (dataPtr->inform) {
+			case MsgDataSystemInform::INFORM_TYPE::None: { break; }
+
+			case MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby: {
+				Snd::GetIns().Play("SystemButton");
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::LOBBY);
+				isReturn = true;
+				break;
+			}
+			case MsgDataSystemInform::INFORM_TYPE::GamePauseEnd: {
+				Snd::GetIns().PausePlay();
+				Snd::GetIns().Play("SystemButton");
+				SceneManager::GetIns().PopScene();
+				Key::GetIns().SetMouseFixed(true);
+				isReturn = true;
+				break;
+			}
+			case MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch: {
+				Snd::GetIns().Play("SystemSelect");
+				if (nowSelect == SELECT::YES) { nowSelect = SELECT::NO; }
+				else if (nowSelect == SELECT::NO) { nowSelect = SELECT::YES; }
+
+				break;
+			}
+			default: { break; }
+			}
+
+			delete dataPtr;
+
+			if (isReturn) { return; }
+		}
 
 	}
 }

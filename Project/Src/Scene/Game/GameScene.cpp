@@ -166,8 +166,15 @@ void GameScene::Update(void)
 #pragma region 遷移判定（ポーズも含む）
 	// ポーズ判定
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SceneManager::GetIns().PushScene(std::make_shared<GamePause>());
+
+		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePause);
+
+		SceneManager::GetIns().PushScene(std::make_shared<GamePause>(Net::GetIns().GetSenderId()));
 		return;
+	}
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
+		SceneManager::GetIns().PushScene(std::make_shared<GamePause>(dataPtr->header.senderId));
+		delete dataPtr;
 	}
 	
 	// ゲームクリア判定
