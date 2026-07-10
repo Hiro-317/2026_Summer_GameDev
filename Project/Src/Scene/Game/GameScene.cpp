@@ -82,7 +82,17 @@ void GameScene::Load(void)
 		pos.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
 	}
 
-	ObjAdd(new GrapeBoss(pos));
+	switch (SceneManager::GetIns().GetSelectBossType())
+	{
+	case BOSS_TYPE::Tomato:
+		ObjAdd(new TomatoBoss(pos));
+		break;
+	case BOSS_TYPE::Grape:
+		ObjAdd(new GrapeBoss(pos));
+		break;
+	default:
+		break;
+	}
 
 	ObjAdd(new TomatoBossStage());
 
@@ -90,7 +100,7 @@ void GameScene::Load(void)
 	collision->InitBuildChunks();
 
 	// プレイヤーにボスの座標をわたす
-	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<GrapeBoss>()->GetTrans().pos);
+	ObjSerch<PlayerManager>()->SetBossPos(&ObjSerch<BossBase>()->GetTrans().pos);
 }
 
 void GameScene::Init(void)
@@ -136,7 +146,7 @@ void GameScene::Update(void)
 		if (focusFlg) {
 			Camera::GetIns().ChangeModeFollowAuto(
 				ObjSerch<PlayerManager>()->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans(),
-				&ObjSerch<GrapeBoss>()->GetTrans().pos);
+				&ObjSerch<BossBase>()->GetTrans().pos);
 		}
 		else {
 			Camera::GetIns().ChangeModeFollowRemote(
@@ -161,7 +171,7 @@ void GameScene::Update(void)
 	}
 	
 	// ゲームクリア判定
-	if (ObjSerch<GrapeBoss>()->GetIsDeath()) {
+	if (ObjSerch<BossBase>()->GetIsDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xff0000, 0x000000);
 		return;
 	}
