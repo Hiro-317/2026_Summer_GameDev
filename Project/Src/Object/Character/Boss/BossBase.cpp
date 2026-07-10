@@ -2,6 +2,7 @@
 
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
+#include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Scene/Game/GameScene.h"
 
 #include "../../UI/HitUI/HitUI.h"
@@ -199,9 +200,17 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			}
 			Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
 
-			// クリティカルなら揺らす
-			if (isClitical) {
-				GameScene::Shake(ShakeKinds::HIG, ShakeSize::SMALL, 10);
+			// ホスト時の演出
+			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
+				// クリティカルなら揺らしクリティカル音を出す
+				if (isClitical) {
+					GameScene::Shake(ShakeKinds::HIG, ShakeSize::SMALL, 10);
+					Snd::GetIns().Play("CriticalDamaged");
+				}
+				// 違うなら普通にダメージ音
+				else {
+					Snd::GetIns().Play("Damaged");
+				}
 			}
 			GameScene::HitStop(4);
 			SetInviCounter(150);
@@ -266,8 +275,14 @@ void BossBase::ReceptionUpdate(void)
 
 		if (dataPtr->header.senderId == Net::GetIns().GetSenderId()) {
 			SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
+			// クリティカルなら揺らしクリティカル音
 			if (dataPtr->clitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+				Snd::GetIns().Play("CriticalDamaged");
+			}
+			// 違うなら普通にダメージ音
+			else {
+				Snd::GetIns().Play("Damaged");
 			}
 			GameScene::HitStop(4);
 			SetInviCounter(150);
