@@ -1,14 +1,15 @@
 #include "TomatoPlayer.h"
 
-#include "UniqueState/Move/TomatoPlayerMoveState.h"
-#include "UniqueState/Tackle/TomatoPlayerTackleState.h"
-#include "UniqueState/HeadButt/TomatoPlayerHeadButtState.h"
-#include "UniqueState/Stamp/TomatoPlayerStampState.h"
-#include "UniqueState/Damage/TomatoPlayerDamageState.h"
+#include "TomatoUniqueState/Move/TomatoPlayerMoveState.h"
+#include "TomatoUniqueState/Tackle/TomatoPlayerTackleState.h"
+#include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtState.h"
+#include "TomatoUniqueState/Stamp/TomatoPlayerStampState.h"
+#include "TomatoUniqueState/Damage/TomatoPlayerDamageState.h"
+#include "TomatoUniqueState/Death/TomatoPlayerDeathState.h"
 
-#include "UniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
-#include "UniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
-#include "UniqueState/Stamp/TomatoPlayerStampCollOperator.h"
+#include "TomatoUniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
+#include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
+#include "TomatoUniqueState/Stamp/TomatoPlayerStampCollOperator.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -174,6 +175,18 @@ void TomatoPlayer::PlayerLoad(void)
 		)
 	);
 
+	// Ž€–Só‘Ô‚ð’Ç‰Á‚·‚é
+	AddState(
+		(int)STATE::DEATH,
+		new TomatoPlayerDeathState(
+			[&]() { ChangeState((int)STATE::DEATH); },
+			[&]() { return state == (int)STATE::DEATH; },
+			trans.pos, trans.angle,
+			[&]() { PlayerDeathSetting(); },
+			[&]() { SetIsDeath(true); },
+			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+		)
+	);
 
 	// ‘JˆÚðŒ‚Ì“o˜^ibefore = ‘JˆÚŒ³)(after = ‘JˆÚŒãj
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
@@ -186,9 +199,6 @@ void TomatoPlayer::PlayerLoad(void)
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	// ˆÚ“®ó‘Ô -> ƒXƒLƒ‹3 ‚Ì‘JˆÚ‚ð“o˜^
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
-
-
-
 
 #pragma endregion 
 
@@ -283,7 +293,7 @@ void TomatoPlayer::PlayerLoad(void)
 		);
 	}
 
-	ui_ArrayIns.emplace_back(new HitUI());
+	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 }
 
 void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
@@ -309,8 +319,68 @@ void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 void TomatoPlayer::ReceptionUpdate(void)
 {
+	PlayerBase::ReceptionUpdate();
+
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
+
+		switch ((STATE)state) {
+		case PlayerBase::STATE::SKILL_1: {
+			SubObjSerch<TomatoPlayerHeadButtCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_2: {
+			SubObjSerch<TomatoPlayerTackleCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_3: {
+			SubObjSerch<TomatoPlayerStampCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
+			break;
+		}
+
+		default: { break; }
+		}
+
+		delete dataPtr;
+	}
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+
+		switch (dataPtr->collKinds) {
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt: {
+			// ŽO’iUŒ‚
+			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
+			else { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
+			break;
+		}
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerTackle: {
+			// ƒ^ƒbƒNƒ‹
+			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOn(); }
+			else { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOff(); }
+			break;
+		}
+
+		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerStamp: {
+			// ƒXƒ^ƒ“ƒv
+			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
+			else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }
+		}
+
+		default: { break; }	// —áŠO
+		}
+
+		delete dataPtr;
+	}
+
 }
 
 void TomatoPlayer::SendUpdate(void)
 {
+	PlayerBase::SendUpdate();
 }

@@ -43,6 +43,7 @@ public:
 
 private:
 
+	// タックル処理
 	void Tackle(void);
 
 #pragma region 定数定義

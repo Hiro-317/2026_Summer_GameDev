@@ -1,8 +1,9 @@
 #include "HitUI.h"
 #include "../../../pch.h"
 
-HitUI::HitUI() :
-    UI_Base()
+HitUI::HitUI(Vector3& targetPos) :
+    UI_Base(),
+    targetPos(targetPos)
 {
 }
 
@@ -39,8 +40,17 @@ void HitUI::SubRelease(void)
 
 void HitUI::DamageSetting(const short damage, const bool isCritical)
 {
+    //Vector2 drawPos = Vector2(
+    //    App::SCREEN_SIZE_X_HALF + GetRand(200) - 100,
+    //    App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50
+    //);
+
+    VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
+	Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
+
     // ダメージ値の設定
     AddPopup(
+        drawPos2D,
         std::to_string(damage),
         isCritical ? 0xffff00 : 0xffffff    // 会心ならば：黄色 / 非会心ならば：白色
     );
@@ -48,8 +58,12 @@ void HitUI::DamageSetting(const short damage, const bool isCritical)
 
 void HitUI::MissSetting()
 {
+    VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
+    Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
+
     // ミス！を設定
     AddPopup(
+        drawPos2D,
         "\u30DF\u30B9\uFF01",   // ミス！
         0x00ffff                // 水色
     );
@@ -57,7 +71,7 @@ void HitUI::MissSetting()
 
 
 // 描画するテキストと色を設定し、描画を開始する
-void HitUI::AddPopup(const std::string& text, int color)
+void HitUI::AddPopup(const Vector2 pos, const std::string& text, int color)
 {
     AddDamageUiInfo info;
 
@@ -65,8 +79,7 @@ void HitUI::AddPopup(const std::string& text, int color)
     info.text = text;
     info.color = color;
 
-    info.pos.x = (float)(App::SCREEN_SIZE_X_HALF + GetRand(200) - 100);
-    info.pos.y = (float)(App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50);
+    info.pos = pos;
 
     damageUiList.emplace_back(info);
 }

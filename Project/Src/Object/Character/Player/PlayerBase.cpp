@@ -66,22 +66,23 @@ void PlayerBase::CharacterLoad(void)
 {
 	PlayerLoad();
 
+	if(Net::GetIns().GetConnectStatus().EntryCount() != 1) {
+		// 観戦モード
+		AddState(
+			(int)STATE::OTHER_WATCH,
+			new OtherPlayerWatchState(
+				// 自分の状態に遷移する関数
+				[&]() { ChangeState((int)STATE::OTHER_WATCH); },
+				// 自分の状態かどうかを返す関数
+				[&]() { return state == (int)STATE::OTHER_WATCH; },
+				// 他プレイヤーの座標
+				otherPlayerTrans,
+				// ボスの座標
+				bossPos
+			)
+		);
+	}
 
-
-	// 観戦モード
-	AddState(
-		(int)STATE::OTHER_WATCH,
-		new OtherPlayerWatchState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::OTHER_WATCH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::OTHER_WATCH; },
-			// 他プレイヤーの座標
-			otherPlayerTrans,
-			// ボスの座標
-			bossPos
-		)
-	);
 
 #pragma region モデル
 	// モデルを読み込む
@@ -150,14 +151,17 @@ void PlayerBase::CharacterInit(void)
 
 void PlayerBase::CharacterUpdate(void)
 {
+	// 自身が死亡していたら更新処理は行わない
+	if (GetIsDeath()) { return; }
+
 	interestPos = trans.pos + INTEREST_POS;
 
+	// 下位クラスの更新処理
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
-		isDeath = true;
 	}
 
 #ifdef _DEBUG		// クールタイム用
@@ -167,10 +171,6 @@ void PlayerBase::CharacterUpdate(void)
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
 		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
 	}
-	if (state == (int)STATE::DEATH) {
-		// 不動オブジェクトにする
-		SetDynamicFlg(false);
-	}
 #endif // _DEBUG
 }
 
@@ -178,7 +178,7 @@ void PlayerBase::CharacterRemoteUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 	// HPがゼロ以下になったら死亡状態に遷移
-	if (characterStats.hp <= 0) { isDeath = true; }
+	//if (characterStats.hp <= 0) { GetIsDeath() = true; }
 }
 
 void PlayerBase::CharacterDraw(void)
@@ -247,25 +247,6 @@ void PlayerBase::ChangeState(int state)
 
 	// 遷移するステート(状態)を送信
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
-
-	// ホストだったら操作者PC以外に伝達する
-	if (Net::GetIns().IsHost()) {
-
-		// すべてのIDを精査する
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-
-			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
-			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
-
-			// また、この情報の発信源である送信者IDを持つPCにも送らない
-			if (id == (int)operatorSenderId) { continue; }
-
-			// それ以外のこの情報が伝わってないPCに情報を送る
-			Net::GetIns().Send(MsgDataPlayerState(state), operatorSenderId, (MSG_SENDER_ID)id);
-		}
-	}
 }
 
 void PlayerBase::AnimePlay(int type, bool loop)
@@ -273,25 +254,6 @@ void PlayerBase::AnimePlay(int type, bool loop)
 	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
 	// 自身のPC以外のすべてに再生したことを送信する
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
-
-	// ホストだったら操作者PC以外に伝達する
-	if (Net::GetIns().IsHost()) {
-
-		// すべてのIDを精査する
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-
-			// ホストには送らない(ここを通るのがホストであるため自分には送らない)
-			if (id == (int)Net::GetIns().GetSenderId()) { continue; }
-
-			// また、この情報の発信源である送信者IDを持つPCにも送らない
-			if (id == (int)operatorSenderId) { continue; }
-
-			// それ以外のこの情報が伝わってないPCに情報を送る
-			Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop), operatorSenderId, (MSG_SENDER_ID)id);
-		}
-	}
 
 	CharacterBase::AnimePlay(type, loop);
 }
@@ -302,7 +264,7 @@ void PlayerBase::ReceptionUpdate(void)
 		// 自分のキャラ（操作対象）の場合
 		if (isOwnOperator) {
 			// ホストから送られた座標と今の自分の座標の距離を測る
-			float diff = (trans.pos, dataPtr->pos).Length();
+			float diff = (trans.pos - dataPtr->pos).Length();
 
 			// 誤差が小さいなら無視
 			if (diff > 0.5f) {
@@ -310,7 +272,8 @@ void PlayerBase::ReceptionUpdate(void)
 				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
 			}
 
-			diff = (trans.angle, dataPtr->angle).Length();
+			// ホストから送られた角度と今の自分の角度のずれを測る
+			diff = (trans.angle - dataPtr->angle).Length();
 
 			// 誤差が小さいなら無視
 			if (diff > 0.5f) {
@@ -330,8 +293,8 @@ void PlayerBase::ReceptionUpdate(void)
 	}
 
 	// アニメーション
-	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId)) {
-		AnimePlay(dataPtr->animeType);
+	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId, true)) {
+		AnimePlay(dataPtr->animeType, dataPtr->loop);
 		delete dataPtr;
 	}
 
@@ -352,10 +315,10 @@ void PlayerBase::ReceptionUpdate(void)
 	// 回避した時の「ミス！」表示
 	while (MsgDataPlayerMissNotice* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(operatorSenderId)) 
 	{
-		if (Net::GetIns().IsHost()) { break; }
-		
-		if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
-			SubUiSerch<HitUI>()->MissSetting();
+		if (!Net::GetIns().IsHost()) {
+			if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
+				SubUiSerch<HitUI>()->MissSetting();
+			}
 		}
 		
 		delete dataPtr;

@@ -222,7 +222,7 @@ void GrapeBoss::PlayerLoad(void)
 			// ボスのサイズ
 			trans.scale, MODEL_SCALE,
 			// 死んだフラグを立てる
-			[&]() { isDeath = true; }
+			[&]() {	SetIsDeath(true); }
 		)
 	);
 
@@ -246,7 +246,7 @@ void GrapeBoss::PlayerLoad(void)
 		)
 	);
 
-	ui_ArrayIns.emplace_back(new HitUI());
+	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 #pragma endregion
 
 }
