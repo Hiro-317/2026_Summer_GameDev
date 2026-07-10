@@ -60,6 +60,8 @@ enum class MSG_DATA_TYPE
     BossTarget,
     // <ホスト>ボス : アニメーションの種類
     BossAnimeType,
+    // <ホスト>ボス : ボムの種類
+    BossBombInform,
 
 	Max
 };
@@ -736,7 +738,7 @@ struct MsgDataBossAttackDraw
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossAttackDraw;
 
     // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
 
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
@@ -756,6 +758,8 @@ struct MsgDataBossAttackDraw
         ChangeAttackD,
         // 攻撃Eステート
         ChangeAttackE,
+        // 攻撃Fステート
+        ChangeAttackF,
     };
 
     INFORM_TYPE inform;
@@ -763,7 +767,6 @@ struct MsgDataBossAttackDraw
     Vector3 angle;
     Vector3 scale;
 
-    // 消すときはinfoだけ入れてくれればよい
     MsgDataBossAttackDraw(INFORM_TYPE inform, Vector3 pos = Vector3(), Vector3 scale = Vector3(), Vector3 angle = Vector3()) :
         header(DATA_TYPE),
         inform(inform),
@@ -836,7 +839,7 @@ struct MsgDataBossTarget
     }
 };
 
-// <ホスト>ボスターゲット情報送信構造体
+// <ホスト>ボスアニメーション情報送信構造体
 struct MsgDataBossAnimeType
 {
     // 列挙型定義との紐づけ
@@ -861,6 +864,60 @@ struct MsgDataBossAnimeType
         header(DATA_TYPE),
         animeType(),
         loop()
+    {
+    }
+};
+
+// <ホスト>ボスボム種類送信構造体
+struct MsgDataBossBombInform
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossBombInform;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // システムイベント列挙型定義
+    enum class INFORM_TYPE
+    {
+        None = -1,
+
+        // 直線投擲
+        Straight,
+        // 爆弾投下（蹴り攻撃と同時に身の回りに落とす爆弾）
+        KickBomb,
+        // 爆弾投下（スタンプ攻撃と同時に身の回りに落とす爆弾）
+        StampBomb,
+        // 爆弾投下（プレイヤーに向かって降らせる爆弾）
+        SingleBomb,
+        // 爆弾投下（1体のプレイヤーに一定時間降らせ続ける爆弾）
+        StalkerBomb,
+        // 爆弾投下（ランダムに地上に大量投下する爆弾）
+        RandomBomb,
+    };
+
+    INFORM_TYPE inform;
+    int index;
+    Vector3 pos;
+    Vector3 moveDir;
+
+    MsgDataBossBombInform(INFORM_TYPE inform, int index, Vector3 pos, Vector3 moveDir = Vector3()) :
+        header(DATA_TYPE),
+        inform(inform),
+        index(index),
+        pos(pos),
+        moveDir(moveDir)
+    {
+    }
+    MsgDataBossBombInform(void) :
+        header(DATA_TYPE),
+        inform(INFORM_TYPE::None),
+        index(),
+        pos(),
+        moveDir()
     {
     }
 };

@@ -5,7 +5,7 @@
 class GrapeBoss : public BossBase
 {
 public:
-	GrapeBoss(const std::vector<const Vector3*> playerPos);
+	GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive);
 	~GrapeBoss()override = default;
 
 	// 状態遷移後1度行う初期化処理
@@ -21,6 +21,8 @@ public:
 		// 最終的な返却用一時変数を返却
 		return ret;
 	}
+
+	virtual void ReceptionUpdate(void)override;
 
 private:
 

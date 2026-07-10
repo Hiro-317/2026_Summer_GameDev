@@ -11,10 +11,10 @@ GrapeBossIdleState::GrapeBossIdleState(
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayIdleAnim,
 	const std::function<void(void)> PlayWalkAnim,
-	const std::function<void(void)> moveChangeState,
-	const std::function<void(void)> headbuttChangeState,
-	const std::function<void(void)> stampChangeState,
-	const std::function<void(void)> tackleChangeState
+	const std::function<void(void)> MoveChangeState,
+	const std::function<void(void)> KickDownChangeState,
+	const std::function<void(void)> StraightChangeState,
+	const std::function<void(void)> StampChangeState
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), angle(angle),
@@ -23,10 +23,10 @@ GrapeBossIdleState::GrapeBossIdleState(
 	GetTarget(GetTarget),
 	PlayIdleAnim(PlayIdleAnim),
 	PlayWalkAnim(PlayWalkAnim),
-	moveChangeState(moveChangeState),
-	headbuttChangeState(headbuttChangeState),
-	stampChangeState(stampChangeState),
-	tackleChangeState(tackleChangeState)
+	MoveChangeState(MoveChangeState),
+	KickDownChangeState(KickDownChangeState),
+	StraightChangeState(StraightChangeState),
+	StampChangeState(StampChangeState)
 {
 }
 
@@ -88,10 +88,25 @@ void GrapeBossIdleState::Update(void)
 		}
 		return;
 	}
+
 	float distance = (*playerPos.at(target) - pos).Length();
 	int luck = GetRand(10000);
 
-	headbuttChangeState();
+	if (luck <= 4000) {
+		if (distance <= 350.0f) {
+			KickDownChangeState();
+		}
+		else {
+			MoveChangeState();
+		}
+	}
+	else if (luck <= 8000) {
+
+		StraightChangeState();
+	}
+	else {
+		StampChangeState();
+	}
 }
 
 void GrapeBossIdleState::Exit(void)

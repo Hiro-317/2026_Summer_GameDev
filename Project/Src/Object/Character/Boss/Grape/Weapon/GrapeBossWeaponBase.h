@@ -74,11 +74,6 @@ public:
 	void SetViewScaleCircle(float scale) { collFront.scale = Vector3(scale); };
 	void SetViewPosCircle(void) { collBack.pos = trans.pos; collFront.pos = trans.pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT + 1.0f; };
 
-	// ó\ë™ê¸ÇÃê›íË(íºê¸)
-	void SetViewScaleLine(float scale) { collFront.scale = Vector3::Xonly(scale); };
-	void SetViewPosLine(Vector3 pos) { collBack.pos = pos; collFront.pos = pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT + 1.0f; };
-	void SetViewAngleLine(Vector3 angle) { collBack.angle = angle; collFront.angle = angle; };
-
 protected:
 
 	// äÓñ{

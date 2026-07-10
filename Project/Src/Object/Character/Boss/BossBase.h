@@ -20,7 +20,8 @@ public:
 
 		std::string modelPath,
 
-		const std::vector<const Vector3*> playerPos
+		const std::vector<const Vector3*> playerPos,
+		const std::vector<const bool*> playerlive
 	);
 
 	~BossBase()override = default;
@@ -55,6 +56,7 @@ private:
 	void CharacterLoad(void)override;
 	void CharacterInit(void)override;
 	void CharacterUpdate(void)override;
+	void CharacterRemoteUpdate()override;
 	void CharacterDraw(void)override;
 	void CharacterAlphaDraw(void)override;
 	void CharacterUiDraw(void)override;
@@ -157,6 +159,12 @@ protected:
 
 	// プレイヤーの座標の参照(読み取り専用)
 	const std::vector<const Vector3*> playerPos;
+
+	// プレイヤーの生存判定の参照(読み取り専用)
+	const std::vector<const bool*> playerLive;
+
+	// プレイヤーの現在の生存判定保持
+	std::vector<bool> nowLive;
 
 	// コライダーの当たり判定描画のパラメーター
 	ParameterLoad* collParam;

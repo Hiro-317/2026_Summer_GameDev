@@ -2,6 +2,7 @@
 
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
+#include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Scene/Game/GameScene.h"
 
 #include "../../UI/HitUI/HitUI.h"
@@ -20,7 +21,8 @@ BossBase::BossBase(
 
 	std::string modelPath,
 
-	const std::vector<const Vector3*> playerPos
+	const std::vector<const Vector3*> playerPos,
+	const std::vector<const bool*> playerLive
 ) :
 	CharacterBase(
 		"Parameter",
@@ -30,7 +32,8 @@ BossBase::BossBase(
 		moveSpeedParameterID,
 		parameterPath),
 	
-	playerPos(playerPos)
+	playerPos(playerPos),
+	playerLive(playerLive)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 
@@ -43,6 +46,10 @@ BossBase::BossBase(
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 		damaged.emplace_back(0);
+	}
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		nowLive.emplace_back(true);
 	}
 	mostDamaged = 0;
 }
@@ -116,6 +123,35 @@ void BossBase::CharacterUpdate(void)
 		ChangeState((int)STATE::DEATH);
 	}
 
+	// プレイヤーの生存判定をする
+	for (int i = 0; i < playerLive.size(); i++) {
+		// 今死んだ場合
+		if (!playerLive.at(i) && nowLive.at(i)) {
+			// 生きているを消す
+			nowLive[i] = false;
+
+			// 最大ダメージの再判定
+			mostDamaged = 0;
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
+				if (mostDamaged < damaged.at(id)) {
+					mostDamaged = damaged.at(id);
+					targetNum = id;
+				}
+			}
+			// 死んだ奴とターゲットが同じならずらす
+			if (targetNum == i) {
+				for (int j = 0; j < playerLive.size(); j++) {
+					if (nowLive.at(j)) {
+						targetNum = j;
+						break;
+					}
+				}
+			}
+		}
+	}
+
 #ifdef _DEBUG		// クールタイム用
 	if (CheckHitKey(KEY_INPUT_0)) {
 		short damage = 10;
@@ -128,6 +164,11 @@ void BossBase::CharacterUpdate(void)
 		SetDynamicFlg(false);
 	}
 #endif // _DEBUG
+}
+
+void BossBase::CharacterRemoteUpdate()
+{
+	for (ActorBase*& c : subObjArray) { c->Update(); }
 }
 
 void BossBase::CharacterDraw(void)
@@ -187,6 +228,7 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			// 与ダメの最大値を探す
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
 				if (mostDamaged < damaged.at(id)) {
 					mostDamaged = damaged.at(id);
 					targetNum = id;
@@ -194,9 +236,17 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			}
 			Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
 
-			// クリティカルなら揺らす
-			if (isClitical) {
-				GameScene::Shake(ShakeKinds::HIG, ShakeSize::SMALL, 10);
+			// ホスト時の演出
+			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
+				// クリティカルなら揺らしクリティカル音を出す
+				if (isClitical) {
+					GameScene::Shake(ShakeKinds::HIG, ShakeSize::SMALL, 10);
+					Snd::GetIns().Play("CriticalDamaged");
+				}
+				// 違うなら普通にダメージ音
+				else {
+					Snd::GetIns().Play("Damaged");
+				}
 			}
 			GameScene::HitStop(4);
 			SetInviCounter(150);
@@ -261,8 +311,14 @@ void BossBase::ReceptionUpdate(void)
 
 		if (dataPtr->header.senderId == Net::GetIns().GetSenderId()) {
 			SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
+			// クリティカルなら揺らしクリティカル音
 			if (dataPtr->clitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+				Snd::GetIns().Play("CriticalDamaged");
+			}
+			// 違うなら普通にダメージ音
+			else {
+				Snd::GetIns().Play("Damaged");
 			}
 			GameScene::HitStop(4);
 			SetInviCounter(150);

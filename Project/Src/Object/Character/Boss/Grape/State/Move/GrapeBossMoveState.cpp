@@ -8,15 +8,15 @@ GrapeBossMoveState::GrapeBossMoveState(
 	float MOVE_SPEED,
 	Vector3& pos, Vector3& angle, const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> GetTarget,
-	const std::function<void(void)> ResetAngle,
-	const std::function<void(void)> headbuttChangeState
+	const std::function<void(void)> PlayRunAnime,
+	const std::function<void(void)> KickDownChangeState
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED),
 	pos(pos), angle(angle), playerPos(playerPos),
 	GetTarget(GetTarget),
-	ResetAngle(ResetAngle),
-	headbuttChangeState(headbuttChangeState)
+	PlayRunAnime(PlayRunAnime),
+	KickDownChangeState(KickDownChangeState)
 {
 	
 }
@@ -24,6 +24,7 @@ GrapeBossMoveState::GrapeBossMoveState(
 void GrapeBossMoveState::Enter(void)
 {
 	target = GetTarget();
+	PlayRunAnime();
 }
 
 void GrapeBossMoveState::Update(void)
@@ -36,7 +37,7 @@ void GrapeBossMoveState::Update(void)
 	pos += moveDir * MOVE_SPEED;
 
 	if ((*playerPos.at(target) - pos).Length() <= 350.0f) {
-		headbuttChangeState();
+		KickDownChangeState();
 	}
 }
 

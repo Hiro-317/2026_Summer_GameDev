@@ -27,6 +27,9 @@ void GrapeStampCollOperator::Load(void)
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
 	SetJudge(false);
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
 
 	collBack.Load("Range/CircleRangeBack");
 	collFront.Load("Range/CircleRangeFront");
@@ -42,8 +45,8 @@ void GrapeStampCollOperator::Load(void)
 
 void GrapeStampCollOperator::SubUpdate(void)
 {
-	collBack.pos = Vector3(trans.pos.x, Vector3::Yonly(HEIGHT).y, trans.pos.z);
-	collFront.pos = Vector3(trans.pos.x, Vector3::Yonly(HEIGHT + 1.0f).y, trans.pos.z);
+	collBack.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
+	collFront.pos = Vector3(trans.pos.x, HEIGHT + 1.0f, trans.pos.z);
 }
 
 void GrapeStampCollOperator::SubAlphaDraw(void)

@@ -321,6 +321,7 @@ private:
 		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAnimeType: { MsgDataRecv<MsgDataBossAnimeType>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossBombInform: { MsgDataRecv<MsgDataBossBombInform>(event, headerData->senderId); break; }
 		}
 
 		// パケットの解放
@@ -415,6 +416,7 @@ private:
 					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
+					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
 					}
 				}
 				msgData[dataType][senderId].clear();
