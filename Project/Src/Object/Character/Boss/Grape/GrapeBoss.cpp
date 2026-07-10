@@ -6,6 +6,7 @@
 #include "../../../../Manager/Font/FontManager.h"
 
 #include "Weapon/GrapeBossWeaponManager.h"
+#include "Weapon/Straight/GrapeBossStraight.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -41,9 +42,6 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos) :
 {
 
 	coolTime = 120;
-
-	this->operatorSenderId = Net::HOST_SENDER_ID;
-	isOwnOperator = true;
 }
 
 void GrapeBoss::PlayerLoad(void)
@@ -120,20 +118,19 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
 			[&]() { return targetNum; },
-			// 角度を戻す
-			[&]() { trans.angle.x = 0; },
+			[&]() { AnimePlay((int)ANIME_TYPE::RUN, true); },
 			// 移動後攻撃に状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_A); }
 		)
 	);
 
 	AddState(
-		static_cast<int>(STATE::ATTACK_C),
+		static_cast<int>(STATE::ATTACK_A),
 		new GrapeBossKickDownState(
 			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
+			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
 			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
+			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// 自分の座標と角度
 			trans.pos, trans.angle, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
@@ -147,7 +144,8 @@ void GrapeBoss::PlayerLoad(void)
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::IDLE); }
+			[&]() { ChangeState((int)STATE::IDLE); },
+			[&]() { coolTime = 120; }
 		)
 	);
 	AddState(
@@ -172,16 +170,17 @@ void GrapeBoss::PlayerLoad(void)
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::IDLE); }
+			[&]() { ChangeState((int)STATE::IDLE); },
+			[&]() { coolTime = 100; }
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_A),
+		static_cast<int>(STATE::ATTACK_C),
 		new GrapeBossStampState(
 			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
+			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
 			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
+			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 自分の座標と角度
 			trans.pos, trans.angle, isGround,
 			// 攻撃の種類の情報
@@ -208,7 +207,7 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::IDLE); },
 			[&]() { SetJudge(false); },
 			[&]() { SetJudge(true); },
-			[&]() { coolTime = 120; }
+			[&]() { coolTime = 180; }
 		)
 	);
 
@@ -249,4 +248,110 @@ void GrapeBoss::PlayerLoad(void)
 	ui_ArrayIns.emplace_back(new HitUI());
 #pragma endregion
 
+}
+
+void GrapeBoss::ReceptionUpdate(void)
+{
+	BossBase::ReceptionUpdate();
+
+	// エリアの同期
+	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(operatorSenderId)) {
+
+		// 受け取ったステートの描画
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
+		{
+			SubObjSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale.x);
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
+		{
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
+		{
+			SubObjSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale.x);
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
+	}
+	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(operatorSenderId)) {
+
+		// 受け取ったステートの描画
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
+		{
+			SubObjSerch<GrapeKickDownCollOperator>()->SetDrawArea(dataPtr->flg);
+			break;
+		}
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
+		{
+			break;
+		}
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
+		{
+			SubObjSerch<GrapeStampCollOperator>()->SetDrawArea(dataPtr->flg);
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
+	}
+	while (MsgDataBossBombInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossBombInform>(operatorSenderId)) {
+
+		// 受け取ったボムの起動
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossBombInform::INFORM_TYPE::Straight:
+		{
+			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight)[dataPtr->index];
+			weapon.weaponIns->SetStartPos(dataPtr->pos);
+			dynamic_cast<GrapeBossStraight*>(weapon.weaponIns)->SetStartDir(dataPtr->moveDir);
+			weapon.live = true;
+			break;
+		}
+		case MsgDataBossBombInform::INFORM_TYPE::KickBomb:
+		{
+			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb)[dataPtr->index];
+			weapon.weaponIns->SetStartPos(dataPtr->pos);
+			weapon.weaponIns->SetViewPosCircle();
+			weapon.live = true;
+			break;
+		}
+		case MsgDataBossBombInform::INFORM_TYPE::StampBomb:
+		{
+			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb)[dataPtr->index];
+			weapon.weaponIns->SetStartPos(dataPtr->pos);
+			weapon.weaponIns->SetViewPosCircle();
+			weapon.live = true;
+			break;
+		}
+		case MsgDataBossBombInform::INFORM_TYPE::SingleBomb:
+		{
+			break;
+		}
+		case MsgDataBossBombInform::INFORM_TYPE::StalkerBomb:
+		{
+			break;
+		}
+		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb:
+		{
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
+	}
 }

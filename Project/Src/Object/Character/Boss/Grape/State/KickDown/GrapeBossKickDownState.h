@@ -31,7 +31,8 @@ public:
 		const std::function<void(void)> PlayAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(void)> DefaultChangeState
+		const std::function<void(void)> DefaultChangeState,
+		const std::function<void(void)> SetCoolTime
 	);
 	~GrapeBossKickDownState()override = default;
 
@@ -93,7 +94,7 @@ private:
 	
 	// ステートを抜けたあとのステート
 	const std::function<void(void)> DefaultChangeState;
-
+	const std::function<void(void)> SetCoolTime;
 #pragma endregion
 
 	// 一度だけ通すように

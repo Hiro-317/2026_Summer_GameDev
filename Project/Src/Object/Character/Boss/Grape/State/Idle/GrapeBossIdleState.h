@@ -25,10 +25,10 @@ public:
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayIdleAnim,
 		const std::function<void(void)> PlayWalkAnim,
-		const std::function<void(void)> moveChangeState,
-		const std::function<void(void)> headbuttChangeState,
-		const std::function<void(void)> stampChangeState,
-		const std::function<void(void)> tackleChangeState
+		const std::function<void(void)> MoveChangeState,
+		const std::function<void(void)> KickDownChangeState,
+		const std::function<void(void)> StraightChangeState,
+		const std::function<void(void)> StampChangeState
 	);
 	~GrapeBossIdleState()override = default;
 
@@ -66,14 +66,14 @@ private:
 	// 回転時アニメーション
 	const std::function<void(void)> PlayWalkAnim;
 
-	// 頭突きへ
-	const std::function<void(void)> headbuttChangeState;
 	// 移動へ
-	const std::function<void(void)> moveChangeState;
+	const std::function<void(void)> MoveChangeState;
+	// キックへ
+	const std::function<void(void)> KickDownChangeState;
+	// 投擲へ
+	const std::function<void(void)> StraightChangeState;
 	// スタンプへ
-	const std::function<void(void)> stampChangeState;
-	// 突進へ
-	const std::function<void(void)> tackleChangeState;
+	const std::function<void(void)> StampChangeState;
 
 #pragma endregion
 

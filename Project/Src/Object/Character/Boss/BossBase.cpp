@@ -130,6 +130,11 @@ void BossBase::CharacterUpdate(void)
 #endif // _DEBUG
 }
 
+void BossBase::CharacterRemoteUpdate()
+{
+	for (ActorBase*& c : subObjArray) { c->Update(); }
+}
+
 void BossBase::CharacterDraw(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Draw(); }

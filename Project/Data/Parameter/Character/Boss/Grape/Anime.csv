@@ -1,9 +1,9 @@
 WalkAnimeSpeed,1
-OverhandAnimeSpeed,1
 KickAnimeSpeed,1
 DownThrowAnimeSpeed,1
 JumpStartAnimeSpeed,1
 JumpingAnimeSpeed,1
 IdleAnimeSpeed,1
 RunAnimeSpeed,1
+OverhandAnimeSpeed,0.3
 StampAnimeSpeed,2

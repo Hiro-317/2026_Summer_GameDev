@@ -15,7 +15,8 @@ GrapeBossStraightState::GrapeBossStraightState(
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> DefaultChangeState
+	const std::function<void(void)> DefaultChangeState,
+	const std::function<void(void)> SetCoolTime
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), angle(angle),
@@ -25,7 +26,8 @@ GrapeBossStraightState::GrapeBossStraightState(
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState)
+	DefaultChangeState(DefaultChangeState),
+	SetCoolTime(SetCoolTime)
 {
 }
 
@@ -34,6 +36,7 @@ void GrapeBossStraightState::Enter(void)
 	target = GetTarget();
 	PlayAttackAnim();
 	first = true;
+	SetCoolTime();
 }
 
 void GrapeBossStraightState::Update(void)
@@ -54,6 +57,10 @@ void GrapeBossStraightState::Update(void)
 				ins->SetStartPos(Vector3(pos.x, HEIGHT, pos.z));
 				// 進む向きを設定（ここのためにキャスト）
 				ins->SetStartDir(Vector3(sinf(ang), 0.0f, cosf(ang)));
+
+				// 起動を通知
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::Straight, i, Vector3(pos.x, HEIGHT, pos.z), Vector3(sinf(ang), 0.0f, cosf(ang))));
+
 				// 起動
 				bombType[i].live = true;
 				ins->SetColliderFlg(true);

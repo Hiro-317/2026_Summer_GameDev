@@ -38,8 +38,8 @@ void GrapeKickDownCollOperator::Load(void)
 
 void GrapeKickDownCollOperator::SubUpdate(void)
 {
-	collBack.pos = trans.pos + Vector3::Yonly(HEIGHT);
-	collFront.pos = trans.pos + Vector3::Yonly(HEIGHT + 1.0f);
+	collBack.pos = Vector3(trans.pos.x ,HEIGHT, trans.pos.z);
+	collFront.pos = Vector3(trans.pos.x, HEIGHT + 1.0f, trans.pos.z);
 }
 
 void GrapeKickDownCollOperator::SubAlphaDraw(void)
