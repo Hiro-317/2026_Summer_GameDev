@@ -7,7 +7,7 @@
 class GamePause : public SceneBase
 {
 public:
-	GamePause(MSG_SENDER_ID operatorSenderId);
+	GamePause(MSG_SENDER_ID operatorSenderId = MSG_SENDER_ID::None);
 	~GamePause();
 
 	void Load(void)override;

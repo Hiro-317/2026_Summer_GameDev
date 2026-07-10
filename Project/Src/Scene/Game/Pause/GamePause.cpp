@@ -13,7 +13,7 @@ GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
 	nowSelect(SELECT::YES),
 
 	operatorSenderId(operatorSenderId),
-	isOperator(operatorSenderId == Net::GetIns().GetSenderId())
+	isOperator(operatorSenderId == MSG_SENDER_ID::None ? true : operatorSenderId == Net::GetIns().GetSenderId())
 {
 }
 
