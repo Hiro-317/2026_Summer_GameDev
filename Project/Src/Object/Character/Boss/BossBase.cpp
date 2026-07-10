@@ -21,7 +21,8 @@ BossBase::BossBase(
 
 	std::string modelPath,
 
-	const std::vector<const Vector3*> playerPos
+	const std::vector<const Vector3*> playerPos,
+	const std::vector<const bool*> playerLive
 ) :
 	CharacterBase(
 		"Parameter",
@@ -31,7 +32,8 @@ BossBase::BossBase(
 		moveSpeedParameterID,
 		parameterPath),
 	
-	playerPos(playerPos)
+	playerPos(playerPos),
+	playerLive(playerLive)
 {
 	trans.Load(("Charactor/" + modelPath).c_str());
 
@@ -44,6 +46,10 @@ BossBase::BossBase(
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 		damaged.emplace_back(0);
+	}
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		nowLive.emplace_back(true);
 	}
 	mostDamaged = 0;
 }
@@ -115,6 +121,35 @@ void BossBase::CharacterUpdate(void)
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
+	}
+
+	// プレイヤーの生存判定をする
+	for (int i = 0; i < playerLive.size(); i++) {
+		// 今死んだ場合
+		if (!playerLive.at(i) && nowLive.at(i)) {
+			// 生きているを消す
+			nowLive[i] = false;
+
+			// 最大ダメージの再判定
+			mostDamaged = 0;
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
+				if (mostDamaged < damaged.at(id)) {
+					mostDamaged = damaged.at(id);
+					targetNum = id;
+				}
+			}
+			// 死んだ奴とターゲットが同じならずらす
+			if (targetNum == i) {
+				for (int j = 0; j < playerLive.size(); j++) {
+					if (nowLive.at(j)) {
+						targetNum = j;
+						break;
+					}
+				}
+			}
+		}
 	}
 
 #ifdef _DEBUG		// クールタイム用
@@ -193,6 +228,7 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 			// 与ダメの最大値を探す
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
 				if (mostDamaged < damaged.at(id)) {
 					mostDamaged = damaged.at(id);
 					targetNum = id;

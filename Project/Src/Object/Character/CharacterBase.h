@@ -38,7 +38,7 @@ public:
 
 	// ステートのゲット関数
 	int GetState(void)const { return state; }
-	bool GetIsDeath(void)const { return isDeath; }
+	const bool& GetIsDeath(void)const { return isDeath; }
 	void SetIsDeath(bool flg) { isDeath = flg; }
 
 	const CharacterStats& GetCharacterStats(void)const { return characterStats; }

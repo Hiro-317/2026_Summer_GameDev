@@ -81,14 +81,20 @@ void GameScene::Load(void)
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 		pos.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
 	}
+	// Ú‘±‚³‚ê‚Ä‚¢‚éƒvƒŒƒCƒ„[”¶‘¶”»’è‚ğæ“¾‚·‚é
+	std::vector<const bool*> live;
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+		live.emplace_back(&ObjSerch<PlayerManager>()->GetPlayerIns((MSG_SENDER_ID)id)->GetIsDeath());
+	}
 
 	switch (SceneManager::GetIns().GetSelectBossType())
 	{
 	case BOSS_TYPE::Tomato:
-		ObjAdd(new TomatoBoss(pos));
+		ObjAdd(new TomatoBoss(pos, live));
 		break;
 	case BOSS_TYPE::Grape:
-		ObjAdd(new GrapeBoss(pos));
+		ObjAdd(new GrapeBoss(pos, live));
 		break;
 	default:
 		break;
