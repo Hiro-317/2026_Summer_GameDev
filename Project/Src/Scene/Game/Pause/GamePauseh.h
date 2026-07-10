@@ -2,10 +2,12 @@
 
 #include"../../SceneBase.h"
 
+#include "../../../Manager/Net/NetWorkDefine.h"
+
 class GamePause : public SceneBase
 {
 public:
-	GamePause();
+	GamePause(MSG_SENDER_ID operatorSenderId = MSG_SENDER_ID::None);
 	~GamePause();
 
 	void Load(void)override;
@@ -18,4 +20,7 @@ private:
 	enum class SELECT { YES, NO, MAX };
 	SELECT nowSelect;
 	int img[(int)SELECT::MAX];
+
+	MSG_SENDER_ID operatorSenderId;
+	bool isOperator;
 };

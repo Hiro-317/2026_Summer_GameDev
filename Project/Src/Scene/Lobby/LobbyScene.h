@@ -30,6 +30,7 @@ private:
 
 		Exit,			// タイトルに戻る
 		Multi,			// マルチプレイ
+		BossChange,		// ボスセレクト
 		CharaChange,	// キャラチェンジ
 		Enter,			// 出撃
 
@@ -43,6 +44,7 @@ private:
 	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
 		"LobbyExit",		// タイトルに戻る
 		"LobbyMulti",		// マルチプレイ
+		"LobbyBossChange",	// ボスセレクト
 		"LobbyCharaChange",	// キャラチェンジ
 		"LobbyEnter",		// 出撃
 	};
@@ -54,7 +56,8 @@ private:
 	// ボタンの画像の位置
 	const Vector2I CHOICE_BUTTON_POS[(int)CHOICE::Max] = {
 		{ 100, App::GetIns().SCREEN_SIZE_Y - 100 },									// タイトルに戻る
-		{ App::GetIns().SCREEN_SIZE_X - 500, App::GetIns().SCREEN_SIZE_Y - 100 },	// マルチプレイ
+		{ App::GetIns().SCREEN_SIZE_X - 700, App::GetIns().SCREEN_SIZE_Y - 100 },	// マルチプレイ
+		{ App::GetIns().SCREEN_SIZE_X - 500, App::GetIns().SCREEN_SIZE_Y - 100 },	// ボスセレクト
 		{ App::GetIns().SCREEN_SIZE_X - 300, App::GetIns().SCREEN_SIZE_Y - 100 },	// キャラチェンジ
 		{ App::GetIns().SCREEN_SIZE_X - 100, App::GetIns().SCREEN_SIZE_Y - 100 },	// 出撃
 	};

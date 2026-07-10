@@ -1,15 +1,19 @@
-#include"GamePauseh.h"
+#include "GamePauseh.h"
 
-#include"../../../Utility/Utility.h"
+#include "../../../Utility/Utility.h"
 
-#include"../../../Application/Application.h"
-#include"../../SceneManager/SceneManager.h"
-#include"../../../Manager/Input/KeyManager.h"
-#include"../../../Manager/Sound/SoundManager.h"
+#include "../../../Application/Application.h"
+#include "../../SceneManager/SceneManager.h"
+#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Sound/SoundManager.h"
+#include "../../../Manager/Net/NetWorkManager.h"
 
-GamePause::GamePause() :
+GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
 	img(),
-	nowSelect(SELECT::YES)
+	nowSelect(SELECT::YES),
+
+	operatorSenderId(operatorSenderId),
+	isOperator(operatorSenderId == MSG_SENDER_ID::None ? true : operatorSenderId == Net::GetIns().GetSenderId())
 {
 }
 
@@ -32,31 +36,52 @@ void GamePause::Init(void)
 
 void GamePause::Update(void)
 {
-	switch (nowSelect)
-	{
-	case GamePause::SELECT::YES:
-		if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) { nowSelect = GamePause::SELECT::NO; Snd::GetIns().Play("SystemSelect"); }
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			Snd::GetIns().Play("SystemButton");
-			SceneManager::GetIns().JumpSceneFade(SCENE_ID::TITLE);
-			return;
-		}
-		break;
-	case GamePause::SELECT::NO:
-		if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) { nowSelect = GamePause::SELECT::YES; Snd::GetIns().Play("SystemSelect"); }
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			Snd::GetIns().PausePlay();
+	// 自分がポーズ画面を開いたとき
+	if (isOperator) {
+
+		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+			SoundManager::GetIns().PausePlay();
 			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().PopScene();
-			Key::GetIns().SetMouseFixed(true);
 			return;
 		}
-		break;
+
+		switch (nowSelect) {
+
+		case GamePause::SELECT::YES:
+			if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+				nowSelect = GamePause::SELECT::NO; Snd::GetIns().Play("SystemSelect");
+
+			}
+
+			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+				Snd::GetIns().Play("SystemButton");
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::TITLE);
+				return;
+			}
+
+			break;
+
+		case GamePause::SELECT::NO:
+
+			if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) { nowSelect = GamePause::SELECT::YES; Snd::GetIns().Play("SystemSelect"); }
+
+			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+				Snd::GetIns().PausePlay();
+				Snd::GetIns().Play("SystemButton");
+				SceneManager::GetIns().PopScene();
+				Key::GetIns().SetMouseFixed(true);
+				return;
+			}
+
+			break;
+		}
+
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SoundManager::GetIns().PausePlay();
-		Snd::GetIns().Play("SystemButton");
-		SceneManager::GetIns().PopScene();
+	// 自分以外がポーズ画面を開いたとき(受信処理のみ)
+	else {
+
+
 	}
 }
 

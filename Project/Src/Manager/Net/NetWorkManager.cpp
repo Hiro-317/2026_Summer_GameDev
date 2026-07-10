@@ -190,6 +190,11 @@ void NetWorkManager::ConnectedUpdate(void)
                 connectInform->header.senderId = HOST_SENDER_ID;
                 msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(connectInform);
 
+                for (auto it = connectInfo.begin(); it != connectInfo.end(); it++) {
+                    // 接続情報を消去
+                    if (it->peer == event.peer) { connectInfo.erase(it); break; }
+                }
+
                 break;
             }
 
@@ -207,7 +212,7 @@ void NetWorkManager::DisconnectionUpdate(void)
     // イベント受信用の一時変数
     ENetEvent event;
     // 切断完了の通知を受け取るまでループして受け取ったらそのpeerを消去する（切断通知を送った側の処理）
-    while (enet_host_service(host, &event, 100) > 0) {
+    while (enet_host_service(host, &event, 0) > 0) {
         switch (event.type) {
         case ENET_EVENT_TYPE_CONNECT: { break; }
         case ENET_EVENT_TYPE_RECEIVE: { enet_packet_destroy(event.packet); break; }

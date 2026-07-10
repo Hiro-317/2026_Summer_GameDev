@@ -304,6 +304,7 @@ private:
 		case MSG_DATA_TYPE::SenderId: { MsgDataSenderIdRecv(event); break; }
 		case MSG_DATA_TYPE::ConnectStatus: { MsgDataConnectStatusRecv(event); break; }
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossSelect: { MsgDataRecv<MsgDataBossSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::CharaSelect: { MsgDataRecv<MsgDataCharaSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::ClientReady: { MsgDataRecv<MsgDataClientReady>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerTrans: { MsgDataRecv<MsgDataPlayerTrans>(event, headerData->senderId); break; }
@@ -328,6 +329,14 @@ private:
 	// データのポインタを配列へ格納する関数
 	template <typename DataType>
 	void MsgDataRecv(const ENetEvent& event, MSG_SENDER_ID senderId)	{
+
+		// 受信データのサイズが構造体のサイズと一致しない場合は破棄する
+		if (event.packet->dataLength != sizeof(DataType)) {
+			enet_packet_destroy(event.packet);
+			return;
+		}
+
+		// 受信データをコピーして配列に格納する
 		DataType* newData = new DataType();
 		memcpy(newData, event.packet->data, sizeof(DataType));
 		msgData[(int)DataType::DATA_TYPE][(int)senderId].emplace_back(newData);
@@ -383,17 +392,27 @@ private:
 				for (void* ptr : msgData[dataType][senderId]) {
 					if (!ptr) { continue; }
 					switch ((MSG_DATA_TYPE)dataType) {
+					case MSG_DATA_TYPE::None: { delete ptr; break; }
+					case MSG_DATA_TYPE::ConnectInform: { delete static_cast<MsgDataConnectInform*>(ptr); break; }
+					case MSG_DATA_TYPE::SenderId: { delete static_cast<MsgDataSenderId*>(ptr); break; }
+					case MSG_DATA_TYPE::ConnectStatus: { delete static_cast<MsgDataConnectStatus*>(ptr); break; }
 					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
+					case MSG_DATA_TYPE::BossSelect: { delete static_cast<MsgDataBossSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::CharaSelect: { delete static_cast<MsgDataCharaSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::ClientReady: { delete static_cast<MsgDataClientReady*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerTrans: { delete static_cast<MsgDataPlayerTrans*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHp: { delete static_cast<MsgDataPlayerHp*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
+					case MSG_DATA_TYPE::BossTrans: { delete static_cast<MsgDataBossTrans*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAttackDraw: { delete static_cast<MsgDataBossAttackDraw*>(ptr); break; }
+					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
+					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
 					}
 				}
 				msgData[dataType][senderId].clear();

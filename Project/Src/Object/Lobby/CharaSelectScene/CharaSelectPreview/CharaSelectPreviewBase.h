@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../Manager/Net/NetWorkDefine.h"
+#include "../../../../Manager/Net/NetWorkDefine.h"
 
-#include "../../ActorBase.h"
+#include "../../../ActorBase.h"
 
 class AnimationController;
 class InstantCamera;
