@@ -1,8 +1,8 @@
 SystemButton,Data/Sound/Se/All/Button.mp3,All,SE,0.5,False,2
 SystemSelect,Data/Sound/Se/All/Select.mp3,All,SE,0.4,False,2
 HURUHATA,Data/Sound/BGM/BGM.m4a,Title,BGM,0.5,True,1
-Battle,Data/Sound/BGM/Battle.mp3,Game,BGM,0.75,True,1
-CriticalDamaged,Data/Sound/Se/Game/Boss/CriticalDamaged.mp3,Game,SE,0.65,False,4
+Battle,Data/Sound/BGM/Battle.mp3,Game,BGM,0.55,True,1
+CriticalDamaged,Data/Sound/Se/Game/Boss/CriticalDamaged.mp3,Game,SE,0.7,False,4
 Damaged,Data/Sound/Se/Game/Damaged.mp3,Game,SE,0.5,False,8
 Headbutt,Data/Sound/Se/Game/Boss/Tomato/Headbutt.mp3,Game,SE,0.5,False,1
 PlayerSimpleAttack,Data/Sound/Se/Game/Player/PlayerSimpleAttack.mp3,Game,SE,0.5,False,1
