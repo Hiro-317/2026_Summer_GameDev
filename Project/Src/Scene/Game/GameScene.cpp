@@ -118,6 +118,8 @@ void GameScene::Init(void)
 		Vector3::YZonly(250, -550), Deg2Rad(4.0f)
 	);
 	focusFlg = false;
+
+	SoundManager::GetIns().Play("Battle");
 	//Camera::GetIns().ChangeModeFree(Deg2Rad(5.0f), 10.0f);
 }
 

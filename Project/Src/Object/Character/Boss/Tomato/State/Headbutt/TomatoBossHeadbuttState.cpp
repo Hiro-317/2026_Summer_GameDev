@@ -53,7 +53,7 @@ void TomatoBossHeadbuttState::Update(void)
 		return;
 	}
 	if (time == 0) {
-		SoundManager::GetIns().Play("Wahoo");
+		SoundManager::GetIns().Play("Headbutt");
 		if (Net::GetIns().IsHost()) {
 			collOperator->CollSet(true);
 		}
