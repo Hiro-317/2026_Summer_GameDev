@@ -41,6 +41,7 @@ void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& oth
 	if (ownTag == COLLIDER_TAG::BOSS_ATTACK_AREA) {
 
 		end = true;
+		SetJudge(false);
 	}
 }
 

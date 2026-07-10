@@ -2,11 +2,12 @@
 
 #include "../../../../CharacterStateBase.h"
 
+#include "GrapeKickDownCollOperator.h"
 #include "../../Weapon/GrapeBossWeaponManager.h"
 
 #include "../../../../../../Common/Vector3.h"
 
-class GrapeBossStraightState : public CharacterStateBase
+class GrapeBossKickDownState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -14,28 +15,25 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angel">角度の参照</param>
 	/// <param name="bombType">攻撃種のクラス取得</param>
-	/// <param name="playerPos">プレイヤーの座標取得</param>
-	/// <param name="GetTarget">プレイヤーの標的番号</param>
+	/// <param name="model">モデルの取得</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
-	GrapeBossStraightState(
+	GrapeBossKickDownState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle,
+		Vector3& pos, Vector3& angle, const Vector3 LOCAL_ROT,
 		BombType* bombType,
-		const std::vector<const Vector3*>playerPos,
-		const std::function<int(void)> GetTarget,
+		const Vector3& MODEL_SCALE,
+		GrapeKickDownCollOperator* collOperator,
 		const std::function<void(void)> PlayAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> DefaultChangeState
 	);
-	~GrapeBossStraightState()override = default;
+	~GrapeBossKickDownState()override = default;
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -50,8 +48,23 @@ public:
 private:
 #pragma region 定数定義
 
-	// 弾の高さ
-	static constexpr float HEIGHT = 150.0f;
+	// 爆弾の発生高さ
+	static constexpr float HEIGHT = 1000.0f;
+
+	// 爆弾のランダム発生距離
+	static constexpr int RADIUS = 300;
+
+	// 攻撃の発生持続時間
+	static constexpr int ATTACK_DURATION = 5;
+
+	// 予測線用のローカル座標
+	const Vector3 FOOT_VIEW_POS = Vector3(-23.16f, 0.0f, -85.34f);
+
+	// モデルのローカル回転
+	const Vector3 LOCAL_ROT;
+
+	// モデルのスケール
+	const Vector3& MODEL_SCALE;
 
 #pragma endregion
 
@@ -62,15 +75,12 @@ private:
 
 	// 角度の参照
 	Vector3& angle;
-
+	
 	// ボムの参照
 	BombType* bombType;
 
-	// プレイヤーの座標の読み取り
-	const std::vector<const Vector3*> playerPos;
-
-	// プレイヤーの標的番号
-	const std::function<int(void)> GetTarget;
+	// コライダーのオペレーターのポインター
+	GrapeKickDownCollOperator* collOperator;
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> PlayAttackAnim;
@@ -89,6 +99,9 @@ private:
 	// 一度だけ通すように
 	bool first;
 
-	// プレイヤーターゲット
-	int target;
+	// 攻撃持続のカウント
+	int cnt;
+
+	// 予測線描画座標
+	Vector3 viewPos;
 };

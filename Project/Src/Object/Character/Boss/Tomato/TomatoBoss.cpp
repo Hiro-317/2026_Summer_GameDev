@@ -173,7 +173,7 @@ void TomatoBoss::PlayerLoad(void)
 			// コリジョンオペレーターの参照私
 			SubObjSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り、プレイヤーの座標の読み取り
-			trans.pos, isGround, playerPos,
+			trans.pos, trans.angle, isGround, playerPos,
 			// 最与ダメプレイヤーをターゲットにする
 			[&]() { return targetNum; },
 			// 攻撃終了後の状態遷移関数のポインタ

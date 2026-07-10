@@ -22,8 +22,6 @@ public:
 		return ret;
 	}
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
-
 private:
 
 #pragma region ’è”’è‹`

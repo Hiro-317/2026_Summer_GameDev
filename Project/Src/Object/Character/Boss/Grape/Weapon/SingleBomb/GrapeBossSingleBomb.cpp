@@ -24,6 +24,8 @@ GrapeBossSingleBomb::GrapeBossSingleBomb(int model)
 	);
 
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+	SetGravityFlg(true);
+	count = 0;
 }
 
 void GrapeBossSingleBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
@@ -45,18 +47,19 @@ void GrapeBossSingleBomb::SubUpdate(void)
 	else {
 		count++;
 		// カウントに応じて状態を変える
-		if (BOMBER_COUNT <= count) {
+		if (BOMBER_COUNT >= count) {
 
 			SetViewScaleCircle(ATTACK_RANGE * (BOMBER_COUNT / count));
 		}
 		// 攻撃判定オン
-		else if ((BOMBER_COUNT + ATTACK_DURATION) <= count) {
+		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
 			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
 		}
 		//攻撃判定オフ、終わり
 		else {
 			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 			end = true;
+			count = 0;
 		}
 	}
 }

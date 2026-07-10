@@ -24,7 +24,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
-		Vector3& pos, const bool& isGround, 
+		Vector3& pos, Vector3& angle, const bool& isGround,
 		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DefaultChangeState,
@@ -68,11 +68,8 @@ private:
 	// 座標の参照
 	Vector3& pos;
 
-	// 直前の座標
-	float prevPos;
-
-	// プレイヤーターゲット
-	int target;
+	// 角度の参照
+	Vector3& angle;
 
 	// 設置判定の読み取り
 	const bool& isGround;
@@ -114,4 +111,11 @@ private:
 
 	// 攻撃中かフラグ
 	bool isAttack;
+
+	// プレイヤーターゲット
+	int target;
+
+	// 直前の座標
+	float prevPos;
+
 };

@@ -38,12 +38,12 @@ void GrapeBossStraightState::Enter(void)
 
 void GrapeBossStraightState::Update(void)
 {
-	// 正面から30度ずらした一発目
-	float ang = angle.y - Deg2Rad(30.0f);
-
 	// アニメーションの再生割合で生成
 	if (first) {
 		if (GetAnimPlayRatio() >= 0.3f) {
+			// 正面から30度ずらした一発目
+			float ang = angle.y - Deg2Rad(30.0f);
+
 			// 生成数まで回す
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::Straight]; i++) {
 

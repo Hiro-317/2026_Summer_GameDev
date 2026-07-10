@@ -2,6 +2,8 @@
 #include "GrapeBossWeaponBase.h"
 
 #include "Straight/GrapeBossStraight.h"
+#include "KickBomb/GrapeBossKickBomb.h"
+#include "StampBomb/GrapeBossStampBomb.h"
 
 
 class GrapeBossWeaponFactory {
@@ -27,12 +29,12 @@ public:
 		}
 		case WeaponType::KickBomb:
 		{
-			res.weaponIns = new GrapeBossStraight(model);
+			res.weaponIns = new GrapeBossKickBomb(model);
 			break;
 		}
 		case WeaponType::StampBomb:
 		{
-			res.weaponIns = new GrapeBossStraight(model);
+			res.weaponIns = new GrapeBossStampBomb(model);
 			break;
 		}
 		case WeaponType::SingleBomb:

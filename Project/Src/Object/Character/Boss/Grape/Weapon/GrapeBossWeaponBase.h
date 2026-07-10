@@ -97,7 +97,7 @@ protected:
 private:
 #pragma region ’è”’è‹`
 
-	static constexpr float VIEW_HEIGHT = 1.0f;
+	static constexpr float VIEW_HEIGHT = 37.0f;
 
 #pragma endregion
 };
