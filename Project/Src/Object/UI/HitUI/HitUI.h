@@ -13,7 +13,7 @@ class HitUI : public UI_Base
 {
 public:
 
-    HitUI();                // コンストラクタ
+    HitUI(Vector3& targetPos);                // コンストラクタ
     ~HitUI() override;      // デストラクタ
 
     void Load(void) override;       // ロード
@@ -38,6 +38,8 @@ private:
     static constexpr float DAMAGE_UI_BOUNCE_START_TIME = DAMAGE_UI_ALIVE_TIME / 3;
     static constexpr float DAMAGE_UI_BOUNCE_TIME = DAMAGE_UI_ALIVE_TIME - DAMAGE_UI_BOUNCE_START_TIME;
     static constexpr float DAMAGE_UI_BOUNCE_POWER = 12.0f;
+
+	const Vector3& targetPos;  // 描画する対象の座標
     
     // ダメージ描画用構造体
     struct AddDamageUiInfo
@@ -105,6 +107,7 @@ private:
     /// <param name="text">表示する文字の指定</param>
     /// <param name="color">表示する文字の色指定</param>
     void AddPopup(
+        const Vector2 pos,
         const std::string& text,
         int color
     );

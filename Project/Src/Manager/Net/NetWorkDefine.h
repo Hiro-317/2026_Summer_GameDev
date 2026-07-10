@@ -622,6 +622,10 @@ struct MsgDataPlayerCollOperator
         CommonPlayerTripleAttack_2,
         CommonPlayerTripleAttack_3,
         CommonPlayerSimpleAttack,
+
+        TomatoPlayerTackle,
+        TomatoPlayerHeadButt,
+        TomatoPlayerStamp,
         
         Max
     };

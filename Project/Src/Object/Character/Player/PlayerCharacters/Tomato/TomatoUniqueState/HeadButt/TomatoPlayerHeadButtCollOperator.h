@@ -1,7 +1,9 @@
 #pragma once
-#include "../../../../../../ActorBase.h"
 
-class TomatoPlayerStampCollOperator : public ActorBase
+#include "../../../../../../ActorBase.h"
+#include "../../../../../../../Manager/Net/NetWorkManager.h"
+
+class TomatoPlayerHeadButtCollOperator : public ActorBase
 {
 public:
 
@@ -14,14 +16,14 @@ public:
 	/// <param name="playerAngle">プレイヤーアングルram>
 	/// <param name="operatorSenderId"></param>
 	/// <param name="playerStats">プレイヤーのステータス情報</param>
-	TomatoPlayerStampCollOperator(
+	TomatoPlayerHeadButtCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		const short ATTACK_RATE_PERCENT,
 		const Vector3& playerPos, const Vector3& playerAngle,
 		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
 	);
-	~TomatoPlayerStampCollOperator()override = default;
+	~TomatoPlayerHeadButtCollOperator()override = default;
 
 	// ロード
 	void Load(void)override;
@@ -32,9 +34,19 @@ public:
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// 攻撃の判定を発生させる
-	void CollOn(void) { if (!isHit)SetJudge(true); }
+	void CollOn(void) { 
+		if (!isHit)SetJudge(true); 
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt));
+		}
+	}
 	// 攻撃の判定を消す
-	void CollOff(void) { SetJudge(false); }
+	void CollOff(void) {
+		SetJudge(false);
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt));
+		}
+	}
 
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }

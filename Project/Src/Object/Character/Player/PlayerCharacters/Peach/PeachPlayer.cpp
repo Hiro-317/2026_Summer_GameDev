@@ -1,0 +1,238 @@
+#include "PeachPlayer.h"
+
+#include "../../CommonPlayerState/Move/PlayerMoveState.h"
+#include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+#include "../../CommonPlayerState/Damage/PlayerDamageState.h"
+#include "../../CommonPlayerState/Death/PlayerDeathState.h"
+
+#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
+#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../../UI/HitUI/HitUI.h"
+
+PeachPlayer::PeachPlayer(MSG_SENDER_ID operatorSenderId) :
+	PlayerBase(
+		operatorSenderId,
+
+		"PeachParameter",
+		"PlayerHP",
+		"PlayerAttackPower",
+		"PlayerDefensePower",
+		"PlayerMoveSpeed",
+
+		"Data/Parameter/Character/Player/Peach/",
+		"Peach/PeachModel"
+	)
+{
+}
+
+void PeachPlayer::PlayerLoad(void)
+{
+	// 影を消す（消さなかったら、変な色になるので）
+	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
+#pragma region 下位オブジェクトの生成
+	
+	// キック用の当たり判定オペレーターを生成する
+	subObjArray.emplace_back(
+		new PlayerSimpleAttackCollOperator(
+			SKILL_2_TARGET_SERCH_RANGE,
+			SKILL_2_COLL_TAG,
+			SKILL_2_COLL_SIZE_TABLE,
+			SKILL_2_COLL_LOCAL_POS,
+			trans.pos, trans.angle,
+			SKILL_2_ATTACK_RATE_PERCENT,
+			operatorSenderId,
+			characterStats
+		)
+	);
+
+	// アニメーションコントローラーを生成する
+	CreateAnimationController();
+
+	for (int i = 0; i < (int)ANIME_TYPE::MAX; i++) {
+		AddInFbxAnimation(i, 1.0f);
+	}
+	
+#pragma endregion 
+
+#pragma region 状態設定
+
+	// 移動状態を追加する
+	AddState(
+		(int)STATE::MOVE,
+		new PlayerMoveState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::MOVE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::MOVE; },
+			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
+			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
+			// 参照（移動量 / 横軸加速度の最大値 / 角度）
+			accelSum, ACCEL_MAX, trans.angle, characterStats,
+			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
+			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
+			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
+			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
+		)
+	);
+
+	// 攻撃状態を追加する (キック)
+	AddState(
+		(int)STATE::SKILL_1,
+		new PlayerSimpleAttackState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::SKILL_1); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_1; },
+			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
+			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
+			// 当たり判定のオペレーター
+			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
+			// 座標 / 角度
+			trans.pos, trans.angle,
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::PUNCH, false); },
+			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	AddState(
+		(int)STATE::DAMAGE,
+		new PlayerDamageState(
+			// 自分の状態に関する関数
+			[&]() { ChangeState((int)STATE::DAMAGE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::DAMAGE; },
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 無敵時間のセット関数
+			[&]() { SetInviCounter(DODGE_INVI_TIME); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	// 死亡状態を追加する
+	AddState(
+		(int)STATE::DEATH,
+		new PlayerDeathState(
+			[&]() { ChangeState((int)STATE::DEATH); },
+			[&]() { return state == (int)STATE::DEATH; },
+			trans.pos, trans.angle,
+			[&]() { return IsAnimeEnd(); },
+			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			[&]() { PlayerDeathSetting(); },
+			[&]() { SetIsDeath(true); },
+			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+		)
+	);
+
+	state;
+
+	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
+	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
+		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
+		};
+
+	//// 移動状態 -> スキル1 の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
+	//// 移動状態 -> スキル2 の遷移を登録
+	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
+	//// 移動状態 -> スキル3 の遷移を登録
+	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+
+#pragma endregion 
+
+	// HPUIの座標設定
+	int number = 0;
+	if (isOwnOperator) {
+		number = 0;
+	}
+	else {
+		// 操作者だけ一番上に表示、それ以外の人のHPは下に描画
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
+			number++;
+			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+		}
+	}
+
+	// HPの登録
+	ui_ArrayIns.emplace_back(
+		new CharacterHpUI(
+			characterStats.hp,
+			characterStats.hpMax.Value(),
+			HP_FRAME_IMAGE_NAME,
+			HP_IMAGE_NAME,
+			HP_LOST_IMAGE_NAME,
+			HP_IMAGE_SIZE,
+			HP_GAUGE_OFFSET,
+			HP_UI_POS[number],
+			FILE_PATH_TYPE::PLAYER_HP,
+			"TomatoPlayer"
+		)
+	);
+
+	// このプレイヤーの操作者だけ通す
+	if (isOwnOperator)
+	{
+		// スタミナのUI登録
+		ui_ArrayIns.emplace_back(
+			new PlayerStaminaUI(
+				dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
+				DASH_STAMINA_MAX
+			)
+		);
+
+		// スキル1のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL1_UI_DRAW_POS,
+				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				SKILL_2_COOL_TIME,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				"SkillSlotSimpleAttack"
+			)
+		);
+	}
+
+	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+}
+
+void PeachPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+	if (!Net::GetIns().IsHost()) { return; }
+	if (GetInviCounter() > 0) { return; }
+	if (state == (int)STATE::DEATH) { return; }
+
+	switch (other.GetTag()) {
+	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
+		// ダメージ状態に遷移
+		ChangeState((int)STATE::DAMAGE);
+		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
+		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		// ダメージ値分HPを減らす
+		characterStats.hp -= damage;
+		break;
+	}
+	}
+}
+
+void PeachPlayer::ReceptionUpdate(void)
+{
+	PlayerBase::ReceptionUpdate();
+}
+
+void PeachPlayer::SendUpdate(void)
+{
+	PlayerBase::SendUpdate();
+}

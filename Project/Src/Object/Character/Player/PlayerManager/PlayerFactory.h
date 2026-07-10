@@ -1,6 +1,7 @@
 #pragma once
 #include "../PlayerCharacters/Orange/OrangePlayer.h"
 #include "../PlayerCharacters/Tomato/TomatoPlayer.h"
+#include "../PlayerCharacters/Peach/PeachPlayer.h"
 
 #include "../../../CharaTypeDefine.h"
 #include "../../../../Scene/SceneManager/SceneManager.h"

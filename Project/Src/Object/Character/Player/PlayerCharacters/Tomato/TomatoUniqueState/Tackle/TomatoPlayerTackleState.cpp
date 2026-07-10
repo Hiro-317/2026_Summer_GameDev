@@ -124,6 +124,9 @@ void TomatoPlayerTackleState::Exit(void)
 	// スキルのクールタイムをセット
 	coolTimeCounter = COOL_TIME;
 	chargeCounter = 0;
+
+	// チャージ攻撃のバフを削除
+	ChargeAttackBuffDelete();
 }
 
 void TomatoPlayerTackleState::AlwaysUpdate(void)

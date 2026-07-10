@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../../ActorBase.h"
+#include "../../../../../Manager/Net/NetWorkManager.h"
 
 class PlayerSimpleAttackCollOperator : public ActorBase
 {
@@ -45,10 +46,20 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚é
-	void CollOn(void) { if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true); }
+	void CollOn(void) { 
+		if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+		}
+	}
 
 	// UŒ‚‚Ì”»’è‚ğÁ‚·
-	void CollOff(void) { ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false); }
+	void CollOff(void) { 
+		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false); 
+		if (!Net::GetIns().IsHost()) {
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+		}
+	}
 
 	// UŒ‚‘ÎÛ‚ğƒŠƒZƒbƒg‚·‚é
 	void ResetTarget(void) { isFindAttackTarget = false; targetPos = nullptr; }
