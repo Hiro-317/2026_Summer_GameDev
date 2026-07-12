@@ -54,12 +54,14 @@ void GrapeBossStraightState::Update(void)
 				auto ins = dynamic_cast<GrapeBossStraight*>(bombType[i].weaponIns);
 
 				// スタート位置の設定
-				ins->SetStartPos(Vector3(pos.x, HEIGHT, pos.z));
+				Vector3 tmpPos = Vector3(pos.x, HEIGHT, pos.z);
+				ins->SetStartPos(tmpPos);
 				// 進む向きを設定（ここのためにキャスト）
-				ins->SetStartDir(Vector3(sinf(ang), 0.0f, cosf(ang)));
+				Vector3 tmpAng = Vector3(sinf(ang), 0.0f, cosf(ang));
+				ins->SetStartDir(tmpAng);
 
 				// 起動を通知
-				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::Straight, i, Vector3(pos.x, HEIGHT, pos.z), Vector3(sinf(ang), 0.0f, cosf(ang))));
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::Straight, i, tmpPos, tmpAng));
 
 				// 起動
 				bombType[i].live = true;

@@ -45,7 +45,6 @@
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
     <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Manager\Net\Enet\callbacks.c" />
     <ClCompile Include="Src\Manager\Net\Enet\compress.c" />
     <ClCompile Include="Src\Manager\Net\Enet\host.c" />
@@ -71,7 +70,6 @@
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
-    <ClCompile Include="Src\Object\CharaSelect\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\UI\HitUI\HitUI.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
@@ -90,14 +88,6 @@
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Move\TomatoPlayerMoveState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Damage\TomatoPlayerDamageState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Stamp\TomatoPlayerStampState.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\UniqueState\Stamp\TomatoPlayerStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeBossKickDownState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeKickDownCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.cpp" />
@@ -114,6 +104,11 @@
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Peach\PeachPlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.cpp" />
+    <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
+    <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
+    <ClCompile Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\BossSelect\BossSelectScene.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Single\GrapeBossSingleState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -252,8 +247,6 @@
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\CharaSelectPreviewBase.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Move\TomatoBossMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoBossTackleState.h" />
@@ -277,15 +270,12 @@
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
     <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\UI\HitUI\HitUI.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\UI\UIDefine.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
-    <ClInclude Include="Src\Object\CharaSelect\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Tomato\LobbyCharaPreviewTomato.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\GrapeBoss.h" />
     <ClInclude Include="Src\Object\Character\Boss\BossBase.h" />
@@ -310,6 +300,22 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeBossKickDownState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeKickDownCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stamp\GrapeBossStampState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stamp\GrapeStampCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Peach\PeachPlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.h" />
+    <ClInclude Include="Src\Scene\Lobby\BossSelect\BossSelectScene.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Single\GrapeBossSingleState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

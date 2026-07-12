@@ -19,6 +19,7 @@
 #include "State/Straight/GrapeBossStraightState.h"
 #include "State/Stamp/GrapeBossStampState.h"
 #include "State/Stamp/GrapeStampCollOperator.h"
+#include "State/Single/GrapeBossSingleState.h"
 #include "State/Death/GrapeBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -207,6 +208,30 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::IDLE); },
 			[&]() { SetJudge(false); },
 			[&]() { SetJudge(true); },
+			[&]() { coolTime = 180; }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_D),
+		new GrapeBossSingleState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_D); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_D); },
+			// プレイヤーの座標と角度
+			playerPos,
+			// 攻撃の種類の情報
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
+			// プレイヤーのターゲット番号
+			[&]() { return targetNum; },
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::IDLE); },
 			[&]() { coolTime = 180; }
 		)
 	);

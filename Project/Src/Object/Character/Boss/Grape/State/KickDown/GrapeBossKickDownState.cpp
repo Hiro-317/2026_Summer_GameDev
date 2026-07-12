@@ -1,7 +1,6 @@
 #include "GrapeBossKickDownState.h"
 
 #include "../../Weapon/GrapeBossWeaponManager.h"
-#include "../../Weapon/Straight/GrapeBossStraight.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
@@ -76,11 +75,12 @@ void GrapeBossKickDownState::Update(void)
 				}
 
 				// スタート位置の設定
-				bombType[i].weaponIns->SetStartPos(Vector3(pos.x + posX, HEIGHT, pos.z + posZ));
+				Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
+				bombType[i].weaponIns->SetStartPos(tmpPos);
 				bombType[i].weaponIns->SetViewPosCircle();
 				
 				// 起動を通知
-				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, Vector3(pos.x + posX, HEIGHT, pos.z + posZ)));
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, tmpPos));
 
 				// 起動
 				bombType[i].live = true;
