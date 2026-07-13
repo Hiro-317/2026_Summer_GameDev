@@ -83,6 +83,7 @@ private:
 		// プレイヤー系にだけ当たるコライダー
 		{ COLLIDER_TAG::TOMATO_BOSS_DISTANCE,	COLLIDER_GROUP::PlayerOnly },
 		{ COLLIDER_TAG::BOSS_ATTACK,			COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::PLAYER_HEAL,			COLLIDER_GROUP::PlayerOnly },
 
 		// エネミー系にだけ当たるコライダー
 

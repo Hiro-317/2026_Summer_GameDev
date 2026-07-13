@@ -83,7 +83,6 @@ void PlayerBase::CharacterLoad(void)
 		);
 	}
 
-
 #pragma region モデル
 	// モデルを読み込む
 
@@ -147,6 +146,8 @@ void PlayerBase::CharacterInit(void)
 	state = (int)STATE::MOVE;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
+
+	TargetPlayerNext();
 }
 
 void PlayerBase::CharacterUpdate(void)
@@ -257,6 +258,21 @@ void PlayerBase::AnimePlay(int type, bool loop)
 
 	CharacterBase::AnimePlay(type, loop);
 }
+void PlayerBase::TargetPlayerNext(void)
+{
+	targetPlayerIndex++;
+
+	if (targetPlayerIndex >= Net::GetIns().GetConnectStatus().EntryCount()) {
+		targetPlayerIndex = 0;
+	}
+
+	if (targetPlayerIndex == (unsigned char)MSG_SENDER_ID::P1) { targetPlayerPos = &trans.pos; }
+	else {
+		if (otherPlayerTrans.size() > targetPlayerIndex - 1) {
+			targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
+		}
+	}
+}
 void PlayerBase::ReceptionUpdate(void)
 {
 	// 座標・角度の同期
@@ -309,6 +325,11 @@ void PlayerBase::ReceptionUpdate(void)
 	// HP
 	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(operatorSenderId)) {
 		characterStats.hp = dataPtr->hp;
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(operatorSenderId)) {
+		characterStats.hp += dataPtr->heal;
 		delete dataPtr;
 	}
 

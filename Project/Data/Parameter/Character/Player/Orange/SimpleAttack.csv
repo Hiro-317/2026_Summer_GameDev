@@ -1,6 +1,6 @@
 CoolTime,240
 AttackMoveSpeed,10
-AttackRatePercent,300
+AttackRatePercent,600
 TargetSerchRange,200
 CollLocalPos,0,0,100
 CollSize,80

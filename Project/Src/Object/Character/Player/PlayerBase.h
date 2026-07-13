@@ -213,9 +213,12 @@ protected:
 	std::vector<ActorBase*> subObjArray;
 	// 抱える下位クラスを格納する配列の中から特定のオブジェクトを探す
 	template<typename SubClass = ActorBase>
-	SubClass* SubObjSerch(void) {
+	SubClass* SubObjSerch(unsigned char index = 0) {
 		for (ActorBase* obj : subObjArray) {
-			if (dynamic_cast<SubClass*>(obj)) { return dynamic_cast<SubClass*>(obj); }
+			if (dynamic_cast<SubClass*>(obj)) {
+				if (index > 0) { index--; continue; }
+				return dynamic_cast<SubClass*>(obj);
+			}
 		}
 		return nullptr;
 	}
@@ -251,5 +254,14 @@ protected:
 
 	// ボスの座標のポインタ
 	const Vector3* bossPos;
+
+	// 味方プレイヤー内のターゲット
+	unsigned char targetPlayerIndex;
+
+	// 味方プレイヤー内のターゲット参照座標
+	const Vector3* targetPlayerPos;
+
+	// 味方プレイヤーのターゲットを次へ
+	void TargetPlayerNext(void);
 
 };

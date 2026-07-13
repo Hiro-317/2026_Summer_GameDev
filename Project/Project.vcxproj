@@ -191,6 +191,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
@@ -301,6 +303,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
