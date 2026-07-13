@@ -11,7 +11,6 @@ PlayerSingleModifierState::PlayerSingleModifierState(
 	const std::function<bool(void)>& isOwnState,
 
 	PlayerSingleModifierCollOperator& collOperator,
-	const std::vector<const Transform*>& targetTrans,
 
 	float COLL_START_TIME, KEY_TYPE HEAL_KEY,
 	int COOL_TIME,
@@ -22,9 +21,7 @@ PlayerSingleModifierState::PlayerSingleModifierState(
 ) :
 	CharacterStateBase(ownChangeState, isOwnState),
 
-
 	collOperator(collOperator),
-	targetTrans(targetTrans),
 	COLL_START_TIME(COLL_START_TIME),
 	HEAL_KEY(HEAL_KEY),
 	COOL_TIME(COOL_TIME),
@@ -60,7 +57,6 @@ void PlayerSingleModifierState::Update(void)
 {
 	if (!isHealed && GetAnimePlayRatio() > COLL_START_TIME) {
 		collOperator.CollOn();
-		collOperator.SetTargetPos(targetTrans.at(targetIndex)->pos);
 		isHealed = true;
 	}
 

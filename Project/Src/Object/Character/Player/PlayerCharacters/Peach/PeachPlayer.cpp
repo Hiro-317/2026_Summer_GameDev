@@ -53,6 +53,7 @@ void PeachPlayer::PlayerLoad(void)
 		new PlayerSingleModifierCollOperator(
 			COLLIDER_TAG::PLAYER_HEAL,
 			operatorSenderId,
+			targetPlayerPos,
 			150
 		)
 	);
@@ -117,7 +118,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
 			*SubObjSerch<PlayerSingleModifierCollOperator>(),
-			otherPlayerTrans, 0.6f, KEY_TYPE::PLAYER_SKILL_2, 60,
+			0.6f, KEY_TYPE::PLAYER_SKILL_2, 60,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ
@@ -304,6 +305,32 @@ void PeachPlayer::ReceptionUpdate(void)
 		//}
 
 		default: { break; }	// 例外
+		}
+
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
+
+		switch ((STATE)state) {
+		case PlayerBase::STATE::SKILL_1: {
+			SubObjSerch<PlayerSimpleAttackCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_2: {
+			SubObjSerch<PlayerSingleModifierCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_3: {
+			break;
+		}
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
+			break;
+		}
+
+		default: { break; }
 		}
 
 		delete dataPtr;

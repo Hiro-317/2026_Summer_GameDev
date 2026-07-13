@@ -15,7 +15,6 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		PlayerSingleModifierCollOperator& collOperator,
-		const std::vector<const Transform*>& targetTrans,
 		float COLL_START_TIME, KEY_TYPE HEAL_KEY,
 		int COOL_TIME,
 		const std::function<void(void)> PlayHealAnime,
@@ -59,9 +58,6 @@ private:
 
 	// 当たり判定のオペレーターの参照
 	PlayerSingleModifierCollOperator& collOperator;
-
-	// 回復する相手の座標取得
-	const std::vector<const Transform*>& targetTrans;
 
 	// 攻撃アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayHealAnime;

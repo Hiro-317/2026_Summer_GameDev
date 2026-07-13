@@ -10,6 +10,9 @@ public:
 	PlayerSingleModifierCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		MSG_SENDER_ID operatorSenderId,
+
+		const Vector3* const& targetPos,
+
 		const short SKILL_POWER,
 		const short SKILL_TIME = -1
 	);
@@ -21,7 +24,7 @@ public:
 
 	// 攻撃の判定を発生させる
 	void CollOn(void) {
-		if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
+		if (!isHit)SetJudge(true);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(
 				MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSingleModifier),
@@ -32,18 +35,13 @@ public:
 
 	// 攻撃の判定を消す
 	void CollOff(void) {
-		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false);
+		SetJudge(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(
 				MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSingleModifier),
 				operatorSenderId
 			);
 		}
-	}
-
-	// 座標指定
-	void SetTargetPos(const Vector3& targetPos) {
-		trans.pos = targetPos;
 	}
 
 	// 攻撃のヒット管理のフラグをリセットする
@@ -68,6 +66,8 @@ private:
 
 
 	const MSG_SENDER_ID operatorSenderId;
+
+	const Vector3* const& targetPos;
 
 #pragma endregion
 

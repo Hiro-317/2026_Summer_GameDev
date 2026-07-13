@@ -19,15 +19,15 @@ void PlayerManager::Load(void)
 		playerInfo.emplace_back(PlayerFactory::CreatePlayer((MSG_SENDER_ID)id));
 	}
 	
-	std::vector<Vector3> pos;
-
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& own : playerInfo) {
 		// プレイヤーのロード
-		info.instance->Load();
-		
-		// 自身以外のプレイヤーの座標を渡す
-		if (info.instance->GetOperatorSenderId() != Net::GetIns().GetSenderId()) {
-			playerInfo.at((int)Net::GetIns().GetSenderId()).instance->SetOtherPlayerTrans(&info.instance->GetTrans());
+		own.instance->Load();
+
+		for (PlayerInfo& other : playerInfo) {
+			// 自身以外のプレイヤーの座標を渡す
+			if (own.instance->GetOperatorSenderId() != other.instance->GetOperatorSenderId()) {
+				own.instance->SetOtherPlayerTrans(&other.instance->GetTrans());
+			}
 		}
 	}
 

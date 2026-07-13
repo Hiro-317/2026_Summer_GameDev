@@ -83,7 +83,6 @@ void PlayerBase::CharacterLoad(void)
 		);
 	}
 
-
 #pragma region ƒ‚ƒfƒ‹
 	// ƒ‚ƒfƒ‹‚ð“Ç‚Ýž‚Þ
 
@@ -147,6 +146,8 @@ void PlayerBase::CharacterInit(void)
 	state = (int)STATE::MOVE;
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
+
+	TargetPlayerNext();
 }
 
 void PlayerBase::CharacterUpdate(void)
