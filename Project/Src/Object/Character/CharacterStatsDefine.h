@@ -8,9 +8,10 @@
 
 #include "../../Manager/Net/NetWorkDefine.h"
 
-// ダメージ計算式（計算式忘れた、後で書く）
+// ダメージ計算式
 static short CalculateDamage(short damage, short defense) { return Round((float)damage / (((float)defense + 100.0f) / 100.0f)); }
 
+#pragma region バフ/デバフ に関する定義
 
 // バフ/デバフ の最大数
 static constexpr char MODIFIER_MAX_NUM = 10;
@@ -19,7 +20,7 @@ static constexpr char MODIFIER_MAX_NUM = 10;
 static constexpr float DEBUFF_MAX = 0.01f;
 
 // バフ/デバフ の対象の列挙型
-enum class ModifierTargetType {
+enum class ModifierTarget {
 	None = -1,
 
 	Hp,
@@ -30,16 +31,21 @@ enum class ModifierTargetType {
 	CriticalDamage,
 };
 
-
 // バフ/デバフ タイプ
 enum class ModifierType
 {
 	None,
 
 	TackleChargeMaxBuff,
+
+	Max
 };
 
-
+// バフ/デバフ タイプと対象の列挙型の対応表
+static constexpr ModifierTarget MODIFIER_TARGET_TABLE[(int)ModifierType::Max] =
+{
+	ModifierTarget::Attack,		// TackleChangeMaxBuff
+};
 
 // バフ/デバフ タイプを識別番号へ変換する関数
 static unsigned char ModifierTypeConversionId(MSG_SENDER_ID operatorSenderId, ModifierType modifierType) {
@@ -56,11 +62,21 @@ static unsigned char ModifierTypeConversionId(MSG_SENDER_ID operatorSenderId, Mo
 	return ret;
 }
 
+// ModifierTypeの識別番号を操作者IDへ変換する関数
+static MSG_SENDER_ID IdConversionOperatorSenderId(unsigned char modifierTypeId) {
+	return (MSG_SENDER_ID)(modifierTypeId >> 6);
+}
+
+// ModifierTypeの識別番号をModifierTypeへ変換する関数
+static ModifierType IdConversionModifierType(unsigned char modifierTypeId) {
+	return (ModifierType)(modifierTypeId & 0b00111111);
+}
+
 // 補正倍率(バフ/デバフ)の構造体
 struct ModifierData
 {
-	// タイプ（同タイプの重複不可）
-	unsigned char type;
+	// ID（同IDの重複不可）
+	unsigned char id;
 
 	// 増減率(バフ/デバフ)の数値（0.0が基準値）（生成関数を通して基準値を補正 例:80->0.8 -80->-0.8）
 	float rate;
@@ -76,13 +92,18 @@ struct ModifierData
 	/// <summary>
 	/// 生成
 	/// </summary>
-	/// <param name="type">タイプ（同タイプの重複不可）</param>
+	/// <param name="id">ID（同IDの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(unsigned char type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
+	ModifierData(unsigned char id, short rate, short time) : id(id), rate(PercentConversion(rate)), time(time) {}
 };
 
+#pragma endregion
 
+
+#pragma region キャラクターのステータス詳細に関する定義
+
+// キャラクターパラメーター1つの構造体（キャラクターはこれを複数持つ形）
 struct CharacterStatsValue
 {
 private:
@@ -111,7 +132,7 @@ public:
 	void AddModifier(const ModifierData& add) {
 		// すでに同じ種類がかかっている場合は上書き
 		for (ModifierData& mod : modifier) {
-			if (add.type == mod.type) { mod = add; return; }
+			if (add.id == mod.id) { mod = add; return; }
 		}
 
 		// 最大数を超える場合は追加なし
@@ -126,7 +147,7 @@ public:
 			modifier.begin(),
 			modifier.end(),
 			[modifierType, operatorSenderId](const ModifierData& mod) {
-				return mod.type == ModifierTypeConversionId(operatorSenderId, modifierType);
+				return mod.id == ModifierTypeConversionId(operatorSenderId, modifierType);
 			}
 		);
 		if (it != modifier.end()) { modifier.erase(it); }
@@ -225,6 +246,47 @@ struct CharacterStats
 		speedPower.ModifinerTimeUpdate();
 	}
 
+	// ヒットポイントの回復（回復量は最大ヒットポイントを超えない）
+	void HpHeal(short heal) {
+		hp += heal;
+		if (hp > hpMax.Value()) { hp = hpMax.Value(); }
+	}
+
+	// バフ/デバフ をかける
+	void AddModifier(const ModifierData& data) {
+
+		// バフ/デバフ の対象の列挙型の対応表をもとにステータスに バフ/デバフ をかける
+		switch (MODIFIER_TARGET_TABLE[(int)IdConversionModifierType(data.id)]) {
+
+		case ModifierTarget::None: { break; }	// バフ/デバフ の対象が未設定の場合は何もしない
+
+		case ModifierTarget::Hp: { hpMax.AddModifier(data); break; }						// ヒットポイント
+		case ModifierTarget::Attack: { attackPower.AddModifier(data); break; }				// 攻撃力
+		case ModifierTarget::Defense: { defensePower.AddModifier(data); break; }			// 防御力
+		case ModifierTarget::Speed: { speedPower.AddModifier(data); break; }				// 速力
+		case ModifierTarget::CriticalRate: { critical.rate.AddModifier(data); break; }		// 会心率
+		case ModifierTarget::CriticalDamage: { critical.damage.AddModifier(data); break; }	// 会心ダメージ
+
+		}
+	}
+
+	// バフ/デバフ を削除する
+	void DeleteModifier(MSG_SENDER_ID operatorSenderId, ModifierType type) {
+
+		switch (MODIFIER_TARGET_TABLE[(int)type]) {
+
+		case ModifierTarget::None: { break; }	// バフ/デバフ の対象が未設定の場合は何もしない
+
+		case ModifierTarget::Hp: { hpMax.DeleteModifier(operatorSenderId, type); break; }						// ヒットポイント
+		case ModifierTarget::Attack: { attackPower.DeleteModifier(operatorSenderId, type); break; }				// 攻撃力
+		case ModifierTarget::Defense: { defensePower.DeleteModifier(operatorSenderId, type); break; }			// 防御力
+		case ModifierTarget::Speed: { speedPower.DeleteModifier(operatorSenderId, type); break; }				// 速力
+		case ModifierTarget::CriticalRate: { critical.rate.DeleteModifier(operatorSenderId, type); break; }		// 会心率
+		case ModifierTarget::CriticalDamage: { critical.damage.DeleteModifier(operatorSenderId, type); break; }	// 会心ダメージ
+
+		}
+	}
+
 	/// <summary>
 	/// 生成
 	/// </summary>
@@ -249,7 +311,9 @@ struct CharacterStats
 	}
 };
 
+#pragma endregion
 
+// スキル構造体
 struct SkillStats
 {
 private:
@@ -280,6 +344,7 @@ public:
 		return ret;
 	}
 
+	// バフ/デバフ の補正倍率(バフ/デバフ)の構造体を生成して返す
 	const ModifierData& ModifierPower(void)const {
 		return ModifierData(modifierType, SKILL_POWER, SKILL_TIME);
 	}
@@ -313,8 +378,11 @@ public:
 	/// <summary>
 	/// バフ/デバフ スキル生成
 	/// </summary>
-	/// <param name="SKILL_POWER">技威力</param>
-	/// <param name="SKILL_TIME">技効果時間</param>
+	/// <param name="operatorSenderId">操作者ID</param>
+	/// <param name="modifierType">バフ/デバフ タイプ（同タイプの重複不可）</param>
+	/// <param name="SKILL_POWER">補正倍率(バフ/デバフ)の数値（0が基準値 例:80%->1.8倍 -80%->0.2倍）</param>
+	/// <param name="SKILL_TIME">効果時間（フレーム数）</param>
+	/// <param name="COLL_TAG">どのコライダーに紐づけるか（未設定(NON)の場合コライダーのタグ関係なく紐づけられる）</param>
 	SkillStats(
 		MSG_SENDER_ID operatorSenderId,
 		ModifierType modifierType,

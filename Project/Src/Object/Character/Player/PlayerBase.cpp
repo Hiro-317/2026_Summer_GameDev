@@ -250,35 +250,73 @@ void PlayerBase::ChangeState(int state)
 
 void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	// 判定そのものはホストがすべて請け負う
 	if (!Net::GetIns().IsHost()) { return; }
-	if (GetInviCounter() > 0) { return; }
+
+	// 死亡状態の場合何もしない
 	if (state == (int)STATE::DEATH) { return; }
 
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
+	// 衝突物のコライダータグを取得
+	COLLIDER_TAG otherColliderTag = other.GetTag();
+
+#pragma region プラス効果の判定（無敵判定を無視して発動）
+
+	switch (otherColliderTag) {
+	case COLLIDER_TAG::PLAYER_HEAL: {	// 回復
+
+		// 回復量を取得
+		short heal = other.GetSkillStats().Power();
+
+		// 回復をクライアントへ送信
+		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
+
+		// 回復させる
+		characterStats.HpHeal(heal);
+
+		return;
+	}
+	case COLLIDER_TAG::PLAYER_BUFF: {	// バフ
+
+		// バフデータ構造体を取得
+		const ModifierData& modifier = other.GetSkillStats().ModifierPower();
+
+		// バフをクライアントへ送信
+		//Net::GetIns().Send(MsgDataPlayerModifier(modifier), operatorSenderId);
+		
+		// バフをかける
+		characterStats.AddModifier(modifier);
+
+		return;
+	}
+	}
+
+#pragma endregion
+
+	// 無敵時間の判定
+	if (GetInviCounter() > 0) { return; }
+
+#pragma region マイナス効果の判定
+
+	switch (otherColliderTag) {
+	case COLLIDER_TAG::BOSS_ATTACK: {	// 被ダメージ
+
 		// ダメージ状態に遷移
 		ChangeState((int)STATE::DAMAGE);
+
 		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
 		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
 		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+
 		// ダメージ値分HPを減らす
 		characterStats.hp -= damage;
-		break;
+
+		return;
+	}
 	}
 
-	case COLLIDER_TAG::PLAYER_HEAL: {
-		characterStats.hp += other.GetSkillStats().Power();
-		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
-		break;
-	}
-
-	case COLLIDER_TAG::PLAYER_BUFF: {
-		characterStats.speedPower.AddModifier(other.GetSkillStats().ModifierPower());
-		break;
-
-	}
-	}
+#pragma endregion
 }
 
 void PlayerBase::AnimePlay(int type, bool loop)
