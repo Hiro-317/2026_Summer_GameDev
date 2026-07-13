@@ -118,7 +118,27 @@ void PeachPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
 			*SubObjSerch<PlayerSingleModifierCollOperator>(),
-			0.6f, KEY_TYPE::PLAYER_SKILL_2, 60,
+			0.6f, KEY_TYPE::PLAYER_SKILL_2, 600,
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
+			// アニメーションの再生割合のゲット関数ポインタ
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	AddState(
+		(int)STATE::SKILL_3,
+		new PlayerSingleModifierState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::SKILL_3); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_3; },
+			*SubObjSerch<PlayerSingleModifierCollOperator>(),
+			0.6f, KEY_TYPE::PLAYER_SKILL_3, 60,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ
@@ -175,7 +195,7 @@ void PeachPlayer::PlayerLoad(void)
 	//// 移動状態 -> スキル2 の遷移を登録
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	//// 移動状態 -> スキル3 の遷移を登録
-	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion 
 
@@ -248,30 +268,7 @@ void PeachPlayer::PlayerLoad(void)
 
 void PeachPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	if (!Net::GetIns().IsHost()) { return; }
-	if (GetInviCounter() > 0) { return; }
-	if (state == (int)STATE::DEATH) { return; }
-
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
-		// ダメージ状態に遷移
-		ChangeState((int)STATE::DAMAGE);
-		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-		// ダメージ値分HPを減らす
-		characterStats.hp -= damage;
-		break;
-	}
-
-	case COLLIDER_TAG::PLAYER_HEAL: {
-		characterStats.hp += other.GetSkillStats().Power();
-		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
-		break;
-	}
-
-	}
+	PlayerBase::OnCollision(ownTag, other);
 }
 
 void PeachPlayer::ReceptionUpdate(void)

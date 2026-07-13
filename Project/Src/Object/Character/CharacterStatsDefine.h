@@ -18,6 +18,18 @@ static constexpr char MODIFIER_MAX_NUM = 10;
 // デバフの数値上限
 static constexpr float DEBUFF_MAX = 0.01f;
 
+// バフ/デバフ の対象の列挙型
+enum class ModifierTargetType {
+	None = -1,
+
+	Hp,
+	Attack,
+	Defense,
+	Speed,
+	CriticalRate,
+	CriticalDamage,
+};
+
 
 // バフ/デバフ タイプ
 enum class ModifierType
@@ -27,11 +39,28 @@ enum class ModifierType
 	TackleChargeMaxBuff,
 };
 
+
+
+// バフ/デバフ タイプを識別番号へ変換する関数
+static unsigned char ModifierTypeConversionId(MSG_SENDER_ID operatorSenderId, ModifierType modifierType) {
+
+	unsigned char ret = 0;
+
+	// 左2ビットを操作者IDの領域とする
+	ret = (int)operatorSenderId << 6;
+
+	// 左2ビットはそのままでそれ以降のビットをModifierTypeの領域とする
+	ret += (int)modifierType;
+
+	// 完成した一意の整数値を識別番号とし、結果を返す
+	return ret;
+}
+
 // 補正倍率(バフ/デバフ)の構造体
 struct ModifierData
 {
 	// タイプ（同タイプの重複不可）
-	ModifierType type;
+	unsigned char type;
 
 	// 増減率(バフ/デバフ)の数値（0.0が基準値）（生成関数を通して基準値を補正 例:80->0.8 -80->-0.8）
 	float rate;
@@ -50,7 +79,7 @@ struct ModifierData
 	/// <param name="type">タイプ（同タイプの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(ModifierType type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
+	ModifierData(unsigned char type, short rate, short time) : type(type), rate(PercentConversion(rate)), time(time) {}
 };
 
 
@@ -79,7 +108,7 @@ public:
 	short Value(void)const { return (short)Round((float)BASE * TotalMag()); }
 
 	// バフ/デバフ をかける
-	void AddModifier(ModifierData add) {
+	void AddModifier(const ModifierData& add) {
 		// すでに同じ種類がかかっている場合は上書き
 		for (ModifierData& mod : modifier) {
 			if (add.type == mod.type) { mod = add; return; }
@@ -92,11 +121,13 @@ public:
 		modifier.emplace_back(add);
 	}
 
-	void DeleteModifier(ModifierType type) {
+	void DeleteModifier(MSG_SENDER_ID operatorSenderId, ModifierType modifierType) {
 		auto it = std::find_if(
 			modifier.begin(),
 			modifier.end(),
-			[type](const ModifierData& mod) { return mod.type == type; }
+			[modifierType, operatorSenderId](const ModifierData& mod) {
+				return mod.type == ModifierTypeConversionId(operatorSenderId, modifierType);
+			}
 		);
 		if (it != modifier.end()) { modifier.erase(it); }
 	}
@@ -234,6 +265,9 @@ private:
 	// この技が バフ/デバフ だった場合の効果時間
 	const short SKILL_TIME;
 
+	// この技が バフ/デバフ だった場合の バフ/デバフ タイプ
+	const unsigned char modifierType;
+
 public:
 	// 威力（攻撃力を参照しない バフ/デバフ や 回復 などのスキルはそのまま技威力が実数値として返される）
 	short Power(bool* const isCritical = nullptr)const {
@@ -244,6 +278,10 @@ public:
 			ret = (short)Round((float)ret * critical->ResultDamageRate(isCritical));
 		}
 		return ret;
+	}
+
+	const ModifierData& ModifierPower(void)const {
+		return ModifierData(modifierType, SKILL_POWER, SKILL_TIME);
 	}
 
 	// コライダータグ
@@ -268,7 +306,7 @@ public:
 		attackPower(characterStats ? &characterStats->attackPower : nullptr),
 		critical(characterStats ? &characterStats->critical : nullptr),
 		COLL_TAG(COLL_TAG),
-		SKILL_TIME(0)
+		SKILL_TIME(0), modifierType(0)
 	{
 	}
 
@@ -277,8 +315,14 @@ public:
 	/// </summary>
 	/// <param name="SKILL_POWER">技威力</param>
 	/// <param name="SKILL_TIME">技効果時間</param>
-	SkillStats(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
+	SkillStats(
+		MSG_SENDER_ID operatorSenderId,
+		ModifierType modifierType,
+		short SKILL_POWER, short SKILL_TIME,
+		COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
+
 		operatorSenderId(operatorSenderId),
+		modifierType(ModifierTypeConversionId(operatorSenderId, modifierType)),
 		SKILL_POWER(SKILL_POWER), SKILL_TIME(SKILL_TIME),
 		COLL_TAG(COLL_TAG),
 		attackPower(nullptr), critical(nullptr)

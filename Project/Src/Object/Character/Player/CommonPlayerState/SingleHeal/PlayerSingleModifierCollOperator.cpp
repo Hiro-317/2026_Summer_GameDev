@@ -7,13 +7,15 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 	MSG_SENDER_ID operatorSenderId,
 	const Vector3* const& targetPos,
 	const short SKILL_POWER,
-	const short SKILL_TIME
+	const short SKILL_TIME,
+	const ModifierType MODIFIER_TYPE
 ) : 
 	COLL_TAG(COLL_TAG),
 	operatorSenderId(operatorSenderId),
 	targetPos(targetPos),
 	SKILL_POWER(SKILL_POWER),
-	SKILL_TIME(SKILL_TIME)
+	SKILL_TIME(SKILL_TIME),
+	MODIFIER_TYPE(MODIFIER_TYPE)
 {
 }
 
@@ -33,7 +35,7 @@ void PlayerSingleModifierCollOperator::Load(void)
 #pragma endregion
 	// Œø‰ÊŠÔ‚ª–¢İ’è(-1)‚Ìê‡A‰ñ•œƒXƒLƒ‹‚Æ‚İ‚È‚·
 	if (SKILL_TIME == -1) { CreateHealSkill(operatorSenderId, SKILL_POWER, COLL_TAG); }
-	else { CreateModifierSkill(operatorSenderId, SKILL_POWER, SKILL_TIME, COLL_TAG); }
+	else { CreateModifierSkill(operatorSenderId, MODIFIER_TYPE, SKILL_POWER, SKILL_TIME, COLL_TAG); }
 
 	// “–‚½‚è”»’èî•ñ‚ğ¶¬‚·‚é
 	ColliderCreate(new SphereCollider(COLL_TAG, COLL_RADIUS));

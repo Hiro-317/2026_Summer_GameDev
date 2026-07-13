@@ -14,7 +14,8 @@ public:
 		const Vector3* const& targetPos,
 
 		const short SKILL_POWER,
-		const short SKILL_TIME = -1
+		const short SKILL_TIME = -1,
+		const ModifierType MODIFIER_TYPE = ModifierType::None
 	);
 	~PlayerSingleModifierCollOperator()override = default;
 
@@ -51,6 +52,8 @@ private:
 #pragma region íËêî
 
 	const COLLIDER_TAG COLL_TAG;
+
+	const ModifierType MODIFIER_TYPE;
 
 	const float COLL_RADIUS = 1.0f;
 

@@ -37,7 +37,6 @@ public:
 	// ó‘ÔŠÖŒW‚È‚­ŒÄ‚Ño‚·ˆ—
 	void AlwaysUpdate(void)override;
 
-
 private:
 
 #pragma region ’è”
@@ -71,5 +70,5 @@ private:
 
 	int targetIndex;
 
-	bool isHealed;
+	bool isModifier;
 };

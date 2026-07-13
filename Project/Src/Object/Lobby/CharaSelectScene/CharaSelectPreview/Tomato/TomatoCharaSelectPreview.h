@@ -6,7 +6,7 @@ class TomatoCharaSelectPreview : public CharaSelectPreviewBase
 {
 public:
 	TomatoCharaSelectPreview() :
-		CharaSelectPreviewBase()
+		CharaSelectPreviewBase("Data/Parameter/Character/Player/Tomato/")
 	{
 	}
 	~TomatoCharaSelectPreview()override = default;
@@ -25,10 +25,11 @@ private:
 
 		CHARA_NAME = "ƒŠƒRƒsƒ“";
 
-		HP = 0;
-		ATTACK = 0;
-		DEFENCE = 0;
-		SPEED = 0;
+
+		HP = GetParameter("TomatoParameter", "PlayerHP");
+		ATTACK = GetParameter("TomatoParameter", "PlayerAttackPower");
+		DEFENCE = GetParameter("TomatoParameter", "PlayerDefensePower");
+		SPEED = GetParameter("TomatoParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Tomato/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Tomato/Skill2.png");

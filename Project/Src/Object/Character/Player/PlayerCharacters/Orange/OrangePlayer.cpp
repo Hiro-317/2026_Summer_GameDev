@@ -363,21 +363,7 @@ void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		return;
 	}
 
-	if (state == (int)STATE::DEATH) { return; }
-
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
-		// ダメージ状態に遷移
-		ChangeState((int)STATE::DAMAGE);
-		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-		// ダメージ値分HPを減らす
-		characterStats.hp -= damage;
-		break;
-	}
-	}
+	PlayerBase::OnCollision(ownTag, other);
 }
 
 void OrangePlayer::ReceptionUpdate(void)

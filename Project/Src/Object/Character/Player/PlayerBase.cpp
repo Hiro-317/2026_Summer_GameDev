@@ -227,8 +227,6 @@ void PlayerBase::CharacterUiDraw(void)
 	}
 }
 
-
-
 void PlayerBase::CharacterRelease(void)
 {
 	for (ActorBase*& c : subObjArray) {
@@ -248,6 +246,39 @@ void PlayerBase::ChangeState(int state)
 
 	// 遷移するステート(状態)を送信
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
+}
+
+void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+	if (!Net::GetIns().IsHost()) { return; }
+	if (GetInviCounter() > 0) { return; }
+	if (state == (int)STATE::DEATH) { return; }
+
+	switch (other.GetTag()) {
+	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
+		// ダメージ状態に遷移
+		ChangeState((int)STATE::DAMAGE);
+		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
+		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		// ダメージ値分HPを減らす
+		characterStats.hp -= damage;
+		break;
+	}
+
+	case COLLIDER_TAG::PLAYER_HEAL: {
+		characterStats.hp += other.GetSkillStats().Power();
+		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
+		break;
+	}
+
+	case COLLIDER_TAG::PLAYER_BUFF: {
+		characterStats.speedPower.AddModifier(other.GetSkillStats().ModifierPower());
+		break;
+
+	}
+	}
 }
 
 void PlayerBase::AnimePlay(int type, bool loop)

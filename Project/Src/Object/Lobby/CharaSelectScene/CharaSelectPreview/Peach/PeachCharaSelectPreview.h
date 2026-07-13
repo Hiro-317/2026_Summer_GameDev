@@ -6,7 +6,7 @@ class PeachCharaSelectPreview : public CharaSelectPreviewBase
 {
 public:
 	PeachCharaSelectPreview() :
-		CharaSelectPreviewBase("Data/Parameter/Character/Player/Orange/")
+		CharaSelectPreviewBase("Data/Parameter/Character/Player/Peach/")
 	{
 	}
 	~PeachCharaSelectPreview()override = default;
@@ -28,10 +28,10 @@ private:
 
 		CHARA_NAME = "‚¨‚à‚à‚±‚Ü‚¿";
 
-		//HP = GetParameter("OrangeParameter", "PlayerHP");
-		//ATTACK = GetParameter("OrangeParameter", "PlayerAttackPower");
-		//DEFENCE = GetParameter("OrangeParameter", "PlayerDefensePower");
-		//SPEED = GetParameter("OrangeParameter", "PlayerMoveSpeed");
+		HP = GetParameter("PeachParameter", "PlayerHP");
+		ATTACK = GetParameter("PeachParameter", "PlayerAttackPower");
+		DEFENCE = GetParameter("PeachParameter", "PlayerDefensePower");
+		SPEED = GetParameter("PeachParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");
