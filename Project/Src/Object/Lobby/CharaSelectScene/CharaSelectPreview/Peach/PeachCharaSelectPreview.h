@@ -2,20 +2,20 @@
 
 #include "../CharaSelectPreviewBase.h"
 
-class OrangeCharaSelectPreview : public CharaSelectPreviewBase
+class PeachCharaSelectPreview : public CharaSelectPreviewBase
 {
 public:
-	OrangeCharaSelectPreview() :
+	PeachCharaSelectPreview() :
 		CharaSelectPreviewBase("Data/Parameter/Character/Player/Orange/")
 	{
 	}
-	~OrangeCharaSelectPreview()override = default;
+	~PeachCharaSelectPreview()override = default;
 
 private:
 
 	void SubLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Character/Orange/OrangeModel");
+		trans.Load("Character/Peach/PeachModel");
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -24,14 +24,14 @@ private:
 		trans.centerDiff = Vector3::Yonly(-250);
 
 		// アニメーションを登録する
-		AddAnimation("Data/Model/Charactor/Orange/Anime/Idle.mv1", 1.0f);
+		AddInFbxAnimation(7, 1.0f, 0);
 
-		CHARA_NAME = "リモネン";
+		CHARA_NAME = "おももこまち";
 
-		HP = GetParameter("OrangeParameter", "PlayerHP");
-		ATTACK = GetParameter("OrangeParameter", "PlayerAttackPower");
-		DEFENCE = GetParameter("OrangeParameter", "PlayerDefensePower");
-		SPEED = GetParameter("OrangeParameter", "PlayerMoveSpeed");
+		//HP = GetParameter("OrangeParameter", "PlayerHP");
+		//ATTACK = GetParameter("OrangeParameter", "PlayerAttackPower");
+		//DEFENCE = GetParameter("OrangeParameter", "PlayerDefensePower");
+		//SPEED = GetParameter("OrangeParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");

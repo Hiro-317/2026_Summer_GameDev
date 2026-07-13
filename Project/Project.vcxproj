@@ -328,6 +328,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Peach\PeachCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
