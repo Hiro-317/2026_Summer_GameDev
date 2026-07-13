@@ -28,7 +28,10 @@ public:
 		const std::function<void(void)> MoveChangeState,
 		const std::function<void(void)> KickDownChangeState,
 		const std::function<void(void)> StraightChangeState,
-		const std::function<void(void)> StampChangeState
+		const std::function<void(void)> StampChangeState,
+		const std::function<void(void)> SingleChangeState,
+		const std::function<void(void)> StalkerChangeState,
+		const std::function<void(void)> RandomChangeState
 	);
 	~GrapeBossIdleState()override = default;
 
@@ -74,6 +77,12 @@ private:
 	const std::function<void(void)> StraightChangeState;
 	// スタンプへ
 	const std::function<void(void)> StampChangeState;
+	// 追従へ
+	const std::function<void(void)> SingleChangeState;
+	// たくさんの追従へ
+	const std::function<void(void)> StalkerChangeState;
+	// ランダムへ
+	const std::function<void(void)> RandomChangeState;
 
 #pragma endregion
 

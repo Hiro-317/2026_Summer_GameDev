@@ -6,6 +6,7 @@
 #include "StampBomb/GrapeBossStampBomb.h"
 #include "SingleBomb/GrapeBossSingleBomb.h"
 #include "StalkerBomb/GrapeBossStalkerBomb.h"
+#include "RandomBomb/GrapeBossRandomBomb.h"
 
 
 class GrapeBossWeaponFactory {
@@ -51,7 +52,7 @@ public:
 		}
 		case WeaponType::RandomBomb:
 		{
-			res.weaponIns = new GrapeBossStraight(model);
+			res.weaponIns = new GrapeBossRandomBomb(model);
 			break;
 		}
 		default:

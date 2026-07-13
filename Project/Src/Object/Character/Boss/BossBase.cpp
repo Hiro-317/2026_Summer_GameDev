@@ -112,6 +112,7 @@ void BossBase::CharacterInit(void)
 {
 	// ˆÊ’u‚ğ‰ŠúˆÊ’u‚É‚·‚é
 	trans.pos = INIT_POS;
+	trans.angle = INIT_ROT;
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
 	ChangeState(static_cast<int>(STATE::IDLE));

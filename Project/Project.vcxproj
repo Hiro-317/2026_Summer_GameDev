@@ -163,6 +163,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeBossKickDownState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeKickDownCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Single\GrapeBossSingleState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Stamp\GrapeBossStampState.cpp" />
@@ -170,6 +171,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponBase.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.cpp" />
@@ -272,6 +274,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeBossKickDownState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\KickDown\GrapeKickDownCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Move\GrapeBossMoveState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Single\GrapeBossSingleState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stamp\GrapeBossStampState.h" />
@@ -279,6 +282,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Straight\GrapeBossStraightState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StampBomb\GrapeBossStampBomb.h" />

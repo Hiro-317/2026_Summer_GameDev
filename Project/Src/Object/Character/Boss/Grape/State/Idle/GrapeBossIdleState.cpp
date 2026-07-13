@@ -14,7 +14,10 @@ GrapeBossIdleState::GrapeBossIdleState(
 	const std::function<void(void)> MoveChangeState,
 	const std::function<void(void)> KickDownChangeState,
 	const std::function<void(void)> StraightChangeState,
-	const std::function<void(void)> StampChangeState
+	const std::function<void(void)> StampChangeState,
+	const std::function<void(void)> SingleChangeState,
+	const std::function<void(void)> StalkerChangeState,
+	const std::function<void(void)> RandomChangeState
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), angle(angle),
@@ -26,7 +29,10 @@ GrapeBossIdleState::GrapeBossIdleState(
 	MoveChangeState(MoveChangeState),
 	KickDownChangeState(KickDownChangeState),
 	StraightChangeState(StraightChangeState),
-	StampChangeState(StampChangeState)
+	StampChangeState(StampChangeState),
+	SingleChangeState(SingleChangeState),
+	StalkerChangeState(StalkerChangeState),
+	RandomChangeState(RandomChangeState)
 {
 }
 

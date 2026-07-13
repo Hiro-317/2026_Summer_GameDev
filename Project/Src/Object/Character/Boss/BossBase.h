@@ -106,6 +106,7 @@ protected:
 
 	// ‰ŠúÀ•W
 	const Vector3 INIT_POS = GetParameterToVector3("Init", "Pos");
+	const Vector3 INIT_ROT = GetParameterToVector3("Init", "Rot") * DX_PI_F / 180.0f;
 
 	// ``````````````````````````•Ï”‰Šú‰»Œn
 

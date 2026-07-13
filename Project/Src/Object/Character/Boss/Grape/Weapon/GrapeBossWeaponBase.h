@@ -44,7 +44,7 @@ static constexpr int WeponDuplicateNum[(int)WeaponType::Max] = {
 	5,
 
 	// 爆弾投下（ランダムに地上に大量投下する爆弾）
-	20
+	30
 };
 
 class GrapeBossWeaponBase : public ActorBase

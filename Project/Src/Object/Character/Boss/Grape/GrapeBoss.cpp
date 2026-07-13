@@ -21,6 +21,7 @@
 #include "State/Stamp/GrapeStampCollOperator.h"
 #include "State/Single/GrapeBossSingleState.h"
 #include "State/Stalker/GrapeBossStalkerState.h"
+#include "State/Random/GrapeBossRandomState.h"
 #include "State/Death/GrapeBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -101,11 +102,17 @@ void GrapeBoss::PlayerLoad(void)
 			// 移動への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::MOVE); },
 			// 踏みつけへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_E); },
+			[&]() { ChangeState((int)STATE::ATTACK_A); },
 			// 投擲への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_E); },
+			[&]() { ChangeState((int)STATE::ATTACK_B); },
 			// スタンプへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_E); }
+			[&]() { ChangeState((int)STATE::ATTACK_C); },
+			// ひとつ追従への状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_D); },
+			// たくさん追従への状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_E); },
+			// たくさんランダムへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_F); }
 		)
 	);
 	AddState(
@@ -260,6 +267,30 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { coolTime = 180; }
 		)
 	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_F),
+		new GrapeBossRandomState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_F); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_F); },
+			// 座標
+			trans.pos,
+			// 攻撃の種類の情報
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
+			// プレイヤーのターゲット番号
+			[&]() { return targetNum; },
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::IDLE); },
+			[&]() { coolTime = 180; }
+		)
+	);
 
 	AddState(
 		static_cast<int>(STATE::DEATH),
@@ -396,6 +427,10 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb:
 		{
+			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb)[dataPtr->index];
+			weapon.weaponIns->SetStartPos(dataPtr->pos);
+			weapon.weaponIns->SetViewPosCircle();
+			weapon.live = true;
 			break;
 		}
 		default:
