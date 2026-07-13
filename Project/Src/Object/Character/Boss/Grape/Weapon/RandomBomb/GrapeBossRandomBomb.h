@@ -26,4 +26,9 @@ private:
 	// 攻撃範囲の描画
 	const float ATTACK_RANGE = GetParameter("RandomBomb", "Range");
 
+	// 攻撃サイズ倍率
+	const float ATTACK_SIZE = GetParameter("RandomBomb", "Size");
+
+	// モデルのサイズ
+	const float MODEL_RADIUS = GetParameter("RandomBomb", "Radius");
 };

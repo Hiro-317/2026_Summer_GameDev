@@ -11,7 +11,7 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model)
 	ColliderCreate(
 		new XZCircleCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			GetParameter("StampBomb", "Range")
+			ATTACK_RANGE
 		)
 	);
 
@@ -19,7 +19,7 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model)
 	ColliderCreate(
 		new SphereCollider(
 			COLLIDER_TAG::BOSS_ATTACK_AREA,
-			GetParameter("StampBomb", "Radius") * ATTACK_SIZE
+			MODEL_RADIUS * ATTACK_SIZE
 		)
 	);
 

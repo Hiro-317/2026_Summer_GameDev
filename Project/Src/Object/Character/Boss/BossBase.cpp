@@ -60,6 +60,10 @@ void BossBase::CharacterLoad(void)
 	// モデルを読み込む
 	PlayerLoad();
 
+	// 影を消す（消さなかったら、変な色合いになるので）
+	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
 	// モデルのスケールを設定
 	trans.scale = MODEL_SCALE;
 

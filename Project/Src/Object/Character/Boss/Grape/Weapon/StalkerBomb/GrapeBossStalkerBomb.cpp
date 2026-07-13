@@ -11,7 +11,7 @@ GrapeBossStalkerBomb::GrapeBossStalkerBomb(int model)
 	ColliderCreate(
 		new XZCircleCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			GetParameter("StalkerBomb", "Radius")
+			ATTACK_RANGE
 		)
 	);
 
@@ -19,10 +19,12 @@ GrapeBossStalkerBomb::GrapeBossStalkerBomb(int model)
 	ColliderCreate(
 		new SphereCollider(
 			COLLIDER_TAG::BOSS_ATTACK_AREA,
-			GetParameter("StalkerBomb", "Radius")
+			MODEL_RADIUS * ATTACK_SIZE
 		)
 	);
+	trans.scale = Vector3(ATTACK_SIZE);
 
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 	SetGravityFlg(true);
 	count = 0;
@@ -32,7 +34,7 @@ void GrapeBossStalkerBomb::Load(const MSG_SENDER_ID operatorSenderId, const Char
 {
 	CreateAttackSkill(operatorSenderId, 50, &stats);
 
-	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
+	collBack.scale = Vector3::XZonly(ATTACK_RANGE / MODEL_RADIUS, ATTACK_RANGE / MODEL_RADIUS);
 	collFront.scale = Vector3(0.0f);
 }
 
@@ -49,7 +51,7 @@ void GrapeBossStalkerBomb::SubUpdate(void)
 		// カウントに応じて状態を変える
 		if (BOMBER_COUNT >= count) {
 
-			SetViewScaleCircle(ATTACK_RANGE * (BOMBER_COUNT / count));
+			SetViewScaleCircle((ATTACK_RANGE / MODEL_RADIUS) * (count / BOMBER_COUNT));
 		}
 		// 攻撃判定オン
 		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {

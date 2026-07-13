@@ -20,6 +20,7 @@
 #include "State/Stamp/GrapeBossStampState.h"
 #include "State/Stamp/GrapeStampCollOperator.h"
 #include "State/Single/GrapeBossSingleState.h"
+#include "State/Stalker/GrapeBossStalkerState.h"
 #include "State/Death/GrapeBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -99,12 +100,12 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK, true); },
 			// 移動への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::MOVE); },
-			// 頭突きへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_A); },
+			// 踏みつけへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_E); },
+			// 投擲への状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_E); },
 			// スタンプへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_B); },
-			// 突進への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_C); }
+			[&]() { ChangeState((int)STATE::ATTACK_E); }
 		)
 	);
 	AddState(
@@ -221,11 +222,36 @@ void GrapeBoss::PlayerLoad(void)
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb),
 			// プレイヤーのターゲット番号
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::IDLE); },
+			[&]() { coolTime = 180; }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_E),
+		new GrapeBossStalkerState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_E); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_E); },
+			// プレイヤーの座標と角度
+			playerPos,
+			// 攻撃の種類の情報
+			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb),
+			// プレイヤーのターゲット番号
+			[&]() { return targetNum; },
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ

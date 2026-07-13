@@ -109,6 +109,9 @@
     <ClCompile Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.cpp" />
     <ClCompile Include="Src\Scene\Lobby\BossSelect\BossSelectScene.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Single\GrapeBossSingleState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -316,6 +319,9 @@
     <ClInclude Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.h" />
     <ClInclude Include="Src\Scene\Lobby\BossSelect\BossSelectScene.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Single\GrapeBossSingleState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

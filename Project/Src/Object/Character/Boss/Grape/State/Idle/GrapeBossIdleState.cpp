@@ -93,7 +93,7 @@ void GrapeBossIdleState::Update(void)
 	int luck = GetRand(10000);
 
 	if (luck <= 4000) {
-		if (distance <= 350.0f) {
+		if (distance <= 450.0f) {
 			KickDownChangeState();
 		}
 		else {

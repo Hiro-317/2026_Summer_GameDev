@@ -36,7 +36,7 @@ void GrapeBossMoveState::Update(void)
 	// ˆÊ’u‚ÌXV
 	pos += moveDir * MOVE_SPEED;
 
-	if ((*playerPos.at(target) - pos).Length() <= 350.0f) {
+	if ((*playerPos.at(target) - pos).Length() <= 450.0f) {
 		KickDownChangeState();
 	}
 }

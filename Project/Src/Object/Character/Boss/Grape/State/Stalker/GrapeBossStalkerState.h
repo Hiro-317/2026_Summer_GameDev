@@ -6,7 +6,7 @@
 
 #include "../../../../../../Common/Vector3.h"
 
-class GrapeBossSingleState : public CharacterStateBase
+class GrapeBossStalkerState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -20,19 +20,20 @@ public:
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
-	GrapeBossSingleState(
+	GrapeBossStalkerState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		const std::vector<const Vector3*> playerPos,
 		BombType* bombType,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayAttackAnim,
+		const std::function<void(void)> IdleAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> SetCoolTime
 	);
-	~GrapeBossSingleState()override = default;
+	~GrapeBossStalkerState()override = default;
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -59,6 +60,8 @@ private:
 	// 予測線用のローカル座標
 	const Vector3 FOOT_VIEW_POS = Vector3(-23.16f, 0.0f, -85.34f);
 
+	// 弾の間隔時間
+	const int DISP_TIME = 15;
 
 #pragma endregion
 
@@ -74,6 +77,7 @@ private:
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> PlayAttackAnim;
+	const std::function<void(void)> IdleAttackAnim;
 
 	// アニメーションの再生割合取得
 	const std::function<float(void)> GetAnimPlayRatio;
@@ -86,6 +90,15 @@ private:
 	const std::function<void(void)> SetCoolTime;
 #pragma endregion
 
+	// 終わっているか
+	bool end;
+
 	// ターゲット番号の保持
 	int target;
+
+	// 弾の数
+	int num;
+
+	// 弾の間隔
+	int disp;
 };
