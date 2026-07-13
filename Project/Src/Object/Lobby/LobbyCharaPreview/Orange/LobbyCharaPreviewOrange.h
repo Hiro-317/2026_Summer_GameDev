@@ -12,7 +12,7 @@ private:
 
 	void CharacterLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Charactor/Orange/OrangeModel");
+		trans.Load("Character/Orange/OrangeModel");
 
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -22,6 +22,6 @@ private:
 		trans.scale = 2.5f;
 
 		// アニメーションを登録する
-		AddAnimation("Data/Model/Charactor/CommonAnime/Dance.mv1", 1);
+		AddAnimation("Data/Model/Character/CommonAnime/Dance.mv1", 1);
 	}
 };

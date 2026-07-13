@@ -9,7 +9,7 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 	: operatorSenderId(operatorSenderId), stats(stats)
 {
 	// •¡»ƒnƒ“ƒhƒ‹
-	bombModel = MV1LoadModel("Data/Model/Charactor/Grape/Bomb.mv1");
+	bombModel = MV1LoadModel("Data/Model/Character/Grape/Bomb.mv1");
 
 	// ‰Šú‰»—p‚Ì”
 	int weaponNumber = 0;

@@ -27,7 +27,6 @@ public:
 		BombType* bombType,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayAttackAnim,
-		const std::function<void(void)> IdleAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> DefaultChangeState,

@@ -158,7 +158,7 @@ private:
 	};
 
 	// アニメーションのフォルダまでのパス
-	const std::string ANIME_FOLDER_PATH = "Data/Model/Charactor/Orange/Anime/";
+	const std::string ANIME_FOLDER_PATH = "Data/Model/Character/Orange/Anime/";
 
 	// アニメーションのタイプごとのパス
 	const std::string ANIME_PATH_TABLE[(int)ANIME_TYPE::MAX] =

@@ -35,7 +35,7 @@ BossBase::BossBase(
 	playerPos(playerPos),
 	playerLive(playerLive)
 {
-	trans.Load(("Charactor/" + modelPath).c_str());
+	trans.Load(("Character/" + modelPath).c_str());
 
 	this->operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();

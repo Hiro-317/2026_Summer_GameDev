@@ -251,7 +251,6 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
-			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
@@ -317,10 +316,6 @@ void GrapeBoss::ReceptionUpdate(void)
 			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale.x);
 			break;
 		}
-		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
-		{
-			break;
-		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
 			SubObjSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
@@ -341,10 +336,6 @@ void GrapeBoss::ReceptionUpdate(void)
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
 			SubObjSerch<GrapeKickDownCollOperator>()->SetDrawArea(dataPtr->flg);
-			break;
-		}
-		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
-		{
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
@@ -389,10 +380,18 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::SingleBomb:
 		{
+			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb)[dataPtr->index];
+			weapon.weaponIns->SetStartPos(dataPtr->pos);
+			weapon.weaponIns->SetViewPosCircle();
+			weapon.live = true; 
 			break;
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::StalkerBomb:
 		{
+			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb)[dataPtr->index];
+			weapon.weaponIns->SetStartPos(dataPtr->pos);
+			weapon.weaponIns->SetViewPosCircle();
+			weapon.live = true; 
 			break;
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb:

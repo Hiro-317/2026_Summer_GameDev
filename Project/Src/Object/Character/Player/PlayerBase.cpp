@@ -28,7 +28,7 @@ PlayerBase::PlayerBase(
 		SPEED_POWER),
 	otherPlayerTrans()
 {
-	trans.Load(("Charactor/" + modelPath).c_str());
+	trans.Load(("Character/" + modelPath).c_str());
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
 }
@@ -56,7 +56,7 @@ PlayerBase::PlayerBase(
 	otherPlayerTrans(),
 	bossPos(nullptr)
 {
-	trans.Load(("Charactor/" + modelPath).c_str());
+	trans.Load(("Character/" + modelPath).c_str());
 
 	this->operatorSenderId = operatorSenderId;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();

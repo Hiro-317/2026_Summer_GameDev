@@ -11,7 +11,6 @@ GrapeBossStalkerState::GrapeBossStalkerState(
 	BombType* bombType,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
-	const std::function<void(void)> IdleAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState,
@@ -22,7 +21,6 @@ GrapeBossStalkerState::GrapeBossStalkerState(
 	bombType(bombType),
 	GetTarget(GetTarget),
 	PlayAttackAnim(PlayAttackAnim),
-	IdleAttackAnim(IdleAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
@@ -44,6 +42,7 @@ void GrapeBossStalkerState::Update(void)
 	// アニメーションが終わっていたらフラグを立てる
 	if (IsAnimeEnd()) {
 
+		PlayAttackAnim();
 		end = true;
 	}
 

@@ -15,7 +15,7 @@ private:
 
 	void SubLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Charactor/Orange/OrangeModel");
+		trans.Load("Character/Orange/OrangeModel");
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -24,7 +24,7 @@ private:
 		trans.centerDiff = Vector3::Yonly(-250);
 
 		// アニメーションを登録する
-		AddAnimation("Data/Model/Charactor/Orange/Anime/Idle.mv1", 1.0f);
+		AddAnimation("Data/Model/Character/Orange/Anime/Idle.mv1", 1.0f);
 
 		CHARA_NAME = "リモネン";
 

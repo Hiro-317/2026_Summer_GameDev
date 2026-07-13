@@ -43,7 +43,7 @@ void GrapeBossStalkerBomb::SubUpdate(void)
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
-		trans.pos.y -= 3.0f;
+		trans.pos.y -= 5.0f;
 	}
 	// ついてるなら爆発カウントを進める
 	else {
