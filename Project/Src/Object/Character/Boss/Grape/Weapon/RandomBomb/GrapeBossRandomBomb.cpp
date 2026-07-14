@@ -4,7 +4,7 @@
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
 
-GrapeBossRandomBomb::GrapeBossSingleBomb(int model)
+GrapeBossRandomBomb::GrapeBossRandomBomb(int model)
 	: GrapeBossWeaponBase(model)
 {
 	// 当たり判定を生成する（XZコライダー）
