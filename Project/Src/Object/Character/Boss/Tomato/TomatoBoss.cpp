@@ -37,8 +37,7 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::v
 
 		playerPos, playerLive)
 {
-	coolTime = 120;
-
+	coolTime = DEFAULT_COOLTIME;
 	rockHit = false;
 }
 
@@ -106,6 +105,7 @@ void TomatoBoss::PlayerLoad(void)
 			trans.pos, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
+			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 頭突きへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_A); },
@@ -132,6 +132,7 @@ void TomatoBoss::PlayerLoad(void)
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
+			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
@@ -150,8 +151,9 @@ void TomatoBoss::PlayerLoad(void)
 			MOVE_SPEED, 20.0f,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
-			// コリジョンオペレーターの参照私
+			// コリジョンオペレーターの参照渡し
 			SubObjSerch<TomatoHeadbuttCollOperator>(),
+			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
@@ -174,7 +176,7 @@ void TomatoBoss::PlayerLoad(void)
 			SubObjSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, isGround, playerPos,
-			// 最与ダメプレイヤーをターゲットにする
+			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
@@ -195,10 +197,11 @@ void TomatoBoss::PlayerLoad(void)
 			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
-			// 自分の座標と角度、プレイヤーの座標の読み取り
-			&trans, playerPos,
-			// コリジョンオペレーターの参照私
+			// 自分の座標と角度、情報の読み取り,プレイヤーの座標の読み取り
+			trans.pos, trans.angle, &trans, playerPos,
+			// コリジョンオペレーターの参照渡し
 			SubObjSerch<TomatoTackleCollOperator>(),
+			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
@@ -219,7 +222,7 @@ void TomatoBoss::PlayerLoad(void)
 			[&]() { state = static_cast<int>(STATE::DEATH); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::DEATH); },
-			// ボスのサイズ
+			// ボスのサイズとスケール
 			trans.scale, MODEL_SCALE,
 			// 死んだフラグを立てる
 			[&]() {	SetIsDeath(true); }
@@ -254,6 +257,8 @@ void TomatoBoss::PlayerLoad(void)
 void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
 	BossBase::OnCollision(ownTag, other);
+
+	// ボスとステージの岩と当たったか
 	if (ownTag == COLLIDER_TAG::BOSS) {
 		if (other.GetTag() == COLLIDER_TAG::STAGE) {
 			if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {

@@ -12,10 +12,20 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="ROTATION_POW">回転量</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="CoolTime">クールタイムの取得</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
+	/// <param name="PlayIdleAnim">アイドルアニメーションの再生</param>
+	/// <param name="PlayWalkAnim">歩きアニメーションの再生</param>
+	/// <param name="MoveChangeState">歩くへのステート</param>
+	/// <param name="KickDownChangeState">かかと落としへのステート</param>
+	/// <param name="StraightChangeState">直線投擲へのステート</param>
+	/// <param name="StampChangeState">スタンプ攻撃へのステート</param>
+	/// <param name="SingleChangeState">一発攻撃へのステート</param>
+	/// <param name="StalkerChangeState">追従攻撃へのステート</param>
+	/// <param name="RandomChangeState">ランダム攻撃へのステート</param>
 	GrapeBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
@@ -34,9 +44,6 @@ public:
 		const std::function<void(void)> RandomChangeState
 	);
 	~GrapeBossIdleState()override = default;
-
-	//// 自分の状態に遷移する条件関数
-	//void OwnStateConditionUpdate(void);
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -86,8 +93,12 @@ private:
 
 #pragma endregion
 
+	// カウント
 	int cnt;
 
 	// プレイヤーターゲット
 	int target;
+
+	// アングル合わせるフラグ
+	bool angleFlg;
 };

@@ -15,12 +15,24 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
+	/// <param name="pos">座標の参照</param>
+	/// <param name="angle">角度の参照</param>
+	/// <param name="isGround">地面かどうか</param>
 	/// <param name="bombType">攻撃種のクラス取得</param>
-	/// <param name="model">モデルの取得</param>
-	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
+	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="collOperator">当たり判定オペレータの参照</param>
+	/// <param name="JUMP_START_ANIM_TYPE">踏み切りアニメーションのenumタイプ</param>
+	/// <param name="STAMP_ANIM_TYPE">スタンプアニメーションのenumタイプ</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
+	/// <param name="PlayJumpStartAnim">踏み切りアニメーションの再生</param>
+	/// <param name="PlayJumpAnim">ジャンプ中アニメーションの再生</param>
+	/// <param name="PlayStampAnim">スタンプアニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
+	/// <param name="DeleteColl">ボス自体のコライダの消滅</param>
+	/// <param name="ReviveColl">ボス自体のコライダの再生</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
+	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,

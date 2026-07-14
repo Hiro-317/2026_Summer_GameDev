@@ -34,7 +34,7 @@ private:
 	const float HEIGHT = 37.0f;
 
 	// コライダー描画の拡大率
-	const Vector3 SCALE = Vector3(RADIUS / 100.0, 1.0f, RADIUS / 100.0);
+	const Vector3 SCALE = Vector3(RADIUS / 100.0f, 1.0f, RADIUS / 100.0f);
 
 #pragma region 受け取る参照変数
 

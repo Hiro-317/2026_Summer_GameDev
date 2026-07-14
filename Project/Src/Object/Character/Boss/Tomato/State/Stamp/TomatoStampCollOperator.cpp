@@ -19,8 +19,6 @@ TomatoStampCollOperator::TomatoStampCollOperator
 	collBack(Vector3()), collFront(Vector3())
 {
 	isDrawArea = false;
-	end = false;
-	attackCnt = 0;
 	trans.pos = Vector3(-1, -1, -1);
 }
 
@@ -63,13 +61,12 @@ void TomatoStampCollOperator::Load(void)
 
 void TomatoStampCollOperator::SubUpdate(void)
 {
+	// ‰Ÿ‚µ–ß‚³‚ê‚½êŠ‚É‚·‚×‚ÄˆÚ“®‚³‚¹‚é
 	auto pos = ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->GetPos();
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPos(pos);
 	collBack.pos = pos;
 	collFront.pos = pos;
 	trans.pos.y = HEIGHT;
-	end = false;
-	attackCnt = 0;
 }
 
 void TomatoStampCollOperator::SubAlphaDraw(void)

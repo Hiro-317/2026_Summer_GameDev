@@ -36,17 +36,22 @@ void TomatoBossIdleState::Enter(void)
 
 void TomatoBossIdleState::Update(void)
 {
+	// クールタイムまで待つ
 	if (cnt > 0) {
 		cnt--;
 		return;
 	}
+	// 距離と確率を出す
 	float distance = (*playerPos.at(target) - pos).Length();
 	int luck = GetRand(10000);
 
+	// 確率で変える
 	if (luck <= 4000) {
+		// 距離が近いなら頭突き
 		if (distance <= 350.0f) {
 			headbuttChangeState();
 		}
+		// 遠いなら移動
 		else {
 			moveChangeState();
 		}
@@ -56,10 +61,12 @@ void TomatoBossIdleState::Update(void)
 		stampChangeState();
 	}
 	else {
+		// 岩に当たっていないならタックル
 		if (!hitRock()) {
 
 			tackleChangeState();
 		}
+		// 当たってたら再抽選
 		else {
 			if (luck <= 9000) {
 				if (distance <= 400.0f) {

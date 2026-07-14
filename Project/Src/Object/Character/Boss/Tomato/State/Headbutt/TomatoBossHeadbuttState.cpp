@@ -40,7 +40,9 @@ void TomatoBossHeadbuttState::Enter(void)
 
 void TomatoBossHeadbuttState::Update(void)
 {
+	// 前隙用の時間加算
 	time++;
+	// 前隙中は予測線の更新
 	if (time < 0) {
 
 		angle.y = atan2f(moveDir.x, moveDir.z);
@@ -52,12 +54,14 @@ void TomatoBossHeadbuttState::Update(void)
 		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle));
 		return;
 	}
+	// 初めなら音と当たり判定を出す
 	if (time == 0) {
 		SoundManager::GetIns().Play("Headbutt");
 		if (Net::GetIns().IsHost()) {
 			collOperator->CollSet(true);
 		}
 	}
+	// 持続時間を超えたらステートを変える
 	if (time > ATTACK_TIME) {
 		DefaultChangeState();
 	}

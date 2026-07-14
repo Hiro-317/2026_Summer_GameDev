@@ -14,12 +14,14 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
+	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="bombType">攻撃種のクラス取得</param>
-	/// <param name="model">モデルの取得</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
+	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossSingleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,

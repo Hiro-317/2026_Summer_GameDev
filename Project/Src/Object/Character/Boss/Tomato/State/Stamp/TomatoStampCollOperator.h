@@ -32,9 +32,6 @@ public:
 	void SetPos(const Vector3& pos){ trans.pos = pos; }
 	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
-	// UŒ‚I—¹
-	bool End(void) { return end; }
-
 private:
 
 #pragma region ’è”
@@ -61,12 +58,6 @@ private:
 #pragma endregion
 
 #pragma region •Ï”
-
-	// UŒ‚I—¹
-	bool end;
-
-	// UŒ‚ƒJƒEƒ“ƒg
-	int attackCnt;
 
 	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
 	bool isDrawArea;

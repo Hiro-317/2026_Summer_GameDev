@@ -17,6 +17,7 @@ public:
 	/// <param name="ROTATION_POW">回転量</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
+	/// <param name="trans">情報の読み取り</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="ResetAngle">角度を戻す</param>
 	/// <param name="DeleteColl">XZのコライダを消す</param>
@@ -26,7 +27,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
-		Transform* trans,
+		Vector3& pos, Vector3& angle, const Transform* trans,
 		const std::vector<const Vector3*> playerPos,
 		TomatoTackleCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
@@ -37,9 +38,6 @@ public:
 		const std::function<void(void)> SetCoolTime
 	);
 	~TomatoBossTackleState()override = default;
-
-	//// 自分の状態に遷移する条件関数
-	//void OwnStateConditionUpdate(void);
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -71,8 +69,14 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// ボスの情報の参照
-	Transform* trans;
+	// ボスの座標
+	Vector3& pos;
+
+	// ボスの角度
+	Vector3& angle;
+
+	// ボスの情報の読み取り
+	const Transform* trans;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;

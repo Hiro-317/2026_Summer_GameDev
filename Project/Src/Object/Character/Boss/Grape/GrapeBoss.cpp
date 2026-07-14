@@ -96,8 +96,11 @@ void GrapeBoss::PlayerLoad(void)
 			trans.pos, trans.angle, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
+			// ターゲット番号の取得
 			[&]() { return targetNum; },
+			// アイドルアニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
+			// 歩きアニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK, true); },
 			// 移動への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::MOVE); },
@@ -126,7 +129,9 @@ void GrapeBoss::PlayerLoad(void)
 			MOVE_SPEED,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.angle, playerPos,
+			// ターゲット番号の取得
 			[&]() { return targetNum; },
+			// 走りアニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::RUN, true); },
 			// 移動後攻撃に状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_A); }
@@ -140,21 +145,28 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
-			// 自分の座標と角度
+			// 自分の座標と角度とローカル角度
 			trans.pos, trans.angle, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
 			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
+			// モデルの拡大率
 			MODEL_SCALE,
+			// プレイヤーの座標の読み取り
+			playerPos,
+			// 当たり判定オペレータの参照
 			SubObjSerch<GrapeKickDownCollOperator>(),
+			// アニメーションの再生関数のポインタ
+			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICKDOWN, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = 120; }
+			// クールタイムの設定
+			[&]() { coolTime = KICKDOWN_COOLTIME; }
 		)
 	);
 	AddState(
@@ -178,9 +190,10 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = 100; }
+			// クールタイムの設定
+			[&]() { coolTime = STRAIGHT_COOLTIME; }
 		)
 	);
 	AddState(
@@ -212,11 +225,14 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
+			// ボス自体のコライダの消滅
 			[&]() { SetJudge(false); },
+			// ボス自体のコライダの再生
 			[&]() { SetJudge(true); },
-			[&]() { coolTime = 180; }
+			// クールタイムの設定
+			[&]() { coolTime = STAMP_COOLTIME; }
 		)
 	);
 	AddState(
@@ -238,9 +254,10 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = 180; }
+			// クールタイムの設定
+			[&]() { coolTime = SINGLE_COOLTIME; }
 		)
 	);
 	AddState(
@@ -262,9 +279,10 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = 180; }
+			// クールタイムの設定
+			[&]() { coolTime = STAMP_COOLTIME; }
 		)
 	);
 	AddState(
@@ -274,21 +292,20 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { state = static_cast<int>(STATE::ATTACK_F); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_F); },
-			// 座標
+			// 座標の参照
 			trans.pos,
 			// 攻撃の種類の情報
 			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
-			// プレイヤーのターゲット番号
-			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = 180; }
+			// クールタイムの設定
+			[&]() { coolTime = RANDOM_COOLTIME; }
 		)
 	);
 

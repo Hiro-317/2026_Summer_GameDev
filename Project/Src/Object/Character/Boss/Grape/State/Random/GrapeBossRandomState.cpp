@@ -8,7 +8,6 @@ GrapeBossRandomState::GrapeBossRandomState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	const Vector3& pos, BombType* bombType,
-	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
@@ -17,7 +16,6 @@ GrapeBossRandomState::GrapeBossRandomState(
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	pos(pos), bombType(bombType),
-	GetTarget(GetTarget),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
@@ -29,7 +27,6 @@ GrapeBossRandomState::GrapeBossRandomState(
 void GrapeBossRandomState::Enter(void)
 {
 	PlayAttackAnim();
-	target = GetTarget();
 	SetCoolTime();
 }
 
@@ -41,8 +38,8 @@ void GrapeBossRandomState::Update(void)
 		for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::RandomBomb]; i++) {
 
 			// 前後左右の制定
-			float FB = GetRand(RADIUS);
-			float LR = GetRand(RADIUS);
+			float FB = (float)GetRand(RADIUS);
+			float LR = (float)GetRand(RADIUS);
 
 			// ランダム位置の生成
 			float posX = 0.0f;

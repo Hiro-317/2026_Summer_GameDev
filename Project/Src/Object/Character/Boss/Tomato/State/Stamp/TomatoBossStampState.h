@@ -15,11 +15,16 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="MOVE_SPEED">自分の状態かどうかを返す関数</param>
+	/// <param name="collOperator">当たり判定オペレーターの参照</param>
 	/// <param name="pos">座標の参照</param>
-	/// <param name="DefaultChangeState">攻撃後の遷移先</param>
-	/// <param name="offCollider">攻撃時のエネミー自体の当たり判定を消すように</param>
-	/// <param name="onCollider">攻撃時のエネミー自体の当たり判定をつけるように</param>
+	/// <param name="angle">角度の参照</param>
+	/// <param name="isGround">地面に当たっているか</param>
+	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="GetTarget">ターゲット番号取得</param>
+	/// <param name="DefaultChangeState">攻撃後変わるステート</param>
+	/// <param name="offCollider">ボス自体のコライダの消滅</param>
+	/// <param name="onCollider">ボス自体のコライダの再生</param>
+	/// <param name="SetCoolTime">クールタイムの設定</param>
 	TomatoBossStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
@@ -34,9 +39,6 @@ public:
 	);
 
 	~TomatoBossStampState()override = default;
-
-	//// 自分の状態に遷移する条件関数
-	//void OwnStateConditionUpdate(void);
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -56,7 +58,7 @@ private:
 	static constexpr float JUMP_POW = 29.0f;
 
 	// 目標までの到達時間(割合)
-	static constexpr float TIME_RATE = 15.0f;
+	static constexpr float TIME_RATE = 18.0f;
 
 	// 攻撃の発生持続時間
 	static constexpr int ATTACK_DURATION = 5;

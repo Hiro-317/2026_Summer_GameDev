@@ -10,7 +10,9 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	Vector3& pos, Vector3& angle, const Vector3 LOCAL_ROT,
 	BombType* bombType,
 	const Vector3& MODEL_SCALE,
+	const std::vector<const Vector3*> playerPos,
 	GrapeKickDownCollOperator* collOperator,
+	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
@@ -21,12 +23,15 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	pos(pos), angle(angle), LOCAL_ROT(LOCAL_ROT),
 	bombType(bombType),
 	MODEL_SCALE(MODEL_SCALE),
+	playerPos(playerPos),
 	collOperator(collOperator),
+	GetTarget(GetTarget),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
-	SetCoolTime(SetCoolTime)
+	SetCoolTime(SetCoolTime),
+	cnt(0), first(false), target(0)
 {
 }
 
@@ -36,8 +41,10 @@ void GrapeBossKickDownState::Enter(void)
 	first = true;
 	cnt = 0;
 	SetCoolTime();
-	viewPos = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
-	collOperator->SetPos(viewPos);
+	target = GetTarget();
+	angle.y = atan2f(playerPos.at(target)->x, playerPos.at(target)->z);
+	Vector3 tmp = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
+	collOperator->SetPos(tmp);
 	collOperator->SetDrawArea(true);
 }
 
@@ -51,8 +58,8 @@ void GrapeBossKickDownState::Update(void)
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::KickBomb]; i++) {
 
 				// 前後左右の制定
-				float FB = GetRand(RADIUS);
-				float LR = GetRand(RADIUS);
+				float FB = (float)GetRand(RADIUS);
+				float LR = (float)GetRand(RADIUS);
 
 				// ランダム位置の生成
 				float posX = 0.0f;

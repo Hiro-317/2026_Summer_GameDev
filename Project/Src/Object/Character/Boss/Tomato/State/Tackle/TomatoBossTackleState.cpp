@@ -8,7 +8,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
-	Transform* trans,
+	Vector3& pos, Vector3& angle, const Transform* trans,
 	const std::vector<const Vector3*> playerPos,
 	TomatoTackleCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
@@ -20,7 +20,8 @@ TomatoBossTackleState::TomatoBossTackleState(
 ) 
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
-	trans(trans), playerPos(playerPos),
+	pos(pos), angle(angle), trans(trans),
+	playerPos(playerPos),
 	collOperator(collOperator),
 	GetTarget(GetTarget),
 	ResetAngle(ResetAngle),
@@ -49,7 +50,7 @@ void TomatoBossTackleState::Enter(void)
 
 void TomatoBossTackleState::Update(void)
 {
-	trans->angle.x += rotPow;
+	angle.x += rotPow;
 
 	// 一秒の溜め
 	if (time < CHARGE_POW) {
@@ -57,13 +58,13 @@ void TomatoBossTackleState::Update(void)
 		time++;
 
 		// 回転の更新
-		moveDir = (*playerPos.at(target) - trans->pos).Normalized();
-		trans->angle.y = atan2f(moveDir.x, moveDir.z);
+		moveDir = (*playerPos.at(target) - pos).Normalized();
+		angle.y = atan2f(moveDir.x, moveDir.z);
 		rotPow += ROTATION_POW;
 
 		// 予測線の更新
-		auto p = Vector3::XZonly(trans->pos.x, trans->pos.z);
-		auto a = Vector3::Yonly(trans->angle.y);
+		auto p = Vector3::XZonly(pos.x, pos.z);
+		auto a = Vector3::Yonly(angle.y);
 		auto s = Vector3::Xonly(((float)time - 180.0f) / 180.0f + 1.0f);
 
 		collOperator->SetViewPos(p);
@@ -79,7 +80,7 @@ void TomatoBossTackleState::Update(void)
 			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::TACKLE_MOVE, Vector3(), trans, false);
 		}
 		// 位置の更新
-		trans->pos += moveDir * MOVE_SPEED;
+		pos += moveDir * MOVE_SPEED;
 
 		collOperator->CollSet(true);
 		
@@ -95,7 +96,7 @@ void TomatoBossTackleState::Update(void)
 			return;
 		}
 	}
-	trans->angle.x += rotPow;
+	angle.x += rotPow;
 	collOperator->SetPos(Vector3::XZonly(trans->pos.x, trans->pos.z));
 }
 

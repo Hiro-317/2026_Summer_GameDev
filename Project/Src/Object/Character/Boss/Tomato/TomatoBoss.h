@@ -119,11 +119,11 @@ private:
 	const float STAMP_RADIUS = GetParameter("Attack", "StampRad");
 
 	// “ª“Ë‚«UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int HEADBUTT_COOLTIME = GetParameter("Attack", "HeadbuttCoolTime");
+	const int HEADBUTT_COOLTIME = GetParameterToInt("Attack", "HeadbuttCoolTime");
 	// ƒXƒ^ƒ“ƒvUŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int STAMP_COOLTIME = GetParameter("Attack", "StampCoolTime");
+	const int STAMP_COOLTIME = GetParameterToInt("Attack", "StampCoolTime");
 	// ƒ^ƒbƒNƒ‹UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int TACKLE_COOLTIME = GetParameter("Attack", "TackleCoolTime");
+	const int TACKLE_COOLTIME = GetParameterToInt("Attack", "TackleCoolTime");
 
 	// `````````````````````````````````
 
@@ -140,6 +140,9 @@ private:
 
 	// ƒQ[ƒ€ƒNƒŠƒA‚Ì•ÏXŠÔ
 	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
+
+	// ƒfƒtƒHƒ‹ƒg‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	static constexpr int DEFAULT_COOLTIME = 120;
 
 #pragma endregion ’è”’è‹`
 

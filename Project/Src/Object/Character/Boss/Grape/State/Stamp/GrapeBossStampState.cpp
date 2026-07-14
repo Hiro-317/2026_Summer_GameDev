@@ -41,7 +41,10 @@ GrapeBossStampState::GrapeBossStampState(
 	DefaultChangeState(DefaultChangeState),
 	offCollider(offCollider),
 	onCollider(onCollider),
-	SetCoolTime(SetCoolTime)
+	SetCoolTime(SetCoolTime),
+	attackCnt(0), cnt(0), first(false),
+	isAttack(false), nowAttackTime(0),
+	prevPos(0.0f), target(0)
 {
 }
 
@@ -109,8 +112,8 @@ void GrapeBossStampState::Update(void)
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::StampBomb]; i++) {
 
 				// 前後左右の制定
-				float FB = GetRand(RADIUS);
-				float LR = GetRand(RADIUS);
+				float FB = (float)GetRand(RADIUS);
+				float LR = (float)GetRand(RADIUS);
 
 				// ランダム位置の生成
 				float posX = 0.0f;

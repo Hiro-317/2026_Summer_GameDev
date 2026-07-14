@@ -22,6 +22,7 @@ void TomatoBossDeathState::Enter(void)
 
 void TomatoBossDeathState::Update(void)
 {
+	// ”š”­‚³‚¹‚é
 	if (cnt <= CHANGE_COUNT) {
 
 		float rate = ((float)cnt - SCALE_REVERSE) * ((float)cnt - SCALE_REVERSE);

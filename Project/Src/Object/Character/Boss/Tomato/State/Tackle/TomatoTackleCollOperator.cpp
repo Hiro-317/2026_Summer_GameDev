@@ -58,6 +58,7 @@ void TomatoTackleCollOperator::Load(void)
 
 void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	// ステージに当たったか
 	if (other.GetTag() == COLLIDER_TAG::STAGE && other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 
 		stageHit = true;

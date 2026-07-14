@@ -15,19 +15,28 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
+	/// <param name="pos">座標の参照</param>
+	/// <param name="angle">角度の参照</param>
+	/// <param name="LOCAL_ROT">ローカル角度</param>
 	/// <param name="bombType">攻撃種のクラス取得</param>
-	/// <param name="model">モデルの取得</param>
+	/// <param name="MODEL_SCALE">モデルの拡大率</param>
+	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="collOperator">攻撃オペレーターの参照</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
+	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossKickDownState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		Vector3& pos, Vector3& angle, const Vector3 LOCAL_ROT,
 		BombType* bombType,
 		const Vector3& MODEL_SCALE,
+		const std::vector<const Vector3*> playerPos,
 		GrapeKickDownCollOperator* collOperator,
+		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
@@ -80,8 +89,14 @@ private:
 	// ボムの参照
 	BombType* bombType;
 
+	// プレイヤーの座標の読み取り
+	const std::vector<const Vector3*> playerPos;
+
 	// コライダーのオペレーターのポインター
 	GrapeKickDownCollOperator* collOperator;
+
+	// ターゲット番号の取得
+	const std::function<int(void)> GetTarget;
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> PlayAttackAnim;
@@ -103,6 +118,6 @@ private:
 	// 攻撃持続のカウント
 	int cnt;
 
-	// 予測線描画座標
-	Vector3 viewPos;
+	// ターゲット番号の保持
+	int target;
 };

@@ -13,14 +13,17 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="ROTATION_POW">回転量</param>
+	/// <param name="MOVE_SPEED"></param>
+	/// <param name="ATTACK_TIME"></param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
-	/// <param name="TomatoHeadbuttCollOperator*">コライダーのポインタ</param>
-	/// <param name="DeleteColl">XZのコライダを消す</param>
-	/// <param name="ReviveColl">XZのコライダを復活させる</param>
-	/// <param name="DefaultChangeState">戻すステート</param>
+	/// <param name="collOperator">当たり判定オペレータの参照</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
+	/// <param name="DeleteColl">ボス自体のコライダの消滅</param>
+	/// <param name="ReviveColl">ボス自体のコライダの再生</param>
+	/// <param name="DefaultChangeState">攻撃後のステート</param>
+	/// <param name="SetCoolTime">クールタイムの設定</param>
 	TomatoBossHeadbuttState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
@@ -35,9 +38,6 @@ public:
 		const std::function<void(void)> SetCoolTime
 	);
 	~TomatoBossHeadbuttState()override = default;
-
-	//// 自分の状態に遷移する条件関数
-	//void OwnStateConditionUpdate(void);
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;

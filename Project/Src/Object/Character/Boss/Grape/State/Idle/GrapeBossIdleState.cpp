@@ -32,7 +32,8 @@ GrapeBossIdleState::GrapeBossIdleState(
 	StampChangeState(StampChangeState),
 	SingleChangeState(SingleChangeState),
 	StalkerChangeState(StalkerChangeState),
-	RandomChangeState(RandomChangeState)
+	RandomChangeState(RandomChangeState),
+	cnt(0), target(0), angleFlg(true)
 {
 }
 
@@ -41,10 +42,12 @@ void GrapeBossIdleState::Enter(void)
 	cnt = CoolTime();
 	target = GetTarget();
 	PlayIdleAnim();
+	angleFlg = true;
 }
 
 void GrapeBossIdleState::Update(void)
 {
+	// クールタイムの間
 	if (cnt > 0) {
 		cnt--;
 		
@@ -54,7 +57,14 @@ void GrapeBossIdleState::Update(void)
 		float norm = dir - angle.y;
 
 		// 角度があってなかったら
-		if (abs(norm) > 0.0f) {
+		if (abs(norm) > Deg2Rad(15.0f)) {
+
+			// フラグを立てる
+			angleFlg = true;
+		}
+
+		// 角度合わせフラグが立ってるなら
+		if (angleFlg) {
 			// 歩きのアニメーションを流す
 			PlayWalkAnim();
 
@@ -85,6 +95,11 @@ void GrapeBossIdleState::Update(void)
 				else {
 					angle.y = dir;
 				}
+			}
+
+			// 角度がほぼあってるならおろす
+			if (abs(norm) <= Deg2Rad(0.1f)) {
+				angleFlg = false;
 			}
 		}
 		else {

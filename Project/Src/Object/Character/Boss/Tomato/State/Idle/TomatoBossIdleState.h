@@ -12,10 +12,16 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="ROTATION_POW">回転量</param>
 	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="CoolTime">クールタイムの取得</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
+	/// <param name="headbuttChangeState">頭突き攻撃へのステート</param>
+	/// <param name="moveChangeState">移動へのステート</param>
+	/// <param name="stampChangeState">スタンプ攻撃へのステート</param>
+	/// <param name="tackleChangeState">タックル攻撃へのステート</param>
+	/// <param name="hitRock">岩に当たっているか</param>
+	/// <param name="rockReset">岩に当たっているかのリセット</param>
 	TomatoBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
@@ -30,9 +36,6 @@ public:
 		const std::function<void(void)> rockReset
 	);
 	~TomatoBossIdleState()override = default;
-
-	//// 自分の状態に遷移する条件関数
-	//void OwnStateConditionUpdate(void);
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
