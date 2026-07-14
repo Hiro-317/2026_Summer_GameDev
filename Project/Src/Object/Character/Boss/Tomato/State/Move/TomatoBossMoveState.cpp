@@ -9,14 +9,14 @@ TomatoBossMoveState::TomatoBossMoveState(
 	Vector3& pos, Vector3& angle, const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> ResetAngle,
-	const std::function<void(void)> headbuttChangeState
+	const std::function<void(void)> HeadbuttChangeState
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	pos(pos), angle(angle), playerPos(playerPos),
 	GetTarget(GetTarget),
 	ResetAngle(ResetAngle),
-	headbuttChangeState(headbuttChangeState)
+	HeadbuttChangeState(HeadbuttChangeState)
 {
 	
 }
@@ -37,7 +37,7 @@ void TomatoBossMoveState::Update(void)
 	pos += moveDir * MOVE_SPEED;
 
 	if ((*playerPos.at(target) - pos).Length() <= 350.0f) {
-		headbuttChangeState();
+		HeadbuttChangeState();
 	}
 }
 

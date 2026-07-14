@@ -57,7 +57,7 @@ void GrapeBossIdleState::Update(void)
 		float norm = dir - angle.y;
 
 		// 角度があってなかったら
-		if (abs(norm) > Deg2Rad(15.0f)) {
+		if (abs(norm) > NOT_ROT) {
 
 			// フラグを立てる
 			angleFlg = true;
@@ -80,26 +80,25 @@ void GrapeBossIdleState::Update(void)
 
 			// 右なら足す
 			if (norm > 0.0f) {
-				if (norm > Deg2Rad(2.0f)) {
-					angle.y += Deg2Rad(2.0f);
+				if (norm > ROT_POW) {
+					angle.y += ROT_POW;
 				}
 				else {
+					// 角度があってるならおろす
 					angle.y = dir;
+					angleFlg = false;
 				}
 			}
 			// 左なら引く
 			else {
-				if (norm < -Deg2Rad(2.0f)) {
-					angle.y -= Deg2Rad(2.0f);
+				if (norm < -ROT_POW) {
+					angle.y -= ROT_POW;
 				}
 				else {
+					// 角度があってるならおろす
 					angle.y = dir;
+					angleFlg = false;
 				}
-			}
-
-			// 角度がほぼあってるならおろす
-			if (abs(norm) <= Deg2Rad(0.1f)) {
-				angleFlg = false;
 			}
 		}
 		else {
@@ -109,24 +108,48 @@ void GrapeBossIdleState::Update(void)
 		}
 		return;
 	}
-
+	// 距離と確率を出す
 	float distance = (*playerPos.at(target) - pos).Length();
-	int luck = GetRand(10000);
+	int luck = GetRand(RANDOM);
 
-	if (luck <= 4000) {
-		if (distance <= 450.0f) {
+	// 確率で変える
+	if (luck <= KICKDOWN_LUCK) {
+		// 距離が近いなら頭突き
+		if (distance <= DISTANCE) {
 			KickDownChangeState();
 		}
+		// 遠いなら移動
 		else {
 			MoveChangeState();
 		}
 	}
-	else if (luck <= 8000) {
+	else if (luck <= STRAIGHT_LUCK) {
+		// 距離が遠いなら直線投擲
+		if (distance >= DISTANCE) {
+			StraightChangeState();
+		}
+		// 近いならかかと落としか追従
+		else if (luck <= RELOOT_LUCK){
+			KickDownChangeState();
+		}
+		else {
+			StalkerChangeState();
+		}
+	}
+	else if (luck <= STAMP_LUCK) {
 
-		StraightChangeState();
+		StampChangeState();
+	}
+	else if (luck <= SINGLE_LUCK) {
+
+		SingleChangeState();
+	}
+	else if (luck <= STALKER_LUCK) {
+
+		StalkerChangeState();
 	}
 	else {
-		StampChangeState();
+		RandomChangeState();
 	}
 }
 

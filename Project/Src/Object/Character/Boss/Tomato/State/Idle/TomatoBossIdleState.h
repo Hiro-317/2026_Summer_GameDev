@@ -16,10 +16,10 @@ public:
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="CoolTime">クールタイムの取得</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
-	/// <param name="headbuttChangeState">頭突き攻撃へのステート</param>
-	/// <param name="moveChangeState">移動へのステート</param>
-	/// <param name="stampChangeState">スタンプ攻撃へのステート</param>
-	/// <param name="tackleChangeState">タックル攻撃へのステート</param>
+	/// <param name="HeadbuttChangeState">頭突き攻撃へのステート</param>
+	/// <param name="MoveChangeState">移動へのステート</param>
+	/// <param name="StampChangeState">スタンプ攻撃へのステート</param>
+	/// <param name="TackleChangeState">タックル攻撃へのステート</param>
 	/// <param name="hitRock">岩に当たっているか</param>
 	/// <param name="rockReset">岩に当たっているかのリセット</param>
 	TomatoBossIdleState(
@@ -28,10 +28,10 @@ public:
 		Vector3& pos, const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> CoolTime,
 		const std::function<int(void)> GetTarget,
-		const std::function<void(void)> headbuttChangeState,
-		const std::function<void(void)> moveChangeState,
-		const std::function<void(void)> stampChangeState,
-		const std::function<void(void)> tackleChangeState,
+		const std::function<void(void)> HeadbuttChangeState,
+		const std::function<void(void)> MoveChangeState,
+		const std::function<void(void)> StampChangeState,
+		const std::function<void(void)> TackleChangeState,
 		const std::function<bool(void)> hitRock,
 		const std::function<void(void)> rockReset
 	);
@@ -62,13 +62,13 @@ private:
 	const std::function<int(void)> CoolTime;
 
 	// 頭突きへ
-	const std::function<void(void)> headbuttChangeState;
+	const std::function<void(void)> HeadbuttChangeState;
 	// 移動へ
-	const std::function<void(void)> moveChangeState;
+	const std::function<void(void)> MoveChangeState;
 	// スタンプへ
-	const std::function<void(void)> stampChangeState;
+	const std::function<void(void)> StampChangeState;
 	// 突進へ
-	const std::function<void(void)> tackleChangeState;
+	const std::function<void(void)> TackleChangeState;
 
 	// 岩との当たり判定
 	const std::function<bool(void)> hitRock;
@@ -77,6 +77,23 @@ private:
 
 #pragma endregion
 
+
+#pragma region 定数定義
+
+	// 確率の全体
+	static constexpr int RANDOM = 10000;
+
+	// それぞれの確率
+	static constexpr int HEADBUTT_LUCK = 4000;
+	static constexpr int STAMP_LUCK = 8000;
+	static constexpr int RELOOT_LUCK = 9000;
+
+	// 移動に移る距離
+	static constexpr float DISTANCE = 400.0f;
+
+#pragma endregion
+
+	// カウント
 	int cnt;
 
 	// プレイヤーターゲット

@@ -42,7 +42,7 @@ void GrapeBossKickDownState::Enter(void)
 	cnt = 0;
 	SetCoolTime();
 	target = GetTarget();
-	angle.y = atan2f(playerPos.at(target)->x, playerPos.at(target)->z);
+	angle.y = atan2f(playerPos.at(target)->x - pos.x, playerPos.at(target)->z - pos.z);
 	Vector3 tmp = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
 	collOperator->SetPos(tmp);
 	collOperator->SetDrawArea(true);

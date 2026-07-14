@@ -19,7 +19,7 @@ public:
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
 	/// <param name="ResetAngle">角度のリセット</param>
-	/// <param name="headbuttChangeState">頭突き攻撃へのステート</param>
+	/// <param name="HeadbuttChangeState">頭突き攻撃へのステート</param>
 	TomatoBossMoveState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
@@ -28,7 +28,7 @@ public:
 		const std::vector<const Vector3*> playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> ResetAngle,
-		const std::function<void(void)> headbuttChangeState
+		const std::function<void(void)> HeadbuttChangeState
 	);
 	~TomatoBossMoveState()override = default;
 
@@ -70,7 +70,7 @@ private:
 	const std::function<void(void)> ResetAngle;
 
 	// 頭突きに移行するポインタ
-	const std::function<void(void)> headbuttChangeState;
+	const std::function<void(void)> HeadbuttChangeState;
 
 #pragma endregion
 

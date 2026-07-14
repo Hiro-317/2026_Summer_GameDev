@@ -1,7 +1,7 @@
 WalkAnimeSpeed,1
-KickAnimeSpeed,1
+KickAnimeSpeed,0.5
 DownThrowAnimeSpeed,1
-JumpStartAnimeSpeed,1
+JumpStartAnimeSpeed,0.8
 JumpingAnimeSpeed,1
 IdleAnimeSpeed,1
 RunAnimeSpeed,1

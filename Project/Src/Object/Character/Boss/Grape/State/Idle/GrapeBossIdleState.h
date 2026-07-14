@@ -93,6 +93,29 @@ private:
 
 #pragma endregion
 
+#pragma region 定数定義
+
+	// 確率の全体
+	static constexpr int RANDOM = 12000;
+
+	// それぞれの確率
+	static constexpr int KICKDOWN_LUCK = 3000;
+	static constexpr int STRAIGHT_LUCK = 4000;
+	static constexpr int STAMP_LUCK = 6000;
+	static constexpr int SINGLE_LUCK = 9000;
+	static constexpr int STALKER_LUCK = 11000;
+	static constexpr int RELOOT_LUCK = 4500;
+
+	// 移動に移る距離
+	static constexpr float DISTANCE = 400.0f;
+
+	// 回らない範囲
+	const float NOT_ROT = Deg2Rad(15.0f);
+	// 一度に回る角度
+	const float ROT_POW = Deg2Rad(2.0f);
+
+#pragma endregion
+
 	// カウント
 	int cnt;
 
