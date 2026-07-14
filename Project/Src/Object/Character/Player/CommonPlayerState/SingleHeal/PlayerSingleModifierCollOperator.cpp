@@ -5,6 +5,7 @@
 PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 	COLLIDER_TAG COLL_TAG, 
 	MSG_SENDER_ID operatorSenderId,
+	MsgDataPlayerCollOperator::COLLIDER_TYPE sendColliderKinds,
 	const Vector3* const& targetPos,
 	const short SKILL_POWER,
 	const short SKILL_TIME,
@@ -12,6 +13,7 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 ) : 
 	COLL_TAG(COLL_TAG),
 	operatorSenderId(operatorSenderId),
+	sendColliderKinds(sendColliderKinds),
 	targetPos(targetPos),
 	SKILL_POWER(SKILL_POWER),
 	SKILL_TIME(SKILL_TIME),

@@ -53,8 +53,22 @@ void PeachPlayer::PlayerLoad(void)
 		new PlayerSingleModifierCollOperator(
 			COLLIDER_TAG::PLAYER_HEAL,
 			operatorSenderId,
+			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal,
 			targetPlayerPos,
 			150
+		)
+	);
+
+	// 回復用の当たり判定オペレーターを生成する
+	subObjArray.emplace_back(
+		new PlayerSingleModifierCollOperator(
+			COLLIDER_TAG::PLAYER_BUFF,
+			operatorSenderId,
+			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff,
+			targetPlayerPos,
+			80,
+			300,
+			ModifierType::PeachPlayerSkillBuff
 		)
 	);
 
@@ -137,7 +151,7 @@ void PeachPlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::SKILL_3); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
-			*SubObjSerch<PlayerSingleModifierCollOperator>(),
+			*SubObjSerch<PlayerSingleModifierCollOperator>(1),
 			0.6f, KEY_TYPE::PLAYER_SKILL_3, 60,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
@@ -256,6 +270,17 @@ void PeachPlayer::PlayerLoad(void)
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
 				dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+				600,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				"SkillSlotSimpleAttack"
+			)
+		);
+
+		// スキル1のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL3_UI_DRAW_POS,
+				dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
 				60,
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				"SkillSlotSimpleAttack"
@@ -268,6 +293,7 @@ void PeachPlayer::PlayerLoad(void)
 
 void PeachPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
+	// 敵の攻撃を受けた時のダメージ処理
 	PlayerBase::OnCollision(ownTag, other);
 }
 
@@ -279,27 +305,27 @@ void PeachPlayer::ReceptionUpdate(void)
 
 		switch (dataPtr->collKinds) {
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack: {
 			// 通常攻撃
 			if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
 			else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }
 			break;
 		}
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSingleModifier: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal: {
 			// 回復
 			if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOn(); }
 			else { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOff(); }
 			break;
 		}
 
-		//case MsgDataPlayerCollOperator::COLLIDER_KINDS::はやくしろ: {
-		//	// スタンプ
-		//	if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
-		//	else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff: {
+			// スタンプ
+			if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>(1)->CollOn(); }
+			else { SubObjSerch<PlayerSingleModifierCollOperator>(1)->CollOff(); }
 
-		//	break;
-		//}
+			break;
+		}
 
 		default: { break; }	// 例外
 		}
@@ -320,6 +346,7 @@ void PeachPlayer::ReceptionUpdate(void)
 			break;
 		}
 		case PlayerBase::STATE::SKILL_3: {
+			SubObjSerch<PlayerSingleModifierCollOperator>(1)->ResetIsHit();
 			break;
 		}
 		case PlayerBase::STATE::DEATH: {

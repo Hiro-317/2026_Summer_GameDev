@@ -37,14 +37,14 @@ public:
 	void CollOn(void) { 
 		if (!isHit)SetJudge(true); 
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
 		}
 	}
 	// çUåÇÇÃîªíËÇè¡Ç∑
 	void CollOff(void) {
 		SetJudge(false);
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
 		}
 	}
 

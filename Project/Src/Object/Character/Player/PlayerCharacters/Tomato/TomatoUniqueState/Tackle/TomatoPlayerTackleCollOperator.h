@@ -39,7 +39,7 @@ public:
 		if (isHit) { return; }
 		SetJudge(true);
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerTackle));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle));
 		}
 	}
 
@@ -47,7 +47,7 @@ public:
 	void CollOff() {
 		SetJudge(false);
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerTackle));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle));
 		}
 	}
 

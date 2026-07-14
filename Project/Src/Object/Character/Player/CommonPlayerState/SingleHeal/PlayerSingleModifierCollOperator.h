@@ -11,6 +11,8 @@ public:
 		COLLIDER_TAG COLL_TAG,
 		MSG_SENDER_ID operatorSenderId,
 
+		MsgDataPlayerCollOperator::COLLIDER_TYPE sendColliderKinds,
+
 		const Vector3* const& targetPos,
 
 		const short SKILL_POWER,
@@ -28,7 +30,7 @@ public:
 		if (!isHit)SetJudge(true);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(
-				MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSingleModifier),
+				MsgDataPlayerCollOperator(true, sendColliderKinds),
 				operatorSenderId
 			);
 		}
@@ -39,7 +41,7 @@ public:
 		SetJudge(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(
-				MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSingleModifier),
+				MsgDataPlayerCollOperator(false, sendColliderKinds),
 				operatorSenderId
 			);
 		}
@@ -69,6 +71,8 @@ private:
 
 
 	const MSG_SENDER_ID operatorSenderId;
+
+	const MsgDataPlayerCollOperator::COLLIDER_TYPE sendColliderKinds;
 
 	const Vector3* const& targetPos;
 

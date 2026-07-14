@@ -49,8 +49,6 @@ void PlayerSingleModifierState::Enter(void)
 	collOperator.ResetIsHit();
 	isModifier = false;
 	PlayHealAnime();
-
-	targetIndex = 0;
 }
 
 void PlayerSingleModifierState::Update(void)

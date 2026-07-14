@@ -49,7 +49,7 @@ public:
 	void CollOn(void) { 
 		if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
 		}
 	}
 
@@ -57,7 +57,7 @@ public:
 	void CollOff(void) { 
 		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false); 
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
 		}
 	}
 

@@ -6,6 +6,7 @@
 
 #include "CommonPlayerState/TripleAttack/PlayerTripleAttackStDefine.h"
 
+#include "../../UI/HitUI/HitUI.h"
 
 class PlayerBase : public CharacterBase
 {
@@ -95,13 +96,6 @@ private:
 
 protected:
 
-	// ステート遷移関数
-	void ChangeState(int state)override;
-
-	// モデルアニメーションプレイ関数
-	void AnimePlay(int type, bool loop = true)override;
-
-	void PlayerDeathSetting(void) { SetJudge(false); SetIsDraw(false); }
 
 #pragma region 定数定義
 	// モデル～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
@@ -264,7 +258,44 @@ protected:
 	// 味方プレイヤー内のターゲット参照座標
 	const Vector3* targetPlayerPos;
 
+#pragma endregion
+
+
+#pragma region 関数定義
+
 	// 味方プレイヤーのターゲットを次へ
 	void TargetPlayerNext(void);
 
+	bool DodgeOnCollision(const STATE dodgeState, const ColliderBase& other) {
+		if (!Net::GetIns().IsHost()) { return false; }
+		if (GetInviCounter() > 0) { return false; }
+
+		// 回避中の無敵処理
+		if (state == (int)dodgeState) {
+			switch (other.GetTag()) {
+			case COLLIDER_TAG::BOSS_ATTACK:
+				// 回避成功時の無敵時間
+				SetInviCounter(DODGE_INVI_TIME);
+
+				// ホストが操作者だった場合表示「ミス！」を出現させる
+				if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
+				// ホスト以外が回避した場合、クライアント側に回避した通知を送る
+				else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); }
+				break;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	// ステート遷移関数
+	void ChangeState(int state)override;
+
+	// モデルアニメーションプレイ関数
+	void AnimePlay(int type, bool loop = true)override;
+
+	void PlayerDeathSetting(void) { SetJudge(false); SetIsDraw(false); }
+
+#pragma endregion
 };

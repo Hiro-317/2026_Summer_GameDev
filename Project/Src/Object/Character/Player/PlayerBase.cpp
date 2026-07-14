@@ -281,7 +281,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		const ModifierData& modifier = other.GetSkillStats().ModifierPower();
 
 		// バフをクライアントへ送信
-		//Net::GetIns().Send(MsgDataPlayerModifier(modifier), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerModifier(modifier), operatorSenderId);
 		
 		// バフをかける
 		characterStats.AddModifier(modifier);
@@ -329,19 +329,24 @@ void PlayerBase::AnimePlay(int type, bool loop)
 }
 void PlayerBase::TargetPlayerNext(void)
 {
+	// ターゲット選択処理
 	targetPlayerIndex++;
 
+	// Indexがプレイヤー人数を超過した場合、0に戻す
 	if (targetPlayerIndex >= Net::GetIns().GetConnectStatus().EntryCount()) {
 		targetPlayerIndex = 0;
 	}
 
-	if (targetPlayerIndex == (unsigned char)MSG_SENDER_ID::P1) { targetPlayerPos = &trans.pos; }
+	// ターゲットが自分なら、自分の座標を入れる。
+	// 他プレイヤーがターゲットなら、そのプレイヤーの座標を代入
+	if (targetPlayerIndex == (unsigned char)Net::GetIns().GetSenderId()) { targetPlayerPos = &trans.pos; }
 	else {
 		if (otherPlayerTrans.size() > targetPlayerIndex - 1) {
 			targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
 		}
 	}
 }
+
 void PlayerBase::ReceptionUpdate(void)
 {
 	// 座標・角度の同期
@@ -398,7 +403,12 @@ void PlayerBase::ReceptionUpdate(void)
 	}
 
 	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(operatorSenderId)) {
-		characterStats.hp += dataPtr->heal;
+		characterStats.HpHeal(dataPtr->heal);
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(operatorSenderId)) {
+		characterStats.AddModifier(dataPtr->modifier);
 		delete dataPtr;
 	}
 

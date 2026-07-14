@@ -16,7 +16,6 @@
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../../UI/HitUI/HitUI.h"
 
 
 
@@ -344,25 +343,10 @@ void OrangePlayer::PlayerLoad(void)
 
 void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	if (!Net::GetIns().IsHost()) { return; }
-	if (GetInviCounter() > 0) { return; }
+	// 回避時の当たり判定処理(回避成功したら、ダメージ処理をスルーする)
+	if (PlayerBase::DodgeOnCollision(STATE::SKILL_3, other)) { return; }
 
-	// 回避中の無敵処理
-	if (state == (int)STATE::SKILL_3) {
-		switch (other.GetTag()) {
-		case COLLIDER_TAG::BOSS_ATTACK:
-			// 回避成功時の無敵時間
-			SetInviCounter(DODGE_INVI_TIME);
-
-			// ホストが操作者だった場合表示「ミス！」を出現させる
-			if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
-			// ホスト以外が回避した場合、クライアント側に回避した通知を送る
-			else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); }
-			break;
-		}
-		return;
-	}
-
+	// 敵の攻撃を受けた時のダメージ処理
 	PlayerBase::OnCollision(ownTag, other);
 }
 
@@ -400,16 +384,16 @@ void OrangePlayer::ReceptionUpdate(void)
 		
 		switch (dataPtr->collKinds) {
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_1:
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_2:
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerTripleAttack_3: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_1:
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_2:
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_3: {
 			// 三段攻撃
 			if (dataPtr->isCollider) { SubObjSerch<PlayerTripleAttackCollOperator>()->CollOn((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds); }
 			else { SubObjSerch<PlayerTripleAttackCollOperator>()->CollOff((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds); }
 			break;
 		}
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::CommonPlayerSimpleAttack: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack: {
 			// キック
 			if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
 			else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }

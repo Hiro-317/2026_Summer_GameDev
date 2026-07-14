@@ -340,21 +340,21 @@ void TomatoPlayer::ReceptionUpdate(void)
 
 		switch (dataPtr->collKinds) {
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt: {
 			// 三段攻撃
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
 			break;
 		}
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerTackle: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle: {
 			// タックル
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOff(); }
 			break;
 		}
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerStamp: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp: {
 			// スタンプ
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }

@@ -112,6 +112,8 @@
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -322,6 +324,11 @@
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Peach\PeachCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Character\ModifierDefine.h" />
+    <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

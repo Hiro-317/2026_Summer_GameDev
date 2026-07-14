@@ -266,6 +266,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
+    <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
     <ClInclude Include="Src\Object\Character\Boss\BossBase.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.h" />
@@ -297,6 +298,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Boss\Tomato\State\Tackle\TomatoTackleCollOperator.h" />
     <ClInclude Include="Src\Object\Character\CharacterStateBase.h" />
     <ClInclude Include="Src\Object\Character\CharacterStatsDefine.h" />
+    <ClInclude Include="Src\Object\Character\ModifierDefine.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Death\PlayerDeathState.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />

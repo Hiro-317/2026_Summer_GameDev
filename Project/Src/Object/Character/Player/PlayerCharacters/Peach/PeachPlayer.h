@@ -8,13 +8,17 @@ class PeachPlayer : public PlayerBase
 {
 public:
 
+	// コンストラクタ
 	PeachPlayer(MSG_SENDER_ID operatorSenderId);
 	~PeachPlayer()override = default;
 
+	// ロード
 	void PlayerLoad(void)override;
 
+	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
+	// 同期処理
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
 
@@ -36,14 +40,15 @@ private:
 		MAX
 	};
 
+	// アニメーションの再生速度
 	const float ANIME_SPEED[(int)ANIME_TYPE::MAX] = {
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		2.5f
+		1.0f,	// IDLE,
+		1.0f,	// WALK,
+		1.0f,	// RUN,
+		1.0f,	// DAMAGE,
+		1.0f,	// DEATH,
+		1.0f,	// PUNCH,
+		2.5f	// HEAL,
 	};
 
 #pragma region スキル1の定数定義
@@ -82,7 +87,12 @@ private:
 
 #pragma region スキル2の定数定義
 
-	
+	//// 当たり判定のタグ
+	//const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::PLAYER_ATTACK;
+
+	//// 攻撃そのもののクールタイム
+	//const int SKILL_2_COOL_TIME = GetParameterToInt("SingleHeal", "CoolTime");
+
 #pragma endregion 
 
 #pragma region スキル3の定数定義
