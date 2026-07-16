@@ -2,6 +2,7 @@
 
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
+#include "../../../Manager/Effect/EffectManager.h"
 
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
@@ -272,7 +273,9 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 
 		// 回復させる
 		characterStats.HpHeal(heal);
-
+		
+		// エフェクト発生
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0, &trans);
 		return;
 	}
 	case COLLIDER_TAG::PLAYER_BUFF: {	// バフ
@@ -286,6 +289,8 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 		// バフをかける
 		characterStats.AddModifier(modifier);
 
+		// エフェクト発生
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0, &trans);
 		return;
 	}
 	}
@@ -402,13 +407,17 @@ void PlayerBase::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
+	// 回復
 	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(operatorSenderId)) {
 		characterStats.HpHeal(dataPtr->heal);
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0.0f, &trans);
 		delete dataPtr;
 	}
 
+	// バフ
 	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(operatorSenderId)) {
 		characterStats.AddModifier(dataPtr->modifier);
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0.0f, &trans);
 		delete dataPtr;
 	}
 

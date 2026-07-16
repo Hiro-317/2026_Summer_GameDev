@@ -29,7 +29,7 @@ PlayerSingleModifierState::PlayerSingleModifierState(
 	GetAnimePlayRatio(GetAnimePlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
-	isModifier(false)
+	isModifierEnd(false)
 {
 }
 
@@ -47,15 +47,15 @@ void PlayerSingleModifierState::Enter(void)
 	coolTimeCounter = COOL_TIME;
 	collOperator.CollOff();
 	collOperator.ResetIsHit();
-	isModifier = false;
+	isModifierEnd = false;
 	PlayHealAnime();
 }
 
 void PlayerSingleModifierState::Update(void)
 {
-	if (!isModifier && GetAnimePlayRatio() > COLL_START_TIME) {
+	if (!isModifierEnd && GetAnimePlayRatio() > COLL_START_TIME) {
 		collOperator.CollOn();
-		isModifier = true;
+		isModifierEnd = true;
 	}
 
 	if (IsAnimeEnd()) { DefaultChangeState(); }
@@ -65,7 +65,7 @@ void PlayerSingleModifierState::Exit(void)
 {
 	collOperator.CollOff();
 	collOperator.ResetIsHit();
-	isModifier = false;
+	isModifierEnd = false;
 }
 
 void PlayerSingleModifierState::AlwaysUpdate(void)

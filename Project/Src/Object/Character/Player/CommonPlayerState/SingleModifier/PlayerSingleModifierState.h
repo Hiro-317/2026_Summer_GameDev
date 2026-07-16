@@ -68,5 +68,5 @@ private:
 	const std::function<void(void)> DefaultChangeState;
 #pragma endregion
 
-	bool isModifier;
+	bool isModifierEnd;
 };

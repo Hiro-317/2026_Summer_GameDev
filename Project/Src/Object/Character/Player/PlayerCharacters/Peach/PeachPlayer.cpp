@@ -2,7 +2,7 @@
 
 #include "../../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
-#include "../../CommonPlayerState/SingleHeal/PlayerSingleModifierState.h"
+#include "../../CommonPlayerState/SingleModifier/PlayerSingleModifierState.h"
 #include "../../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 
@@ -132,7 +132,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
 			*SubObjSerch<PlayerSingleModifierCollOperator>(),
-			0.6f, KEY_TYPE::PLAYER_SKILL_2, 600,
+			0.3f, KEY_TYPE::PLAYER_SKILL_2, 600,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ
@@ -152,7 +152,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
 			*SubObjSerch<PlayerSingleModifierCollOperator>(1),
-			0.6f, KEY_TYPE::PLAYER_SKILL_3, 60,
+			0.3f, KEY_TYPE::PLAYER_SKILL_3, 60,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ

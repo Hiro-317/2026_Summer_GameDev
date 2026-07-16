@@ -17,7 +17,8 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 	targetPos(targetPos),
 	SKILL_POWER(SKILL_POWER),
 	SKILL_TIME(SKILL_TIME),
-	MODIFIER_TYPE(MODIFIER_TYPE)
+	MODIFIER_TYPE(MODIFIER_TYPE),
+	targetTrans(Vector3())
 {
 }
 
@@ -58,8 +59,11 @@ void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const Co
 void PlayerSingleModifierCollOperator::SubUpdate(void)
 {
 	if (GetJudgeFlg()) {
+		// ìñÇΩÇ¡ÇΩÇÁìñÇΩÇËîªíËÇè¡Ç∑
 		if (isHit) { CollOff(); } 
 		trans.pos = *targetPos;
 	}
+
+	targetTrans.pos = *targetPos;
 }
 

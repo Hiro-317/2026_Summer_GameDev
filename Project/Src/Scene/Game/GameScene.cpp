@@ -232,18 +232,18 @@ void GameScene::Draw(void)
 	// オブジェクト全ての描画処理
 	for (ActorBase* obj : objects) { obj->Draw(); }
 
-#pragma region エフェクト描画
-
-	DrawEffekseer3D();
-
-#pragma endregion
-
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
 	collision->DrawChunkGrid();
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	Camera::GetIns().DrawDebug();
+
+#pragma region エフェクト描画
+
+	DrawEffekseer3D();
+
+#pragma endregion
 #pragma endregion
 
 #pragma region 画面演出

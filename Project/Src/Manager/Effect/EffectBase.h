@@ -15,6 +15,8 @@ enum class EFFECT_NAME {
 
 	TACKLE_MOVE,
 	STAMP_LAND,
+	HEAL,
+	BUFF,
 
 	MAX
 };
