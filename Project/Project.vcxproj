@@ -146,6 +146,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
     <ClCompile Include="Src\Manager\Effect\StampLand\EffectStampLand.cpp" />
+    <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
+    <ClCompile Include="Src\Manager\Effect\TackleCharge\TackleCharge.cpp" />
     <ClCompile Include="Src\Manager\Effect\TackleMove\EffectTackleMove.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
@@ -264,6 +266,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
     <ClInclude Include="Src\Manager\Effect\Heal\EffectHeal.h" />
     <ClInclude Include="Src\Manager\Effect\StampLand\EffectStampLand.h" />
+    <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
+    <ClInclude Include="Src\Manager\Effect\TackleCharge\TackleCharge.h" />
     <ClInclude Include="Src\Manager\Effect\TackleMove\EffectTackleMove.h" />
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Input\InputTextManager.h" />

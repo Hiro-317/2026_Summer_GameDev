@@ -3,6 +3,7 @@
 #include "../../../../../../../Manager/Input/KeyManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../../../Manager/Effect/EffectManager.h"
 
 TomatoPlayerTackleState::TomatoPlayerTackleState(
 	const std::function<void(void)>& ownChangeState,
@@ -25,7 +26,8 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	ChargeAttackBuffDelete(ChargeAttackBuffDelete),
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
-	chargeCounter(0)
+	chargeCounter(0),
+	trans(Vector3())
 {
 
 }
@@ -57,11 +59,15 @@ void TomatoPlayerTackleState::Enter(void)
 	// カウンターの初期化
 	timeCounter = COUNT_MAX;
 	coolTimeCounter = chargeCounter;
+
+	EffectManager::GetIns()->CreateEffect(EFFECT_NAME::TACKLE_CHARGE, 0.0f, &trans);
 }
 
 void TomatoPlayerTackleState::Update(void)
 {
 	coolTimeCounter = chargeCounter;
+	trans.pos = pos;
+	trans.angle.y = angle.y;
 
 	// カウンターがゼロになったら終了
 	if (timeCounter <= 0) {
@@ -81,7 +87,7 @@ void TomatoPlayerTackleState::Update(void)
 
 		// 回転スタート
 		angle.x += ROTATION_POW;
-	
+
 		// チャージの効果音を再生
 		SoundManager::GetIns().Play("TackleCharge");
 
@@ -127,6 +133,8 @@ void TomatoPlayerTackleState::Exit(void)
 
 	// チャージ攻撃のバフを削除
 	ChargeAttackBuffDelete();
+
+	EffectManager::GetIns()->StopEffect(EFFECT_NAME::TACKLE_CHARGE);
 }
 
 void TomatoPlayerTackleState::AlwaysUpdate(void)
@@ -143,6 +151,8 @@ void TomatoPlayerTackleState::Tackle(void)
 	// チャージの効果音を消して、タックルの効果音を再生
 	SoundManager::GetIns().Stop("TackleCharge");
 	SoundManager::GetIns().Play("TackleMove");
+
+	EffectManager::GetIns()->StopEffect(EFFECT_NAME::TACKLE_CHARGE);
 
 	// 突進中も回転を続ける
 	angle.x += ROTATION_POW;

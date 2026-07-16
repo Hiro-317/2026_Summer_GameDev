@@ -93,4 +93,7 @@ private:
 
 	// UŒ‚I—¹”»’è—p
 	bool isEnd;
+
+
+	Transform trans;
 };
