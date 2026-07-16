@@ -60,7 +60,7 @@ public:
 	void SetTransformPtr(Transform* ptr) { trans = ptr; }
 
 	// 当たり判定通知用関数セット
-	void SetOnCollisionFunc(std::function<void(COLLIDER_TAG ownTag, const ColliderBase& other)> OnCollisionFunc) { OnCollision = std::move(OnCollisionFunc); }
+	void SetOnCollisionFunc(std::function<void(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)> OnCollisionFunc) { OnCollision = std::move(OnCollisionFunc); }
 
 	// 接地判定通知用関数セット
 	void SetOnGroundedFunc(std::function<void(void)>OnGroundedFunc) { OnGrounded = std::move(OnGroundedFunc); }
@@ -103,7 +103,7 @@ public:
 	virtual CHUNK_SPACE GetChunkSpace(void)const { return CHUNK_SPACE::XYZ; }
 
 	// 判定通知の呼び出し
-	void CallOnCollision(COLLIDER_TAG ownTag, const ColliderBase& other) { OnCollision(ownTag,other); }
+	void CallOnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) { OnCollision(ownTag,other,collisionPoint); }
 
 	// 接地判定の呼び出し
 	void CallOnGrounded(void) { OnGrounded(); }
@@ -169,7 +169,7 @@ private:
 	SHAPE shape;
 	
 	// 当たったときに呼び出す関数をポインタで受け取って保持
-	std::function<void(COLLIDER_TAG ownTag, const ColliderBase& other)>OnCollision;
+	std::function<void(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)>OnCollision;
 
 	// 接地したときに呼び出す関数をポインタで受け取って保持
 	std::function<void(void)>OnGrounded;

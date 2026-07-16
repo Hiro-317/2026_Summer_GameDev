@@ -31,7 +31,7 @@ public:
 	const Transform& GetTrans(void)const { return trans; }
 
 	// “–‚½‚è”»’è‚Ì’Ê’m
-	virtual void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other) {}
+	virtual void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other,const Vector3& collisionPoint) {}
 
 	// Ú’n”»’è‚Ì’Ê’m
 	virtual void OnGrounded() {

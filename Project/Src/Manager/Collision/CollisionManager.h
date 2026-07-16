@@ -256,7 +256,7 @@ private:
 	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
 
 	// Œ`ó‚ÌU‚è•ª‚¯
-	bool IsHit(ColliderBase* a, ColliderBase* b);
+	bool IsHit(ColliderBase* a, ColliderBase* b, Vector3& collisionPoint);
 
 #pragma endregion
 
@@ -265,22 +265,22 @@ private:
 	// “¯Œ`ó“¯m```````````````````````````````
 
 	// ü•ª~ü•ª
-	bool LineToLine(LineCollider* a, LineCollider* b);
+	bool LineToLine(LineCollider* a, LineCollider* b, Vector3& collisionPoint);
 
 	// ‹…‘Ì~‹…‘Ì
-	bool SphereToSphere(SphereCollider* a, SphereCollider* b);
+	bool SphereToSphere(SphereCollider* a, SphereCollider* b, Vector3& collisionPoint);
 
 	// ƒJƒvƒZƒ‹~ƒJƒvƒZƒ‹
-	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b);
+	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, Vector3& collisionPoint);
 
 	// ƒ{ƒbƒNƒX~ƒ{ƒbƒNƒX
-	bool BoxToBox(BoxCollider* a, BoxCollider* b);
+	bool BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint);
 
 	// ƒ‚ƒfƒ‹~ƒ‚ƒfƒ‹
-	bool ModelToModel(ModelCollider* a, ModelCollider* b);
+	bool ModelToModel(ModelCollider* a, ModelCollider* b, Vector3& collisionPoint);
 
 	// XZ•½–Êã‚Ì‰~Œ`~XZ•½–Êã‚Ì‰~Œ`
-	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b);
+	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, Vector3& collisionPoint);
 
 	// ```````````````````````````````“¯Œ`ó“¯m
 
@@ -288,40 +288,40 @@ private:
 	// •ÊŒ`ó“¯m```````````````````````````````
 
 	// ü•ª~‹…‘Ì
-	bool LineToSphere(LineCollider* line, SphereCollider* sphere);
+	bool LineToSphere(LineCollider* line, SphereCollider* sphere, Vector3& collisionPoint);
 
 	// ü•ª~ƒJƒvƒZƒ‹
-	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule);
+	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule, Vector3& collisionPoint);
 
 	// ü•ª~ƒ{ƒbƒNƒX
-	bool LineToBox(LineCollider* line, BoxCollider* box);
+	bool LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint);
 
 	// ü•ª~ƒ‚ƒfƒ‹
-	bool LineToModel(LineCollider* line, ModelCollider* model);
+	bool LineToModel(LineCollider* line, ModelCollider* model, Vector3& collisionPoint);
 
 	// ‹…‘Ì~ƒJƒvƒZƒ‹
-	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule);
+	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, Vector3& collisionPoint);
 
 	// ‹…‘Ì~ƒ{ƒbƒNƒX
-	bool SphereToBox(SphereCollider* sphere, BoxCollider* box);
+	bool SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint);
 
 	// ‹…‘Ì~ƒ‚ƒfƒ‹
-	bool SphereToModel(SphereCollider* sphere, ModelCollider* model);
+	bool SphereToModel(SphereCollider* sphere, ModelCollider* model, Vector3& collisionPoint);
 
 	// ‹…‘Ì~XZ•½–Êã‚Ì‰~Œ`
-	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle);
+	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, Vector3& collisionPoint);
 
 	// ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
-	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box);
+	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, Vector3& collisionPoint);
 
 	// ƒJƒvƒZƒ‹~ƒ‚ƒfƒ‹
-	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model);
+	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model, Vector3& collisionPoint);
 
 	// ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~Œ`
-	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle);
+	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, Vector3& collisionPoint);
 
 	// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹
-	bool BoxToModel(BoxCollider* box, ModelCollider* model);
+	bool BoxToModel(BoxCollider* box, ModelCollider* model, Vector3& collisionPoint);
 
 	// ```````````````````````````````•ÊŒ`ó“¯m
 
