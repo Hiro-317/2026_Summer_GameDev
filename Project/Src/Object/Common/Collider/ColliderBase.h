@@ -28,18 +28,14 @@ public:
 	// 最小/最大 座標 構造体
 	struct AABB { Vector3 min, max; };
 
-	enum class CHUNK_SPACE { XYZ, XZ, };
-
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="type">当たり判定タイプ</param>
-	/// <param name="enoughDistance">判定スキップに十分な距離　-1.0fで未設定とし、距離による判定スキップを行わない（引数省略で-1.0f）</param>
 	/// <param name="pos">相対座標（引数省略で{0.0f,0.0f,0.0f}）</param>
-	ColliderBase(COLLIDER_TAG type, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
+	ColliderBase(COLLIDER_TAG type, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
 		trans(nullptr),
 		pos(pos),
-		enoughDistance(enoughDistance),
 		judgeFlg(true),
 		dynamicFlg(true),
 		pushFlg(true),
@@ -82,9 +78,6 @@ public:
 	// 動的オブジェクトか否か（true = 動的、false = 静的）
 	bool GetDynamicFlg(void)const { return dynamicFlg; }
 
-	// 判定スキップに十分な距離
-	float GetEnoughDistance(void)const { return enoughDistance; }
-
 	// 当たり判定フラグ（true = 「判定する」、false = 「判定しない」）
 	bool GetJudge(void)const { return judgeFlg; }
 
@@ -99,8 +92,6 @@ public:
 
 	// 当たり判定の形状
 	SHAPE GetShape(void)const { return shape; }
-
-	virtual CHUNK_SPACE GetChunkSpace(void)const { return CHUNK_SPACE::XYZ; }
 
 	// 判定通知の呼び出し
 	void CallOnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) { OnCollision(ownTag,other,collisionPoint); }
@@ -145,9 +136,6 @@ private:
 	
 	// モデル制御情報の座標からの相対座標
 	Vector3 pos;
-
-	// 絶対に当たらない距離（判定時早期リターン用）
-	float enoughDistance;
 
 	// 動的オブジェクトか否か（true = 動的、false = 静的）
 	bool dynamicFlg;

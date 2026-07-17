@@ -70,7 +70,11 @@ struct Vector3
     void operator/=(const VECTOR& value);
     void operator/=(float value);
 
+	// ì‡êœ
     float Dot(const Vector3& value) const;
+    // äOêœ
+    Vector3 Cross(const Vector3& value) const;
+
 
     bool operator==(const Vector3& value) const;
     bool operator==(const VECTOR& value) const;

@@ -116,10 +116,8 @@ public:
 	// 解放
 	void Clear(void) {
 		for (ColliderGroupData& colliders : groupColliders) {
-			colliders.dynamicChunksXZ.clear();
-			colliders.staticChunksXZ.clear();
-			colliders.dynamicChunks3D.clear();
-			colliders.staticChunks3D.clear();
+			colliders.dynamicChunks.clear();
+			colliders.staticChunks.clear();
 			colliders.colliders.clear();
 		}
 	}
@@ -135,7 +133,7 @@ private:
 #pragma region チャンク分け用
 
 	// 重なるチャンクインデックス(ChunkIndex)一覧を取得する
-	void GetOverlappedChunks3D(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
+	void GetOverlappedChunks(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
 		out.clear();
 
 		ChunkIndex minIndex = {
@@ -158,52 +156,16 @@ private:
 			}
 		}
 	}
-	// 重なるチャンクインデックス(ChunkIndex)一覧を取得する（XZチャンク用）
-	void GetOverlappedChunksXZ(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
-		out.clear();
-
-		ChunkIndex minIndex = {
-			ToChunkIndex(aabb.min.x, CHUNK_SIZE),
-			0,
-			ToChunkIndex(aabb.min.z, CHUNK_SIZE)
-		};
-
-		ChunkIndex maxIndex = {
-			ToChunkIndex(aabb.max.x, CHUNK_SIZE),
-			0,
-			ToChunkIndex(aabb.max.z, CHUNK_SIZE)
-		};
-
-		for (int z = minIndex.z; z <= maxIndex.z; z++) {
-			for (int x = minIndex.x; x <= maxIndex.x; x++) {
-				out.push_back(ChunkIndex(x, 0, z));
-			}
-		}
-	}
 
 	// 指定のチャンクマップにコライダーを1つ登録
-	void RegisterToChunks3D(ChunkMap& chunks, ColliderBase* collider) {
+	void RegisterToChunks(ChunkMap& chunks, ColliderBase* collider) {
 
 		// 安全処理
 		if (!collider) { return; }
 
 		// 重なるチャンクインデックスを取得
 		std::vector<ChunkIndex> indexes;
-		GetOverlappedChunks3D(collider->GetAABB(), indexes);
-
-		// 取得したチャンクインデックスすべてに登録
-		for (const ChunkIndex& index : indexes) {
-			chunks[index].colliders.emplace_back(collider);
-		}
-	}
-	void RegisterToChunksXZ(ChunkMap& chunks, ColliderBase* collider) {
-
-		// 安全処理
-		if (!collider) { return; }
-
-		// 重なるチャンクインデックスを取得
-		std::vector<ChunkIndex> indexes;
-		GetOverlappedChunksXZ(collider->GetAABB(), indexes);
+		GetOverlappedChunks(collider->GetAABB(), indexes);
 
 		// 取得したチャンクインデックスすべてに登録
 		for (const ChunkIndex& index : indexes) {
@@ -216,8 +178,7 @@ private:
 		for (ColliderGroupData& group : groupColliders) {
 
 			// 動的コライダーチャンク分け配列をリセット
-			group.dynamicChunks3D.clear();
-			group.dynamicChunksXZ.clear();
+			group.dynamicChunks.clear();
 
 			for (ColliderBase* collider : group.colliders) {
 				// 安全処理
@@ -227,13 +188,7 @@ private:
 				if (!collider->GetDynamicFlg()) { continue; }
 
 				// 動的コライダーチャンク分け配列に割り当てなおす
-				if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XYZ) {
-					RegisterToChunks3D(group.dynamicChunks3D, collider);
-					RegisterToChunksXZ(group.dynamicChunksXZ, collider);
-				}
-				else if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XZ) {
-					RegisterToChunksXZ(group.dynamicChunksXZ, collider);
-				}
+				RegisterToChunks(group.dynamicChunks, collider);
 			}
 		}
 	}

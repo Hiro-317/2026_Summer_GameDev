@@ -5,8 +5,8 @@
 class CapsuleCollider : public ColliderBase
 {
 public:
-	CapsuleCollider(COLLIDER_TAG type, const Vector3& localStartPos, const Vector3& localEndPos, float radius, float enoughDistance = -1.0f, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
-		ColliderBase(type, enoughDistance, pos),
+	CapsuleCollider(COLLIDER_TAG type, const Vector3& localStartPos, const Vector3& localEndPos, float radius, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
+		ColliderBase(type, pos),
 		startPos(localStartPos),
 		endPos(localEndPos),
 		radius(radius)

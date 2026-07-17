@@ -49,16 +49,10 @@ struct ColliderGroupData {
 	std::vector<ColliderBase*> colliders;
 
 	// 静的コライダー参照
-	ChunkMap staticChunks3D;
+	ChunkMap staticChunks;
 
 	// 動的コライダー参照
-	ChunkMap dynamicChunks3D;
-
-	// 静的コライダー参照（Y座標を無視して判定をとるコライダー用　例 : XZCircleColliderなど）
-	ChunkMap staticChunksXZ;
-
-	// 動的コライダー参照（Y座標を無視して判定をとるコライダー用　例 : XZCircleColliderなど）
-	ChunkMap dynamicChunksXZ;
+	ChunkMap dynamicChunks;
 };
 
 // 重複判定防止のペアキー(どのセットが判定を取ったか記録するため)

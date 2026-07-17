@@ -46,7 +46,7 @@ struct Transform
 
 
 	// 角度を行列化したもの
-	MATRIX AngleMat(void)const { return MatrixAllMultXZY({ localAngle,angle }); }
+	MATRIX AngleMat(void)const { return MatrixAllMultXZY({ angle }); }
 
 	// 渡されたVector3構造体を自身の角度情報で回転させたVector3構造体を返す
 	Vector3 VTrans(const Vector3& v)const { return (v != 0.0f) ? Vector3(VTransform(v.ToVECTOR(), AngleMat())) : Vector3(); }
