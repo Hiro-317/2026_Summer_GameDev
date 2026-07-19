@@ -6,7 +6,7 @@
 #include "../../Common/Collider/XZCircleCollider.h"
 
 TomatoBossStage::TomatoBossStage() :
-	ActorBase("Data/Parameter/Stage/"), sky(Vector3())
+	ActorBase("Data/Parameter/Stage/"), sky()
 {
 }
 
@@ -57,7 +57,7 @@ void TomatoBossStage::ColliderLoad()
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		ColliderCreate(new XZCircleCollider(COLLIDER_TAG::STAGE, info.radius, -1.0f, info.pos));
+		ColliderCreate(new XZCircleCollider(COLLIDER_TAG::STAGE, info.radius, 1000.0f, info.pos));
 	}
 }
 

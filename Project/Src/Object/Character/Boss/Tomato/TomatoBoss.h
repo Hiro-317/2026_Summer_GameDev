@@ -22,7 +22,7 @@ public:
 		return ret;
 	}
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 	virtual void ReceptionUpdate(void)override;
 
 private:

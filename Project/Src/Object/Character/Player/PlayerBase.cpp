@@ -120,15 +120,14 @@ void PlayerBase::CharacterLoad(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	//ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	ColliderCreate(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::PLAYER,
 			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 
@@ -249,7 +248,7 @@ void PlayerBase::ChangeState(int state)
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
 }
 
-void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	// 判定そのものはホストがすべて請け負う
 	if (!Net::GetIns().IsHost()) { return; }

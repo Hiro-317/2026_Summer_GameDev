@@ -9,8 +9,8 @@ struct Transform
 
 	// 座標
 	Vector3 pos;
-	// １フレーム前の座標（参照用）
-	const Vector3& prevPos;
+	// 1フレーム前の座標
+	Vector3 prevPos;
 
 	// 現在の移動量
 	Vector3 Velocity(void)const { return (pos - prevPos); }
@@ -25,15 +25,12 @@ struct Transform
 	// スケール
 	Vector3 scale;
 
-	/// <summary>
-	/// Transform生成
-	/// </summary>
-	/// <param name="prevPos">１フレーム前の座標の変数を参照渡し</param>
-	Transform(const Vector3& prevPos) :
+	/// 生成
+	Transform(void) :
 		model(-1),
 
 		pos(),
-		prevPos(prevPos),
+		prevPos(),
 
 		centerDiff(),
 
@@ -46,7 +43,7 @@ struct Transform
 
 
 	// 角度を行列化したもの
-	MATRIX AngleMat(void)const { return MatrixAllMultXZY({ localAngle,angle }); }
+	MATRIX AngleMat(void)const { return MatrixAllMultXZY({ angle }); }
 
 	// 渡されたVector3構造体を自身の角度情報で回転させたVector3構造体を返す
 	Vector3 VTrans(const Vector3& v)const { return (v != 0.0f) ? Vector3(VTransform(v.ToVECTOR(), AngleMat())) : Vector3(); }

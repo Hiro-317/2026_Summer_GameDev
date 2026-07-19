@@ -3,7 +3,7 @@
 #include"../Application/Application.h"
 
 ActorBase::ActorBase() :
-	trans(prevPos),
+	trans(),
 	collider(),
 
 	dynamicFlg(true),
@@ -11,8 +11,6 @@ ActorBase::ActorBase() :
 
 	pushFlg(true),
 	pushWeight(0),
-
-	prevPos(trans.pos),
 
 	accelSum(0.0f),
 
@@ -28,7 +26,7 @@ ActorBase::ActorBase() :
 }
 
 ActorBase::ActorBase(const std::string& parameterPath) :
-	trans(prevPos),
+	trans(),
 	collider(),
 
 	dynamicFlg(true),
@@ -36,8 +34,6 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 
 	pushFlg(true),
 	pushWeight(0),
-
-	prevPos(trans.pos),
 
 	accelSum(0.0f, 0.0f, 0.0f),
 
@@ -67,7 +63,7 @@ void ActorBase::Init(void)
 void ActorBase::Update(void)
 {
 	// 動的オブジェクトは１フレーム前の座標を保持
-	if (dynamicFlg) { prevPos = trans.pos; }
+	if (dynamicFlg) { trans.prevPos = trans.pos; }
 
 	// 派生先追加更新
 	SubUpdate();

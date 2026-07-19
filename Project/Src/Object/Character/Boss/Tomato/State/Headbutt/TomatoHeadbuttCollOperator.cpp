@@ -15,8 +15,8 @@ TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
 	SCALE(collParam.GetParameterToVector3("Wahoo", "Scale")),
 	CENTER(collParam.GetParameterToVector3("Wahoo", "Center")* SCALE),
 	ANGLE(collParam.GetParameterToVector3("Wahoo", "Angle")),
-	collBack(Vector3()),
-	collFront(Vector3())
+	collBack(),
+	collFront()
 {
 }
 
@@ -24,7 +24,7 @@ void TomatoHeadbuttCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, TO_PLAYER_DISTANCE)
+		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, TO_PLAYER_DISTANCE, 1000.0f)
 	);
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);

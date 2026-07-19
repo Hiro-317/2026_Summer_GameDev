@@ -51,32 +51,28 @@ void TomatoBoss::PlayerLoad(void)
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 	ColliderCreate(
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 
@@ -85,9 +81,9 @@ void TomatoBoss::PlayerLoad(void)
 
 #pragma region トマトが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), operatorSenderId, characterStats, *collParam));
 	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, operatorSenderId, characterStats, *collParam));
-	subObjArray.push_back(new TomatoTackleCollOperator(TO_PLAYER_DISTANCE, operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), operatorSenderId, characterStats, *collParam));
 
 #pragma endregion
 
@@ -254,9 +250,9 @@ void TomatoBoss::PlayerLoad(void)
 
 }
 
-void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
-	BossBase::OnCollision(ownTag, other);
+	BossBase::OnCollision(ownTag, other, collisionPoint);
 
 	// ボスとステージの岩と当たったか
 	if (ownTag == COLLIDER_TAG::BOSS) {

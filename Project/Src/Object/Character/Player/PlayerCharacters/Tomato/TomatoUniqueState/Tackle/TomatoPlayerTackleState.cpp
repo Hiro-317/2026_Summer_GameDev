@@ -27,7 +27,7 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
 	chargeCounter(0),
-	trans(Vector3())
+	trans()
 {
 
 }

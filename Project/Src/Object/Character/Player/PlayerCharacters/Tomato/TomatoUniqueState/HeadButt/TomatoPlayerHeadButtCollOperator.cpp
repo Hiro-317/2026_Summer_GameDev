@@ -52,14 +52,13 @@ void TomatoPlayerHeadButtCollOperator::Update(void)
 	trans.angle = playerAngle;
 }
 
-void TomatoPlayerHeadButtCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void TomatoPlayerHeadButtCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	switch (other.GetTag())
 	{
 	case COLLIDER_TAG::BOSS:
 	case COLLIDER_TAG::ENEMY:
 	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
-	case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		isHit = true;
 		break;
 	default:break;

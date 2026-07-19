@@ -11,7 +11,8 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model)
 	ColliderCreate(
 		new XZCircleCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			ATTACK_RANGE
+			ATTACK_RANGE,
+			1000.0f
 		)
 	);
 

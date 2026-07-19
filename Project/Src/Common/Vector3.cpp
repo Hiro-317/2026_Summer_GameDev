@@ -79,6 +79,15 @@ void Vector3::operator/=(float v) {
 // ‚»‚Ì‘¼
 float Vector3::Dot(const Vector3& v) const { return x * v.x + y * v.y + z * v.z; }
 
+Vector3 Vector3::Cross(const Vector3& value) const
+{
+    return Vector3(
+        y * value.z - z * value.y,
+        z * value.x - x * value.z,
+        x * value.y - y * value.x
+    );
+}
+
 bool Vector3::operator==(const Vector3& v) const { return x == v.x && y == v.y && z == v.z; }
 bool Vector3::operator==(const VECTOR& v) const { return x == v.x && y == v.y && z == v.z; }
 bool Vector3::operator==(float v) const { return x == v && y == v && z == v; }

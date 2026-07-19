@@ -45,7 +45,7 @@ public:
 
 	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
@@ -87,18 +87,9 @@ protected:
 
 	// “–‚½‚è”»’èî•ñ`````````````````````````````````````````
 
-	// å‚ÉÚ’n”»’è‚Ég—p‚·‚éü•ªƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹n“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
-	const Vector3 LINE_COLLIDER_START_POS = Vector3();
-	// å‚ÉÚ’n”»’è‚Ég—p‚·‚éü•ªƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹I“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
-	const Vector3 LINE_COLLIDER_END_POS = -Vector3::Yonly(MODEL_SIZE.y * 0.5f);
-	// å‚ÉÚ’n”»’è‚Ég—p‚·‚éü•ªƒRƒ‰ƒCƒ_[‚Ìâ‘Î‚É“–‚½‚ç‚È‚¢‚¨‚¨‚æ‚»‚Ì‹——£
-	const float LINE_COLLIDER_ENOUGH_DISTANCE = LINE_COLLIDER_END_POS.Length();
-
-	// ƒvƒŒƒCƒ„[‚É‚¾‚¯s‚¤(XZ•½–Ê‚Ì‚İ‚ğQÆ‚·‚é)‰Ÿ‚µo‚µ‚Ì‹——£
-	const float TO_PLAYER_DISTANCE = 250.0f;
-
 	// ‰Ÿ‚µo‚µ‚ğs‚¤Û‚Ìd‚³
 	const unsigned char COLLISION_PUSH_WEIGHT = (unsigned char)GetParameterToInt("Collider", "CollisionPushWeight");
+
 	// ````````````````````````````````````````````````
 
 

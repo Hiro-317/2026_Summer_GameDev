@@ -291,10 +291,10 @@ void PeachPlayer::PlayerLoad(void)
 	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 }
 
-void PeachPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void PeachPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	// “G‚ÌUŒ‚‚ğó‚¯‚½‚Ìƒ_ƒ[ƒWˆ—
-	PlayerBase::OnCollision(ownTag, other);
+	PlayerBase::OnCollision(ownTag, other, collisionPoint);
 }
 
 void PeachPlayer::ReceptionUpdate(void)

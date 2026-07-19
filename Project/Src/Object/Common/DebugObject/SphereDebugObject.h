@@ -2,13 +2,13 @@
 
 #include "DebugObjectBase.h"
 
-#include "../Collider/BoxCollider.h"
+#include "../Collider/SphereCollider.h"
 
-class BoxDebugObject : public DebugObjectBase
+class SphereDebugObject : public DebugObjectBase
 {
 public:
-	BoxDebugObject(
-		const Vector3& size,
+	SphereDebugObject(
+		float radius,
 
 		const Vector3& pos = Vector3(),
 
@@ -26,15 +26,15 @@ public:
 			pushWeight,
 			isOperator
 		),
-		size(size)
+		radius(radius)
 	{
 	}
-	~BoxDebugObject()override = default;
+	~SphereDebugObject()override = default;
 
 	void Load(void)override {
-		ColliderCreate(new BoxCollider(COLLIDER_TAG::DEBUG_OBJECT, size));
+		ColliderCreate(new SphereCollider(COLLIDER_TAG::DEBUG_OBJECT, radius));
 	}
 
 private:
-	Vector3 size;
+	float radius;
 };

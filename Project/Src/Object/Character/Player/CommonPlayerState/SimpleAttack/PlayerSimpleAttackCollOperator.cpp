@@ -48,21 +48,20 @@ void PlayerSimpleAttackCollOperator::Load(void)
 #pragma endregion
 
 	// ìñÇΩÇËîªíËèÓïÒÇê∂ê¨Ç∑ÇÈ
-	ColliderCreate(new SphereCollider(COLL_TAG, COLL_SIZE, COLL_SIZE, COLL_LOCAL_POS));
-	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
+	ColliderCreate(new SphereCollider(COLL_TAG, COLL_SIZE, COLL_LOCAL_POS));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 }
 
-void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
 		switch (other.GetTag())
 		{
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isFindAttackTarget = true;
 			targetPos = &other.GetTransform().pos;
@@ -76,7 +75,6 @@ void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		{
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isHit = true;
 			break;

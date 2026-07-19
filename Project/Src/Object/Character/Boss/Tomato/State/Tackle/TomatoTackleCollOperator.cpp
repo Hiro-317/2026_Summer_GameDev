@@ -16,8 +16,11 @@ TomatoTackleCollOperator::TomatoTackleCollOperator(
 	SCALE(collParam.GetParameterToVector3("Tackle", "Scale")),
 	CENTER(collParam.GetParameterToVector3("Tackle", "Center")* SCALE),
 	ANGLE(collParam.GetParameterToVector3("Tackle", "Angle")),
-	collBack(Vector3()),
-	collFront(Vector3())
+	collBack(),
+	collFront(),
+	isDrawArea(false),
+	rate(),
+	stageHit()
 {
 }
 
@@ -25,12 +28,12 @@ void TomatoTackleCollOperator::Load(void)
 {
 	// 当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, TO_PLAYER_DISTANCE)
+		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, TO_PLAYER_DISTANCE, 1000.0f)
 	);
 
 	// ステージ当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, TO_PLAYER_DISTANCE)
+		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, TO_PLAYER_DISTANCE, 1000.0f)
 	);
 
 	CreateAttackSkill(operatorSenderId, 150, &stats, COLLIDER_TAG::BOSS_ATTACK);
@@ -56,7 +59,7 @@ void TomatoTackleCollOperator::Load(void)
 	isDrawArea = false;
 }
 
-void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	// ステージに当たったか
 	if (other.GetTag() == COLLIDER_TAG::STAGE && other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {

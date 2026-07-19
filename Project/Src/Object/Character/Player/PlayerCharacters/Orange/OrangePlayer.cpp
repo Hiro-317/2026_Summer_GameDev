@@ -341,13 +341,13 @@ void OrangePlayer::PlayerLoad(void)
 #pragma endregion 
 }
 
-void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	// 回避時の当たり判定処理(回避成功したら、ダメージ処理をスルーする)
 	if (PlayerBase::DodgeOnCollision(STATE::SKILL_3, other)) { return; }
 
 	// 敵の攻撃を受けた時のダメージ処理
-	PlayerBase::OnCollision(ownTag, other);
+	PlayerBase::OnCollision(ownTag, other, collisionPoint);
 }
 
 void OrangePlayer::ReceptionUpdate(void)

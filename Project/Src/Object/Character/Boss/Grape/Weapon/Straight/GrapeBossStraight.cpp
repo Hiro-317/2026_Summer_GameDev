@@ -36,7 +36,7 @@ void GrapeBossStraight::Load(const MSG_SENDER_ID operatorSenderId, const Charact
 	collFront.scale = Vector3::Zonly(ATTACK_SIZE);
 }
 
-void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	if (ownTag == COLLIDER_TAG::BOSS_ATTACK_AREA) {
 

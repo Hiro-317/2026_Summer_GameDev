@@ -300,9 +300,9 @@ void TomatoPlayer::PlayerLoad(void)
 	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 }
 
-void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
-	PlayerBase::OnCollision(ownTag, other);
+	PlayerBase::OnCollision(ownTag, other, collisionPoint);
 }
 
 void TomatoPlayer::ReceptionUpdate(void)

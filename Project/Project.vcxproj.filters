@@ -341,6 +341,10 @@
     <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
     <ClInclude Include="Src\Manager\Effect\Heal\EffectHeal.h" />
     <ClInclude Include="Src\Manager\Effect\Buff\EffectBuff.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Peach\PeachCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\CapsuleDebugObject.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\DebugObjectBase.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

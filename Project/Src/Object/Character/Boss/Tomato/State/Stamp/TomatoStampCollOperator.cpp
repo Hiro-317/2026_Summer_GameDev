@@ -16,7 +16,7 @@ TomatoStampCollOperator::TomatoStampCollOperator
 	stats(stats),
 	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
 	HEIGHT(collParam.GetParameter("Stamp","Height")),
-	collBack(Vector3()), collFront(Vector3())
+	collBack(), collFront()
 {
 	isDrawArea = false;
 	trans.pos = Vector3(-1, -1, -1);
@@ -38,8 +38,8 @@ void TomatoStampCollOperator::Load(void)
 #pragma endregion
 
 	// ìñÇΩÇËîªíËèÓïÒÇê∂ê¨Ç∑ÇÈ
-	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS));
-	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS));
+	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS, 1000.0f));
+	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS, 1000.0f));
 	SetJudge(false);
 
 	// çUåÇîÕàÕÇÃìñÇΩÇËîªíË

@@ -339,6 +339,9 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\CapsuleDebugObject.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\DebugObjectBase.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />

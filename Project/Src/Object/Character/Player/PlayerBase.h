@@ -76,7 +76,7 @@ public:
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
 	// “–‚½‚è”»’èˆ—
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;

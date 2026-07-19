@@ -51,7 +51,7 @@ void GrapeBoss::PlayerLoad(void)
 {
 	// アニメーション～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-// アニメーションコントローラーを生成する
+	// アニメーションコントローラーを生成する
 	CreateAnimationController();
 
 	// 各種アニメーションを登録する
@@ -66,8 +66,7 @@ void GrapeBoss::PlayerLoad(void)
 		new CapsuleCollider(
 			COLLIDER_TAG::BOSS,
 			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
-			CAPSULE_COLLIDER_RADIUS,
-			CAPSULE_COLLIDER_ENOUGH_DISTANCE
+			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 

@@ -50,22 +50,21 @@ void PlayerTripleAttackCollOperator::Load(void)
 
 	// “–‚½‚è”»’èî•ñ‚ğ¶¬‚·‚é
 	for (int i = 0; i < (int)PLAYER_TRIPLE_ATTACK_STAGE::MAX; i++) {
-		ColliderCreate(new SphereCollider(COLL_TAG, COLL_SIZE[i], COLL_SIZE[i], COLL_LOCAL_POS));
+		ColliderCreate(new SphereCollider(COLL_TAG, COLL_SIZE[i]));
 	}
-	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE, FIND_ATTACK_TARGET_RANGE));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE));
 	SetJudge(false);
 
 	CreateAttackSkill(operatorSenderId, SKILL_1_ATTACK_RATE_PERCENT, &playerStats, COLLIDER_TAG::PLAYER_ATTACK);
 }
 
-void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
 		switch (other.GetTag())
 		{
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isFindAttackTarget = true;
 			targetPos = &other.GetTransform().pos;
@@ -79,7 +78,6 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		{
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::SPHERE_DEBUG_OBJECT:
 		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isHit = true;
 			break;

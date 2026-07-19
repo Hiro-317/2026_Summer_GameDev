@@ -14,7 +14,7 @@ public:
 	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
 
 	// ê⁄êGîªíË
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 protected:
 

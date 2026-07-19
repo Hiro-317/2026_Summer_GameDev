@@ -2,12 +2,14 @@
 
 #include "ChunkStDefine.h"
 
-#include"../../Object/Common/Collider/LineCollider.h"
-#include"../../Object/Common/Collider/SphereCollider.h"
-#include"../../Object/Common/Collider/CapsuleCollider.h"
-#include"../../Object/Common/Collider/BoxCollider.h"
-#include"../../Object/Common/Collider/ModelCollider.h"
-#include"../../Object/Common/Collider/XZCircleCollider.h"
+#include "../../Object/Common/Collider/ColliderBase.h"
+
+class LineCollider;
+class SphereCollider;
+class CapsuleCollider;
+class BoxCollider;
+class ModelCollider;
+class XZCircleCollider;
 
 class CollisionManager
 {
@@ -116,10 +118,8 @@ public:
 	// ‰ğ•ú
 	void Clear(void) {
 		for (ColliderGroupData& colliders : groupColliders) {
-			colliders.dynamicChunksXZ.clear();
-			colliders.staticChunksXZ.clear();
-			colliders.dynamicChunks3D.clear();
-			colliders.staticChunks3D.clear();
+			colliders.dynamicChunks.clear();
+			colliders.staticChunks.clear();
 			colliders.colliders.clear();
 		}
 	}
@@ -132,10 +132,101 @@ private:
 	// d•¡”»’è–h~‚Ì”»’è‹L˜^
 	std::unordered_set<ColliderPairKey, ColliderPairKeyHash> checkedPairs;
 
-#pragma region ƒ`ƒƒƒ“ƒN•ª‚¯—p
+
+#pragma region ”»’è‚ÌU‚è•ª‚¯
+
+	// ƒ`ƒƒƒ“ƒN•ª‚¯(XV)
+	void BuildChunks(void);
+
+	// w’è‚ÌƒOƒ‹[ƒv“¯m‚ğ”»’è(2ƒOƒ‹[ƒvw’è)
+	void Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB);
+	// w’è‚ÌƒOƒ‹[ƒv‚ğ‘“–‚½‚è‚Å”»’è(1ƒOƒ‹[ƒvw’è)
+	void Matching(COLLIDER_GROUP group);
+
+	// ƒ`ƒƒƒ“ƒN‚ğU‚è•ª‚¯‚Ä”»’èÀs
+	void MatchingChunks(ChunkMap& aChunks, ChunkMap& bChunks);
+	// ƒ`ƒƒƒ“ƒN‚ğU‚è•ª‚¯‚Ä”»’èÀs
+	void MatchingChunks(ChunkMap& chunks);
+
+	// d•¡”»’èƒ`ƒFƒbƒN
+	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
+
+	// Œ`ó‚ÌU‚è•ª‚¯
+	bool IsHit(ColliderBase* a, ColliderBase* b, Vector3& collisionPoint);
+
+#pragma endregion
+
+#pragma region ŠeŒ`ó‚ÌÀ”»’è
+
+	// “¯Œ`ó“¯m```````````````````````````````
+
+	// ü•ª~ü•ª
+	bool LineToLine(LineCollider* a, LineCollider* b, Vector3& collisionPoint);
+
+	// ‹…‘Ì~‹…‘Ì
+	bool SphereToSphere(SphereCollider* a, SphereCollider* b, Vector3& collisionPoint);
+
+	// ƒJƒvƒZƒ‹~ƒJƒvƒZƒ‹
+	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, Vector3& collisionPoint);
+
+	// ƒ{ƒbƒNƒX~ƒ{ƒbƒNƒX
+	bool BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint);
+
+	// ƒ‚ƒfƒ‹~ƒ‚ƒfƒ‹
+	bool ModelToModel(ModelCollider* a, ModelCollider* b, Vector3& collisionPoint);
+
+	// XZ•½–Êã‚Ì‰~Œ`~XZ•½–Êã‚Ì‰~Œ`
+	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, Vector3& collisionPoint);
+
+	// ```````````````````````````````“¯Œ`ó“¯m
+
+
+	// •ÊŒ`ó“¯m```````````````````````````````
+
+	// ü•ª~‹…‘Ì
+	bool LineToSphere(LineCollider* line, SphereCollider* sphere, Vector3& collisionPoint);
+
+	// ü•ª~ƒJƒvƒZƒ‹
+	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule, Vector3& collisionPoint);
+
+	// ü•ª~ƒ{ƒbƒNƒX
+	bool LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint);
+
+	// ü•ª~ƒ‚ƒfƒ‹
+	bool LineToModel(LineCollider* line, ModelCollider* model, Vector3& collisionPoint);
+
+	// ‹…‘Ì~ƒJƒvƒZƒ‹
+	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, Vector3& collisionPoint);
+
+	// ‹…‘Ì~ƒ{ƒbƒNƒX
+	bool SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint);
+
+	// ‹…‘Ì~ƒ‚ƒfƒ‹
+	bool SphereToModel(SphereCollider* sphere, ModelCollider* model, Vector3& collisionPoint);
+
+	// ‹…‘Ì~XZ•½–Êã‚Ì‰~Œ`
+	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, Vector3& collisionPoint);
+
+	// ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
+	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, Vector3& collisionPoint);
+
+	// ƒJƒvƒZƒ‹~ƒ‚ƒfƒ‹
+	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model, Vector3& collisionPoint);
+
+	// ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~Œ`
+	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, Vector3& collisionPoint);
+
+	// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹
+	bool BoxToModel(BoxCollider* box, ModelCollider* model, Vector3& collisionPoint);
+
+	// ```````````````````````````````•ÊŒ`ó“¯m
+
+#pragma endregion
+
+#pragma region ƒ†[ƒeƒBƒŠƒeƒB
 
 	// d‚È‚éƒ`ƒƒƒ“ƒNƒCƒ“ƒfƒbƒNƒX(ChunkIndex)ˆê——‚ğæ“¾‚·‚é
-	void GetOverlappedChunks3D(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
+	void GetOverlappedChunks(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
 		out.clear();
 
 		ChunkIndex minIndex = {
@@ -158,52 +249,15 @@ private:
 			}
 		}
 	}
-	// d‚È‚éƒ`ƒƒƒ“ƒNƒCƒ“ƒfƒbƒNƒX(ChunkIndex)ˆê——‚ğæ“¾‚·‚éiXZƒ`ƒƒƒ“ƒN—pj
-	void GetOverlappedChunksXZ(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
-		out.clear();
-
-		ChunkIndex minIndex = {
-			ToChunkIndex(aabb.min.x, CHUNK_SIZE),
-			0,
-			ToChunkIndex(aabb.min.z, CHUNK_SIZE)
-		};
-
-		ChunkIndex maxIndex = {
-			ToChunkIndex(aabb.max.x, CHUNK_SIZE),
-			0,
-			ToChunkIndex(aabb.max.z, CHUNK_SIZE)
-		};
-
-		for (int z = minIndex.z; z <= maxIndex.z; z++) {
-			for (int x = minIndex.x; x <= maxIndex.x; x++) {
-				out.push_back(ChunkIndex(x, 0, z));
-			}
-		}
-	}
 
 	// w’è‚Ìƒ`ƒƒƒ“ƒNƒ}ƒbƒv‚ÉƒRƒ‰ƒCƒ_[‚ğ1‚Â“o˜^
-	void RegisterToChunks3D(ChunkMap& chunks, ColliderBase* collider) {
-
+	void RegisterToChunks(ChunkMap& chunks, ColliderBase* collider)const {
 		// ˆÀ‘Sˆ—
 		if (!collider) { return; }
 
 		// d‚È‚éƒ`ƒƒƒ“ƒNƒCƒ“ƒfƒbƒNƒX‚ğæ“¾
 		std::vector<ChunkIndex> indexes;
-		GetOverlappedChunks3D(collider->GetAABB(), indexes);
-
-		// æ“¾‚µ‚½ƒ`ƒƒƒ“ƒNƒCƒ“ƒfƒbƒNƒX‚·‚×‚Ä‚É“o˜^
-		for (const ChunkIndex& index : indexes) {
-			chunks[index].colliders.emplace_back(collider);
-		}
-	}
-	void RegisterToChunksXZ(ChunkMap& chunks, ColliderBase* collider) {
-
-		// ˆÀ‘Sˆ—
-		if (!collider) { return; }
-
-		// d‚È‚éƒ`ƒƒƒ“ƒNƒCƒ“ƒfƒbƒNƒX‚ğæ“¾
-		std::vector<ChunkIndex> indexes;
-		GetOverlappedChunksXZ(collider->GetAABB(), indexes);
+		GetOverlappedChunks(collider->GetAABB(), indexes);
 
 		// æ“¾‚µ‚½ƒ`ƒƒƒ“ƒNƒCƒ“ƒfƒbƒNƒX‚·‚×‚Ä‚É“o˜^
 		for (const ChunkIndex& index : indexes) {
@@ -211,123 +265,6 @@ private:
 		}
 	}
 
-	// ƒ`ƒƒƒ“ƒN•ª‚¯(XV)
-	void BuildChunks(void) {
-		for (ColliderGroupData& group : groupColliders) {
-
-			// “®“IƒRƒ‰ƒCƒ_[ƒ`ƒƒƒ“ƒN•ª‚¯”z—ñ‚ğƒŠƒZƒbƒg
-			group.dynamicChunks3D.clear();
-			group.dynamicChunksXZ.clear();
-
-			for (ColliderBase* collider : group.colliders) {
-				// ˆÀ‘Sˆ—
-				if (!collider) { continue; }
-
-				// Ã“IƒRƒ‰ƒCƒ_[‚Í•ÏX‚È‚µ
-				if (!collider->GetDynamicFlg()) { continue; }
-
-				// “®“IƒRƒ‰ƒCƒ_[ƒ`ƒƒƒ“ƒN•ª‚¯”z—ñ‚ÉŠ„‚è“–‚Ä‚È‚¨‚·
-				if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XYZ) {
-					RegisterToChunks3D(group.dynamicChunks3D, collider);
-					RegisterToChunksXZ(group.dynamicChunksXZ, collider);
-				}
-				else if (collider->GetChunkSpace() == ColliderBase::CHUNK_SPACE::XZ) {
-					RegisterToChunksXZ(group.dynamicChunksXZ, collider);
-				}
-			}
-		}
-	}
-
-#pragma endregion
-
-#pragma region ”»’è‚ÌU‚è•ª‚¯
-
-	// w’è‚ÌƒOƒ‹[ƒv“¯m‚ğ”»’è(2ƒOƒ‹[ƒvw’è)
-	void Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB);
-	// w’è‚ÌƒOƒ‹[ƒv‚ğ‘“–‚½‚è‚Å”»’è(1ƒOƒ‹[ƒvw’è)
-	void Matching(COLLIDER_GROUP group);
-
-	// ƒ`ƒƒƒ“ƒN‚ğU‚è•ª‚¯‚Ä”»’èÀs
-	void MatchingChunks(ChunkMap& aChunks, ChunkMap& bChunks);
-	// ƒ`ƒƒƒ“ƒN‚ğU‚è•ª‚¯‚Ä”»’èÀs
-	void MatchingChunks(ChunkMap& chunks);
-
-	// d•¡”»’èƒ`ƒFƒbƒN
-	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
-
-	// Œ`ó‚ÌU‚è•ª‚¯
-	bool IsHit(ColliderBase* a, ColliderBase* b);
-
-#pragma endregion
-
-#pragma region ŠeŒ`ó‚ÌÀ”»’è
-
-	// “¯Œ`ó“¯m```````````````````````````````
-
-	// ü•ª~ü•ª
-	bool LineToLine(LineCollider* a, LineCollider* b);
-
-	// ‹…‘Ì~‹…‘Ì
-	bool SphereToSphere(SphereCollider* a, SphereCollider* b);
-
-	// ƒJƒvƒZƒ‹~ƒJƒvƒZƒ‹
-	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b);
-
-	// ƒ{ƒbƒNƒX~ƒ{ƒbƒNƒX
-	bool BoxToBox(BoxCollider* a, BoxCollider* b);
-
-	// ƒ‚ƒfƒ‹~ƒ‚ƒfƒ‹
-	bool ModelToModel(ModelCollider* a, ModelCollider* b);
-
-	// XZ•½–Êã‚Ì‰~Œ`~XZ•½–Êã‚Ì‰~Œ`
-	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b);
-
-	// ```````````````````````````````“¯Œ`ó“¯m
-
-
-	// •ÊŒ`ó“¯m```````````````````````````````
-
-	// ü•ª~‹…‘Ì
-	bool LineToSphere(LineCollider* line, SphereCollider* sphere);
-
-	// ü•ª~ƒJƒvƒZƒ‹
-	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule);
-
-	// ü•ª~ƒ{ƒbƒNƒX
-	bool LineToBox(LineCollider* line, BoxCollider* box);
-
-	// ü•ª~ƒ‚ƒfƒ‹
-	bool LineToModel(LineCollider* line, ModelCollider* model);
-
-	// ‹…‘Ì~ƒJƒvƒZƒ‹
-	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule);
-
-	// ‹…‘Ì~ƒ{ƒbƒNƒX
-	bool SphereToBox(SphereCollider* sphere, BoxCollider* box);
-
-	// ‹…‘Ì~ƒ‚ƒfƒ‹
-	bool SphereToModel(SphereCollider* sphere, ModelCollider* model);
-
-	// ‹…‘Ì~XZ•½–Êã‚Ì‰~Œ`
-	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle);
-
-	// ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
-	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box);
-
-	// ƒJƒvƒZƒ‹~ƒ‚ƒfƒ‹
-	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model);
-
-	// ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~Œ`
-	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle);
-
-	// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹
-	bool BoxToModel(BoxCollider* box, ModelCollider* model);
-
-	// ```````````````````````````````•ÊŒ`ó“¯m
-
-#pragma endregion
-
-#pragma region ƒ†[ƒeƒBƒŠƒeƒB
 	/// <summary>
 	/// w’è‚µ‚½2‚Â‚ÌƒRƒ‰ƒCƒ_[“¯m‚É‰Ÿ‚µo‚µˆ—‚ª•K—v‚©‚Ç‚¤‚©
 	/// </summary>
@@ -346,7 +283,7 @@ private:
 	/// <param name="bWeight">iinj d‚İ</param>
 	/// <param name="aWeightRatio">ioutj d‚İ‚ÌŠ„‡</param>
 	/// <param name="bWeightRatio">ioutj d‚İ‚ÌŠ„‡</param>
-	void WeightRatioCalculation(unsigned char aWeight, unsigned char bWeight, float& aWeightRatio, float& bWeightRatio) {
+	void WeightRatioCalculation(unsigned char aWeight, unsigned char bWeight, float& aWeightRatio, float& bWeightRatio)const {
 		// ‚¨Œİ‚¢‚Ìd‚İ‚É‚¨‚¯‚éŠ„‡‚ğŒvZi‘Šè‚Ìd‚İ € ©•ª‚Æ‘Šè‚Ìd‚İ‚Ì‡Œvj
 
 		// ©•ª‚Æ‘Šè‚Ìd‚İ‚Ì‡Œv
@@ -369,7 +306,7 @@ private:
 	/// <param name="b">ƒRƒ‰ƒCƒ_[‚Q</param>
 	/// <param name="normal">‰Ÿ‚µo‚µ•ûŒü</param>
 	/// <param name="overlap">‚ß‚è‚ñ‚¾—Ê</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap) {
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const {
 		// “®“Iƒtƒ‰ƒO
 		bool aDynamic = a->GetDynamicFlg();
 		bool bDynamic = b->GetDynamicFlg();
@@ -408,7 +345,7 @@ private:
 	/// <param name="a">ƒRƒ‰ƒCƒ_[‚P</param>
 	/// <param name="b">ƒRƒ‰ƒCƒ_[‚Q</param>
 	/// <param name="overlapVec">‰Ÿ‚µo‚µƒxƒNƒgƒ‹</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec) {
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const {
 		// “®“Iƒtƒ‰ƒO
 		bool aDynamic = a->GetDynamicFlg();
 		bool bDynamic = b->GetDynamicFlg();
@@ -449,7 +386,7 @@ private:
 	/// <param name="a">–³ğŒ‚É‰Ÿ‚µo‚³‚ê‚é•û</param>
 	/// <param name="b">–³ğŒ‚É“®‚©‚³‚¸‰Ÿ‚µo‚·•û</param>
 	/// <param name="overlapVec">‰Ÿ‚µo‚µƒxƒNƒgƒ‹</param>
-	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec) {
+	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const {
 		dynamicColl->SetTransformPos(dynamicColl->GetTransform().pos + overlapVec);
 		if (overlapVec.Normalized().y > 0.5f) { dynamicColl->CallOnGrounded(); }
 	}

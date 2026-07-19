@@ -25,7 +25,7 @@ TomatoPlayerStampState::TomatoPlayerStampState(
 	IsGround(IsGround),
 	DefaultChangeState(DefaultChangeState),
 	isEnd(false),
-	trans(Vector3())
+	trans()
 {
 
 }

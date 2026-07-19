@@ -31,7 +31,7 @@ public:
 
 private:
 
-	// カプセルコライダーのローカル座標
+	// XZサークルコライダーの半径
 	const float TO_PLAYER_DISTANCE;
 
 	// コライダー描画の高さ
