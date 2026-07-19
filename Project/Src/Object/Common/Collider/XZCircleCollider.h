@@ -30,31 +30,37 @@ public:
 	}
 
 	void DrawDebug(unsigned int color = 0xffffff)override {
-        constexpr int DIV_NUM = 64;
 
-        Vector3 center = GetPos();
+        // 円の分割数
+        constexpr int DIV_NUM = 32;
 
+		// 中心座標
+        const Vector3 center = GetPos();
+
+		// 上面・下面のY座標
+        const float topY = center.y + yLength;
+        const float bottomY = center.y - yLength;
+
+        // 上面・下面
         for (int i = 0; i < DIV_NUM; i++) {
             float angle1 = DX_PI_F * 2.0f * i / DIV_NUM;
             float angle2 = DX_PI_F * 2.0f * (i + 1) / DIV_NUM;
 
-            Vector3 p1 = {
-                center.x + cosf(angle1) * radius,
-                center.y,
-                center.z + sinf(angle1) * radius
-            };
+            Vector3 top1 = Vector3(center.x + cosf(angle1) * radius, topY, center.z + sinf(angle1) * radius);
 
-            Vector3 p2 = {
-                center.x + cosf(angle2) * radius,
-                center.y,
-                center.z + sinf(angle2) * radius
-            };
+            Vector3 top2 = Vector3(center.x + cosf(angle2) * radius, topY, center.z + sinf(angle2) * radius);
 
-            DrawLine3D(
-                VGet(p1.x, p1.y, p1.z),
-                VGet(p2.x, p2.y, p2.z),
-                color
-            );
+            Vector3 bottom1 = Vector3(top1.x, bottomY, top1.z);
+
+            Vector3 bottom2 = Vector3(top2.x, bottomY, top2.z);
+
+            // 上面
+            DrawLine3D(top1.ToVECTOR(), top2.ToVECTOR(), color);
+            // 下面
+            DrawLine3D(bottom1.ToVECTOR(), bottom2.ToVECTOR(), color);
+            // 側面
+            DrawLine3D(top1.ToVECTOR(), bottom1.ToVECTOR(), color);
+
         }
     }
 

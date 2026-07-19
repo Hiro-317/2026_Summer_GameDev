@@ -11,7 +11,8 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model)
 	ColliderCreate(
 		new XZCircleCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			GetParameter("KickBomb", "Range")
+			GetParameter("KickBomb", "Range"),
+			1000.0f
 		)
 	);
 

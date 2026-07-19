@@ -32,7 +32,7 @@ public:
 	void SubAlphaDraw(void)override;
 
 	// “–‚½‚è”»’èˆ—
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚é
 	void CollOn() { 

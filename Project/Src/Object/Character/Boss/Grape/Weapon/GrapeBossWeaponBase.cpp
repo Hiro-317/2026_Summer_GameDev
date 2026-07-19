@@ -2,7 +2,7 @@
 
 
 GrapeBossWeaponBase::GrapeBossWeaponBase(int model)
-	: ActorBase("Data/Parameter/Character/Boss/Grape/Weapons/"), collBack(0), collFront(0)
+	: ActorBase("Data/Parameter/Character/Boss/Grape/Weapons/"), collBack(), collFront()
 {
 	trans.Duplicate(model);
 

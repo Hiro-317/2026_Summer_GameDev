@@ -330,6 +330,10 @@
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Peach\PeachCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\CapsuleDebugObject.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\DebugObjectBase.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

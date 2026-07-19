@@ -19,7 +19,7 @@ public:
 
 	void Load(void)override;
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
@@ -36,7 +36,7 @@ public:
 
 private:
 
-	// カプセルコライダーのローカル座標
+	// XZサークルコライダーの半径
 	const float TO_PLAYER_DISTANCE;
 
 	// コライダー描画の高さ

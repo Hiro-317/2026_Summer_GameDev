@@ -60,6 +60,14 @@ void ParameterLoad::LoadCsvFile(const std::string& filePath, const std::string& 
     }
 }
 
+bool ParameterLoad::IsParameterExist(const std::string& fileName, const std::string& parameterName) const
+{
+    auto fileIt = parameterMap.find(fileName);
+    if (fileIt == parameterMap.end()) { return false; }
+    const auto& parameterMapForFile = fileIt->second;
+	return parameterMapForFile.find(parameterName) != parameterMapForFile.end();
+}
+
 const std::vector<float>& ParameterLoad::GetParameterArray(const std::string& fileName, const std::string& parameterName) const
 {
     return parameterMap.at(fileName).at(parameterName);

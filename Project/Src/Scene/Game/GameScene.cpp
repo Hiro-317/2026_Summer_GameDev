@@ -24,9 +24,12 @@
 
 #include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
 #include "../../Object/Character/Boss/Grape/GrapeBoss.h"
-#include "../../Object/Common/DebugObject/BoxDebugObject.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
+
+#include "../../Object/Common/DebugObject/BoxDebugObject.h"
+#include "../../Object/Common/DebugObject/SphereDebugObject.h"
+#include "../../Object/Common/DebugObject/CapsuleDebugObject.h"
 
 
 int GameScene::hitStop = 0;

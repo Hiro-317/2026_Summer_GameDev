@@ -97,10 +97,26 @@ void BossBase::CharacterLoad(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（XZ平面上円コライダー）
-	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::TOMATO_BOSS_DISTANCE, TO_PLAYER_DISTANCE));
+	if (IsParameterExist("Collider", "ToPlayerDistanceRadius") && IsParameterExist("Collider", "ToPlayerDistanceHeight")) {
+		ColliderCreate(
+			new XZCircleCollider(
+				COLLIDER_TAG::TOMATO_BOSS_DISTANCE,
+				GetParameter("Collider", "ToPlayerDistanceRadius"),
+				GetParameter("Collider", "ToPlayerDistanceHeight")
+			)
+		);
+	}
 
 	// 当たり判定を生成する（線分コライダー）
-	ColliderCreate(new LineCollider(COLLIDER_TAG::BOSS, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	if (IsParameterExist("Collider", "LineColliderStartPos") && IsParameterExist("Collider", "LineColliderEndPos")) {
+		ColliderCreate(
+			new LineCollider(
+				COLLIDER_TAG::BOSS,
+				GetParameterToVector3("Collider", "LineColliderStartPos") * MODEL_SCALE,
+				GetParameterToVector3("Collider", "LineColliderEndPos") * MODEL_SCALE
+			)
+		);
+	}
 
 #pragma endregion
 
@@ -206,7 +222,7 @@ void BossBase::CharacterUiDraw(void)
 	}
 }
 
-void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	if (!Net::GetIns().IsHost()) return;
 

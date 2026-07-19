@@ -14,6 +14,10 @@ public:
 
     ~ParameterLoad() = default;
 
+    bool IsParameterExist(
+        const std::string& fileName,
+		const std::string& parameterName) const;
+
     // ”z—ñ‚²‚ÆŽæ“¾
     const std::vector<float>& GetParameterArray(
         const std::string& fileName,

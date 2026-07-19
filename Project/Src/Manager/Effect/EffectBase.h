@@ -23,7 +23,7 @@ enum class EFFECT_NAME {
 struct EFFECT_INFO
 {
 	EFFECT_NAME name = EFFECT_NAME::NON;
-	Transform trans{ Vector3() };
+	Transform trans = Transform();
 	const Transform* follow = nullptr;
 	int speed = -1;
 	bool followRotX;

@@ -77,9 +77,6 @@ private:
 	// 押し出しを行う際の重さ（0 ～ 100 で設定）
 	unsigned char pushWeight;
 
-	// １フレーム前の座標
-	Vector3 prevPos;
-
 	// 加速度の更新
 	void AccelUpdate(void);
 
@@ -87,8 +84,8 @@ private:
 	void Gravity(void);
 
 	// 重力
-	const float GRAVITY = -0.6f;
-	const float GRAVITY_MAX = -30.0f;
+	static constexpr float GRAVITY = -0.6f;
+	static constexpr float GRAVITY_MAX = -30.0f;
 
 	// 接地判定 管理用(派生先で変更不可で参照渡し)
 	bool isGroundMaster;
@@ -147,7 +144,7 @@ protected:
 		collider.back()->SetDynamicFlg((dynamicFlg) ? true : false);
 		collider.back()->SetPushFlg(pushFlg);
 		collider.back()->SetPushWeight(pushWeight);
-		collider.back()->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other) { this->OnCollision(ownTag, other); });
+		collider.back()->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) { this->OnCollision(ownTag, other, collisionPoint); });
 		collider.back()->SetOnGroundedFunc([this](void) { this->OnGrounded(); });
 		ColliderToSetSkill();
 	}
@@ -188,6 +185,11 @@ protected:
 	}
 
 #pragma region パラメーター外部ファイル管理に関する関数
+	bool IsParameterExist(const std::string& fileName, const std::string& parameterName)const {
+		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
+		return parameter->IsParameterExist(fileName, parameterName);
+	}
+
 	/// <summary>
 	/// パラメーター外部ファイル管理クラスから指定のパラメーターの指定の配列番号の値だけを取得する
 	/// </summary>
@@ -198,7 +200,6 @@ protected:
 		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
 		return parameter->GetParameter(fileName, parameterName, index);
 	}
-
 
 	/// <summary>
 	/// パラメーター外部ファイル管理クラスから指定のパラメーターを配列ごと取得する
@@ -230,7 +231,9 @@ protected:
 		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
 		return parameter->GetParameterToVector3(fileName, parameterName);
 	}
-#pragma endregion パラメーター外部ファイル管理に関する関数
+#pragma endregion
+
+#pragma region スキル設定
 
 	// 攻撃スキル詳細生成
 	void CreateAttackSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
@@ -256,7 +259,10 @@ protected:
 			}
 		}
 	}
-#pragma endregion 初期設定
+
+#pragma endregion
+
+#pragma endregion
 
 	// 当たり判定の設定（true = 「判定する」、false = 「判定しない」）
 	void SetJudge(bool flg) {

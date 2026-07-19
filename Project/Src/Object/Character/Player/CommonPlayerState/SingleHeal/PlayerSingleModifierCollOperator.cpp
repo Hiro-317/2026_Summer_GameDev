@@ -40,7 +40,7 @@ void PlayerSingleModifierCollOperator::Load(void)
 	SetJudge(false);
 }
 
-void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	switch (other.GetTag())
 	{

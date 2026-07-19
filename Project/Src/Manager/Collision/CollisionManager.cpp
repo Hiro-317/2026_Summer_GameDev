@@ -9,6 +9,13 @@
 
 #include "../Camera/Camera.h"
 
+#include"../../Object/Common/Collider/LineCollider.h"
+#include"../../Object/Common/Collider/SphereCollider.h"
+#include"../../Object/Common/Collider/CapsuleCollider.h"
+#include"../../Object/Common/Collider/BoxCollider.h"
+#include"../../Object/Common/Collider/ModelCollider.h"
+#include"../../Object/Common/Collider/XZCircleCollider.h"
+
 #pragma region 初期化系
 
 // コライダーを追加（単体）
@@ -109,6 +116,26 @@ void CollisionManager::Check(void)
 #pragma endregion
 
 #pragma region 判定振り分け
+
+void CollisionManager::BuildChunks(void)
+{
+	for (ColliderGroupData& group : groupColliders) {
+
+		// 動的コライダーチャンク分け配列をリセット
+		group.dynamicChunks.clear();
+
+		for (ColliderBase* collider : group.colliders) {
+			// 安全処理
+			if (!collider) { continue; }
+
+			// 静的コライダーは変更なし
+			if (!collider->GetDynamicFlg()) { continue; }
+
+			// 動的コライダーチャンク分け配列に割り当てなおす
+			RegisterToChunks(group.dynamicChunks, collider);
+		}
+	}
+}
 
 // 指定のグループ同士を判定(2グループ指定)
 void CollisionManager::Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB)
@@ -223,7 +250,9 @@ bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b, Vector3& collisio
 	if (aShape == SHAPE::NON || bShape == SHAPE::NON) { return false; }
 
 	// そもそも、同じタグ同士は当たり判定しない
-	if (a->GetTag() == b->GetTag()) { return false; }
+	if (a->GetTag() == b->GetTag()) {
+		if (TAG_TO_GROUP_LIST.contains(a->GetTag())) { return false; }
+	}
 
 	// 雑な判定（軽量化目的）
 	ColliderBase::AABB aAABB = a->GetAABB(), bAABB = b->GetAABB();
@@ -516,32 +545,6 @@ bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, 
 }
 
 // ボックス×ボックス
-#pragma region 回転対応前
-//bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint)
-//{
-//#pragma region 必要情報を取得
-//	Vector3 normal = a->GetPos() - b->GetPos();
-//	Vector3 halfSizeSum = (a->GetSize() + b->GetSize()) * 0.5f;
-//#pragma endregion
-//
-//#pragma region 衝突判定（）
-//	if (abs(normal.x) > halfSizeSum.x) { return false; }
-//	if (abs(normal.y) > halfSizeSum.y) { return false; }
-//	if (abs(normal.z) > halfSizeSum.z) { return false; }
-//#pragma endregion
-//
-//#pragma region 衝突確定：必要なら押し出し
-//	if (NeedPush(a, b)) {
-//
-//		Vector3 overlapNorm = halfSizeSum - normal.Abs();
-//
-//		ApplyPush(a, b, overlapNorm.MinElement() * (normal / normal.Abs()));
-//	}
-//#pragma endregion
-//
-//	return true;
-//}
-#pragma endregion
 bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint)
 {
 #pragma region 必要情報を取得
@@ -887,63 +890,6 @@ bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsul
 }
 
 // 線分×ボックス
-#pragma region 回転対応前
-//bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint)
-//{
-//	// 押し出し方向（固定）
-//	Vector3 pushDir = line->GetDirection().Normalized();
-//
-//	// Box 情報
-//	Vector3 boxPos = box->GetPos();
-//	Vector3 half = box->GetSize() * 0.5f;
-//
-//	Vector3 bmin = boxPos - half;
-//	Vector3 bmax = boxPos + half;
-//
-//	// Rough 判定
-//	Vector3 cp = line->ClosestPoint(boxPos);
-//
-//	if (cp.x < bmin.x || cp.x > bmax.x ||
-//		cp.y < bmin.y || cp.y > bmax.y ||
-//		cp.z < bmin.z || cp.z > bmax.z)
-//	{
-//		return false;
-//	}
-//
-//	// 詳細判定 + 最深点決定
-//	Vector3 hitPoint = cp;
-//	Vector3 local = hitPoint - boxPos;
-//
-//	Vector3 overlap(
-//		half.x - fabs(local.x),
-//		half.y - fabs(local.y),
-//		half.z - fabs(local.z)
-//	);
-//
-//	if (overlap.x <= 0 || overlap.y <= 0 || overlap.z <= 0)
-//		return false;
-//
-//	// 押し出し
-//	if (NeedPush(line, box))
-//	{
-//		// 押し出し距離を押し出し方向成分で決定
-//		float pushDist =
-//			fabs(pushDir.x) * overlap.x +
-//			fabs(pushDir.y) * overlap.y +
-//			fabs(pushDir.z) * overlap.z;
-//
-//		// 安全マージン
-//		pushDist += 0.001f;
-//
-//		Vector3 pushVec = pushDir * pushDist;
-//		line->SetTransformPosAdd(pushVec);
-//
-//		if (pushDir.y > 0.5f) { line->CallOnGrounded(); }
-//	}
-//
-//	return true;
-//}
-#pragma endregion
 bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint)
 {
 #pragma region 必要情報を取得
@@ -1062,26 +1008,31 @@ bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, Vector3& 
 #pragma region 衝突確定：必要に応じて押し出し
 
 	if (NeedPush(line, box)) {
-		// Boxから線分が完全に抜ける時刻
-		const float pushTime = exitTime;
-
-		// 線分全体の長さに変換
-		float pushDistance = lineVector.Length() * pushTime;
-
-		// 少しだけ余分に押し出す
-		pushDistance += 0.001f;
-
-		const Vector3 pushVector = pushDir * pushDistance;
-
-		line->SetTransformPosAdd(pushVector);
-
 		// 衝突面のローカル法線をワールド空間へ変換
-		const Vector3 worldHitNormal =
-			boxAxes[0] * localHitNormal.x +
-			boxAxes[1] * localHitNormal.y +
-			boxAxes[2] * localHitNormal.z;
+		Vector3 worldHitNormal = boxAxes[0] * localHitNormal.x + boxAxes[1] * localHitNormal.y + boxAxes[2] * localHitNormal.z;
 
-		// 上向き面に接触した場合
+		// ワールド空間の法線を正規化
+		worldHitNormal.Normalize();
+
+		// 線分の始点がBox内部にある場合、終点よりも深く入り込んでいる可能性があるので、
+		const float startDepth = -(lineStart - collisionPoint).Dot(worldHitNormal);
+
+		// 線分の終点がBox内部にある場合、始点よりも深く入り込んでいる可能性があるので、
+		const float endDepth = -(lineEnd - collisionPoint).Dot(worldHitNormal);
+
+		// 始点・終点のうち、より深く入り込んでいる方を使う
+		float overlap = (std::max)(startDepth, endDepth);
+
+		// 浮動小数点誤差で負の値になる場合があるので、0未満なら0にする
+		if (overlap < 0.0f) { overlap = 0.0f; }
+
+		// 浮動小数点誤差による再衝突を防ぐ小さな余白
+		overlap += 0.001f;
+
+		// Boxの接触面法線方向へ押し出す
+		line->SetTransformPosAdd(worldHitNormal * overlap);
+
+		// 上向きの面に接触
 		if (worldHitNormal.y > 0.5f) { line->CallOnGrounded(); }
 	}
 
@@ -1204,62 +1155,6 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 	return true;
 }
 
-#pragma region 回転対応前
-//bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint)
-//{
-//#pragma region 必要情報を取得
-//	Vector3 c = sphere->GetPos();
-//	float r = sphere->GetRadius();
-//
-//	Vector3 boxPos = box->GetPos();
-//	Vector3 half = box->GetSize() * 0.5f;
-//#pragma endregion
-//
-//#pragma region 衝突判定
-//	// 最近点
-//	Vector3 nearest;
-//	nearest.x = std::clamp(c.x, boxPos.x - half.x, boxPos.x + half.x);
-//	nearest.y = std::clamp(c.y, boxPos.y - half.y, boxPos.y + half.y);
-//	nearest.z = std::clamp(c.z, boxPos.z - half.z, boxPos.z + half.z);
-//
-//	Vector3 normal = c - nearest;
-//	float distSq = normal.LengthSq();
-//
-//	if (distSq > r * r) { return false; }
-//#pragma endregion
-//
-//#pragma region 衝突確定：必要に応じて押し出し
-//	if (NeedPush(sphere, box)) {
-//		float dist = sqrtf(distSq);
-//
-//		Vector3 pushNormal;
-//
-//		if (dist > 0.0001f) { pushNormal = normal / dist; }
-//		else {
-//			// 一致 → 球がちょうど面に乗っている
-//			// 面法線を計算する
-//			Vector3 diff = c - boxPos;
-//
-//			float dx = fabs(diff.x) - half.x;
-//			float dy = fabs(diff.y) - half.y;
-//			float dz = fabs(diff.z) - half.z;
-//
-//			// 1番めり込んでいる方向＝面法線
-//			if (dx >= dy && dx >= dz) { pushNormal = Vector3((diff.x > 0 ? 1 : -1), 0, 0); }
-//			else if (dy >= dx && dy >= dz) { pushNormal = Vector3(0, (diff.y > 0 ? 1 : -1), 0); }
-//			else { pushNormal = Vector3(0, 0, (diff.z > 0 ? 1 : -1)); }
-//		}
-//
-//		float overlap = r - dist;
-//		if (overlap < 0) { overlap = 0; }
-//
-//		ApplyPush(sphere, box, pushNormal, overlap);
-//	}
-//#pragma endregion
-//
-//	return true;
-//}
-#pragma endregion
 // 球体×ボックス
 bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint)
 {
@@ -1444,26 +1339,118 @@ bool CollisionManager::SphereToModel(SphereCollider* sphere, ModelCollider* mode
 bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, Vector3& collisionPoint)
 {
 #pragma region 必要情報を取得
-	// XZ平面上のベクトルを取得
-	Vector2 vec = sphere->GetPos().ToVector2XZ() - xzcircle->GetPos().ToVector2XZ();
+
+	// 球体の中心座標
+	const Vector3 spherePos = sphere->GetPos();
+	// 球体の半径
+	const float sphereRadius = sphere->GetRadius();
+
+	// XZCircleColliderの中心座標
+	const Vector3 circlePos = xzcircle->GetPos();
+	// XZCircleColliderの半径
+	const float circleRadius = xzcircle->GetRadius();
+	// XZCircleColliderのY方向の長さ
+	const float yLength = xzcircle->GetYLength();
+
+
+	// XZ平面上で、円の中心から球の中心へ向かうベクトル
+	Vector2 vec = spherePos.ToVector2XZ() - circlePos.ToVector2XZ();
+
 	// 半径の合計
-	float radius = sphere->GetRadius() + xzcircle->GetRadius();
+	const float radiusSum = sphereRadius + circleRadius;
+
 #pragma endregion
 
-	// 衝突判定
-	if (vec.LengthSq() > radius * radius) { return false; }
+#pragma region Y方向の早期リターン
 
-#pragma region 衝突確定：必要なら押し出し
-	if (NeedPush(sphere, xzcircle)) {
-		// めり込み量
-		float overlap = radius - vec.Length();
+	// XZCircleColliderのY方向範囲
+	const float circleMinY = circlePos.y - yLength;
 
-		// ベクトルを正規化
-		vec.Normalize();
+	const float circleMaxY = circlePos.y + yLength;
 
-		// 押し出し
-		ApplyPush(sphere, xzcircle, Vector3::XZonly(vec.x, vec.y), overlap);
+	// SphereのY方向範囲
+	const float sphereMinY = spherePos.y - sphereRadius;
+
+	const float sphereMaxY = spherePos.y + sphereRadius;
+
+	// Y方向で完全に離れている
+	if (sphereMaxY < circleMinY || sphereMinY > circleMaxY) { return false; }
+
+#pragma endregion
+
+#pragma region XZ平面上で衝突判定
+
+	const float distanceSq = vec.LengthSq();
+
+	if (distanceSq > radiusSum * radiusSum) { return false; }
+
+#pragma endregion
+
+#pragma region XZ方向の法線を取得
+
+	constexpr float epsilon = 1e-6f;
+
+	Vector3 pushNormal;
+
+	float distance = 0.0f;
+
+	if (distanceSq > epsilon * epsilon) {
+		distance = std::sqrt(distanceSq);
+
+		pushNormal = Vector3::XZonly(vec.x / distance, vec.y / distance);
 	}
+	else {
+		/*
+			XZ座標が完全一致している場合は
+			押し出す方向を計算できない。
+
+			そのため、Sphereの移動方向の逆方向を使う。
+		*/
+
+		Vector3 fallbackNormal = -sphere->GetTransform().Velocity();
+
+		// Y方向は使用しない
+		fallbackNormal.y = 0.0f;
+
+		if (fallbackNormal.LengthSq() > epsilon * epsilon) { pushNormal = fallbackNormal.Normalized(); }
+		// 移動していない場合は固定方向
+		else { pushNormal = Vector3::Xonly(1.0f); }
+
+		distance = 0.0f;
+	}
+
+#pragma endregion
+
+#pragma region 衝突点を計算
+
+	/*
+		衝突点のY座標。
+
+		Sphereの中心Yを、XZCircleColliderの
+		Y範囲内に収めた位置にする。
+	*/
+	const float collisionY = std::clamp(spherePos.y, circleMinY, circleMaxY);
+
+	// XZCircleCollider表面上の点
+	const Vector3 pointOnCircle(circlePos.x + pushNormal.x * circleRadius, collisionY, circlePos.z + pushNormal.z * circleRadius);
+
+	// Sphere表面上の点
+	const Vector3 pointOnSphere(spherePos.x - pushNormal.x * sphereRadius, collisionY, spherePos.z - pushNormal.z * sphereRadius);
+
+	// 両方の表面点の中間を代表衝突点にする
+	collisionPoint = (pointOnCircle + pointOnSphere) * 0.5f;
+
+#pragma endregion
+
+#pragma region 衝突確定：必要ならXZ方向へ押し出し
+
+	if (NeedPush(sphere, xzcircle)) {
+		// XZ平面上のめり込み量
+		const float overlap = radiusSum - distance;
+
+		ApplyPush(sphere, xzcircle, pushNormal, overlap);
+	}
+
 #pragma endregion
 
 	return true;
@@ -1473,68 +1460,180 @@ bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider
 bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, Vector3& collisionPoint)
 {
 #pragma region 必要情報の取得
-	// capsule（カプセル）～～～～～～～～～～～
-	// 線分の 始点/終点 座標
-	const Vector3 A = capsule->GetStartPos(), B = capsule->GetEndPos();
-	// 半径
-	const float   r = capsule->GetRadius();
-	// ～～～～～～～～～～～～～～～～～～～～
 
-	// box（ボックス）～～～～～～～～～～～～～
-	// 座標
+	// カプセル中心軸
+	const Vector3 capsuleStart = capsule->GetStartPos();
+	const Vector3 capsuleEnd = capsule->GetEndPos();
+	const float capsuleRadius = capsule->GetRadius();
+
+	// Box
 	const Vector3 boxPos = box->GetPos();
-	// 大きさ（半分）
-	const Vector3 half = box->GetSize() / 2;
-	// ～～～～～～～～～～～～～～～～～～～～
+	const Vector3 half = box->GetHalfSize();
+
+	// 回転後のBoxの3軸
+	const std::array<Vector3, 3> boxAxes = box->GetAxes();
+
 #pragma endregion
 
-#pragma region 衝突判定（）
-	// Step1：capsule（カプセル）線分上でbox（ボックス）に最も近い点を求める
-	Vector3 AB = B - A;
-	float abLenSq = AB.LengthSq();
-	float t = 0.0f;
+#pragma region カプセル中心軸をBoxローカル座標へ変換
 
-	if (abLenSq > 1e-6f) {
-		// A→Bの線分上で、Box中心がどの位置に投影されるか
-		t = (boxPos - A).Dot(AB) / abLenSq;
+	const Vector3 startDifference = capsuleStart - boxPos;
+
+	const Vector3 endDifference = capsuleEnd - boxPos;
+
+	const Vector3 localStart(startDifference.Dot(boxAxes[0]), startDifference.Dot(boxAxes[1]), startDifference.Dot(boxAxes[2]));
+
+	const Vector3 localEnd(endDifference.Dot(boxAxes[0]), endDifference.Dot(boxAxes[1]), endDifference.Dot(boxAxes[2]));
+
+#pragma endregion
+
+#pragma region 線分とAABBの最近点ペアを求める
+
+	// Boxローカル空間でのカプセル中心軸線分
+	const Vector3 localSegment = localEnd - localStart;
+
+	// 線分上の割合
+	float t = 0.5f;
+
+	// 
+	Vector3 localCapsuleClosest;
+	Vector3 localBoxClosest;
+
+	constexpr int iterationCount = 8;
+
+	for (int i = 0; i < iterationCount; ++i) {
+		// 現在の線分上の点
+		localCapsuleClosest = localStart + localSegment * t;
+
+		// その点からBoxへの最近点
+		localBoxClosest.x = std::clamp(localCapsuleClosest.x, -half.x, half.x);
+
+		localBoxClosest.y = std::clamp(localCapsuleClosest.y, -half.y, half.y);
+
+		localBoxClosest.z = std::clamp(localCapsuleClosest.z, -half.z, half.z);
+
+		// Box最近点を線分へ再投影
+		const float segmentLengthSq = localSegment.LengthSq();
+
+		if (segmentLengthSq <= 1e-8f) { t = 0.0f;			break; }
+
+		t = (localBoxClosest - localStart).Dot(localSegment) / segmentLengthSq;
 		t = std::clamp(t, 0.0f, 1.0f);
 	}
 
-	// 最近点（カプセル線分上）
-	Vector3 P = A + AB * t;
+	// 最終結果を再計算
+	localCapsuleClosest = localStart + localSegment * t;
 
-	// Step2：P と Box の最も近い点を求める（SphereToBox と同じ原理）
-	Vector3 nearest;
-	nearest.x = std::clamp(P.x, boxPos.x - half.x, boxPos.x + half.x);
-	nearest.y = std::clamp(P.y, boxPos.y - half.y, boxPos.y + half.y);
-	nearest.z = std::clamp(P.z, boxPos.z - half.z, boxPos.z + half.z);
+	localBoxClosest.x = std::clamp(localCapsuleClosest.x, -half.x, half.x);
+	localBoxClosest.y = std::clamp(localCapsuleClosest.y, -half.y, half.y);
+	localBoxClosest.z = std::clamp(localCapsuleClosest.z, -half.z, half.z);
 
-	Vector3 normal = P - nearest;
-	float distSq = normal.LengthSq();
-
-	// 未衝突
-	if (distSq > r * r) { return false; }
 #pragma endregion
 
-#pragma region 衝突確定：押し出しが必要か->必要なら押し出し
-	// 押し出しが必要か
-	if (NeedPush(capsule, box)) {
+#pragma region 最近点をワールド座標へ変換
 
-		// 衝突判定時取得したdispSqを使って、実際の距離を算出する
-		float dist = sqrtf(distSq);
+	const Vector3 capsuleClosest = boxPos + boxAxes[0] * localCapsuleClosest.x + boxAxes[1] * localCapsuleClosest.y + boxAxes[2] * localCapsuleClosest.z;
+	const Vector3 boxClosest = boxPos + boxAxes[0] * localBoxClosest.x + boxAxes[1] * localBoxClosest.y + boxAxes[2] * localBoxClosest.z;
 
-		if (dist <= 0.0001f) {
-			// 完全一致していたら適当な方向（移動方向の逆方向）を与える
-			normal = -capsule->GetTransform().Velocity();
-			dist = 0.0f;
+#pragma endregion
+
+#pragma region 衝突判定
+
+	Vector3 normal = capsuleClosest - boxClosest;
+
+	const float distSq = normal.LengthSq();
+
+	if (distSq > capsuleRadius * capsuleRadius) { return false; }
+
+#pragma endregion
+
+#pragma region 衝突方向・めり込み量・衝突点を計算
+
+	constexpr float epsilon = 1e-6f;
+
+	Vector3 pushNormal;
+	float overlap = 0.0f;
+
+	if (distSq > epsilon * epsilon) {
+		// カプセル中心軸がBox外側にある通常ケース
+		const float distance = std::sqrt(distSq);
+
+		pushNormal = normal / distance;
+
+		overlap = capsuleRadius - distance;
+
+		// カプセル表面上の点
+		const Vector3 pointOnCapsule = capsuleClosest - pushNormal * capsuleRadius;
+
+		// Box表面上の最近点との中間
+		collisionPoint = (pointOnCapsule + boxClosest) * 0.5f;
+	}
+	else {
+
+		const float distanceToXFace = half.x - std::abs(localCapsuleClosest.x);
+		const float distanceToYFace = half.y - std::abs(localCapsuleClosest.y);
+		const float distanceToZFace = half.z - std::abs(localCapsuleClosest.z);
+
+		Vector3 localPushNormal;
+		Vector3 localSurfacePoint = localCapsuleClosest;
+
+		float distanceToSurface = 0.0f;
+
+		if (distanceToXFace <= distanceToYFace && distanceToXFace <= distanceToZFace) {
+			float sign = 1.0f;
+
+			if (localCapsuleClosest.x < 0.0f) { sign = -1.0f; }
+
+			localPushNormal = Vector3::Xonly(sign);
+
+			localSurfacePoint.x = half.x * sign;
+
+			distanceToSurface = distanceToXFace;
+		}
+		else if (distanceToYFace <= distanceToXFace && distanceToYFace <= distanceToZFace) {
+			float sign = 1.0f;
+
+			if (localCapsuleClosest.y < 0.0f) { sign = -1.0f; }
+
+			localPushNormal = Vector3::Yonly(sign);
+
+			localSurfacePoint.y = half.y * sign;
+
+			distanceToSurface = distanceToYFace;
+		}
+		else {
+			float sign = 1.0f;
+
+			if (localCapsuleClosest.z < 0.0f) { sign = -1.0f; }
+
+			localPushNormal = Vector3::Zonly(sign);
+
+			localSurfacePoint.z = half.z * sign;
+
+			distanceToSurface = distanceToZFace;
 		}
 
-		// めり込んだ量
-		float overlap = r - dist;
+		// ローカル法線をワールド空間へ変換
+		pushNormal = boxAxes[0] * localPushNormal.x + boxAxes[1] * localPushNormal.y + boxAxes[2] * localPushNormal.z;
+		pushNormal.Normalize();
 
-		// 押し出し処理
-		ApplyPush(capsule, box, normal.Normalized(), overlap);
+		// Box内部から表面までの距離＋カプセル半径
+		overlap = distanceToSurface + capsuleRadius;
+
+		// 最寄り面上の点をワールド座標へ変換
+		collisionPoint = boxPos + boxAxes[0] * localSurfacePoint.x + boxAxes[1] * localSurfacePoint.y + boxAxes[2] * localSurfacePoint.z;
 	}
+
+#pragma endregion
+
+#pragma region 衝突確定：必要なら押し出し
+
+	if (NeedPush(capsule, box)) {
+		if (overlap < 0.0f) { overlap = 0.0f; }
+
+		ApplyPush(capsule, box, pushNormal, overlap);
+	}
+
 #pragma endregion
 
 	return true;
@@ -1550,51 +1649,152 @@ bool CollisionManager::CapsuleToModel(CapsuleCollider* capsule, ModelCollider* m
 bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, Vector3& collisionPoint)
 {
 #pragma region 必要情報を取得
-	Vector3 start = capsule->GetStartPos();
-	Vector3 end = capsule->GetEndPos();
-	Vector3 circlePos = xzcircle->GetPos();
 
-	float radiusSum = capsule->GetRadius() + xzcircle->GetRadius();
+	const Vector3 capsuleStart = capsule->GetStartPos();
 
-	Vector3 startXZ = start; startXZ.y = 0.0f;
-	Vector3 endXZ = end;   endXZ.y = 0.0f;
-	Vector3 circleXZ = circlePos; circleXZ.y = 0.0f;
+	const Vector3 capsuleEnd = capsule->GetEndPos();
+
+	const float capsuleRadius = capsule->GetRadius();
+
+	const Vector3 circlePos = xzcircle->GetPos();
+
+	const float circleRadius = xzcircle->GetRadius();
+
+	const float circleYLength = xzcircle->GetYLength();
+
+	const float radiusSum = capsuleRadius + circleRadius;
+
 #pragma endregion
 
-#pragma region 衝突判定
+#pragma region Y方向の早期リターン
 
-	// 最近点
-	Vector3 seg = endXZ - startXZ;
-	Vector3 toCircle = circleXZ - startXZ;
+	// カプセル中心軸のY方向範囲
+	const float capsuleAxisMinY = (std::min)(capsuleStart.y, capsuleEnd.y);
 
-	float segLenSq = seg.LengthSq();
+	const float capsuleAxisMaxY = (std::max)(capsuleStart.y, capsuleEnd.y);
+
+	// カプセル全体のY方向範囲
+	const float capsuleMinY = capsuleAxisMinY - capsuleRadius;
+
+	const float capsuleMaxY = capsuleAxisMaxY + capsuleRadius;
+
+	// XZCircleColliderのY方向範囲
+	const float circleMinY = circlePos.y - circleYLength;
+
+	const float circleMaxY = circlePos.y + circleYLength;
+
+	// Y方向で完全に離れている
+	if (capsuleMaxY < circleMinY || capsuleMinY > circleMaxY) { return false; }
+
+#pragma endregion
+
+#pragma region XZ平面へ投影
+
+	Vector3 startXZ = capsuleStart;
+
+	Vector3 endXZ = capsuleEnd;
+
+	Vector3 circleXZ = circlePos;
+
+	startXZ.y = 0.0f;
+	endXZ.y = 0.0f;
+	circleXZ.y = 0.0f;
+
+#pragma endregion
+
+#pragma region カプセル中心軸上の最近点を取得
+
+	// XZ平面上のカプセル中心軸
+	const Vector3 segmentXZ = endXZ - startXZ;
+
+	const Vector3 startToCircle = circleXZ - startXZ;
+
+	const float segmentLengthSq = segmentXZ.LengthSq();
 
 	float t = 0.0f;
-	if (segLenSq > 1e-6f) {
-		t = std::clamp(seg.Dot(toCircle) / segLenSq, 0.0f, 1.0f);
+
+	if (segmentLengthSq > 1e-8f) {
+		t = segmentXZ.Dot(startToCircle) / segmentLengthSq;
+
+		t = std::clamp(t, 0.0f, 1.0f);
 	}
 
-	Vector3 closestXZ = startXZ + seg * t;
+	// XZ平面上の最近点
+	const Vector3 closestXZ = startXZ + segmentXZ * t;
 
-	Vector3 diffXZ = closestXZ - circleXZ;
-	float distSq = diffXZ.LengthSq();
+	// XZ平面上で求めたtを使って、実際の3Dカプセル中心軸上の点も求める
+	const Vector3 capsuleAxis = capsuleEnd - capsuleStart;
+	const Vector3 closestOnCapsuleAxis = capsuleStart + capsuleAxis * t;
 
-	if (distSq > radiusSum * radiusSum) { return false; }
 #pragma endregion
 
-#pragma region 衝突確定：押し出しが必要か->必要なら押し出し
-	if (NeedPush(capsule, xzcircle)) {
-		float dist = std::sqrt(distSq);
+#pragma region XZ方向の衝突判定
 
-		Vector3 normalXZ;
-		if (dist < 1e-6f) {
-			normalXZ = Vector3::XZonly(1.0f, 0.0f);
-			dist = 0.0f;
-		}
-		else { normalXZ = diffXZ / dist; }
+	const Vector3 differenceXZ = closestXZ - circleXZ;
 
-		ApplyPush(capsule, xzcircle, Vector3::XZonly(normalXZ.x, normalXZ.z), radiusSum - dist);
+	const float distanceSq = differenceXZ.LengthSq();
+
+	if (distanceSq > radiusSum * radiusSum) { return false; }
+
+#pragma endregion
+
+#pragma region XZ方向の法線を取得
+
+	constexpr float epsilon = 1e-6f;
+
+	Vector3 pushNormal;
+
+	float distance = 0.0f;
+
+	if (distanceSq > epsilon * epsilon) {
+		distance = std::sqrt(distanceSq);
+
+		pushNormal = Vector3::XZonly(differenceXZ.x / distance, differenceXZ.z / distance);
 	}
+	// XZ座標が完全に一致している場合
+	else {
+
+		// 移動方向の逆をXZ平面へ投影して使用する。
+		Vector3 fallbackNormal = -capsule->GetTransform().Velocity();
+		fallbackNormal.y = 0.0f;
+
+		if (fallbackNormal.LengthSq() > epsilon * epsilon) { pushNormal = fallbackNormal.Normalized(); }
+		// 移動していなければ固定方向
+		else { pushNormal = Vector3::Xonly(1.0f); }
+
+		distance = 0.0f;
+	}
+
+#pragma endregion
+
+#pragma region 衝突点を計算
+
+	/*
+		衝突点のY座標は、
+		カプセル中心軸上の最近点Yを
+		XZCircleColliderの高さ範囲に収める。
+	*/
+	const float collisionY = std::clamp(closestOnCapsuleAxis.y, circleMinY, circleMaxY);
+
+	// XZCircleCollider表面上の点
+	const Vector3 pointOnCircle(circlePos.x + pushNormal.x * circleRadius, collisionY, circlePos.z + pushNormal.z * circleRadius);
+
+	// カプセル表面上の点
+	const Vector3 pointOnCapsule(closestOnCapsuleAxis.x - pushNormal.x * capsuleRadius, collisionY, closestOnCapsuleAxis.z - pushNormal.z * capsuleRadius);
+
+	// 両形状の表面点の中間
+	collisionPoint = (pointOnCircle + pointOnCapsule) * 0.5f;
+
+#pragma endregion
+
+#pragma region 衝突確定：必要ならXZ方向へ押し出し
+
+	if (NeedPush(capsule, xzcircle)) {
+		const float overlap = radiusSum - distance;
+
+		ApplyPush(capsule, xzcircle, pushNormal, overlap);
+	}
+
 #pragma endregion
 
 	return true;
@@ -1661,5 +1861,6 @@ void CollisionManager::DrawChunkGrid(void) const
 		}
 	}
 }
+
 
 #pragma endregion

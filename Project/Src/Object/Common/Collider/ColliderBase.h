@@ -7,6 +7,8 @@
 
 #include "../Transform.h"
 
+#include "ColliderTagDefine.h"
+
 #include "../../Character/CharacterStatsDefine.h"
 
 class ColliderBase

@@ -2,12 +2,14 @@
 
 #include "ChunkStDefine.h"
 
-#include"../../Object/Common/Collider/LineCollider.h"
-#include"../../Object/Common/Collider/SphereCollider.h"
-#include"../../Object/Common/Collider/CapsuleCollider.h"
-#include"../../Object/Common/Collider/BoxCollider.h"
-#include"../../Object/Common/Collider/ModelCollider.h"
-#include"../../Object/Common/Collider/XZCircleCollider.h"
+#include "../../Object/Common/Collider/ColliderBase.h"
+
+class LineCollider;
+class SphereCollider;
+class CapsuleCollider;
+class BoxCollider;
+class ModelCollider;
+class XZCircleCollider;
 
 class CollisionManager
 {
@@ -130,72 +132,11 @@ private:
 	// 重複判定防止の判定記録
 	std::unordered_set<ColliderPairKey, ColliderPairKeyHash> checkedPairs;
 
-#pragma region チャンク分け用
-
-	// 重なるチャンクインデックス(ChunkIndex)一覧を取得する
-	void GetOverlappedChunks(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
-		out.clear();
-
-		ChunkIndex minIndex = {
-			ToChunkIndex(aabb.min.x, CHUNK_SIZE),
-			ToChunkIndex(aabb.min.y, CHUNK_SIZE),
-			ToChunkIndex(aabb.min.z, CHUNK_SIZE)
-		};
-
-		ChunkIndex maxIndex = {
-			ToChunkIndex(aabb.max.x, CHUNK_SIZE),
-			ToChunkIndex(aabb.max.y, CHUNK_SIZE),
-			ToChunkIndex(aabb.max.z, CHUNK_SIZE)
-		};
-
-		for (int z = minIndex.z; z <= maxIndex.z; z++) {
-			for (int y = minIndex.y; y <= maxIndex.y; y++) {
-				for (int x = minIndex.x; x <= maxIndex.x; x++) {
-					out.push_back(ChunkIndex(x, y, z));
-				}
-			}
-		}
-	}
-
-	// 指定のチャンクマップにコライダーを1つ登録
-	void RegisterToChunks(ChunkMap& chunks, ColliderBase* collider) {
-
-		// 安全処理
-		if (!collider) { return; }
-
-		// 重なるチャンクインデックスを取得
-		std::vector<ChunkIndex> indexes;
-		GetOverlappedChunks(collider->GetAABB(), indexes);
-
-		// 取得したチャンクインデックスすべてに登録
-		for (const ChunkIndex& index : indexes) {
-			chunks[index].colliders.emplace_back(collider);
-		}
-	}
-
-	// チャンク分け(更新時)
-	void BuildChunks(void) {
-		for (ColliderGroupData& group : groupColliders) {
-
-			// 動的コライダーチャンク分け配列をリセット
-			group.dynamicChunks.clear();
-
-			for (ColliderBase* collider : group.colliders) {
-				// 安全処理
-				if (!collider) { continue; }
-
-				// 静的コライダーは変更なし
-				if (!collider->GetDynamicFlg()) { continue; }
-
-				// 動的コライダーチャンク分け配列に割り当てなおす
-				RegisterToChunks(group.dynamicChunks, collider);
-			}
-		}
-	}
-
-#pragma endregion
 
 #pragma region 判定の振り分け
+
+	// チャンク分け(更新時)
+	void BuildChunks(void);
 
 	// 指定のグループ同士を判定(2グループ指定)
 	void Matching(COLLIDER_GROUP groupA, COLLIDER_GROUP groupB);
@@ -283,6 +224,47 @@ private:
 #pragma endregion
 
 #pragma region ユーティリティ
+
+	// 重なるチャンクインデックス(ChunkIndex)一覧を取得する
+	void GetOverlappedChunks(const ColliderBase::AABB& aabb, std::vector<ChunkIndex>& out) const {
+		out.clear();
+
+		ChunkIndex minIndex = {
+			ToChunkIndex(aabb.min.x, CHUNK_SIZE),
+			ToChunkIndex(aabb.min.y, CHUNK_SIZE),
+			ToChunkIndex(aabb.min.z, CHUNK_SIZE)
+		};
+
+		ChunkIndex maxIndex = {
+			ToChunkIndex(aabb.max.x, CHUNK_SIZE),
+			ToChunkIndex(aabb.max.y, CHUNK_SIZE),
+			ToChunkIndex(aabb.max.z, CHUNK_SIZE)
+		};
+
+		for (int z = minIndex.z; z <= maxIndex.z; z++) {
+			for (int y = minIndex.y; y <= maxIndex.y; y++) {
+				for (int x = minIndex.x; x <= maxIndex.x; x++) {
+					out.push_back(ChunkIndex(x, y, z));
+				}
+			}
+		}
+	}
+
+	// 指定のチャンクマップにコライダーを1つ登録
+	void RegisterToChunks(ChunkMap& chunks, ColliderBase* collider)const {
+		// 安全処理
+		if (!collider) { return; }
+
+		// 重なるチャンクインデックスを取得
+		std::vector<ChunkIndex> indexes;
+		GetOverlappedChunks(collider->GetAABB(), indexes);
+
+		// 取得したチャンクインデックスすべてに登録
+		for (const ChunkIndex& index : indexes) {
+			chunks[index].colliders.emplace_back(collider);
+		}
+	}
+
 	/// <summary>
 	/// 指定した2つのコライダー同士に押し出し処理が必要かどうか
 	/// </summary>
@@ -301,7 +283,7 @@ private:
 	/// <param name="bWeight">（in） 重み</param>
 	/// <param name="aWeightRatio">（out） 重みの割合</param>
 	/// <param name="bWeightRatio">（out） 重みの割合</param>
-	void WeightRatioCalculation(unsigned char aWeight, unsigned char bWeight, float& aWeightRatio, float& bWeightRatio) {
+	void WeightRatioCalculation(unsigned char aWeight, unsigned char bWeight, float& aWeightRatio, float& bWeightRatio)const {
 		// お互いの重みにおける割合を計算（相手の重み ÷ 自分と相手の重みの合計）
 
 		// 自分と相手の重みの合計
@@ -324,7 +306,7 @@ private:
 	/// <param name="b">コライダー２</param>
 	/// <param name="normal">押し出し方向</param>
 	/// <param name="overlap">めり込んだ量</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap) {
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const {
 		// 動的フラグ
 		bool aDynamic = a->GetDynamicFlg();
 		bool bDynamic = b->GetDynamicFlg();
@@ -363,7 +345,7 @@ private:
 	/// <param name="a">コライダー１</param>
 	/// <param name="b">コライダー２</param>
 	/// <param name="overlapVec">押し出しベクトル</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec) {
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const {
 		// 動的フラグ
 		bool aDynamic = a->GetDynamicFlg();
 		bool bDynamic = b->GetDynamicFlg();
@@ -404,7 +386,7 @@ private:
 	/// <param name="a">無条件に押し出される方</param>
 	/// <param name="b">無条件に動かさず押し出す方</param>
 	/// <param name="overlapVec">押し出しベクトル</param>
-	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec) {
+	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const {
 		dynamicColl->SetTransformPos(dynamicColl->GetTransform().pos + overlapVec);
 		if (overlapVec.Normalized().y > 0.5f) { dynamicColl->CallOnGrounded(); }
 	}

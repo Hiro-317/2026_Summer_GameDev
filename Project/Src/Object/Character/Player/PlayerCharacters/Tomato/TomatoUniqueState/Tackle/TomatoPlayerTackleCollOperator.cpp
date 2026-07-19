@@ -60,7 +60,7 @@ void TomatoPlayerTackleCollOperator::SubAlphaDraw(void)
 
 }
 
-void TomatoPlayerTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void TomatoPlayerTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	switch (other.GetTag())
 	{

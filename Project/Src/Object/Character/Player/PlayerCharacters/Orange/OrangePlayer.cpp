@@ -342,7 +342,7 @@ void OrangePlayer::PlayerLoad(void)
 #pragma endregion 
 }
 
-void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	if (!Net::GetIns().IsHost()) { return; }
 	if (GetInviCounter() > 0) { return; }

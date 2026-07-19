@@ -8,8 +8,8 @@ GrapeKickDownCollOperator::GrapeKickDownCollOperator(
 )	:
 	operatorSenderId(operatorSenderId),
 	stats(stats),
-	collBack(Vector3()),
-	collFront(Vector3())
+	collBack(),
+	collFront()
 {
 }
 
@@ -17,7 +17,7 @@ void GrapeKickDownCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS)
+		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS, 1000.0f)
 	);
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
