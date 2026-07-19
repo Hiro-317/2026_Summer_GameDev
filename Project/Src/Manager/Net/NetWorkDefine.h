@@ -6,6 +6,10 @@
 
 #include "../Input/KeyManager.h"
 
+#include "SenderID_Define.h"
+
+#include "../../Object/Character/ModifierDefine.h"
+
 // データタイプ（<> <- 送信者）
 enum class MSG_DATA_TYPE
 {
@@ -43,6 +47,8 @@ enum class MSG_DATA_TYPE
     PlayerDamage,
     // <ホスト>プレイヤー：HP回復
     PlayerHeal,
+    // <ホスト>プレイヤー：バフ・デバフ
+    PlayerModifier,
     // <ホスト>プレイヤー：ミスUIパケット
     PlayerMissNotice,
     // <クライアント>プレイヤー：状態
@@ -83,9 +89,6 @@ static constexpr enet_uint8 CHANNEL_PACKET_FLAG[(int)MSG_DATA_CHANNEL::Max] = {
     ENET_PACKET_FLAG_RELIABLE,
     0,
 };
-
-// ID
-enum class MSG_SENDER_ID { None = -1, P1, P2, P3, P4, Max };
 
 // 接続情報構造体
 struct ConnectInfo { ENetPeer* peer; MSG_SENDER_ID senderId; };
@@ -607,14 +610,14 @@ struct MsgDataPlayerState
     }
 };
 
-// <ホスト>被ダメ送信構造体
+// <ホスト>回復スキルの送信
 struct MsgDataPlayerHeal
 {
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerHeal;
 
     // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
 
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
@@ -633,6 +636,33 @@ struct MsgDataPlayerHeal
     }
 };
 
+// <ホスト>バフ・デバフ送信
+struct MsgDataPlayerModifier
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerModifier;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    ModifierData modifier;
+
+    MsgDataPlayerModifier(const ModifierData& modifier) :
+        header(DATA_TYPE),
+        modifier(modifier)
+    {
+    }
+    MsgDataPlayerModifier(void) :
+        header(DATA_TYPE),
+        modifier()
+    {
+    }
+};
+
+
 // <ホスト>当たり判定情報送信構造体
 struct MsgDataPlayerCollOperator
 {
@@ -646,7 +676,7 @@ struct MsgDataPlayerCollOperator
     MsgDataHeader header;
 
     // 当たり判定の種類の列挙型定義
-    enum class COLLIDER_KINDS
+    enum class COLLIDER_TYPE
     {
         Non = -1,
 
@@ -655,21 +685,25 @@ struct MsgDataPlayerCollOperator
         CommonPlayerTripleAttack_3,
         CommonPlayerSimpleAttack,
 
-        CommonPlayerSingleModifier,
+        //CommonPlayerSingleModifier,
 
         TomatoPlayerTackle,
         TomatoPlayerHeadButt,
         TomatoPlayerStamp,
+
+        PeachPlayerHeal,
+        PeachPlayerBuff,
+
         
         Max
     };
     // 当たり判定の種類の列挙型定義の変数定義
-    COLLIDER_KINDS collKinds;
+    COLLIDER_TYPE collKinds;
 
     // 当たり判定：ON / OFF
     bool isCollider;
 
-    MsgDataPlayerCollOperator(bool isCollider, COLLIDER_KINDS collKinds) :
+    MsgDataPlayerCollOperator(bool isCollider, COLLIDER_TYPE collKinds) :
         header(DATA_TYPE),
         isCollider(isCollider),
         collKinds(collKinds)

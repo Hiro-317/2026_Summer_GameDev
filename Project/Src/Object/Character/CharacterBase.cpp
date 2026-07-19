@@ -125,6 +125,7 @@ void CharacterBase::SubUpdate(void)
 
 	for (UI_Base*& ui : ui_ArrayIns) { ui->Update(); }
 
+	characterStats.ModifinerTimeUpdate();
 
 	// アニメーション更新
 	if (anime) { anime->Update(); }

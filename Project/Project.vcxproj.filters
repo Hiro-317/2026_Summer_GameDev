@@ -116,6 +116,10 @@
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierState.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -330,6 +334,13 @@
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierState.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Peach\PeachCharaSelectPreview.h" />
+    <ClInclude Include="Src\Object\Character\ModifierDefine.h" />
+    <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
+    <ClInclude Include="Src\Manager\Effect\Heal\EffectHeal.h" />
+    <ClInclude Include="Src\Manager\Effect\Buff\EffectBuff.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

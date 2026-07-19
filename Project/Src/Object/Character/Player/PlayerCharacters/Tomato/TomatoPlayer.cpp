@@ -130,8 +130,12 @@ void TomatoPlayer::PlayerLoad(void)
 			// 座標 / 角度
 			trans.pos, trans.angle,
 			// チャージ後の突進の攻撃力を増やす関数のポインタ.
-			[&]() { characterStats.attackPower.AddModifier(ModifierData(ModifierType::TackleChargeMaxBuff, 30, 60)); },
-			[&]() { characterStats.attackPower.DeleteModifier(ModifierType::TackleChargeMaxBuff); },
+			[&]() { 
+				characterStats.attackPower.AddModifier(
+					ModifierData(ModifierTypeConversionId(operatorSenderId, ModifierType::TackleChargeMaxBuff), 30, 60)
+				); 
+			},
+			[&]() { characterStats.attackPower.DeleteModifier(operatorSenderId, ModifierType::TackleChargeMaxBuff); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -298,23 +302,7 @@ void TomatoPlayer::PlayerLoad(void)
 
 void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
 {
-	if (!Net::GetIns().IsHost()) { return; }
-	if (GetInviCounter() > 0) { return; }
-	if (state == (int)STATE::DEATH) { return; }
-
-	switch (other.GetTag()) {
-	case COLLIDER_TAG::BOSS_ATTACK: {		// ボスの攻撃
-		// ダメージ状態に遷移
-		ChangeState((int)STATE::DAMAGE);
-		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
-		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-		// ダメージ値分HPを減らす
-		characterStats.hp -= damage;
-		break;
-	}
-	}
+	PlayerBase::OnCollision(ownTag, other);
 }
 
 void TomatoPlayer::ReceptionUpdate(void)
@@ -352,21 +340,21 @@ void TomatoPlayer::ReceptionUpdate(void)
 
 		switch (dataPtr->collKinds) {
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerHeadButt: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt: {
 			// 三段攻撃
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
 			break;
 		}
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerTackle: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle: {
 			// タックル
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOff(); }
 			break;
 		}
 
-		case MsgDataPlayerCollOperator::COLLIDER_KINDS::TomatoPlayerStamp: {
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp: {
 			// スタンプ
 			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
 			else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }

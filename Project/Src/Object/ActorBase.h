@@ -243,8 +243,8 @@ protected:
 		ColliderToSetSkill();
 	}
 	// バフ/デバフスキル詳細生成
-	void CreateModifierSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, SKILL_TIME, tag));
+	void CreateModifierSkill(MSG_SENDER_ID operatorSenderId, ModifierType modifierType, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+		skillStats.emplace_back(new SkillStats(operatorSenderId, modifierType, SKILL_POWER, SKILL_TIME, tag));
 		ColliderToSetSkill();
 	}
 

@@ -96,4 +96,6 @@ private:
 
 #pragma endregion 
 
+	Transform trans;
+
 };

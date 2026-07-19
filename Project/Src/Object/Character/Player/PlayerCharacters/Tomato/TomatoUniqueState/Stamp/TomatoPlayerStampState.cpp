@@ -3,6 +3,7 @@
 #include "../../../../../../../Manager/Input/KeyManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../../../Manager/Effect/EffectManager.h"
 
 TomatoPlayerStampState::TomatoPlayerStampState(
 	const std::function<void(void)>& ownChangeState,
@@ -23,7 +24,8 @@ TomatoPlayerStampState::TomatoPlayerStampState(
 	ChangeIsGravity(ChangeIsGravity),
 	IsGround(IsGround),
 	DefaultChangeState(DefaultChangeState),
-	isEnd(false)
+	isEnd(false),
+	trans(Vector3())
 {
 
 }
@@ -59,6 +61,9 @@ void TomatoPlayerStampState::Enter(void)
 
 void TomatoPlayerStampState::Update(void)
 {
+	trans.pos = pos;
+	trans.angle = angle;
+
 	// 攻撃終了フラグがtrueの場合ステートを抜ける
 	if (isEnd) {
 		collOperator.CollOff();
@@ -85,6 +90,8 @@ void TomatoPlayerStampState::Update(void)
 			isEnd = true;
 			// 地面に到着したら、当たり判定を発生
 			collOperator.CollOn();
+
+			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::STAMP_SHOCK_WAVE, 0.0f, &trans);
 			
 			// 当たったら当たり判定を消す
 			if (collOperator.GetIsHit()) {

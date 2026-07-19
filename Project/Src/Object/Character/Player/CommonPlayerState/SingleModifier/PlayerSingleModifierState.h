@@ -37,7 +37,6 @@ public:
 	// ó‘ÔŠÖŒW‚È‚­ŒÄ‚Ño‚·ˆ—
 	void AlwaysUpdate(void)override;
 
-
 private:
 
 #pragma region ’è”
@@ -69,7 +68,5 @@ private:
 	const std::function<void(void)> DefaultChangeState;
 #pragma endregion
 
-	int targetIndex;
-
-	bool isHealed;
+	bool isModifierEnd;
 };

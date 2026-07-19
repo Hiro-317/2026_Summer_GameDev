@@ -2,6 +2,7 @@
 
 #include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
+#include "../../../Manager/Effect/EffectManager.h"
 
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
@@ -227,8 +228,6 @@ void PlayerBase::CharacterUiDraw(void)
 	}
 }
 
-
-
 void PlayerBase::CharacterRelease(void)
 {
 	for (ActorBase*& c : subObjArray) {
@@ -250,6 +249,81 @@ void PlayerBase::ChangeState(int state)
 	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
 }
 
+void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+	// 判定そのものはホストがすべて請け負う
+	if (!Net::GetIns().IsHost()) { return; }
+
+	// 死亡状態の場合何もしない
+	if (state == (int)STATE::DEATH) { return; }
+
+	// 衝突物のコライダータグを取得
+	COLLIDER_TAG otherColliderTag = other.GetTag();
+
+#pragma region プラス効果の判定（無敵判定を無視して発動）
+
+	switch (otherColliderTag) {
+	case COLLIDER_TAG::PLAYER_HEAL: {	// 回復
+
+		// 回復量を取得
+		short heal = other.GetSkillStats().Power();
+
+		// 回復をクライアントへ送信
+		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
+
+		// 回復させる
+		characterStats.HpHeal(heal);
+		
+		// エフェクト発生
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0, &trans);
+		return;
+	}
+	case COLLIDER_TAG::PLAYER_BUFF: {	// バフ
+
+		// バフデータ構造体を取得
+		const ModifierData& modifier = other.GetSkillStats().ModifierPower();
+
+		// バフをクライアントへ送信
+		Net::GetIns().Send(MsgDataPlayerModifier(modifier), operatorSenderId);
+		
+		// バフをかける
+		characterStats.AddModifier(modifier);
+
+		// エフェクト発生
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0, &trans);
+		return;
+	}
+	}
+
+#pragma endregion
+
+	// 無敵時間の判定
+	if (GetInviCounter() > 0) { return; }
+
+#pragma region マイナス効果の判定
+
+	switch (otherColliderTag) {
+	case COLLIDER_TAG::BOSS_ATTACK: {	// 被ダメージ
+
+		// ダメージ状態に遷移
+		ChangeState((int)STATE::DAMAGE);
+
+		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
+		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+
+		// プレイヤーが受けるダメージ値を、クライアント側に送信
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+
+		// ダメージ値分HPを減らす
+		characterStats.hp -= damage;
+
+		return;
+	}
+	}
+
+#pragma endregion
+}
+
 void PlayerBase::AnimePlay(int type, bool loop)
 {
 	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
@@ -260,19 +334,24 @@ void PlayerBase::AnimePlay(int type, bool loop)
 }
 void PlayerBase::TargetPlayerNext(void)
 {
+	// ターゲット選択処理
 	targetPlayerIndex++;
 
+	// Indexがプレイヤー人数を超過した場合、0に戻す
 	if (targetPlayerIndex >= Net::GetIns().GetConnectStatus().EntryCount()) {
 		targetPlayerIndex = 0;
 	}
 
-	if (targetPlayerIndex == (unsigned char)MSG_SENDER_ID::P1) { targetPlayerPos = &trans.pos; }
+	// ターゲットが自分なら、自分の座標を入れる。
+	// 他プレイヤーがターゲットなら、そのプレイヤーの座標を代入
+	if (targetPlayerIndex == (unsigned char)Net::GetIns().GetSenderId()) { targetPlayerPos = &trans.pos; }
 	else {
 		if (otherPlayerTrans.size() > targetPlayerIndex - 1) {
 			targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
 		}
 	}
 }
+
 void PlayerBase::ReceptionUpdate(void)
 {
 	// 座標・角度の同期
@@ -328,8 +407,17 @@ void PlayerBase::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
+	// 回復
 	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(operatorSenderId)) {
-		characterStats.hp += dataPtr->heal;
+		characterStats.HpHeal(dataPtr->heal);
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0.0f, &trans);
+		delete dataPtr;
+	}
+
+	// バフ
+	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(operatorSenderId)) {
+		characterStats.AddModifier(dataPtr->modifier);
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0.0f, &trans);
 		delete dataPtr;
 	}
 
