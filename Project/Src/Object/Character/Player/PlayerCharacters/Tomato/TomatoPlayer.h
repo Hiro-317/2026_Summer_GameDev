@@ -57,9 +57,9 @@ private:
 
 	const short SKILL3_DAMAGE_RATE = GetParameterToInt("Stamp", "DamageRate");
 
-	const float STAMP_JUMP_POWER = GetParameterToInt("Stamp", "JumpPower");
+	const float STAMP_JUMP_POWER = GetParameter("Stamp", "JumpPower");
 
-	const float STAMP_FALL_SPEED = GetParameterToInt("Stamp", "FallSpeed");
+	const float STAMP_FALL_SPEED = GetParameter("Stamp", "FallSpeed");
 
 #pragma endregion 
 };

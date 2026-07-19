@@ -75,7 +75,7 @@ void CharacterHpUI::SubDraw()
 		uiPos.x + HP_GAUGE_OFFSET.x,
 		uiPos.y,
 		0, 0,
-		HP_IMAGE_SIZE.x - damageBarOffset,
+		HP_IMAGE_SIZE.x - (int)damageBarOffset,
 		HP_IMAGE_SIZE.y,
 		uiImages.at((int)IMAGE_KINDS::DAMAGE_GAUGE),
 		true
@@ -86,7 +86,7 @@ void CharacterHpUI::SubDraw()
 		uiPos.x + HP_GAUGE_OFFSET.x,
 		uiPos.y,
 		0, 0,
-		HP_IMAGE_SIZE.x - hpBarOffset, 
+		HP_IMAGE_SIZE.x - (int)hpBarOffset, 
 		HP_IMAGE_SIZE.y,
 		uiImages.at((int)IMAGE_KINDS::HP_GAUGE),
 		true

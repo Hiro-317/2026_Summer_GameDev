@@ -26,10 +26,10 @@ private:
 		CHARA_NAME = "ƒŠƒRƒsƒ“";
 
 
-		HP = GetParameter("TomatoParameter", "PlayerHP");
-		ATTACK = GetParameter("TomatoParameter", "PlayerAttackPower");
-		DEFENCE = GetParameter("TomatoParameter", "PlayerDefensePower");
-		SPEED = GetParameter("TomatoParameter", "PlayerMoveSpeed");
+		HP = GetParameterToInt("TomatoParameter", "PlayerHP");
+		ATTACK = GetParameterToInt("TomatoParameter", "PlayerAttackPower");
+		DEFENCE = GetParameterToInt("TomatoParameter", "PlayerDefensePower");
+		SPEED = GetParameterToInt("TomatoParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Tomato/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Tomato/Skill2.png");

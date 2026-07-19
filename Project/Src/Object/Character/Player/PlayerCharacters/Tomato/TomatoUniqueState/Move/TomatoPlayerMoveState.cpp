@@ -84,7 +84,7 @@ void TomatoPlayerMoveState::Update(void)
 	}
 	else {
 		// 待機アニメーションにする
-		angle.x = Deg2Rad(0);
+		angle.x = Deg2Rad(0.0f);
 	}
 
 	// 角度を入力方向に向ける

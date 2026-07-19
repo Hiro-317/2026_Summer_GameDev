@@ -28,10 +28,10 @@ private:
 
 		CHARA_NAME = "‚¨‚à‚à‚±‚Ü‚¿";
 
-		HP = GetParameter("PeachParameter", "PlayerHP");
-		ATTACK = GetParameter("PeachParameter", "PlayerAttackPower");
-		DEFENCE = GetParameter("PeachParameter", "PlayerDefensePower");
-		SPEED = GetParameter("PeachParameter", "PlayerMoveSpeed");
+		HP = GetParameterToInt("PeachParameter", "PlayerHP");
+		ATTACK = GetParameterToInt("PeachParameter", "PlayerAttackPower");
+		DEFENCE = GetParameterToInt("PeachParameter", "PlayerDefensePower");
+		SPEED = GetParameterToInt("PeachParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");

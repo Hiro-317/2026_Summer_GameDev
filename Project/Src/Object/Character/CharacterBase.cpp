@@ -71,10 +71,10 @@ CharacterBase::CharacterBase(
 	isInviEffect(false),
 
 	characterStats(
-		GetParameter((fileName).c_str(), (hpParameterID).c_str()),
-		GetParameter((fileName).c_str(), (attackPowerParameterID).c_str()),
-		GetParameter((fileName).c_str(), (defensePowerParameterID).c_str()),
-		GetParameter((fileName).c_str(), (moveSpeedParameterID).c_str())
+		GetParameterToInt((fileName).c_str(), (hpParameterID).c_str()),
+		GetParameterToInt((fileName).c_str(), (attackPowerParameterID).c_str()),
+		GetParameterToInt((fileName).c_str(), (defensePowerParameterID).c_str()),
+		GetParameterToInt((fileName).c_str(), (moveSpeedParameterID).c_str())
 		),
 
 	operatorSenderId(MSG_SENDER_ID::None),

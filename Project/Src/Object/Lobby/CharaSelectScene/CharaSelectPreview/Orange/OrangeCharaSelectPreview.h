@@ -28,10 +28,10 @@ private:
 
 		CHARA_NAME = "ƒŠƒ‚ƒlƒ“";
 
-		HP = GetParameter("OrangeParameter", "PlayerHP");
-		ATTACK = GetParameter("OrangeParameter", "PlayerAttackPower");
-		DEFENCE = GetParameter("OrangeParameter", "PlayerDefensePower");
-		SPEED = GetParameter("OrangeParameter", "PlayerMoveSpeed");
+		HP = GetParameterToInt("OrangeParameter", "PlayerHP");
+		ATTACK = GetParameterToInt("OrangeParameter", "PlayerAttackPower");
+		DEFENCE = GetParameterToInt("OrangeParameter", "PlayerDefensePower");
+		SPEED = GetParameterToInt("OrangeParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");

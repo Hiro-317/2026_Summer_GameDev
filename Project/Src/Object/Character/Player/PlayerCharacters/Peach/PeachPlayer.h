@@ -80,7 +80,7 @@ private:
 	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("SimpleAttack", "AttackMoveSpeed");
 
 	// ÉXÉLÉãÇÃçUåÇî{ó¶
-	const short SKILL_1_ATTACK_RATE_PERCENT = GetParameter("SimpleAttack", "AttackRatePercent");
+	const short SKILL_1_ATTACK_RATE_PERCENT = GetParameterToInt("SimpleAttack", "AttackRatePercent");
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`ÉXÉLÉã2èÛë‘
 #pragma endregion

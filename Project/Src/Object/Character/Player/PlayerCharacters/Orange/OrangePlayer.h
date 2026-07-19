@@ -29,7 +29,7 @@ private:
 	// ƒXƒLƒ‹1ó‘Ô```````````````````````````
 
 	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
-	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("TripleAttack","TargetSerchRange");
+	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("TripleAttack", "TargetSerchRange");
 
 	// “–‚½‚è”»’è‚ÌƒTƒCƒYƒe[ƒuƒ‹i”¼Œaj
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_SIZE_TABLE =
@@ -40,13 +40,13 @@ private:
 	};
 
 	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
-	const Vector3 SKILL_1_COLL_LOCAL_POS = GetParameterToVector3("TripleAttack","CollLocalPos");
+	const Vector3 SKILL_1_COLL_LOCAL_POS = GetParameterToVector3("TripleAttack", "CollLocalPos");
 
 	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_1_COOL_TIME = GetParameterToInt("TripleAttack","CoolTime");
+	const int SKILL_1_COOL_TIME = GetParameterToInt("TripleAttack", "CoolTime");
 
 	// UŒ‚‚ªŸ’i‚ÉŒq‚ª‚é—P—\ŠÔ
-	const int SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME = GetParameterToInt("TripleAttack","AttackNextStageContinueTime");
+	const int SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME = GetParameterToInt("TripleAttack", "AttackNextStageContinueTime");
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
 	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_START_TIME =
@@ -64,10 +64,10 @@ private:
 	};
 
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("TripleAttack","AttackMoveSpeed");
+	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("TripleAttack", "AttackMoveSpeed");
 
 	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
-	const short SKILL_1_ATTACK_RATE_PERCENT = (short)GetParameter("TripleAttack","AttackRatePercent");
+	const short SKILL_1_ATTACK_RATE_PERCENT = (short)GetParameter("TripleAttack", "AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
 
@@ -75,31 +75,31 @@ private:
 	// ƒXƒLƒ‹2ó‘Ô```````````````````````````
 
 	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
-	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("SimpleAttack","TargetSerchRange");
+	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("SimpleAttack", "TargetSerchRange");
 
 	// “–‚½‚è”»’è‚Ìƒ^ƒO
 	const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::PLAYER_ATTACK;
 
 	// “–‚½‚è”»’è‚ÌƒTƒCƒYi”¼Œaj
-	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("SimpleAttack","CollSize");
+	const float SKILL_2_COLL_SIZE_TABLE = GetParameter("SimpleAttack", "CollSize");
 
 	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
-	const Vector3 SKILL_2_COLL_LOCAL_POS = GetParameterToVector3("SimpleAttack","CollLocalPos");
+	const Vector3 SKILL_2_COLL_LOCAL_POS = GetParameterToVector3("SimpleAttack", "CollLocalPos");
 
 	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_2_COOL_TIME = GetParameterToInt("SimpleAttack","CoolTime");
+	const int SKILL_2_COOL_TIME = GetParameterToInt("SimpleAttack", "CoolTime");
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_2_COLL_START_TIME = GetParameter("SimpleAttack","CollStartTime");
+	const float SKILL_2_COLL_START_TIME = GetParameter("SimpleAttack", "CollStartTime");
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_2_COLL_END_TIME = GetParameter("SimpleAttack","CollEndTime");
+	const float SKILL_2_COLL_END_TIME = GetParameter("SimpleAttack", "CollEndTime");
 
 	// UŒ‚’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("SimpleAttack","AttackMoveSpeed");
+	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("SimpleAttack", "AttackMoveSpeed");
 
 	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
-	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameter("SimpleAttack","AttackRatePercent");
+	const short SKILL_2_ATTACK_RATE_PERCENT = GetParameterToInt("SimpleAttack", "AttackRatePercent");
 
 	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
 
