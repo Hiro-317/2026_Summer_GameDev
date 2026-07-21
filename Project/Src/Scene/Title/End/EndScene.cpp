@@ -8,70 +8,181 @@
 #include"../../../Manager/Sound/SoundManager.h"
 
 EndScene::EndScene() :
-	img(),
-	nowSelect(SELECT::YES)
-{
-}
+	nowSelect(),
 
-EndScene::~EndScene()
+	frameImage(),
+	selectImage(),
+	charaImage(),
+
+	selectEasingCounter(),
+	selectEasingRate(),
+
+	charaEasingCounter(),
+	charaEasingRotate()
 {
 }
 
 void EndScene::Load(void)
 {
-	img[(int)SELECT::YES] = LoadImg("Data/Image/Title/End/Yes.png");
-	img[(int)SELECT::NO] = LoadImg("Data/Image/Title/End/No.png");
+
+#pragma region ‰æ‘œ‚ğ“Ç‚İ‚Ş
+
+	// ˜g
+	frameImage = LoadGraph(FRAME_IMAGE_PATH.c_str());
+
+	// ‘I‘ğˆ
+	for (int i = 0; i < (int)SELECT::Max; i++) {
+		selectImage[i][(int)true] = LoadGraph(SELECT_TO_SELECT_IMAGE_PATH[i].c_str());
+		selectImage[i][(int)false] = LoadGraph(SELECT_TO_NOT_SELECT_IMAGE_PATH[i].c_str());
+	}
+
+	// ƒLƒƒƒ‰ƒNƒ^[
+	charaImage = LoadGraph(CHARA_IMAGE_PATH.c_str());
+
+#pragma endregion
+
 }
 
-void EndScene::Init(void) 
+void EndScene::Init(void)
 {
-	nowSelect = SELECT::YES;
+	// Œ»İ‚Ì‘I‘ğó‘Ô‚ğ‰Šú‰»
+	nowSelect = SELECT::No;
+
+	selectEasingCounter = 0.0f;
+	selectEasingRate = 0.0f;
+
+	charaEasingCounter = 0.0f;
+	charaEasingRotate = 0.0f;
 }
 
 void EndScene::Update(void)
 {
-	switch (nowSelect)
-	{
-	case EndScene::SELECT::YES:
-		if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) { nowSelect = EndScene::SELECT::NO; Snd::GetIns().Play("SystemSelect"); }
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			Snd::GetIns().Play("SystemButton");
-			App::GetIns().GameEnd();
-			return;
-		}
-		break;
-	case EndScene::SELECT::NO:
-		if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) { nowSelect = EndScene::SELECT::YES; Snd::GetIns().Play("SystemSelect"); }
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			SoundManager::GetIns().PausePlay();
-			Snd::GetIns().Play("SystemButton");
-			SceneManager::GetIns().PopScene();
-			return;
-		}
-		break;
-	}
+	// –ß‚éƒ{ƒ^ƒ“‚Åƒ^ƒCƒgƒ‹‚É–ß‚é
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SoundManager::GetIns().PausePlay();
 		Snd::GetIns().Play("SystemButton");
+		SoundManager::GetIns().PausePlay();
 		SceneManager::GetIns().PopScene();
+		return;
 	}
+
+	// ‘I‘ğˆ‚É‚æ‚Á‚Ä•ªŠò
+	switch (nowSelect) {
+		
+	case EndScene::SELECT::Yes: {
+		// ‘I‘ğó‘ÔuYesv’†‚Ìˆ—
+
+		// ‰Eƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
+		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+			// Œø‰Ê‰¹
+			Snd::GetIns().Play("SystemSelect");
+
+			// ‘I‘ğó‘ÔuNov‚Ö
+			nowSelect = EndScene::SELECT::No;
+		}
+
+		// Œˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
+		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			// Œø‰Ê‰¹
+			Snd::GetIns().Play("SystemButton");
+
+			// ƒQ[ƒ€‚ğI—¹
+			App::GetIns().GameEnd();
+
+			// ˆÈ~‚Íthis‚ªnullptr‚Ìˆ×I—¹
+			return;
+		}
+
+		break;
+	}
+
+	case EndScene::SELECT::No: {
+		// ‘I‘ğó‘ÔuNov’†‚Ìˆ—
+
+		// ¶ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
+		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+			// Œø‰Ê‰¹
+			Snd::GetIns().Play("SystemSelect");
+
+			// ‘I‘ğó‘ÔuYesv‚Ö
+			nowSelect = EndScene::SELECT::Yes;
+		}
+
+		// Œˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
+		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			// Œø‰Ê‰¹
+			Snd::GetIns().Play("SystemButton");
+
+			// ’â~’†‚Ì‰¹º‚ğ‘S‚ÄÄ¶
+			SoundManager::GetIns().PausePlay();
+
+			// ‚±‚ÌƒV[ƒ“‚ğ”jŠüAƒ^ƒCƒgƒ‹‚É–ß‚é
+			SceneManager::GetIns().PopScene();
+
+			// ˆÈ~‚Íthis‚ªnullptr‚Ìˆ×I—¹
+			return;
+		}
+
+		break;
+	}
+
+	}
+
+	// ‰‰oXV``````````````````````````````
+
+	selectEasingCounter += 0.1f;
+	if (selectEasingCounter > 10000.0f) { selectEasingCounter = 0.0f; }
+	selectEasingRate = 1.0f + (sinf(selectEasingCounter) + 1.0f) * 0.05f;
+
+	charaEasingCounter += 0.05f;
+	if (charaEasingCounter > 10000.0f) { charaEasingCounter = 0.0f; }
+	charaEasingRotate = Deg2Rad(sinf(charaEasingCounter) * 5.0f);
+
+	// ``````````````````````````````‰‰oXV
 }
 
 void EndScene::Draw(void) 
 {
-	int xx = Application::SCREEN_SIZE_X;
-	int yy = Application::SCREEN_SIZE_Y;
-	int x = xx / 2;
-	int y = yy / 2;
-
+	// ‰æ–Ê‘S‘Ì‚ğ”¼“§–¾•`‰æ
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawBox(0, 0, xx, yy, 0xffffff, true);
+	DrawBox(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, 0xffffff, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawRotaGraph(x, y, 1, 0, img[(int)nowSelect], true);
+	// ‰æ‘œ•`‰æ‚Ìƒ‰ƒ€ƒ_ŠÖ”
+	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f)->void {
+		DrawRotaGraph(pos.x, pos.y, rate, angle, handle, true);
+		};
+
+	// ˜g‚ğ•`‰æ
+	drawImage(frameImage, FRAME_POS);
+	// ‘I‘ğˆ‚ğ•`‰æ
+	for (int i = 0; i < (int)SELECT::Max; i++) {
+		drawImage(
+			selectImage[i][(int)((int)nowSelect == i)],
+			SELECT_POS[i],
+			((int)nowSelect == i) ? selectEasingRate : 1.0f
+		);
+	}
+	// ƒCƒ[ƒWƒLƒƒƒ‰‚Ì•`‰æ
+	drawImage(charaImage, CHARA_POS, 1.0f, charaEasingRotate);
 }
 
 void EndScene::Release(void) 
 {
-	for (auto& id : img) { DeleteGraph(id); }
+
+#pragma region ‰æ‘œ‚ğ‰ğ•ú
+
+	// ˜g
+	DeleteGraph(frameImage);
+
+	// ‘I‘ğˆ
+	for (int i = 0; i < (int)SELECT::Max; i++) {
+		DeleteGraph(selectImage[i][(int)true]);
+		DeleteGraph(selectImage[i][(int)false]);
+	}
+
+	// ƒLƒƒƒ‰ƒNƒ^[
+	DeleteGraph(charaImage);
+
+#pragma endregion
+
 }
