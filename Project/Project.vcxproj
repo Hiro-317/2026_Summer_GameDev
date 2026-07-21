@@ -233,6 +233,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="Src\Object\Stage\GrapeBoss\GrapeBossStage.cpp" />
     <ClCompile Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.cpp" />
     <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
     <ClCompile Include="Src\Object\UI\HitUI\HitUI.cpp" />
@@ -376,6 +377,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Tomato\LobbyCharaPreviewTomato.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyStage\LobbyStage.h" />
     <ClInclude Include="Src\Object\SkyDome\SkyDome.h" />
+    <ClInclude Include="Src\Object\Stage\GrapeBoss\GrapeBossStage.h" />
     <ClInclude Include="Src\Object\Stage\TomatoBoss\TomatoBossStage.h" />
     <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
     <ClInclude Include="Src\Object\UI\HitUI\HitUI.h" />

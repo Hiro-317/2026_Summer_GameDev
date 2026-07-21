@@ -1,4 +1,7 @@
-HP,3000
+HP_1,3000
+HP_2,6000
+HP_3,9000
+HP_4,12000
 MoveSpeed,1
 AttackPower,300
 DefensePower,500

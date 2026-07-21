@@ -11,11 +11,6 @@ public:
 
 	BossBase(
 
-		const std::string hpParameterID,
-		const std::string attackPowerParameterID,
-		const std::string defensePowerParameterID,
-		const std::string moveSpeedParameterID,
-
 		const std::string& parameterPath,
 
 		std::string modelPath,

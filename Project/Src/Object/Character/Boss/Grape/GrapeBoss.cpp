@@ -34,10 +34,6 @@
 
 GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
-		"HP",
-		"AttackPower",
-		"DefensePower",
-		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Grape/",
 		"Grape/GrapeModel",
 

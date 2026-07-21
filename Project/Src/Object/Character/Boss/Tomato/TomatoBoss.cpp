@@ -28,10 +28,6 @@
 
 TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
-		"HP",
-		"AttackPower",
-		"DefensePower",
-		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Tomato/",
 		"Tomato/Tomato",
 
