@@ -1,0 +1,63 @@
+#include "GrapePlayerBombCollOperator.h"
+
+#include "../../../../../../Common/Collider/SphereCollider.h"
+
+GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
+	COLLIDER_TAG COLL_TAG,
+	const short ATTACK_RATE_PERCENT,
+	const Vector3& playerPos, const Vector3& playerAngle,
+	MSG_SENDER_ID operatorSenderId,
+	const CharacterStats& playerStats
+) :
+	ActorBase(),
+	COLL_TAG(COLL_TAG),
+	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+	playerPos(playerPos), playerAngle(playerAngle),
+	operatorSenderId(operatorSenderId),
+	playerStats(playerStats),
+	isHit(false)
+{
+}
+
+void GrapePlayerBombCollOperator::Load(void)
+{
+#pragma region 基底クラスにある機能の挙動設定
+
+	// 動的オブジェクトとしての挙動を無効にする
+	SetDynamicFlg(true);
+
+	// 重力を無効にする
+	SetGravityFlg(false);
+
+	// 衝突時の押し出しを無効にする
+	SetPushFlg(false);
+
+#pragma endregion
+
+	// コライダー生成
+	ColliderCreate(new SphereCollider(COLL_TAG, 500.0f));
+
+	// 初期化処理
+	SetJudge(false);
+	isHit = false;
+
+	// スキルのダメージ量の設定
+	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
+}
+
+void GrapePlayerBombCollOperator::Update(void)
+{
+}
+
+void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+{
+	switch (other.GetTag())
+	{
+	case COLLIDER_TAG::BOSS:
+	case COLLIDER_TAG::ENEMY:
+	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+		isHit = true;
+		break;
+	default:break;
+	}
+}

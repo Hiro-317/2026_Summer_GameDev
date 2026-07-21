@@ -112,14 +112,17 @@
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierState.cpp" />
     <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
     <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
+    <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
+    <ClCompile Include="Src\Manager\Effect\TackleCharge\TackleCharge.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapePlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -330,8 +333,6 @@
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Stalker\GrapeBossStalkerState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\StalkerBomb\GrapeBossStalkerBomb.h" />
-    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierCollOperator.h" />
-    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleHeal\PlayerSingleModifierState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Random\GrapeBossRandomState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierCollOperator.h" />
@@ -345,6 +346,11 @@
     <ClInclude Include="Src\Object\Common\DebugObject\CapsuleDebugObject.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\DebugObjectBase.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />
+    <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
+    <ClInclude Include="Src\Manager\Effect\TackleCharge\TackleCharge.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapePlayer.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

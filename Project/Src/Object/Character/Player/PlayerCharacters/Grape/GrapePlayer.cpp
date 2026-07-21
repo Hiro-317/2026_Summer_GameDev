@@ -1,0 +1,296 @@
+#include "GrapePlayer.h"
+
+#include "../../CommonPlayerState/Move/PlayerMoveState.h"
+#include "../../CommonPlayerState/Damage/PlayerDamageState.h"
+#include "../../CommonPlayerState/Death/PlayerDeathState.h"
+#include "GrapeUniqueState/Bomb/GrapePlayerBombState.h"
+
+#include "GrapeUniqueState/Bomb/GrapePlayerBombCollOperator.h"
+
+#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
+#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../../UI/HitUI/HitUI.h"
+
+GrapePlayer::GrapePlayer(MSG_SENDER_ID operatorSenderId) :
+	PlayerBase(operatorSenderId,
+
+		"GrapeParameter",
+		"PlayerHP",
+		"PlayerAttackPower",
+		"PlayerDefensePower",
+		"PlayerMoveSpeed",
+
+		"Data/Parameter/Character/Player/Grape/",
+		"Grape/GrapeModel"
+	)
+{
+}
+
+void GrapePlayer::PlayerLoad(void)
+{
+	// 影を消す（消さなかったら、変な色になるので）
+	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
+#pragma region 下位オブジェクトの生成
+
+	// アニメーションコントローラーを生成する
+	CreateAnimationController();
+
+	// アニメーションの読み込み
+	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED);
+
+
+	// 頭突き攻撃の当たり判定を生成
+	subObjArray.emplace_back(
+		new GrapePlayerBombCollOperator(
+			COLLIDER_TAG::PLAYER_ATTACK,
+			100,
+			trans.pos, trans.angle,
+			operatorSenderId,
+			characterStats
+		)
+	);
+
+#pragma endregion 
+
+#pragma region 状態設定
+
+
+	AddState(
+		(int)STATE::SKILL_1,
+		new GrapePlayerBombState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::SKILL_1); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::SKILL_1; },
+			*SubObjSerch<GrapePlayerBombCollOperator>(),
+			60,
+			120,
+			trans.pos,
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	// 移動状態を追加する
+	AddState(
+		(int)STATE::MOVE,
+		new PlayerMoveState(
+			// 自分の状態に遷移する関数
+			[&]() { ChangeState((int)STATE::MOVE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::MOVE; },
+			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
+			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
+			// 参照（移動量 / 横軸加速度の最大値 / 角度）
+			accelSum, ACCEL_MAX, trans.angle, characterStats,
+			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
+			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
+			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
+			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
+		)
+	);
+
+	AddState(
+		(int)STATE::DAMAGE,
+		new PlayerDamageState(
+			// 自分の状態に関する関数
+			[&]() { ChangeState((int)STATE::DAMAGE); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == (int)STATE::DAMAGE; },
+			// アニメーションの再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 無敵時間のセット関数
+			[&]() { SetInviCounter(DODGE_INVI_TIME); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	// 死亡状態を追加する
+	AddState(
+		(int)STATE::DEATH,
+		new PlayerDeathState(
+			[&]() { ChangeState((int)STATE::DEATH); },
+			[&]() { return state == (int)STATE::DEATH; },
+			trans.pos, trans.angle,
+			[&]() { return IsAnimeEnd(); },
+			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			[&]() { PlayerDeathSetting(); },
+			[&]() { SetIsDeath(true); },
+			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+		)
+	);
+
+	state;
+
+	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
+	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
+		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
+		};
+
+	//// 移動状態 -> スキル1 の遷移を登録
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
+	//// 移動状態 -> スキル2 の遷移を登録
+	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
+	//// 移動状態 -> スキル3 の遷移を登録
+	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+
+#pragma endregion 
+
+	// HPUIの座標設定
+	int number = 0;
+	if (isOwnOperator) {
+		number = 0;
+	}
+	else {
+		// 操作者だけ一番上に表示、それ以外の人のHPは下に描画
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
+			number++;
+			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+		}
+	}
+
+	// HPの登録
+	ui_ArrayIns.emplace_back(
+		new CharacterHpUI(
+			characterStats.hp,
+			characterStats.hpMax.Value(),
+			HP_FRAME_IMAGE_NAME,
+			HP_IMAGE_NAME,
+			HP_LOST_IMAGE_NAME,
+			HP_IMAGE_SIZE,
+			HP_GAUGE_OFFSET,
+			HP_UI_POS[number],
+			FILE_PATH_TYPE::PLAYER_HP,
+			"TomatoPlayer"
+		)
+	);
+
+	// このプレイヤーの操作者だけ通す
+	if (isOwnOperator)
+	{
+		// スタミナのUI登録
+		ui_ArrayIns.emplace_back(
+			new PlayerStaminaUI(
+				dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
+				DASH_STAMINA_MAX
+			)
+		);
+
+		//// スキル1のUI
+		//ui_ArrayIns.emplace_back(
+		//	new PlayerSkillUI(
+		//		SKILL1_UI_DRAW_POS,
+		//		dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+		//		SKILL_1_COOL_TIME,
+		//		PlayerSkillUI::SKILL_UI_COLOR::RED,
+		//		"SkillSlotSimpleAttack"
+		//	)
+		//);
+
+		//// スキル1のUI
+		//ui_ArrayIns.emplace_back(
+		//	new PlayerSkillUI(
+		//		SKILL2_UI_DRAW_POS,
+		//		dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+		//		600,
+		//		PlayerSkillUI::SKILL_UI_COLOR::RED,
+		//		"SkillSlotSimpleAttack"
+		//	)
+		//);
+
+		//// スキル1のUI
+		//ui_ArrayIns.emplace_back(
+		//	new PlayerSkillUI(
+		//		SKILL3_UI_DRAW_POS,
+		//		dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+		//		60,
+		//		PlayerSkillUI::SKILL_UI_COLOR::RED,
+		//		"SkillSlotSimpleAttack"
+		//	)
+		//);
+	}
+
+	// ミスUIの生成
+	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+}
+
+void GrapePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+{
+	// 敵の攻撃を受けた時のダメージ処理
+	PlayerBase::OnCollision(ownTag, other, collisionPoint);
+}
+
+void GrapePlayer::ReceptionUpdate(void)
+{
+	PlayerBase::ReceptionUpdate();
+
+	//while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+
+	//	switch (dataPtr->collKinds) {
+
+	//	case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack: {
+	//		// 通常攻撃
+	//		if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
+	//		else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }
+	//		break;
+	//	}
+
+	//	case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal: {
+	//		// 回復
+	//		if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOn(); }
+	//		else { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOff(); }
+	//		break;
+	//	}
+
+	//	case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff: {
+	//		// スタンプ
+	//		if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>(1)->CollOn(); }
+	//		else { SubObjSerch<PlayerSingleModifierCollOperator>(1)->CollOff(); }
+
+	//		break;
+	//	}
+
+	//	default: { break; }	// 例外
+	//	}
+
+	//	delete dataPtr;
+	//}
+
+	//while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+	//	state = dataPtr->state;
+
+	//	switch ((STATE)state) {
+	//	case PlayerBase::STATE::SKILL_1: {
+	//		SubObjSerch<PlayerSimpleAttackCollOperator>()->ResetIsHit();
+	//		break;
+	//	}
+	//	case PlayerBase::STATE::SKILL_2: {
+	//		SubObjSerch<PlayerSingleModifierCollOperator>()->ResetIsHit();
+	//		break;
+	//	}
+	//	case PlayerBase::STATE::SKILL_3: {
+	//		SubObjSerch<PlayerSingleModifierCollOperator>(1)->ResetIsHit();
+	//		break;
+	//	}
+	//	case PlayerBase::STATE::DEATH: {
+	//		PlayerDeathSetting();
+	//		break;
+	//	}
+
+	//	default: { break; }
+	//	}
+
+	//	delete dataPtr;
+	//}
+}
+
+void GrapePlayer::SendUpdate(void)
+{
+	PlayerBase::SendUpdate();
+}
