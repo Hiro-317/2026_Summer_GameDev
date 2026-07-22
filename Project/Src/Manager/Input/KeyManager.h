@@ -58,6 +58,12 @@ public:
 		// スペシャルスキル（キャラごとの「必殺技」）
 		PLAYER_SPECIAL_SKILL,
 
+#pragma endregion
+
+#pragma region ロビー操作
+
+		// マルチ選択のルームナンバー画面を開く
+		MULTI_POP_UP_ROOM_NUMBER,
 
 #pragma endregion
 

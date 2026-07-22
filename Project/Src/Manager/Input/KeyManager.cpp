@@ -75,6 +75,14 @@ void KeyManager::Init(void)
 
 #pragma endregion
 
+#pragma region ロビー操作
+
+	// マルチ選択のルームナンバー画面を開く
+	SET_KEYBOARD(KEY_TYPE::MULTI_POP_UP_ROOM_NUMBER, KEY_INPUT_RSHIFT);
+	SET_KEYBOARD(KEY_TYPE::MULTI_POP_UP_ROOM_NUMBER, KEY_INPUT_LSHIFT);
+	SET_C_BUTTON(KEY_TYPE::MULTI_POP_UP_ROOM_NUMBER, XINPUT_BUTTON_X);
+
+#pragma endregion
 
 #pragma region カメラ操作
 	// 移動
