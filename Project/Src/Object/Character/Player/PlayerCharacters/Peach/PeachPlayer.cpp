@@ -28,10 +28,9 @@ PeachPlayer::PeachPlayer(MSG_SENDER_ID operatorSenderId) :
 
 void PeachPlayer::PlayerLoad(void)
 {
-	// 影を消す（消さなかったら、変な色になるので）
+	// 影を消す（消さなかったら、変な色合いになるので）
 	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-
 #pragma region 下位オブジェクトの生成
 	
 	// パンチ用の当たり判定オペレーターを生成する
@@ -265,18 +264,18 @@ void PeachPlayer::PlayerLoad(void)
 			)
 		);
 
-		// スキル1のUI
+		// スキル2のUI
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
 				dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
 				600,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
-				"SkillSlotSimpleAttack"
+				PlayerSkillUI::SKILL_UI_COLOR::GREEN,
+				"SkillSlotHeal"
 			)
 		);
 
-		// スキル1のUI
+		// スキル3のUI
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,

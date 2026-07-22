@@ -81,7 +81,7 @@ void CharacterHpUI::SubDraw()
 		true
 	);
 
-	// HPバーの描画
+	// HPの緑のゲージの描画
 	DrawRectGraph(
 		uiPos.x + HP_GAUGE_OFFSET.x,
 		uiPos.y,
@@ -92,7 +92,7 @@ void CharacterHpUI::SubDraw()
 		true
 	);
 
-	// HPを描画するキャラの名前（仮）
+	// HPを描画するキャラの名前
 	DrawFormatStringToHandle(
 		uiPos.x + CHARA_NAME_X_OFFSET,
 		uiPos.y + ((HP_IMAGE_SIZE.y / 2) - 10),

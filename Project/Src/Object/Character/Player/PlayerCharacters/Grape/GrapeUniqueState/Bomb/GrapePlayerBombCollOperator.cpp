@@ -32,6 +32,8 @@ void GrapePlayerBombCollOperator::Load(void)
 	// 衝突時の押し出しを無効にする
 	SetPushFlg(false);
 
+	SetIsDraw(false);
+
 #pragma endregion
 
 	// コライダー生成
@@ -43,6 +45,8 @@ void GrapePlayerBombCollOperator::Load(void)
 
 	// スキルのダメージ量の設定
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
+
+	trans.Load("Character/Grape/Bomb");
 }
 
 void GrapePlayerBombCollOperator::Update(void)

@@ -27,10 +27,6 @@ public:
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
-	// 更新処理
-	void Update(void)override;
-	// 状態遷移前1度行う終了処理
-	void Exit(void)override;
 
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;

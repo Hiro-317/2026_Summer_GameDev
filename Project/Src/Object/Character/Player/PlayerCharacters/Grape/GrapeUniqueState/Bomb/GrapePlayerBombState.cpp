@@ -48,36 +48,27 @@ void GrapePlayerBombState::Enter(void)
 	collOperator.SetPos();
 
 	// タイマーを開始
-	timeCounter = 120;
+	timeCounter = 1200;
 	DefaultChangeState();
-}
-
-void GrapePlayerBombState::Update(void)
-{
-
-
-}
-
-void GrapePlayerBombState::Exit(void)
-{
-
 }
 
 void GrapePlayerBombState::AlwaysUpdate(void)
 {
+#pragma region 爆発処理
+	
+	// タイマースタート
 	if (timeCounter > 0) {
 		timeCounter--;
 	}
-	else {
-		if (isInit) {
-			collOperator.CollOn();
-			timeCounter = 0;
-		}
+
+	if (timeCounter > 1000) {
+
 	}
 
 	if (collOperator.GetIsHit()) {
 		collOperator.CollOff();
 	}
+#pragma endregion 
 
 	// 自身の状態でないときは、攻撃のクールタイムを減らす
 	if (!IsOwnState()) {
