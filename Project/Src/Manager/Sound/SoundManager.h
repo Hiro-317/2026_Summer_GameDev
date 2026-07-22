@@ -3,6 +3,7 @@
 #include<vector>
 #include<map>
 #include<string>
+#include<algorithm>
 
 class SoundManager
 {
@@ -69,21 +70,34 @@ public:
 	void PausePlay(void);
 
 #pragma region ボリューム取得
-	// マスターボリューム
+	// マスターボリューム（0～255）
 	unsigned char MasterVolume(void)const { return masterVolume; }
-	// BGMボリューム割合
+	// マスターボリューム割合（0～1）
+	float MasterVolumeRatio(void)const { return ((float)masterVolume / (float)MASTER_VOLUME_MAX); }
+	// BGMボリューム割合（0～1）
 	float BgmVolume(void)const { return bgmVolume; }
-	// SEボリューム割合
+	// SEボリューム割合（0～1）
 	float SeVolume(void)const { return seVolume; }
 #pragma endregion
 
 #pragma region ボリューム変更
-	// マスターボリューム
-	void SetMasterVolume(unsigned char volume) { masterVolume = volume; }
-	// BGMボリューム割合
-	void SetBgmVolume(float volume) { bgmVolume = volume; }
-	// SEボリューム割合
-	void SetSeVolume(float volume) { seVolume = volume; }
+	// マスターボリュームを代入（0～255）
+	void SetMasterVolume(unsigned char volume) { masterVolume = std::clamp(volume, MASTER_VOLUME_MIN, MASTER_VOLUME_MAX); }
+	// マスターボリュームを加算
+	void AddMasterVolume(signed char volume) {
+		short newVolume = masterVolume + volume;
+		masterVolume = (unsigned char)std::clamp(newVolume, (short)MASTER_VOLUME_MIN, (short)MASTER_VOLUME_MAX);
+	}
+
+	// BGMボリューム割合を代入（0～1）
+	void SetBgmVolume(float volume) { bgmVolume = std::clamp(volume, BGM_VOLUME_MIN, BGM_VOLUME_MAX); }
+	// BGMボリューム割合を加算
+	void AddBgmVolume(float volume) { bgmVolume = std::clamp(bgmVolume + volume, BGM_VOLUME_MIN, BGM_VOLUME_MAX); }
+
+	// SEボリューム割合を代入（0～1）
+	void SetSeVolume(float volume) { seVolume = std::clamp(volume, SE_VOLUME_MIN, SE_VOLUME_MAX); }
+	// SEボリューム割合を加算
+	void AddSeVolume(float volume) { seVolume = std::clamp(seVolume + volume, SE_VOLUME_MIN, SE_VOLUME_MAX); }
 #pragma endregion
 
 private:

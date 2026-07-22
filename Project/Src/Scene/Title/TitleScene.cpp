@@ -1,18 +1,19 @@
-#include"TitleScene.h"
+#include "TitleScene.h"
 
-#include"../../Utility/Utility.h"
+#include "../../Utility/Utility.h"
 
-#include"../../Application/Application.h"
+#include "../../Application/Application.h"
 
-#include"../../Manager/Net/NetWorkManager.h"
-#include"../../Manager/Input/KeyManager.h"
-#include"../../Manager/Camera/Camera.h"
-#include"../../Manager/Sound/SoundManager.h"
-#include"../../Manager/Font/FontManager.h"
+#include "../../Manager/Net/NetWorkManager.h"
+#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Camera/Camera.h"
+#include "../../Manager/Sound/SoundManager.h"
+#include "../../Manager/Font/FontManager.h"
 
-#include"../SceneManager/SceneManager.h"
+#include "../SceneManager/SceneManager.h"
 
-#include"End/EndScene.h"
+#include "../Common/Option/OptionScene.h"
+#include "End/EndScene.h"
 
 TitleScene::TitleScene():
 
@@ -109,6 +110,9 @@ void TitleScene::Init(void)
 		if (cloudVec[i].x == 0) { cloudVec[i].x++; }
 		if (i == CLOUD_NUM - 1) { cloudVec[i].x *= BANAGON_MOVE_SPEED_RATE; }
 	}
+
+	// 演出更新
+	EasingUpdate();
 }
 void TitleScene::Update(void)
 {
@@ -129,7 +133,7 @@ void TitleScene::Update(void)
 		return;
 	}
 
-	// 操作によって選択キャラを変える
+	// 操作によって選択肢を変える
 	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
 		// 1つ前のタイプへ
 		nowSelect = (SELECT)((int)nowSelect - 1);
@@ -172,10 +176,10 @@ void TitleScene::Update(void)
 			// オプション
 
 			// 効果音
-			//Snd::GetIns().Play("SystemSelect");
+			Snd::GetIns().Play("SystemSelect");
 
 			// 専用のシーンを追加
-			//SceneManager::GetIns().PushScene(std::make_shared<EndScene>());
+			SceneManager::GetIns().PushScene(std::make_shared<OptionScene>());
 
 			break;
 		}
@@ -209,13 +213,6 @@ void TitleScene::Draw(void)
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f, bool reverse = false)->void {
 		DrawRotaGraph(pos.x, pos.y, rate, angle, handle, true, reverse);
 		};
-
-	static Vector2I tempPos = Vector2I();
-	if (CheckHitKey(KEY_INPUT_UP) == 1) { tempPos.y--; }
-	if (CheckHitKey(KEY_INPUT_DOWN) == 1) { tempPos.y++; }
-	if (CheckHitKey(KEY_INPUT_LEFT) == 1) { tempPos.x--; }
-	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x++; }
-
 
 #pragma region 各画像の描画
 	// 背景
@@ -300,12 +297,12 @@ void TitleScene::EasingUpdate(void)
 		cloudPos[i] += cloudVec[i];
 
 		// 方向転換（右に）
-		if (cloudPos[i].x < -App::SCREEN_SIZE_X_HALF) {
+		if (cloudPos[i].x < -App::SCREEN_SIZE_X_HALF / 2) {
 			cloudVec[i].x = GetRand(CLOUD_MOVE_MAX_SPEED) + 1;
 			if (i == CLOUD_NUM - 1) { cloudVec[i].x *= BANAGON_MOVE_SPEED_RATE; }
 		}
 		// 方向転換（左に）
-		else if (cloudPos[i].x > App::SCREEN_SIZE_X + App::SCREEN_SIZE_X_HALF) {
+		else if (cloudPos[i].x > App::SCREEN_SIZE_X + App::SCREEN_SIZE_X_HALF / 2) {
 			cloudVec[i].x = -(GetRand(CLOUD_MOVE_MAX_SPEED) + 1);
 			if (i == CLOUD_NUM - 1) { cloudVec[i].x *= BANAGON_MOVE_SPEED_RATE; }
 		}
