@@ -2,6 +2,8 @@
 
 #include "../../../Manager/Font/FontManager.h"
 
+#include "../../../Manager/Net/NetWorkManager.h"
+
 
 CharacterHpUI::CharacterHpUI(
 	const short& hp,
@@ -19,7 +21,10 @@ CharacterHpUI::CharacterHpUI(
 	const Vector2I HP_UI_POS,
 
 	const FILE_PATH_TYPE PATH_TYPE,
-	const std::string CHARA_NAME
+	const std::string CHARA_NAME,
+
+	const char& targetIndex
+
 ) :
 	hp(hp),
 	HP_MAX(HP_MAX),
@@ -37,6 +42,8 @@ CharacterHpUI::CharacterHpUI(
 
 	PATH_TYPE(PATH_TYPE),
 	CHARA_NAME(CHARA_NAME),
+
+	targetIndex(targetIndex),
 
 	hpRatio(0.0f),
 	hpBarOffset(0.0f),
@@ -57,7 +64,12 @@ void CharacterHpUI::Load(void)
 		UILoadImage(ICON_CHARA_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_CHARA,	PATH_TYPE);
 		UILoadImage(ICON_FRAME_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_FRAME,	PATH_TYPE);
 		UILoadImage(ICON_SELECT_IMAGE_NAME, (int)IMAGE_KINDS::ICON_BACK,	PATH_TYPE);
+
+		if (targetIndex != -1) {
+			UILoadImage("PlayerToNowSelect", (int)IMAGE_KINDS::ICON_SELECT, PATH_TYPE);
+		}
 	}
+
 }
 
 void CharacterHpUI::SubUpdate()
@@ -105,33 +117,51 @@ void CharacterHpUI::SubDraw()
 		true
 	);
 
+	// プレイヤーHPならアイコンを描画する
 	if (PATH_TYPE != FILE_PATH_TYPE::PLAYER_HP) { return; }
 
-	DrawRotaGraph(
+	Vector2I iconPos = {
 		uiPos.x - 50,
-		uiPos.y + HP_IMAGE_SIZE.y / 2,
-		0.173f,
+		uiPos.y + HP_IMAGE_SIZE.y / 2
+	};
+
+	DrawRotaGraph(
+		iconPos.x,
+		iconPos.y,
+		ICON_EX_RATE,
 		0.0f,
 		uiImages.at((int)IMAGE_KINDS::ICON_BACK),
 		true
 	);
+
 	DrawRotaGraph(
-		uiPos.x - 50,
-		uiPos.y + HP_IMAGE_SIZE.y / 2,
-		0.173f,
+		iconPos.x,
+		iconPos.y,
+		ICON_EX_RATE,
 		0.0f,
 		uiImages.at((int)IMAGE_KINDS::ICON_CHARA),
 		true
 	);
 
 	DrawRotaGraph(
-		uiPos.x - 50,
-		uiPos.y + HP_IMAGE_SIZE.y / 2,
-		0.173f,
+		iconPos.x,
+		iconPos.y,
+		ICON_EX_RATE,
 		0.0f,
 		uiImages.at((int)IMAGE_KINDS::ICON_FRAME),
 		true
 	);
+
+	if (targetIndex == (unsigned char)Net::GetIns().GetSenderId()) {
+		DrawRotaGraph(
+			iconPos.x, 
+			iconPos.y, 
+			ICON_EX_RATE, 
+			0.0f, 
+			uiImages.at((int)IMAGE_KINDS::ICON_SELECT), 
+			true
+		);
+	}
 }
 
 void CharacterHpUI::SubRelease()

@@ -160,18 +160,22 @@ void PlayerBase::CharacterUpdate(void)
 	// 下位クラスの更新処理
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
+	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+		TargetPlayerNext();
+	}
+
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
 	}
 
 #ifdef _DEBUG		// クールタイム用
-	if (CheckHitKey(KEY_INPUT_0)) {
-		short damage = 10;
-		characterStats.hp -= damage;
-		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-	}
+	//if (CheckHitKey(KEY_INPUT_0)) {
+	//	short damage = 10;
+	//	characterStats.hp -= damage;
+	//	// プレイヤーが受けるダメージ値を、クライアント側に送信
+	//	Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+	//}
 #endif // _DEBUG
 }
 

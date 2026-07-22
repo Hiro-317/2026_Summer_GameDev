@@ -241,7 +241,8 @@ void PeachPlayer::PlayerLoad(void)
 			HP_GAUGE_OFFSET,
 			HP_UI_POS[number],
 			FILE_PATH_TYPE::PLAYER_HP,
-			""
+			"",
+			targetPlayerIndex
 		)
 	);
 
