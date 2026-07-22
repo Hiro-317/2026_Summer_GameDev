@@ -10,6 +10,9 @@ CharacterHpUI::CharacterHpUI(
 	const std::string HP_FRAME_IMAGE_NAME,
 	const std::string HP_IMAGE_NAME,
 	const std::string HP_LOST_IMAGE_NAME,
+	const std::string ICON_CHARA_IMAGE_NAME,
+	const std::string ICON_FRAME_IMAGE_NAME,
+	const std::string ICON_SELECT_IMAGE_NAME,
 
 	const Vector2I HP_IMAGE_SIZE,
 	const Vector2I HP_GAUGE_OFFSET,
@@ -24,6 +27,9 @@ CharacterHpUI::CharacterHpUI(
 	HP_FRAME_IMAGE_NAME(HP_FRAME_IMAGE_NAME),
 	HP_IMAGE_NAME(HP_IMAGE_NAME),
 	HP_LOST_IMAGE_NAME(HP_LOST_IMAGE_NAME),
+	ICON_CHARA_IMAGE_NAME(ICON_CHARA_IMAGE_NAME),
+	ICON_FRAME_IMAGE_NAME(ICON_FRAME_IMAGE_NAME),
+	ICON_SELECT_IMAGE_NAME(ICON_SELECT_IMAGE_NAME),
 
 	HP_IMAGE_SIZE(HP_IMAGE_SIZE),
 	HP_GAUGE_OFFSET(HP_GAUGE_OFFSET),
@@ -45,6 +51,13 @@ void CharacterHpUI::Load(void)
 	UILoadImage(HP_FRAME_IMAGE_NAME,(int)IMAGE_KINDS::FRAME,		PATH_TYPE);
 	UILoadImage(HP_IMAGE_NAME,		(int)IMAGE_KINDS::HP_GAUGE,		PATH_TYPE);
 	UILoadImage(HP_LOST_IMAGE_NAME,	(int)IMAGE_KINDS::DAMAGE_GAUGE, PATH_TYPE);
+
+	// プレイヤーならロードする
+	if (PATH_TYPE == FILE_PATH_TYPE::PLAYER_HP) {
+		UILoadImage(ICON_CHARA_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_CHARA,	PATH_TYPE);
+		UILoadImage(ICON_FRAME_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_FRAME,	PATH_TYPE);
+		UILoadImage(ICON_SELECT_IMAGE_NAME, (int)IMAGE_KINDS::ICON_BACK,	PATH_TYPE);
+	}
 }
 
 void CharacterHpUI::SubUpdate()
@@ -92,13 +105,33 @@ void CharacterHpUI::SubDraw()
 		true
 	);
 
-	// HPを描画するキャラの名前
-	DrawFormatStringToHandle(
-		uiPos.x + CHARA_NAME_X_OFFSET,
-		uiPos.y + ((HP_IMAGE_SIZE.y / 2) - 10),
-		0xffffff, 
-		Font::GetIns().GetFont(FontKinds::DEFAULT_20), 
-		(CHARA_NAME).c_str());
+	if (PATH_TYPE != FILE_PATH_TYPE::PLAYER_HP) { return; }
+
+	DrawRotaGraph(
+		uiPos.x - 50,
+		uiPos.y + HP_IMAGE_SIZE.y / 2,
+		0.173f,
+		0.0f,
+		uiImages.at((int)IMAGE_KINDS::ICON_BACK),
+		true
+	);
+	DrawRotaGraph(
+		uiPos.x - 50,
+		uiPos.y + HP_IMAGE_SIZE.y / 2,
+		0.173f,
+		0.0f,
+		uiImages.at((int)IMAGE_KINDS::ICON_CHARA),
+		true
+	);
+
+	DrawRotaGraph(
+		uiPos.x - 50,
+		uiPos.y + HP_IMAGE_SIZE.y / 2,
+		0.173f,
+		0.0f,
+		uiImages.at((int)IMAGE_KINDS::ICON_FRAME),
+		true
+	);
 }
 
 void CharacterHpUI::SubRelease()

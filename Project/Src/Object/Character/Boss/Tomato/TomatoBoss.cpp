@@ -235,6 +235,7 @@ void TomatoBoss::PlayerLoad(void)
 			characterStats.hp,
 			characterStats.hpMax.Value(),
 			HP_FRAME_IMAGE_NAME,
+			"","","",
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
 			HP_IMAGE_SIZE,

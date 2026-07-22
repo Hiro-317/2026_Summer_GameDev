@@ -24,6 +24,9 @@ public:
 		const std::string HP_FRAME_IMAGE_NAME,
 		const std::string HP_IMAGE_NAME,
 		const std::string HP_LOST_IMAGE_NAME,
+		const std::string ICON_CHARA_IMAGE_NAME,
+		const std::string ICON_FRAME_IMAGE_NAME,
+		const std::string ICON_BACK_IMAGE_NAME,
 
 		const Vector2I HP_IMAGE_SIZE,
 		const Vector2I HP_GAUGE_OFFSET,
@@ -50,6 +53,10 @@ private:
 		HP_GAUGE,
 		DAMAGE_GAUGE,
 
+		ICON_CHARA,
+		ICON_FRAME,
+		ICON_BACK,
+
 		MAX
 	};
 
@@ -59,6 +66,9 @@ private:
 	const std::string HP_FRAME_IMAGE_NAME;	// フレームの画像パス
 	const std::string HP_IMAGE_NAME;		// HPバーの画像パス
 	const std::string HP_LOST_IMAGE_NAME;	// ダメージを受けた時のHPバーの画像パス
+	const std::string ICON_FRAME_IMAGE_NAME;	// HPの隣に表示するアイコン画像パス
+	const std::string ICON_CHARA_IMAGE_NAME;	// HPの隣に表示するアイコン画像パス
+	const std::string ICON_SELECT_IMAGE_NAME;	// HPの隣に表示するアイコン画像パス
 
 	// HPバーの画像サイズ
 	const Vector2I HP_IMAGE_SIZE;	// HP画像サイズ

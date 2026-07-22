@@ -351,6 +351,7 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Peach\LobbyCharaPreviewPeach.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

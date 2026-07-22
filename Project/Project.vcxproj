@@ -379,6 +379,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Peach\LobbyCharaPreviewPeach.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Tomato\LobbyCharaPreviewTomato.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyStage\LobbyStage.h" />
     <ClInclude Include="Src\Object\SkyDome\SkyDome.h" />
