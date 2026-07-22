@@ -53,10 +53,7 @@ private:
 	static constexpr int RADIUS = 1000;
 
 	// 爆弾と敵自身の距離
-	static constexpr float DIST = 100.0f;
-
-	// 攻撃の発生持続時間
-	static constexpr int ATTACK_DURATION = 5;
+	static constexpr float DIST = 50.0f;
 
 	// 予測線用のローカル座標
 	const Vector3 FOOT_VIEW_POS = Vector3(-23.16f, 0.0f, -85.34f);

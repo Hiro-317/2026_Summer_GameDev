@@ -828,10 +828,10 @@ struct MsgDataBossAttackDraw
 
     INFORM_TYPE inform;
     Vector3 pos;
-    Vector3 angle;
-    Vector3 scale;
+    float angle;
+    float scale;
 
-    MsgDataBossAttackDraw(INFORM_TYPE inform, Vector3 pos = Vector3(), Vector3 scale = Vector3(), Vector3 angle = Vector3()) :
+    MsgDataBossAttackDraw(INFORM_TYPE inform, Vector3 pos = Vector3(), float scale = 0.0f, float angle = 0.0f) :
         header(DATA_TYPE),
         inform(inform),
         pos(pos),

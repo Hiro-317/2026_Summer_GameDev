@@ -31,7 +31,7 @@ void TomatoBossHeadbuttState::Enter(void)
 {
 	target = GetTarget();
 	moveDir = (*playerPos.at(target) - pos).Normalized();
-	time = START_CNT;
+	time = -START_CNT;
 	DeleteColl();
 	SetCoolTime();
 	collOperator->SetDrawArea(true);
@@ -46,12 +46,12 @@ void TomatoBossHeadbuttState::Update(void)
 	if (time < 0) {
 
 		angle.y = atan2f(moveDir.x, moveDir.z);
-		Vector3 s = Vector3::Xonly(((float)time + 100.0f) / 100.0f);
+		float s = (((float)time + START_CNT) / START_CNT);
 
 		collOperator->SetScale(s);
 		collOperator->SetViewPos(pos);
-		collOperator->SetAngle(angle);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle));
+		collOperator->SetAngle(angle.y);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle.y));
 		return;
 	}
 	// ‰‚ß‚È‚ç‰¹‚Æ“–‚½‚è”»’è‚ğo‚·

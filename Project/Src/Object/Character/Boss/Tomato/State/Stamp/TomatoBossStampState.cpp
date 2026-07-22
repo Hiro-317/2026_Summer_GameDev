@@ -106,7 +106,7 @@ void TomatoBossStampState::Update(void)
 		// —\‘ªü‚ÌXV
 		float scale = 1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE;
 		collOperator->SetScale(scale);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB, attackPos, Vector3::Xonly(scale)));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB, attackPos, scale));
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "../../Weapon/Straight/GrapeBossStraight.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../../Manager/Sound/SoundManager.h"
 
 GrapeBossStraightState::GrapeBossStraightState(
 	const std::function<void(void)>& ownChangeState, 
@@ -43,7 +44,7 @@ void GrapeBossStraightState::Update(void)
 {
 	// アニメーションの再生割合で生成
 	if (first) {
-		if (GetAnimPlayRatio() >= 0.3f) {
+		if (GetAnimPlayRatio() >= RATIO) {
 			// 正面から30度ずらした一発目
 			float ang = angle.y - Deg2Rad(30.0f);
 
@@ -70,6 +71,8 @@ void GrapeBossStraightState::Update(void)
 				//次の周のため角度をずらす
 				ang += Deg2Rad(30.0f);
 			}
+			//音を出す
+			Snd::GetIns().Play("Throw");
 			// 二度目は通さないようにフラグを折る
 			first = false;
 		}

@@ -110,6 +110,12 @@ void SoundManager::ChangeScene(const std::string& scene)
 	deleteSubscrs.clear();
 #pragma endregion
 
+	AddScene(scene);
+}
+
+void SoundManager::AddScene(const std::string& scene)
+{
+
 #pragma region 指定されたシーンに対応するサウンドを読み込む
 	// テーブルを探索する
 	for (std::pair<const std::string, SoundTable>& data : SOUND_TABLE) {

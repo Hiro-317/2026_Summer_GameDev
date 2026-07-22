@@ -3,6 +3,7 @@
 #include "../../Weapon/GrapeBossWeaponManager.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../../Manager/Sound/SoundManager.h"
 
 GrapeBossKickDownState::GrapeBossKickDownState(
 	const std::function<void(void)>& ownChangeState,
@@ -92,8 +93,9 @@ void GrapeBossKickDownState::Update(void)
 				// 起動
 				bombType[i].live = true;
 			}
-			// フレーム位置に攻撃を発生
+			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
+			Snd::GetIns().Play("Kick");
 		}
 		// 二度目は通さないようにフラグを折る
 		first = false;

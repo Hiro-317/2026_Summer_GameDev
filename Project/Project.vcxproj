@@ -142,6 +142,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
     <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
     <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
@@ -263,6 +265,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Common\Vector3.h" />
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
+    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombBig.h" />
+    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombSmall.h" />
     <ClInclude Include="Src\Manager\Effect\Buff\EffectBuff.h" />
     <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
     <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />

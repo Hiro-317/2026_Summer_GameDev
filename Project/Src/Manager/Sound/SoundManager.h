@@ -42,6 +42,12 @@ public:
 	void ChangeScene(const std::string& scene);
 
 	/// <summary>
+	/// 現在の音声情報を破棄せず指定されたシーンの音声情報を読み込む
+	/// </summary>
+	/// <param name="scene">シーンの名前</param>
+	void AddScene(const std::string& scene);
+
+	/// <summary>
 	/// 音声を再生する
 	/// </summary>
 	/// <param name="id">音声ID</param>

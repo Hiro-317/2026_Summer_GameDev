@@ -19,6 +19,7 @@ void GrapeBossStage::Load(void)
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;
 	trans.scale = Vector3(4.0f);
+	trans.pos += Vector3::Yonly(GROUND_HEIGHT);
 
 	sky.scale = Vector3(4.0f);
 

@@ -23,8 +23,8 @@ public:
 
 	void SetPos(const Vector3& pos) { trans.pos = pos; }
 	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
-	void SetAngle(const Vector3& angle) { collBack.angle = angle; collFront.angle = angle; }
-	void SetScale(const Vector3& scale) { collFront.scale = Vector3(SCALE.x * scale.x, SCALE.y, SCALE.z); }
+	void SetAngle(const float& angle) { collBack.angle.y = collFront.angle.y = angle; }
+	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, SCALE.y, SCALE.z); }
 
 	// çUåÇîÕàÕÇÃï`âÊê›íË
 	void SetDrawArea(bool flg) { isDrawArea = flg; }

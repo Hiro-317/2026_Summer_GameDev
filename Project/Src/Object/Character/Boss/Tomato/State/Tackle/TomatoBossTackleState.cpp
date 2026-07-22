@@ -64,8 +64,8 @@ void TomatoBossTackleState::Update(void)
 
 		// —\‘ªü‚ÌXV
 		auto p = Vector3::XZonly(pos.x, pos.z);
-		auto a = Vector3::Yonly(angle.y);
-		auto s = Vector3::Xonly(((float)time - 180.0f) / 180.0f + 1.0f);
+		auto a = angle.y;
+		auto s = ((float)time - 180.0f) / 180.0f + 1.0f;
 
 		collOperator->SetViewPos(p);
 		collOperator->SetAngle(a);

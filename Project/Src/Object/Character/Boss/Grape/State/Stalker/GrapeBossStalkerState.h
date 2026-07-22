@@ -55,9 +55,6 @@ private:
 	// 爆弾のランダム発生距離
 	static constexpr int RADIUS = 300;
 
-	// 攻撃の発生持続時間
-	static constexpr int ATTACK_DURATION = 5;
-
 	// 予測線用のローカル座標
 	const Vector3 FOOT_VIEW_POS = Vector3(-23.16f, 0.0f, -85.34f);
 

@@ -3,6 +3,8 @@
 #include "../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
+#include "../../../../../../Manager/Effect/EffectManager.h"
+
 
 GrapeBossRandomBomb::GrapeBossRandomBomb(int model)
 	: GrapeBossWeaponBase(model)
@@ -27,6 +29,7 @@ GrapeBossRandomBomb::GrapeBossRandomBomb(int model)
 
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetPushFlg(false);
 	SetGravityFlg(true);
 	count = 0;
 }
@@ -48,6 +51,16 @@ void GrapeBossRandomBomb::SubUpdate(void)
 	}
 	// ついてるなら爆発カウントを進める
 	else {
+		// 前フレームの判定が残ってるので
+		// それ防止に
+		// 開始されたフレームの検知
+		if (!now) {
+			// 今開始されたらフラグを立てる
+			now = true;
+			// ほんとはついてないので落下
+			trans.pos.y -= 3.0f;
+			return;
+		}
 		count++;
 		// カウントに応じて状態を変える
 		if (BOMBER_COUNT >= count) {
@@ -62,7 +75,10 @@ void GrapeBossRandomBomb::SubUpdate(void)
 		else {
 			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 			end = true;
+			now = false;
 			count = 0;
+			SetViewScaleCircle(0.0f);
+			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
 		}
 	}
 }

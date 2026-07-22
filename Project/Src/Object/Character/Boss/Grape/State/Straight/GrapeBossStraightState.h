@@ -55,6 +55,9 @@ private:
 	// 弾の高さ
 	static constexpr float HEIGHT = 150.0f;
 
+	// 弾の発射タイミング
+	static constexpr float RATIO = 0.3f;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -93,4 +96,7 @@ private:
 
 	// プレイヤーターゲット
 	int target;
+
+	// 弾の開始角度三つ分
+	Vector3 dir[WeponDuplicateNum[(int)WeaponType::Straight]];
 };

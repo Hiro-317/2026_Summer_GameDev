@@ -1,5 +1,8 @@
 #include "GrapeBossWeaponManager.h"
 
+#include "../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../Manager/Effect/EffectManager.h"
+
 #include "GrapeBossWeaponFactory.h"
 
 
@@ -45,6 +48,13 @@ void GrapeBossWeaponManager::SubUpdate()
 			// I—¹‚µ‚Ä‚¢‚é‚È‚çŽE‚·
 			if (i.weaponIns->IsEnd()) {
 				
+				i.live = false;
+				i.weaponIns->ResetEnd();
+				Snd::GetIns().Play("Exprosion");
+			}
+			// —áŠOˆ—
+			if (i.weaponIns->GetTrans().pos < EXIT_HEIGHT) {
+
 				i.live = false;
 				i.weaponIns->ResetEnd();
 			}

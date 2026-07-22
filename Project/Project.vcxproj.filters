@@ -121,6 +121,8 @@
     <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
     <ClCompile Include="Src\Manager\Effect\TackleCharge\TackleCharge.cpp" />
     <ClCompile Include="Src\Object\Stage\GrapeBoss\GrapeBossStage.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -347,6 +349,8 @@
     <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
     <ClInclude Include="Src\Manager\Effect\TackleCharge\TackleCharge.h" />
     <ClInclude Include="Src\Object\Stage\GrapeBoss\GrapeBossStage.h" />
+    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombSmall.h" />
+    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombBig.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">
