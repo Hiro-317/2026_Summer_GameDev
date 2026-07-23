@@ -40,17 +40,17 @@ void HitUI::SubRelease(void)
 
 void HitUI::DamageSetting(const short damage, const bool isCritical)
 {
-    //Vector2 drawPos = Vector2(
-    //    App::SCREEN_SIZE_X_HALF + GetRand(200) - 100,
-    //    App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50
-    //);
+    Vector2 drawPos = Vector2(
+        App::SCREEN_SIZE_X_HALF + GetRand(200) - 100,
+        App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50
+    );
 
-    VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
-	Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
+ //   VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
+	//Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
 
     // ダメージ値の設定
     AddPopup(
-        drawPos2D,
+        drawPos,
         std::to_string(damage),
         isCritical ? 0xffff00 : 0xffffff    // 会心ならば：黄色 / 非会心ならば：白色
     );
@@ -58,12 +58,16 @@ void HitUI::DamageSetting(const short damage, const bool isCritical)
 
 void HitUI::MissSetting()
 {
-    VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
-    Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
+    Vector2 drawPos = Vector2(
+        App::SCREEN_SIZE_X_HALF + GetRand(200) - 100,
+        App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50
+    );
+    //VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
+    //Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
 
     // ミス！を設定
     AddPopup(
-        drawPos2D,
+        drawPos,
         "\u30DF\u30B9\uFF01",   // ミス！
         0x00ffff                // 水色
     );

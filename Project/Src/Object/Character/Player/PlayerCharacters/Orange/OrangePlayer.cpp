@@ -283,12 +283,15 @@ void OrangePlayer::PlayerLoad(void)
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
+			"OrangeIcon",
+			"P" + std::to_string(number + 1) + "Frame",
+			"P" + std::to_string(number + 1) + "Back",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS[number],
 			FILE_PATH_TYPE::PLAYER_HP,
-			"OrangePlayer"
-			)
+			""
+		)
 	);
 
 	// é©ï™Ç™ëÄçÏé“Ç©Ç«Ç§Ç©

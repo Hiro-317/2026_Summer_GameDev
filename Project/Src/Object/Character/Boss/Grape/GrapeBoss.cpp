@@ -334,11 +334,12 @@ void GrapeBoss::PlayerLoad(void)
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
+			"","","",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS,
 			FILE_PATH_TYPE::BOSS_HP,
-			"GrapeBoss"
+			""
 		)
 	);
 

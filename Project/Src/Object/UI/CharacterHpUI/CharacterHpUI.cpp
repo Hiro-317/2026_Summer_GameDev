@@ -2,6 +2,8 @@
 
 #include "../../../Manager/Font/FontManager.h"
 
+#include "../../../Manager/Net/NetWorkManager.h"
+
 
 CharacterHpUI::CharacterHpUI(
 	const short& hp,
@@ -10,13 +12,19 @@ CharacterHpUI::CharacterHpUI(
 	const std::string HP_FRAME_IMAGE_NAME,
 	const std::string HP_IMAGE_NAME,
 	const std::string HP_LOST_IMAGE_NAME,
+	const std::string ICON_CHARA_IMAGE_NAME,
+	const std::string ICON_FRAME_IMAGE_NAME,
+	const std::string ICON_SELECT_IMAGE_NAME,
 
 	const Vector2I HP_IMAGE_SIZE,
 	const Vector2I HP_GAUGE_OFFSET,
 	const Vector2I HP_UI_POS,
 
 	const FILE_PATH_TYPE PATH_TYPE,
-	const std::string CHARA_NAME
+	const std::string CHARA_NAME,
+
+	const char& targetIndex
+
 ) :
 	hp(hp),
 	HP_MAX(HP_MAX),
@@ -24,6 +32,9 @@ CharacterHpUI::CharacterHpUI(
 	HP_FRAME_IMAGE_NAME(HP_FRAME_IMAGE_NAME),
 	HP_IMAGE_NAME(HP_IMAGE_NAME),
 	HP_LOST_IMAGE_NAME(HP_LOST_IMAGE_NAME),
+	ICON_CHARA_IMAGE_NAME(ICON_CHARA_IMAGE_NAME),
+	ICON_FRAME_IMAGE_NAME(ICON_FRAME_IMAGE_NAME),
+	ICON_SELECT_IMAGE_NAME(ICON_SELECT_IMAGE_NAME),
 
 	HP_IMAGE_SIZE(HP_IMAGE_SIZE),
 	HP_GAUGE_OFFSET(HP_GAUGE_OFFSET),
@@ -31,6 +42,8 @@ CharacterHpUI::CharacterHpUI(
 
 	PATH_TYPE(PATH_TYPE),
 	CHARA_NAME(CHARA_NAME),
+
+	targetIndex(targetIndex),
 
 	hpRatio(0.0f),
 	hpBarOffset(0.0f),
@@ -45,6 +58,18 @@ void CharacterHpUI::Load(void)
 	UILoadImage(HP_FRAME_IMAGE_NAME,(int)IMAGE_KINDS::FRAME,		PATH_TYPE);
 	UILoadImage(HP_IMAGE_NAME,		(int)IMAGE_KINDS::HP_GAUGE,		PATH_TYPE);
 	UILoadImage(HP_LOST_IMAGE_NAME,	(int)IMAGE_KINDS::DAMAGE_GAUGE, PATH_TYPE);
+
+	// プレイヤーならロードする
+	if (PATH_TYPE == FILE_PATH_TYPE::PLAYER_HP) {
+		UILoadImage(ICON_CHARA_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_CHARA,	PATH_TYPE);
+		UILoadImage(ICON_FRAME_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_FRAME,	PATH_TYPE);
+		UILoadImage(ICON_SELECT_IMAGE_NAME, (int)IMAGE_KINDS::ICON_BACK,	PATH_TYPE);
+
+		if (targetIndex != -1) {
+			UILoadImage("PlayerToNowSelect", (int)IMAGE_KINDS::ICON_SELECT, PATH_TYPE);
+		}
+	}
+
 }
 
 void CharacterHpUI::SubUpdate()
@@ -81,7 +106,7 @@ void CharacterHpUI::SubDraw()
 		true
 	);
 
-	// HPバーの描画
+	// HPの緑のゲージの描画
 	DrawRectGraph(
 		uiPos.x + HP_GAUGE_OFFSET.x,
 		uiPos.y,
@@ -92,13 +117,51 @@ void CharacterHpUI::SubDraw()
 		true
 	);
 
-	// HPを描画するキャラの名前（仮）
-	DrawFormatStringToHandle(
-		uiPos.x + CHARA_NAME_X_OFFSET,
-		uiPos.y + ((HP_IMAGE_SIZE.y / 2) - 10),
-		0xffffff, 
-		Font::GetIns().GetFont(FontKinds::DEFAULT_20), 
-		(CHARA_NAME).c_str());
+	// プレイヤーHPならアイコンを描画する
+	if (PATH_TYPE != FILE_PATH_TYPE::PLAYER_HP) { return; }
+
+	Vector2I iconPos = {
+		uiPos.x - 50,
+		uiPos.y + HP_IMAGE_SIZE.y / 2
+	};
+
+	DrawRotaGraph(
+		iconPos.x,
+		iconPos.y,
+		ICON_EX_RATE,
+		0.0f,
+		uiImages.at((int)IMAGE_KINDS::ICON_BACK),
+		true
+	);
+
+	DrawRotaGraph(
+		iconPos.x,
+		iconPos.y,
+		ICON_EX_RATE,
+		0.0f,
+		uiImages.at((int)IMAGE_KINDS::ICON_CHARA),
+		true
+	);
+
+	DrawRotaGraph(
+		iconPos.x,
+		iconPos.y,
+		ICON_EX_RATE,
+		0.0f,
+		uiImages.at((int)IMAGE_KINDS::ICON_FRAME),
+		true
+	);
+
+	if (targetIndex == (unsigned char)Net::GetIns().GetSenderId()) {
+		DrawRotaGraph(
+			iconPos.x, 
+			iconPos.y, 
+			ICON_EX_RATE, 
+			0.0f, 
+			uiImages.at((int)IMAGE_KINDS::ICON_SELECT), 
+			true
+		);
+	}
 }
 
 void CharacterHpUI::SubRelease()

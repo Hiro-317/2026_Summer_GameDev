@@ -16,6 +16,8 @@ class CharacterHpUI : public UI_Base
 {
 public:
 
+	static constexpr float ICON_EX_RATE = 0.173f;
+
 	// コンストラクタ
 	CharacterHpUI(
 		const short& hp,
@@ -24,13 +26,18 @@ public:
 		const std::string HP_FRAME_IMAGE_NAME,
 		const std::string HP_IMAGE_NAME,
 		const std::string HP_LOST_IMAGE_NAME,
+		const std::string ICON_CHARA_IMAGE_NAME,
+		const std::string ICON_FRAME_IMAGE_NAME,
+		const std::string ICON_BACK_IMAGE_NAME,
 
 		const Vector2I HP_IMAGE_SIZE,
 		const Vector2I HP_GAUGE_OFFSET,
 		const Vector2I HP_UI_POS,
 
 		const FILE_PATH_TYPE PATH_TYPE,
-		const std::string CHARA_NAME
+		const std::string CHARA_NAME,
+
+		const char& targetIndex = -1
 	);	
 
 	//デストラクタ
@@ -50,8 +57,14 @@ private:
 		HP_GAUGE,
 		DAMAGE_GAUGE,
 
+		ICON_CHARA,
+		ICON_FRAME,
+		ICON_BACK,
+		ICON_SELECT,
+
 		MAX
 	};
+
 
 #pragma region 定数定義
 
@@ -59,6 +72,9 @@ private:
 	const std::string HP_FRAME_IMAGE_NAME;	// フレームの画像パス
 	const std::string HP_IMAGE_NAME;		// HPバーの画像パス
 	const std::string HP_LOST_IMAGE_NAME;	// ダメージを受けた時のHPバーの画像パス
+	const std::string ICON_FRAME_IMAGE_NAME;	// HPの隣に表示するアイコン画像パス
+	const std::string ICON_CHARA_IMAGE_NAME;	// HPの隣に表示するアイコン画像パス
+	const std::string ICON_SELECT_IMAGE_NAME;	// HPの隣に表示するアイコン画像パス
 
 	// HPバーの画像サイズ
 	const Vector2I HP_IMAGE_SIZE;	// HP画像サイズ
@@ -86,6 +102,7 @@ private:
 	float damageBarOffset;	// ダメージを受けた時に描画されるバー
 	float damageBarAxcel;
 
+	const  char& targetIndex;
 #pragma endregion 変数定義
 
 };
