@@ -7,6 +7,7 @@
 #include "Orange/LobbyCharaPreviewOrange.h"
 #include "Tomato/LobbyCharaPreviewTomato.h"
 #include "Peach/LobbyCharaPreviewPeach.h"
+#include "Grape/LobbyCharaPreviewGrape.h"
 
 LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
 	charaPreview{ nullptr, nullptr, nullptr, nullptr }
@@ -79,6 +80,11 @@ void LobbyCharaPreviewManager::ReloadChara(void)
 		break;
 	}
 
+	case CHARA_TYPE::Grape: {	// トマト
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewGrape(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+		break;
+	}
+
 	default: { return; }	// 例外
 	}
 
@@ -119,6 +125,11 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 
 	case CHARA_TYPE::Peach: {	// トマト
 		charaPreview[(int)senderId] = new LobbyCharaPreviewPeach(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
+		break;
+	}
+
+	case CHARA_TYPE::Grape: {	// トマト
+		charaPreview[(int)senderId] = new LobbyCharaPreviewGrape(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 

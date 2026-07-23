@@ -9,6 +9,7 @@
 #include "CharaSelectPreview/Orange/OrangeCharaSelectPreview.h"
 #include "CharaSelectPreview/Tomato/TomatoCharaSelectPreview.h"
 #include "CharaSelectPreview/Peach/PeachCharaSelectPreview.h"
+#include "CharaSelectPreview/Grape/GrapeCharaSelectPreview.h"
 #include "CharaSelectPreview/Unknow/UnknowCharaSelectPreview.h"
 
 CharaSelectPreviewManager::CharaSelectPreviewManager() :
@@ -48,6 +49,7 @@ void CharaSelectPreviewManager::Load(void)
 		case CHARA_TYPE::Orange: { return new OrangeCharaSelectPreview(); }
 		case CHARA_TYPE::Tomato: { return new TomatoCharaSelectPreview(); }
 		case CHARA_TYPE::Peach: { return new PeachCharaSelectPreview(); }
+		case CHARA_TYPE::Grape: { return new GrapeCharaSelectPreview(); }
 		default: { return new UnknowCharaSelectPreview(); }
 		}
 		};
