@@ -96,7 +96,7 @@ void BossBase::CharacterLoad(void)
 	if (IsParameterExist("Collider", "ToPlayerDistanceRadius") && IsParameterExist("Collider", "ToPlayerDistanceHeight")) {
 		ColliderCreate(
 			new XZCircleCollider(
-				COLLIDER_TAG::TOMATO_BOSS_DISTANCE,
+				COLLIDER_TAG::BOSS_DISTANCE,
 				GetParameter("Collider", "ToPlayerDistanceRadius"),
 				GetParameter("Collider", "ToPlayerDistanceHeight")
 			)
@@ -223,7 +223,7 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 	if (!Net::GetIns().IsHost()) return;
 
 	// ボスとプレイヤーの攻撃との当たり判定
-	if (ownTag == COLLIDER_TAG::TOMATO_BOSS_DISTANCE) {
+	if (ownTag == COLLIDER_TAG::BOSS_DISTANCE) {
 		switch (other.GetTag()) {
 		case COLLIDER_TAG::PLAYER_ATTACK: {
 			bool isClitical = false;

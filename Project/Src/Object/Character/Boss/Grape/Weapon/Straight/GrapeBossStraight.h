@@ -5,7 +5,7 @@
 class GrapeBossStraight : public GrapeBossWeaponBase
 {
 public:
-	GrapeBossStraight(int model);
+	GrapeBossStraight(int model, int front, int back);
 	~GrapeBossStraight() = default;
 
 	// ‰Šúİ’è—pŠÖ”

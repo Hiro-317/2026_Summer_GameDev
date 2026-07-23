@@ -75,6 +75,8 @@ private:
 
 	// 複製用ハンドル
 	int bombModel;
+	int backModel;
+	int frontModel;
 
 	// 武器の配列
 	BombType weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];

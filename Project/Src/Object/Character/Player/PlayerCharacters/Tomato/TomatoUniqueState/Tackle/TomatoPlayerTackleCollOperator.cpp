@@ -66,7 +66,7 @@ void TomatoPlayerTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 	{
 	case COLLIDER_TAG::BOSS:
 	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+	case COLLIDER_TAG::BOSS_DISTANCE:
 		isHit = true;
 		break;
 	default:break;

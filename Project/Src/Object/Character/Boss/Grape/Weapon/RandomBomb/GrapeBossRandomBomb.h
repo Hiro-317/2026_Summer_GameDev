@@ -5,7 +5,7 @@
 class GrapeBossRandomBomb : public GrapeBossWeaponBase
 {
 public:
-	GrapeBossRandomBomb(int model);
+	GrapeBossRandomBomb(int model, int front, int back);
 	~GrapeBossRandomBomb() = default;
 
 	// ÉçÅ[Éh

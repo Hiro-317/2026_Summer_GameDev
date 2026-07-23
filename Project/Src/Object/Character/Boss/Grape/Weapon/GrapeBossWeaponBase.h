@@ -51,7 +51,7 @@ class GrapeBossWeaponBase : public ActorBase
 {
 public:
 
-	GrapeBossWeaponBase(int model);
+	GrapeBossWeaponBase(int model, int front, int back);
 	~GrapeBossWeaponBase() = default;
 
 	// ‹K’è—p‚ÌLoad

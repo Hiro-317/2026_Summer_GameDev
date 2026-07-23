@@ -6,8 +6,8 @@
 #include "../../../../../../Manager/Effect/EffectManager.h"
 
 
-GrapeBossRandomBomb::GrapeBossRandomBomb(int model)
-	: GrapeBossWeaponBase(model)
+GrapeBossRandomBomb::GrapeBossRandomBomb(int model, int front, int back)
+	: GrapeBossWeaponBase(model, front, back)
 {
 	// 当たり判定を生成する（XZコライダー）
 	ColliderCreate(

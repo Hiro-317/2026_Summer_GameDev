@@ -24,6 +24,7 @@
 
 #include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
 #include "../../Object/Character/Boss/Grape/GrapeBoss.h"
+//#include "../../Object/Character/Boss/Banana/BananaBoss.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
 #include "../../Object/Stage/GrapeBoss/GrapeBossStage.h"

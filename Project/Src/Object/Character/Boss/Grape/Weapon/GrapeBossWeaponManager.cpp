@@ -13,6 +13,8 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 {
 	// 複製ハンドル
 	bombModel = MV1LoadModel("Data/Model/Character/Grape/Bomb.mv1");
+	frontModel = MV1LoadModel("Data/Model/Range/CircleRangeFront.mv1");
+	backModel = MV1LoadModel("Data/Model/Range/CircleRangeBack.mv1");
 
 	// 初期化用の数
 	int weaponNumber = 0;
@@ -22,7 +24,7 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 		for (int j = 0; j < WeponDuplicateNum[i]; j++) {
 
 			// 作ってもらった武器を格納
-			weapons[weaponNumber] = GrapeBossWeaponFactory::Create(bombModel, i);
+			weapons[weaponNumber] = GrapeBossWeaponFactory::Create(bombModel, i, frontModel, backModel);
 
 			// 数の更新
 			weaponNumber++;

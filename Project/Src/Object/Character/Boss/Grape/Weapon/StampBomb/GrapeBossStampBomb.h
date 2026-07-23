@@ -5,7 +5,7 @@
 class GrapeBossStampBomb : public GrapeBossWeaponBase
 {
 public:
-	GrapeBossStampBomb(int model);
+	GrapeBossStampBomb(int model, int front, int back);
 	~GrapeBossStampBomb() = default;
 
 	// ÉçÅ[Éh
