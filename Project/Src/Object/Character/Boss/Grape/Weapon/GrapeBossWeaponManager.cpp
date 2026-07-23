@@ -71,7 +71,11 @@ void GrapeBossWeaponManager::SubAlphaDraw()
 	}
 }
 
-void GrapeBossWeaponManager::SubRelease() 
+void GrapeBossWeaponManager::SubRelease()
 {
-	for (auto& i : weapons) i.weaponIns->Release();
+	for (auto& i : weapons) {
+		i.weaponIns->Release();
+		delete i.weaponIns;
+		i.weaponIns = nullptr;
+	}
 }

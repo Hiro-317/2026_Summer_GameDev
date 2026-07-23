@@ -286,6 +286,8 @@ void BossBase::CharacterRelease(void)
 	}
 	subObjArray.clear();
 	collParam->Release();
+	delete collParam;
+	collParam = nullptr;
 }
 
 void BossBase::AnimePlay(int type, bool loop)

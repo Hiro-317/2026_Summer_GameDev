@@ -19,7 +19,6 @@ void GrapeBossStage::Load(void)
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;
 	trans.scale = Vector3(4.0f);
-	trans.pos += Vector3::Yonly(GROUND_HEIGHT);
 
 	sky.scale = Vector3(4.0f);
 
@@ -44,6 +43,11 @@ void GrapeBossStage::SubDraw(void)
 	SetUseLighting(true);
 }
 
+void GrapeBossStage::SubRelease(void)
+{
+	sky.Release();
+}
+
 void GrapeBossStage::ColliderLoad()
 {
 	// 地面の当たり判定
@@ -51,7 +55,7 @@ void GrapeBossStage::ColliderLoad()
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		ColliderCreate(new XZCircleCollider(COLLIDER_TAG::STAGE, info.radius, 1000.0f, info.pos));
+		//ColliderCreate(new XZCircleCollider(COLLIDER_TAG::STAGE, info.radius, 1000.0f, info.pos));
 	}
 }
 

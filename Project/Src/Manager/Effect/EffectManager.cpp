@@ -34,16 +34,17 @@ void EffectManager::CreateEffect(EFFECT_NAME name, const Vector3& local, const T
 void EffectManager::StopEffect(EFFECT_NAME name) {
 
 	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
-		if ((*info)->GetName() == name) { (*info)->StopEffect(); delete (*info); info = effectInfo.erase(info); }
+		if ((*info)->GetName() == name) { (*info)->StopEffect(); delete (*info); (*info) = nullptr; info = effectInfo.erase(info); }
 		else { info++; }
 	}
 }
 
 void EffectManager::StopEffectAll(void)
 {
-	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
-		(*info)->StopEffect();
-		info++;
+	for (auto effect : effectInfo) {
+		effect->StopEffect();
+		delete effect;
+		effect = nullptr;
 	}
 	effectInfo.clear();
 }
