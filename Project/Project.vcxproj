@@ -161,9 +161,6 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Manager\Net\Enet\win32.c" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Banana\BananaBoss.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Death\BananaBossDeathState.cpp" />
-    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Idle\BananaBossIdleState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.cpp" />
@@ -280,9 +277,6 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Banana\BananaBoss.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Death\BananaBossDeathState.h" />
-    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Idle\BananaBossIdleState.h" />
     <ClInclude Include="Src\Object\Character\Boss\BossBase.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Death\GrapeBossDeathState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Grape\State\Idle\GrapeBossIdleState.h" />

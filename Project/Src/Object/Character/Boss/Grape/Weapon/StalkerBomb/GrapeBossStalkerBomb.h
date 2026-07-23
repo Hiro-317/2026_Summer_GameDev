@@ -5,7 +5,7 @@
 class GrapeBossStalkerBomb : public GrapeBossWeaponBase
 {
 public:
-	GrapeBossStalkerBomb(int model);
+	GrapeBossStalkerBomb(int model, int front, int back);
 	~GrapeBossStalkerBomb() = default;
 
 	// ÉçÅ[Éh

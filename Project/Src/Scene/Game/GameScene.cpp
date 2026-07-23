@@ -24,7 +24,7 @@
 
 #include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
 #include "../../Object/Character/Boss/Grape/GrapeBoss.h"
-#include "../../Object/Character/Boss/Banana/BananaBoss.h"
+//#include "../../Object/Character/Boss/Banana/BananaBoss.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
 
@@ -95,7 +95,7 @@ void GameScene::Load(void)
 	switch (SceneManager::GetIns().GetSelectBossType())
 	{
 	case BOSS_TYPE::Tomato:
-		ObjAdd(new BananaBoss(pos, live));
+		ObjAdd(new TomatoBoss(pos, live));
 		break;
 	case BOSS_TYPE::Grape:
 		ObjAdd(new GrapeBoss(pos, live));

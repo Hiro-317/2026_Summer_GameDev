@@ -3,8 +3,8 @@
 #include "../../../../../Common/Collider/SphereCollider.h"
 
 
-GrapeBossStraight::GrapeBossStraight(int model)
-	: GrapeBossWeaponBase(model)
+GrapeBossStraight::GrapeBossStraight(int model, int front, int back)
+	: GrapeBossWeaponBase(model, front, back)
 {
 	// 当たり判定を生成する（球体コライダー）
 	ColliderCreate(

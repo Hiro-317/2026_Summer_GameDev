@@ -1,5 +1,5 @@
 #pragma once
-#include "GrapeBossWeaponBase.h"
+#include "GrapeBossWeaponManager.h"
 
 #include "Straight/GrapeBossStraight.h"
 #include "KickBomb/GrapeBossKickBomb.h"
@@ -14,7 +14,7 @@ class GrapeBossWeaponFactory {
 public:
 
 	// インスタンスの生産
-	static BombType Create(int model, int type) {
+	static BombType Create(int model, int type, int front, int back) {
 
 		// 返り値用
 		BombType res;
@@ -27,32 +27,32 @@ public:
 		{
 		case WeaponType::Straight:
 		{
-			res.weaponIns = new GrapeBossStraight(model);
+			res.weaponIns = new GrapeBossStraight(model, front, back);
 			break;
 		}
 		case WeaponType::KickBomb:
 		{
-			res.weaponIns = new GrapeBossKickBomb(model);
+			res.weaponIns = new GrapeBossKickBomb(model, front, back);
 			break;
 		}
 		case WeaponType::StampBomb:
 		{
-			res.weaponIns = new GrapeBossStampBomb(model);
+			res.weaponIns = new GrapeBossStampBomb(model, front, back);
 			break;
 		}
 		case WeaponType::SingleBomb:
 		{
-			res.weaponIns = new GrapeBossSingleBomb(model);
+			res.weaponIns = new GrapeBossSingleBomb(model, front, back);
 			break;
 		}
 		case WeaponType::StalkerBomb:
 		{
-			res.weaponIns = new GrapeBossStalkerBomb(model);
+			res.weaponIns = new GrapeBossStalkerBomb(model, front, back);
 			break;
 		}
 		case WeaponType::RandomBomb:
 		{
-			res.weaponIns = new GrapeBossRandomBomb(model);
+			res.weaponIns = new GrapeBossRandomBomb(model, front, back);
 			break;
 		}
 		default:

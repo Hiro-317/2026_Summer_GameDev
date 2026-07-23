@@ -4,8 +4,8 @@
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
 
-GrapeBossStalkerBomb::GrapeBossStalkerBomb(int model)
-	: GrapeBossWeaponBase(model)
+GrapeBossStalkerBomb::GrapeBossStalkerBomb(int model, int front, int back)
+	: GrapeBossWeaponBase(model, front, back)
 {
 	// 当たり判定を生成する（XZコライダー）
 	ColliderCreate(

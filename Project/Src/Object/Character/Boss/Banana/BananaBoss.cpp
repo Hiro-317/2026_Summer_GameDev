@@ -71,6 +71,8 @@ void BananaBoss::PlayerLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
+	//subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
+
 	AddState(
 		static_cast<int>(STATE::IDLE),
 		new BananaBossIdleState(

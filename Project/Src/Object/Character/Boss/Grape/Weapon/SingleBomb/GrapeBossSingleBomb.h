@@ -5,7 +5,7 @@
 class GrapeBossSingleBomb : public GrapeBossWeaponBase
 {
 public:
-	GrapeBossSingleBomb(int model);
+	GrapeBossSingleBomb(int model, int front, int back);
 	~GrapeBossSingleBomb() = default;
 
 	// ÉçÅ[Éh
