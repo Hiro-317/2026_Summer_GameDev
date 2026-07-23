@@ -5,8 +5,8 @@
 class SphereCollider : public ColliderBase
 {
 public:
-	SphereCollider(COLLIDER_TAG type, float radius, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
-		ColliderBase(type, pos),
+	SphereCollider(COLLIDER_TAG type, float radius, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
+		ColliderBase(type, pos, angle),
 		radius(radius)
 	{
 		SetShape(SHAPE::SPHERE);

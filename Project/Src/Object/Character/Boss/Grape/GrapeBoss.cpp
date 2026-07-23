@@ -40,7 +40,7 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vec
 		playerPos, playerLive)
 {
 
-	coolTime = 120;
+	coolTime = 12000;
 	Snd::GetIns().AddScene("GrapeBoss");
 }
 
@@ -72,7 +72,7 @@ void GrapeBoss::PlayerLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
+	//subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
 	subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
 	subObjArray.push_back(new GrapeStampCollOperator(operatorSenderId, characterStats));
 

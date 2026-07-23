@@ -5,8 +5,8 @@
 class XZCircleCollider : public ColliderBase
 {
 public:
-    XZCircleCollider(COLLIDER_TAG type, float radius, float yLength, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
-        ColliderBase(type, pos),
+    XZCircleCollider(COLLIDER_TAG type, float radius, float yLength, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
+        ColliderBase(type, pos, angle),
         radius(radius),
         yLength(yLength)
     {

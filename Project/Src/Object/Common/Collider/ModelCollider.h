@@ -40,8 +40,8 @@ private:
 	};
 
 public:
-	ModelCollider(COLLIDER_TAG type, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
-		ColliderBase(type, pos)
+	ModelCollider(COLLIDER_TAG type, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
+		ColliderBase(type, pos, angle)
 	{
 		SetShape(SHAPE::MODEL);
 	}

@@ -35,9 +35,10 @@ public:
 	/// </summary>
 	/// <param name="type">当たり判定タイプ</param>
 	/// <param name="pos">相対座標（引数省略で{0.0f,0.0f,0.0f}）</param>
-	ColliderBase(COLLIDER_TAG type, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
+	ColliderBase(COLLIDER_TAG type, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
 		trans(nullptr),
 		pos(pos),
+		angle(angle),
 		judgeFlg(true),
 		dynamicFlg(true),
 		pushFlg(true),
@@ -73,6 +74,13 @@ public:
 
 	// 1フレーム前のコライダー座標（モデル制御情報の座標がそのままコライダーの座標とは限らない為、計算済みの座標を取得する関数を用意）
 	Vector3 GetPrevPos(void)const { return (trans->prevPos + trans->VTrans(pos)); }
+
+	// コライダー角度（モデル制御情報の角度がそのままコライダーの角度とは限らない為、計算済みの角度を取得する関数を用意）
+	Vector3 GetAngle(void)const { return (trans->angle + angle); }
+
+	MATRIX GetAngleMat(void)const { return MatrixAllMultXZY({ trans->angle,angle }); }
+
+	Vector3 VTrans(const Vector3& v)const { return (v != 0.0f) ? Vector3(VTransform(v.ToVECTOR(), GetAngleMat())) : Vector3(); }
 
 	// モデル制御情報を直接取得
 	const Transform& GetTransform(void)const { return *trans; }
@@ -138,6 +146,9 @@ private:
 	
 	// モデル制御情報の座標からの相対座標
 	Vector3 pos;
+
+	// モデル制御情報の角度からの相対角度
+	Vector3 angle;
 
 	// 動的オブジェクトか否か（true = 動的、false = 静的）
 	bool dynamicFlg;
