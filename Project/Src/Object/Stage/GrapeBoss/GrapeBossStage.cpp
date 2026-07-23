@@ -6,7 +6,7 @@
 #include "../../Common/Collider/XZCircleCollider.h"
 
 GrapeBossStage::GrapeBossStage() :
-	ActorBase("Data/Parameter/Stage/"), sky()
+	ActorBase("Data/Parameter/Stage/Grape/"), sky()
 {
 }
 
@@ -55,7 +55,7 @@ void GrapeBossStage::ColliderLoad()
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		//ColliderCreate(new XZCircleCollider(COLLIDER_TAG::STAGE, info.radius, 1000.0f, info.pos));
+		ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, info.size, info.pos, Vector3::Yonly(info.yAngle)));
 	}
 }
 

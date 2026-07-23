@@ -5,8 +5,8 @@
 class CapsuleCollider : public ColliderBase
 {
 public:
-	CapsuleCollider(COLLIDER_TAG type, const Vector3& localStartPos, const Vector3& localEndPos, float radius, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
-		ColliderBase(type, pos),
+	CapsuleCollider(COLLIDER_TAG type, const Vector3& localStartPos, const Vector3& localEndPos, float radius, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
+		ColliderBase(type, pos, angle),
 		startPos(localStartPos),
 		endPos(localEndPos),
 		radius(radius)
@@ -24,9 +24,9 @@ public:
 	float GetRadius(void)const { return radius; }
 
 	// カプセル線分の始点
-	Vector3 GetStartPos(void)const { return GetPos() + GetTransform().VTrans(startPos); }
+	Vector3 GetStartPos(void)const { return GetPos() + VTrans(startPos); }
 	// カプセル線分の終点
-	Vector3 GetEndPos(void)const { return GetPos() + GetTransform().VTrans(endPos); }
+	Vector3 GetEndPos(void)const { return GetPos() + VTrans(endPos); }
 
 	// 指定した座標から線分の中で一番近い座標を取得する
 	Vector3 ClosestPoint(const Vector3& point) const {

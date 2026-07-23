@@ -11,8 +11,8 @@ public:
 	/// <param name="localStartPos">線分の開始点</param>
 	/// <param name="localEndPos">線分の終了点</param>
 	/// <param name="pos">相対座標（引数省略で{0.0f,0.0f,0.0f}）</param>
-	LineCollider(COLLIDER_TAG type, const Vector3& localStartPos, const Vector3& localEndPos, Vector3 pos = { 0.0f, 0.0f, 0.0f }) :
-		ColliderBase(type, pos),
+	LineCollider(COLLIDER_TAG type, const Vector3& localStartPos, const Vector3& localEndPos, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
+		ColliderBase(type, pos, angle),
 		startPos(localStartPos),
 		endPos(localEndPos)
 	{
@@ -27,9 +27,9 @@ public:
 	float GetHalfLen(void)const { return (startPos - endPos).Length() / 2; }
 
 	// 線分の始点
-	Vector3 GetStartPos(void)const { return GetPos() + GetTransform().VTrans(startPos); }
+	Vector3 GetStartPos(void)const { return GetPos() + VTrans(startPos); }
 	// 線分の終点
-	Vector3 GetEndPos(void)const { return GetPos() + GetTransform().VTrans(endPos); }
+	Vector3 GetEndPos(void)const { return GetPos() + VTrans(endPos); }
 
 	// 押し出しの方向
 	Vector3 GetDirection(void)const { return GetStartPos() - GetEndPos(); }

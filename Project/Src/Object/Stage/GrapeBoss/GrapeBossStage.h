@@ -19,12 +19,17 @@ private:
     struct ColliderInfo
     {
         Vector3 pos;    // 座標
-        float side;   // 壁の一辺
-        float angle;    //壁の角度
+        Vector3 size;   // 大きさ
+        float yAngle;    // 壁の角度
 	};
 
     const std::vector<ColliderInfo> WALL_COLLISION_INFO =
     {
+        { GetParameterToVector3("Collider","WallCollPos1"), GetParameterToVector3("Collider","WallCollSize1"), Deg2Rad(GetParameter("Collider","WallCollYAngle1")) },
+        { GetParameterToVector3("Collider","WallCollPos2"), GetParameterToVector3("Collider","WallCollSize2"), Deg2Rad(GetParameter("Collider","WallCollYAngle2")) },
+        { GetParameterToVector3("Collider","WallCollPos3"), GetParameterToVector3("Collider","WallCollSize3"), Deg2Rad(GetParameter("Collider","WallCollYAngle3")) },
+        { GetParameterToVector3("Collider","WallCollPos4"), GetParameterToVector3("Collider","WallCollSize4"), Deg2Rad(GetParameter("Collider","WallCollYAngle4")) },
+        { GetParameterToVector3("Collider","WallCollPos5"), GetParameterToVector3("Collider","WallCollSize5"), Deg2Rad(GetParameter("Collider","WallCollYAngle5")) },
     };
 
 #pragma endregion
