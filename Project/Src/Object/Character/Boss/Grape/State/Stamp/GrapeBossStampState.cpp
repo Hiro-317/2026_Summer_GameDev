@@ -3,6 +3,7 @@
 #include "../../Weapon/GrapeBossWeaponManager.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../../../Manager/Sound/SoundManager.h"
 
 GrapeBossStampState::GrapeBossStampState(
 	const std::function<void(void)>& ownChangeState,
@@ -79,6 +80,7 @@ void GrapeBossStampState::Update(void)
 		// 踏み切り終わりは持続アニメーション
 		if (IsAnimeEnd()) {
 			PlayJumpAnim();
+			Snd::GetIns().Play("StampJump");
 		}
 	}
 	// スタンプ
@@ -108,6 +110,7 @@ void GrapeBossStampState::Update(void)
 		if (first) {
 			// 地上についたのでスタンプ
 			PlayStampAnim();
+			Snd::GetIns().Play("StampLand");
 			// 生成数まで回す
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::StampBomb]; i++) {
 
@@ -162,7 +165,7 @@ void GrapeBossStampState::Update(void)
 			collOperator->SetDrawArea(false);
 			Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 			collOperator->SetScale(0.0f);
-			Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, Vector3(0.0f)));
+			Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, 0.0f));
 		}
 	}
 
@@ -177,7 +180,7 @@ void GrapeBossStampState::Update(void)
 		// 予測線の更新
 		float scale = 1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE;
 		collOperator->SetScale(scale);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, Vector3::Xonly(scale)));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, scale));
 	}
 }
 

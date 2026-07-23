@@ -7,6 +7,8 @@
 #include "Buff/EffectBuff.h"
 #include "TackleCharge/TackleCharge.h"
 #include "StampShockWave/EffectStampShockWave.h"
+#include "Bomb/EffectBombSmall.h"
+#include "Bomb/EffectBombBig.h"
 class EffectFactory {
 
 public:
@@ -23,6 +25,8 @@ public:
 		case EFFECT_NAME::BUFF: { res = new EffectBuff(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		case EFFECT_NAME::TACKLE_CHARGE: { res = new TackleCharge(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		case EFFECT_NAME::STAMP_SHOCK_WAVE: { res = new EffectStampShockWave(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
+		case EFFECT_NAME::BOMB_SMALL: { res = new EffectBombSmall(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
+		case EFFECT_NAME::BOMB_BIG: { res = new EffectBombBig(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		default: { break; }
 		}
 		return res;

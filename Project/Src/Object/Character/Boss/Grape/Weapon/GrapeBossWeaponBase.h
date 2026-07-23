@@ -72,7 +72,7 @@ public:
 
 	// 予測線の設定(円形)
 	void SetViewScaleCircle(float scale) { collFront.scale = Vector3(scale); };
-	void SetViewPosCircle(void) { collBack.pos = trans.pos; collFront.pos = trans.pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT + 1.0f; };
+	void SetViewPosCircle(void) { collBack.pos = trans.pos; collFront.pos = trans.pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT; };
 
 protected:
 
@@ -88,6 +88,9 @@ protected:
 
 	// 終了フラグ
 	bool end;
+
+	// 今開始されたか
+	bool now;
 
 private:
 #pragma region 定数定義

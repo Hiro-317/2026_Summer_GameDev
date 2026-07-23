@@ -126,6 +126,11 @@
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.cpp" />
+    <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
+    <ClCompile Include="Src\Manager\Effect\TackleCharge\TackleCharge.cpp" />
+    <ClCompile Include="Src\Object\Stage\GrapeBoss\GrapeBossStage.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -358,6 +363,11 @@
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Peach\LobbyCharaPreviewPeach.h" />
+    <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
+    <ClInclude Include="Src\Manager\Effect\TackleCharge\TackleCharge.h" />
+    <ClInclude Include="Src\Object\Stage\GrapeBoss\GrapeBossStage.h" />
+    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombSmall.h" />
+    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombBig.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

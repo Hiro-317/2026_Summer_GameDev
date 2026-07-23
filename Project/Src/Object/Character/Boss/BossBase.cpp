@@ -13,10 +13,6 @@
 
 BossBase::BossBase(
 
-	const std::string hpParameterID,
-	const std::string attackPowerParameterID,
-	const std::string defensePowerParameterID,
-	const std::string moveSpeedParameterID,
 	const std::string& parameterPath,
 
 	std::string modelPath,
@@ -26,10 +22,10 @@ BossBase::BossBase(
 ) :
 	CharacterBase(
 		"Parameter",
-		hpParameterID,
-		attackPowerParameterID,
-		defensePowerParameterID,
-		moveSpeedParameterID,
+		"HP_" + std::to_string(playerLive.size()),
+		"AttackPower",
+		"DefensePower",
+		"MoveSpeed",
 		parameterPath),
 	
 	playerPos(playerPos),
@@ -290,6 +286,8 @@ void BossBase::CharacterRelease(void)
 	}
 	subObjArray.clear();
 	collParam->Release();
+	delete collParam;
+	collParam = nullptr;
 }
 
 void BossBase::AnimePlay(int type, bool loop)

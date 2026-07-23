@@ -63,6 +63,9 @@ private:
 
 	static GrapeBossWeaponManager* ins;
 
+	// 例外処理用
+	static constexpr float EXIT_HEIGHT = -10.0f;
+
 #pragma region 参照値
 
 	const MSG_SENDER_ID& operatorSenderId;

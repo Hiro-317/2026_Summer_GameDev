@@ -26,6 +26,7 @@
 #include "../../Object/Character/Boss/Grape/GrapeBoss.h"
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
+#include "../../Object/Stage/GrapeBoss/GrapeBossStage.h"
 
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 #include "../../Object/Common/DebugObject/SphereDebugObject.h"
@@ -95,15 +96,15 @@ void GameScene::Load(void)
 	{
 	case BOSS_TYPE::Tomato:
 		ObjAdd(new TomatoBoss(pos, live));
+		ObjAdd(new TomatoBossStage());
 		break;
 	case BOSS_TYPE::Grape:
 		ObjAdd(new GrapeBoss(pos, live));
+		ObjAdd(new GrapeBossStage());
 		break;
 	default:
 		break;
 	}
-
-	ObjAdd(new TomatoBossStage());
 
 	// “–‚½‚è”»’è‚Ìƒ`ƒƒƒ“ƒN•ª‚¯(‰Šú‰»Žž)‚ðs‚¤
 	collision->InitBuildChunks();

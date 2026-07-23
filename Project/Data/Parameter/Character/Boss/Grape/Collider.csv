@@ -4,4 +4,4 @@ CollisionSphereRad,200
 ToPlayerDistanceHeight,1000
 ToPlayerDistanceRadius,150
 LineColliderStartPos,0,0,0
-LineColliderEndPos,0,-88.5,0
+LineColliderEndPos,0,-120,0

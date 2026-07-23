@@ -3,7 +3,7 @@
 #include "../../../../Application/Application.h"
 
 #include "../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../Manager/Font/FontManager.h"
+#include "../../../../Manager/Sound/SoundManager.h"
 
 #include "Weapon/GrapeBossWeaponManager.h"
 #include "Weapon/Straight/GrapeBossStraight.h"
@@ -34,10 +34,6 @@
 
 GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
-		"HP",
-		"AttackPower",
-		"DefensePower",
-		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Grape/",
 		"Grape/GrapeModel",
 
@@ -45,6 +41,7 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vec
 {
 
 	coolTime = 120;
+	Snd::GetIns().AddScene("GrapeBoss");
 }
 
 void GrapeBoss::PlayerLoad(void)
@@ -361,13 +358,19 @@ void GrapeBoss::ReceptionUpdate(void)
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
 			SubObjSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale.x);
+			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
+		{
+			SubObjSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
+			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
 			SubObjSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale.x);
+			SubObjSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		default:

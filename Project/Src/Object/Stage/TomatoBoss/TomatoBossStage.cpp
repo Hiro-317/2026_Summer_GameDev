@@ -50,6 +50,11 @@ void TomatoBossStage::SubDraw(void)
 	SetUseLighting(true);
 }
 
+void TomatoBossStage::SubRelease(void)
+{
+	sky.Release();
+}
+
 void TomatoBossStage::ColliderLoad()
 {
 	// 地面の当たり判定

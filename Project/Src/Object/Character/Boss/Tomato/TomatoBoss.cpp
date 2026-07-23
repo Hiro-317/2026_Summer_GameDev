@@ -3,7 +3,7 @@
 #include "../../../../Application/Application.h"
 
 #include "../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../Manager/Font/FontManager.h"
+#include "../../../../Manager/Sound/SoundManager.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -28,10 +28,6 @@
 
 TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
-		"HP",
-		"AttackPower",
-		"DefensePower",
-		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Tomato/",
 		"Tomato/Tomato",
 
@@ -39,6 +35,7 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::v
 {
 	coolTime = DEFAULT_COOLTIME;
 	rockHit = false;
+	Snd::GetIns().AddScene("TomatoBoss");
 }
 
 void TomatoBoss::PlayerLoad(void)
@@ -286,7 +283,7 @@ void TomatoBoss::ReceptionUpdate(void)
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
 		{
 			SubObjSerch<TomatoStampCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<TomatoStampCollOperator>()->SetScale(dataPtr->scale.x);
+			SubObjSerch<TomatoStampCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:

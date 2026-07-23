@@ -55,6 +55,7 @@ public:
 protected:
 
     void SubDraw(void)override;
+    void SubRelease(void)override;
 
 private:
 
