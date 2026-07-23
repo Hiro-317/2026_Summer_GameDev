@@ -27,7 +27,7 @@ public:
     /// </summary>
     /// <param name="damage">表示するダメージ値</param>
     /// <param name="isCritical">会心ならば true / 非会心ならば false</param>
-    void DamageSetting(const short damage, const bool isCritical = false);
+    void DamageSetting(const Vector3& collisionPos, const short damage, const bool isCritical = false);
 
     // ミス！を設定
     void MissSetting();

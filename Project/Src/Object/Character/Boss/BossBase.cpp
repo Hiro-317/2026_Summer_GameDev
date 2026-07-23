@@ -235,14 +235,14 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// ホストならそのままUI描画
 			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
-				SubUiSerch<HitUI>()->DamageSetting(damage, isClitical);
+				SubUiSerch<HitUI>()->DamageSetting(collisionPoint, damage, isClitical);
 			}
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
 
 			// ダメージとクリティカル情報を送信する
-			Net::GetIns().Send(MsgDataBossHit(damage, isClitical), other.GetSkillStats().operatorSenderId);
+			Net::GetIns().Send(MsgDataBossHit(collisionPoint, damage, isClitical), other.GetSkillStats().operatorSenderId);
 
 			// 与ダメを足す
 			damaged[static_cast<int>(other.GetSkillStats().operatorSenderId)] += damage;
@@ -332,7 +332,7 @@ void BossBase::ReceptionUpdate(void)
 		characterStats.hp -= dataPtr->damage;
 
 		if (dataPtr->header.senderId == Net::GetIns().GetSenderId()) {
-			SubUiSerch<HitUI>()->DamageSetting(dataPtr->damage, dataPtr->clitical);
+			SubUiSerch<HitUI>()->DamageSetting(dataPtr->collisionPoint, dataPtr->damage, dataPtr->clitical);
 			// クリティカルなら揺らしクリティカル音
 			if (dataPtr->clitical) {
 				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);

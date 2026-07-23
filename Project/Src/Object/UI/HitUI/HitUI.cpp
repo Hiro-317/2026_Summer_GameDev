@@ -1,6 +1,8 @@
 #include "HitUI.h"
 #include "../../../pch.h"
 
+#include "../../../Manager/Camera/Camera.h"
+
 HitUI::HitUI(Vector3& targetPos) :
     UI_Base(),
     targetPos(targetPos)
@@ -38,15 +40,11 @@ void HitUI::SubRelease(void)
     damageUiList.clear();
 }
 
-void HitUI::DamageSetting(const short damage, const bool isCritical)
+void HitUI::DamageSetting(const Vector3& collisionPos, const short damage, const bool isCritical)
 {
-    Vector2 drawPos = Vector2(
-        App::SCREEN_SIZE_X_HALF + GetRand(200) - 100,
-        App::SCREEN_SIZE_Y_HALF + GetRand(100) - 50
-    );
-
- //   VECTOR drawPos = ConvWorldPosToScreenPos(targetPos.ToVECTOR());
-	//Vector2 drawPos2D = Vector2(drawPos.x + GetRand(200) - 100, drawPos.y + GetRand(100) - 50);
+    Camera::GetIns().Apply();
+    Vector3 temp = ConvWorldPosToScreenPos(collisionPos.ToVECTOR());
+    Vector2 drawPos = Vector2(temp.x, temp.y);
 
     // ダメージ値の設定
     AddPopup(

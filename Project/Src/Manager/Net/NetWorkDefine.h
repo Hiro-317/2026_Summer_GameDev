@@ -889,17 +889,20 @@ struct MsgDataBossHit
 
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
+    Vector3 collisionPoint;
     int damage;
     bool clitical;
 
-    MsgDataBossHit(const int& damage, const bool& clitical) :
+    MsgDataBossHit(const Vector3& collisionPoint, const int& damage, const bool& clitical) :
         header(DATA_TYPE),
+        collisionPoint(collisionPoint),
         damage(damage),
         clitical(clitical)
     {
     }
     MsgDataBossHit(void) :
         header(DATA_TYPE),
+        collisionPoint(),
         damage(),
         clitical()
     {
