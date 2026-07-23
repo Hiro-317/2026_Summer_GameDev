@@ -112,7 +112,7 @@ void CharacterHpUI::SubDraw()
 	if (PATH_TYPE != FILE_PATH_TYPE::PLAYER_HP) { return; }
 
 	Vector2I iconPos = {
-		uiPos.x - 50,
+		uiPos.x - 35,
 		uiPos.y + HP_IMAGE_SIZE.y / 2
 	};
 
@@ -120,7 +120,7 @@ void CharacterHpUI::SubDraw()
 		iconPos.x,
 		iconPos.y,
 		1,
-		0.0f,
+		0,
 		uiImages.at((int)IMAGE_KINDS::ICON_BACK),
 		true
 	);
@@ -129,7 +129,7 @@ void CharacterHpUI::SubDraw()
 		iconPos.x,
 		iconPos.y,
 		1,
-		0.0f,
+		0,
 		uiImages.at((int)IMAGE_KINDS::ICON_CHARA),
 		true
 	);
@@ -138,7 +138,7 @@ void CharacterHpUI::SubDraw()
 		iconPos.x,
 		iconPos.y,
 		1,
-		0.0f,
+		0,
 		uiImages.at((int)IMAGE_KINDS::ICON_FRAME),
 		true
 	);
