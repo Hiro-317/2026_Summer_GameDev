@@ -258,7 +258,10 @@ protected:
 	// 味方プレイヤー内のターゲット参照座標
 	const Vector3* targetPlayerPos;
 
-#pragma endregion
+	// HPバー座標からアイコンまでの相対座標
+	const Vector2I ICON_LOCAL_POS = Vector2I(-49, HP_IMAGE_SIZE.y / 2);
+	
+	Vector2I targetIconPos;
 
 
 #pragma region 関数定義

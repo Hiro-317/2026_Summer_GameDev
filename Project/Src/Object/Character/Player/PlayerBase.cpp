@@ -347,11 +347,17 @@ void PlayerBase::TargetPlayerNext(void)
 
 	// ターゲットが自分なら、自分の座標を入れる。
 	// 他プレイヤーがターゲットなら、そのプレイヤーの座標を代入
-	if (targetPlayerIndex == (unsigned char)Net::GetIns().GetSenderId()) { targetPlayerPos = &trans.pos; }
+	if (targetPlayerIndex == 0) { targetPlayerPos = &trans.pos; }
 	else {
-		if (otherPlayerTrans.size() > targetPlayerIndex - 1) {
+		if (otherPlayerTrans.size() >= targetPlayerIndex) {
 			targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
 		}
+	}
+
+	targetIconPos = HP_UI_POS[targetPlayerIndex] + ICON_LOCAL_POS;
+
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerToPlayerTarget((unsigned char)targetPlayerIndex), operatorSenderId);
 	}
 }
 
@@ -421,6 +427,23 @@ void PlayerBase::ReceptionUpdate(void)
 	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(operatorSenderId)) {
 		characterStats.AddModifier(dataPtr->modifier);
 		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0.0f, &trans);
+		delete dataPtr;
+	}
+
+	// 味方ターゲット変更
+	while (MsgDataPlayerToPlayerTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerToPlayerTarget>(operatorSenderId)) {
+
+		targetPlayerIndex = dataPtr->targetIndex;
+
+		// ターゲットが自分なら、自分の座標を入れる。
+		// 他プレイヤーがターゲットなら、そのプレイヤーの座標を代入
+		if (targetPlayerIndex == 0) { targetPlayerPos = &trans.pos; }
+		else {
+			if (otherPlayerTrans.size() >= targetPlayerIndex) {
+				targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
+			}
+		}
+
 		delete dataPtr;
 	}
 

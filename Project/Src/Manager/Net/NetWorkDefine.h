@@ -49,6 +49,8 @@ enum class MSG_DATA_TYPE
     PlayerHeal,
     // <ホスト>プレイヤー：バフ・デバフ
     PlayerModifier,
+    // <クライアント>プレイヤー：味方ターゲット
+    PlayerToPlayerTarget,
     // <ホスト>プレイヤー：ミスUIパケット
     PlayerMissNotice,
     // <クライアント>プレイヤー：状態
@@ -658,6 +660,33 @@ struct MsgDataPlayerModifier
     MsgDataPlayerModifier(void) :
         header(DATA_TYPE),
         modifier()
+    {
+    }
+};
+
+// <クライアント>味方へのターゲット
+struct MsgDataPlayerToPlayerTarget
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerToPlayerTarget;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // ターゲットインデックス
+    unsigned char targetIndex;
+
+    MsgDataPlayerToPlayerTarget(unsigned char targetIndex) :
+        header(DATA_TYPE),
+        targetIndex(targetIndex)
+    {
+    }
+    MsgDataPlayerToPlayerTarget(void) :
+        header(DATA_TYPE),
+        targetIndex()
     {
     }
 };

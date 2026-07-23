@@ -21,10 +21,7 @@ CharacterHpUI::CharacterHpUI(
 	const Vector2I HP_UI_POS,
 
 	const FILE_PATH_TYPE PATH_TYPE,
-	const std::string CHARA_NAME,
-
-	const char& targetIndex
-
+	const std::string CHARA_NAME
 ) :
 	hp(hp),
 	HP_MAX(HP_MAX),
@@ -42,8 +39,6 @@ CharacterHpUI::CharacterHpUI(
 
 	PATH_TYPE(PATH_TYPE),
 	CHARA_NAME(CHARA_NAME),
-
-	targetIndex(targetIndex),
 
 	hpRatio(0.0f),
 	hpBarOffset(0.0f),
@@ -64,10 +59,6 @@ void CharacterHpUI::Load(void)
 		UILoadImage(ICON_CHARA_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_CHARA,	PATH_TYPE);
 		UILoadImage(ICON_FRAME_IMAGE_NAME,	(int)IMAGE_KINDS::ICON_FRAME,	PATH_TYPE);
 		UILoadImage(ICON_SELECT_IMAGE_NAME, (int)IMAGE_KINDS::ICON_BACK,	PATH_TYPE);
-
-		if (targetIndex != -1) {
-			UILoadImage("PlayerToNowSelect", (int)IMAGE_KINDS::ICON_SELECT, PATH_TYPE);
-		}
 	}
 
 }
@@ -128,7 +119,7 @@ void CharacterHpUI::SubDraw()
 	DrawRotaGraph(
 		iconPos.x,
 		iconPos.y,
-		ICON_EX_RATE,
+		1,
 		0.0f,
 		uiImages.at((int)IMAGE_KINDS::ICON_BACK),
 		true
@@ -137,7 +128,7 @@ void CharacterHpUI::SubDraw()
 	DrawRotaGraph(
 		iconPos.x,
 		iconPos.y,
-		ICON_EX_RATE,
+		1,
 		0.0f,
 		uiImages.at((int)IMAGE_KINDS::ICON_CHARA),
 		true
@@ -146,22 +137,11 @@ void CharacterHpUI::SubDraw()
 	DrawRotaGraph(
 		iconPos.x,
 		iconPos.y,
-		ICON_EX_RATE,
+		1,
 		0.0f,
 		uiImages.at((int)IMAGE_KINDS::ICON_FRAME),
 		true
 	);
-
-	if (targetIndex == (unsigned char)Net::GetIns().GetSenderId()) {
-		DrawRotaGraph(
-			iconPos.x, 
-			iconPos.y, 
-			ICON_EX_RATE, 
-			0.0f, 
-			uiImages.at((int)IMAGE_KINDS::ICON_SELECT), 
-			true
-		);
-	}
 }
 
 void CharacterHpUI::SubRelease()
