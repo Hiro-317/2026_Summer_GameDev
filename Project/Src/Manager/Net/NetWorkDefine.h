@@ -49,6 +49,8 @@ enum class MSG_DATA_TYPE
     PlayerHeal,
     // <ホスト>プレイヤー：バフ・デバフ
     PlayerModifier,
+    // <クライアント>プレイヤー：味方ターゲット
+    PlayerToPlayerTarget,
     // <ホスト>プレイヤー：ミスUIパケット
     PlayerMissNotice,
     // <クライアント>プレイヤー：状態
@@ -662,6 +664,33 @@ struct MsgDataPlayerModifier
     }
 };
 
+// <クライアント>味方へのターゲット
+struct MsgDataPlayerToPlayerTarget
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerToPlayerTarget;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // ターゲットインデックス
+    unsigned char targetIndex;
+
+    MsgDataPlayerToPlayerTarget(unsigned char targetIndex) :
+        header(DATA_TYPE),
+        targetIndex(targetIndex)
+    {
+    }
+    MsgDataPlayerToPlayerTarget(void) :
+        header(DATA_TYPE),
+        targetIndex()
+    {
+    }
+};
+
 
 // <ホスト>当たり判定情報送信構造体
 struct MsgDataPlayerCollOperator
@@ -860,17 +889,20 @@ struct MsgDataBossHit
 
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
+    Vector3 collisionPoint;
     int damage;
     bool clitical;
 
-    MsgDataBossHit(const int& damage, const bool& clitical) :
+    MsgDataBossHit(const Vector3& collisionPoint, const int& damage, const bool& clitical) :
         header(DATA_TYPE),
+        collisionPoint(collisionPoint),
         damage(damage),
         clitical(clitical)
     {
     }
     MsgDataBossHit(void) :
         header(DATA_TYPE),
+        collisionPoint(),
         damage(),
         clitical()
     {

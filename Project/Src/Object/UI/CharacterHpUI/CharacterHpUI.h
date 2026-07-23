@@ -16,8 +16,6 @@ class CharacterHpUI : public UI_Base
 {
 public:
 
-	static constexpr float ICON_EX_RATE = 0.173f;
-
 	// コンストラクタ
 	CharacterHpUI(
 		const short& hp,
@@ -35,9 +33,7 @@ public:
 		const Vector2I HP_UI_POS,
 
 		const FILE_PATH_TYPE PATH_TYPE,
-		const std::string CHARA_NAME,
-
-		const char& targetIndex = -1
+		const std::string CHARA_NAME
 	);	
 
 	//デストラクタ
@@ -60,7 +56,6 @@ private:
 		ICON_CHARA,
 		ICON_FRAME,
 		ICON_BACK,
-		ICON_SELECT,
 
 		MAX
 	};
@@ -101,8 +96,6 @@ private:
 
 	float damageBarOffset;	// ダメージを受けた時に描画されるバー
 	float damageBarAxcel;
-
-	const  char& targetIndex;
 #pragma endregion 変数定義
 
 };

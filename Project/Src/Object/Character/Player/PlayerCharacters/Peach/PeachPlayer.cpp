@@ -9,6 +9,7 @@
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
+#include "../../../../UI/ToPlayerTargetUI/ToPlayerTargetUI.h"
 #include "../../../../UI/HitUI/HitUI.h"
 
 PeachPlayer::PeachPlayer(MSG_SENDER_ID operatorSenderId) :
@@ -235,14 +236,13 @@ void PeachPlayer::PlayerLoad(void)
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
 			"PeachIcon",
-			"P" + std::to_string(number + 1) + "Frame",
-			"P" + std::to_string(number + 1) + "Back",
+			"P" + std::to_string((int)operatorSenderId + 1) + "Frame",
+			"P" + std::to_string((int)operatorSenderId + 1) + "Back",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS[number],
 			FILE_PATH_TYPE::PLAYER_HP,
-			"",
-			targetPlayerIndex
+			""
 		)
 	);
 
@@ -289,6 +289,8 @@ void PeachPlayer::PlayerLoad(void)
 				"SkillSlotSimpleAttack"
 			)
 		);
+
+		ui_ArrayIns.emplace_back(new ToPlayerTargetUI(targetIconPos));
 	}
 
 	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
