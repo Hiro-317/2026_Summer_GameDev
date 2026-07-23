@@ -37,6 +37,7 @@ void Application::Init(void)
 {
 	// アプリケーションの初期設定
 	SetWindowText("");
+	SetWindowIconID(123);
 
 	// ウィンドウ関連
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);	// サイズ変更
