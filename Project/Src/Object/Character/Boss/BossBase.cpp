@@ -135,10 +135,6 @@ void BossBase::CharacterInit(void)
 void BossBase::CharacterUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
-	// HPがゼロ以下になったら死亡状態に遷移
-	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
-		ChangeState((int)STATE::DEATH);
-	}
 
 	// プレイヤーの生存判定をする
 	for (int i = 0; i < playerLive.size(); i++) {
@@ -236,7 +232,10 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
-
+			// HPがゼロ以下になったら死亡状態に遷移
+			if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
+				ChangeState((int)STATE::DEATH);
+			}
 			// ダメージとクリティカル情報を送信する
 			Net::GetIns().Send(MsgDataBossHit(collisionPoint, damage, isClitical), other.GetSkillStats().operatorSenderId);
 

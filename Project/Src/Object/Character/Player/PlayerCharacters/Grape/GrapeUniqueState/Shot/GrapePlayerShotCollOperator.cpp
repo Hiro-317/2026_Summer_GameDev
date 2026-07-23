@@ -90,7 +90,7 @@ void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 	{
 	case COLLIDER_TAG::BOSS:
 	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+	case COLLIDER_TAG::BOSS_DISTANCE:
 		isHit = true;
 		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
 		SetIsDraw(false);
