@@ -15,7 +15,8 @@ GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	playerPos(playerPos), playerAngle(playerAngle),
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
-	isHit(false)
+	isHit(false),
+	isAttackTargetFind(false)
 {
 }
 
@@ -32,36 +33,59 @@ void GrapePlayerBombCollOperator::Load(void)
 	// 衝突時の押し出しを無効にする
 	SetPushFlg(false);
 
-	SetIsDraw(false);
-
 #pragma endregion
 
 	// コライダー生成
 	ColliderCreate(new SphereCollider(COLL_TAG, 500.0f));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 100.0f));
 
 	// 初期化処理
 	SetJudge(false);
 	isHit = false;
+	isAttackTargetFind = false;
+
+	// 最初は描画しない
+	SetIsDraw(false);
 
 	// スキルのダメージ量の設定
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
 	trans.Load("Character/Grape/Bomb");
+	trans.scale = 0.2f;
 }
 
 void GrapePlayerBombCollOperator::Update(void)
 {
+	if (isHit) {
+		CollOff();
+	}
 }
 
 void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
-	switch (other.GetTag())
-	{
-	case COLLIDER_TAG::BOSS:
-	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
-		isHit = true;
-		break;
-	default:break;
+	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
+		// 攻撃の当たり判定
+		switch (other.GetTag())
+		{
+		case COLLIDER_TAG::BOSS:
+		case COLLIDER_TAG::ENEMY:
+		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+			isAttackTargetFind = true;
+			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+			break;
+		default:break;
+		}
+	}
+	else {
+		// 攻撃の当たり判定
+		switch (other.GetTag())
+		{
+		case COLLIDER_TAG::BOSS:
+		case COLLIDER_TAG::ENEMY:
+		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
+			isHit = true;
+			break;
+		default:break;
+		}
 	}
 }

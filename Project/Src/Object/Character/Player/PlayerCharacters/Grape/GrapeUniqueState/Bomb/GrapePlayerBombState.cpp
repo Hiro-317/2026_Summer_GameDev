@@ -7,14 +7,16 @@ GrapePlayerBombState::GrapePlayerBombState(
 	const std::function<bool(void)>& isOwnState,
 	GrapePlayerBombCollOperator& collOperator,
 	const int COOL_TIME,
-	const float ATTACK_TIME,
+	const int ATTACK_COUNT_TIME,
+	const int ATTACK_START_TIME,
 	Vector3& pos,
 	const std::function<void(void)> DefaultChangeState
 ) :
 	CharacterStateBase(ownChangeState, isOwnState),
 	collOperator(collOperator),
 	COOL_TIME(COOL_TIME),
-	ATTACK_TIME(ATTACK_TIME),
+	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
+	ATTACK_START_TIME(ATTACK_START_TIME),
 	pos(pos),
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
@@ -35,44 +37,60 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 
 void GrapePlayerBombState::Enter(void)
 {
+	// 
 	isInit = true;
-
+	
 	// すべて初期化
 	collOperator.CollOff();
 	collOperator.ResetIsHit();
-
-	// クールタイムをセット
-	coolTimeCounter = COOL_TIME;
+	collOperator.ResetIsTargetFind();
+	collOperator.SetIsBombDraw(true);
+	collOperator.SetIsEnemySerch(false);
 
 	// 爆弾の設置場所を設定
 	collOperator.SetPos();
 
+	// クールタイムをセット
+	coolTimeCounter = COOL_TIME;
+
 	// タイマーを開始
-	timeCounter = 1200;
+	timeCounter = ATTACK_COUNT_TIME;
+
+	// 設置完了したので、ステート遷移処理
 	DefaultChangeState();
 }
 
 void GrapePlayerBombState::AlwaysUpdate(void)
 {
-#pragma region 爆発処理
-	
-	// タイマースタート
-	if (timeCounter > 0) {
-		timeCounter--;
-	}
-
-	if (timeCounter > 1000) {
-
-	}
-
-	if (collOperator.GetIsHit()) {
-		collOperator.CollOff();
-	}
-#pragma endregion 
-
 	// 自身の状態でないときは、攻撃のクールタイムを減らす
 	if (!IsOwnState()) {
 		// 攻撃のクールタイムを減らす
 		if (coolTimeCounter > 0) { coolTimeCounter--; }
 	}
+
+#pragma region 設置後の処理
+	if (collOperator.GetIsHit() || timeCounter == 0) { 
+		return; 
+	}
+
+	// タイマースタート
+	if (timeCounter > 1) { 
+		timeCounter--; 
+		collOperator.SetIsBombDraw(true);
+	}
+
+	// 設置してから二十秒後
+	if (timeCounter < (ATTACK_COUNT_TIME - ATTACK_START_TIME)) {
+		// 敵を探し始める
+		collOperator.SetIsEnemySerch(true);
+	}
+
+	// タイマーが終了するか、爆弾の範囲内に敵が入ったら爆発する
+	if (timeCounter == 1 || collOperator.GetIsAttackTargetFind()) {
+		collOperator.CollOn();
+		collOperator.SetIsBombDraw(false);
+		timeCounter = 0;
+	}
+
+#pragma endregion 
 }

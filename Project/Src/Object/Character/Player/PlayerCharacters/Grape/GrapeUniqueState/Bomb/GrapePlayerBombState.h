@@ -14,7 +14,8 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		GrapePlayerBombCollOperator& collOperator,
 		const int COOL_TIME,
-		const float ATTACK_TIME,
+		const int ATTACK_COUNT_TIME,
+		const int ATTACK_START_TIME,
 		Vector3& pos,
 		const std::function<void(void)> DefaultChangeState
 	);
@@ -31,16 +32,17 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
-
 private:
 #pragma region 定数定義
 
 	// クールタイム
 	const int COOL_TIME;
 
-	// 突進してから終了までのカウントタイム
-	const float ATTACK_TIME;
+	// 爆発するまでのカウント時間
+	const float ATTACK_COUNT_TIME;
 
+	// 爆弾待機時間
+	const float ATTACK_START_TIME; 
 #pragma endregion 
 
 #pragma region 変数定義

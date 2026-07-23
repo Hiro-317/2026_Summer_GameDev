@@ -34,25 +34,40 @@ public:
 
 	// 攻撃の判定を発生させる
 	void CollOn(void) {
-		if (!isHit)SetJudge(true);
+		if (!isHit) ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
+		SetIsEnemySerch(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
 		}
 	}
 	// 攻撃の判定を消す
 	void CollOff(void) {
-		SetJudge(false);
+		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
 		}
 	}
 
+	// 敵を探す
+	void SetIsEnemySerch(bool isJudge) {
+		if (GetIsHit()) { return; }
+		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
+	}
+
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }
+	void ResetIsTargetFind(void) { isAttackTargetFind = false; }
 
 	// 攻撃ヒット管理フラグを取得する
 	const bool GetIsHit(void) { return isHit; }
 
+	// 攻撃対象を見つけたかどうか
+	const bool GetIsAttackTargetFind(void) { return isAttackTargetFind; }
+
+	// 爆弾の描画するかどうか
+	void SetIsBombDraw(bool isDraw_) { SetIsDraw(isDraw_); }
+
+	// プレイヤーの位置に爆弾を設置する
 	void SetPos(void) {
 		trans.pos = playerPos;
 	}
@@ -83,4 +98,6 @@ private:
 
 	// 攻撃のヒット管理のフラグ
 	bool isHit;
+
+	bool isAttackTargetFind;
 };

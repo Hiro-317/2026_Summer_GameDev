@@ -46,7 +46,7 @@ void GrapePlayer::PlayerLoad(void)
 	subObjArray.emplace_back(
 		new GrapePlayerBombCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			100,
+			SKILL1_ATTACK_RATE,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
@@ -57,7 +57,7 @@ void GrapePlayer::PlayerLoad(void)
 
 #pragma region 状態設定
 
-
+	// 設置型爆弾
 	AddState(
 		(int)STATE::SKILL_1,
 		new GrapePlayerBombState(
@@ -66,8 +66,12 @@ void GrapePlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
 			*SubObjSerch<GrapePlayerBombCollOperator>(),
-			60,
-			120,
+			// クールタイム
+			SKILL1_COOL_TIME,
+			// 爆発するまでの時間
+			ATTACK_COUNT_TIME,
+			// 爆弾の待機時間
+			ATTACK_START_TIME,
 			trans.pos,
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -164,8 +168,8 @@ void GrapePlayer::PlayerLoad(void)
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
 			"TomatoIcon",
-			"P1Frame",
-			"P1Back",
+			"P" + std::to_string(number + 1) + "Frame",
+			"P" + std::to_string(number + 1) + "Back",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS[number],
@@ -185,16 +189,16 @@ void GrapePlayer::PlayerLoad(void)
 			)
 		);
 
-		//// スキル1のUI
-		//ui_ArrayIns.emplace_back(
-		//	new PlayerSkillUI(
-		//		SKILL1_UI_DRAW_POS,
-		//		dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-		//		SKILL_1_COOL_TIME,
-		//		PlayerSkillUI::SKILL_UI_COLOR::RED,
-		//		"SkillSlotSimpleAttack"
-		//	)
-		//);
+		// スキル1のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL1_UI_DRAW_POS,
+				dynamic_cast<GrapePlayerBombState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				1800,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				"SkillSlotSimpleAttack"
+			)
+		);
 
 		//// スキル1のUI
 		//ui_ArrayIns.emplace_back(
