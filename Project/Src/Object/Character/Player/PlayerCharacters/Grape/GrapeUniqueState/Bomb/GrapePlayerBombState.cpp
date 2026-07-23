@@ -10,6 +10,8 @@ GrapePlayerBombState::GrapePlayerBombState(
 	const int ATTACK_COUNT_TIME,
 	const int ATTACK_START_TIME,
 	Vector3& pos,
+	const std::function<void(void)> BombFallAnime,
+	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState
 ) :
 	CharacterStateBase(ownChangeState, isOwnState),
@@ -18,6 +20,8 @@ GrapePlayerBombState::GrapePlayerBombState(
 	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
 	ATTACK_START_TIME(ATTACK_START_TIME),
 	pos(pos),
+	BombFallAnime(BombFallAnime),
+	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
 	isInit(false)
@@ -56,8 +60,15 @@ void GrapePlayerBombState::Enter(void)
 	// タイマーを開始
 	timeCounter = ATTACK_COUNT_TIME;
 
-	// 設置完了したので、ステート遷移処理
-	DefaultChangeState();
+	// アニメーションを再生
+	BombFallAnime();
+}
+
+void GrapePlayerBombState::Update(void)
+{
+	if (IsAnimeEnd()) {
+		DefaultChangeState();
+	}
 }
 
 void GrapePlayerBombState::AlwaysUpdate(void)

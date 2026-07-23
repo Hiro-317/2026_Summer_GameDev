@@ -4,8 +4,10 @@
 #include "../../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 #include "GrapeUniqueState/Bomb/GrapePlayerBombState.h"
+#include "GrapeUniqueState/Shot/GrapePlayerShotState.h"
 
 #include "GrapeUniqueState/Bomb/GrapePlayerBombCollOperator.h"
+#include "GrapeUniqueState/Shot/GrapePlayerShotCollOperator.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -53,6 +55,16 @@ void GrapePlayer::PlayerLoad(void)
 		)
 	);
 
+	subObjArray.emplace_back(
+		new GrapePlayerShotCollOperator(
+			COLLIDER_TAG::PLAYER_ATTACK,
+			100,
+			trans.pos,trans.angle,
+			operatorSenderId,
+			characterStats
+		)
+	);
+
 #pragma endregion 
 
 #pragma region 状態設定
@@ -72,10 +84,31 @@ void GrapePlayer::PlayerLoad(void)
 			ATTACK_COUNT_TIME,
 			// 爆弾の待機時間
 			ATTACK_START_TIME,
+			// プレイヤーの座標
 			trans.pos,
+			[&]() { AnimePlay((int)ANIME_TYPE::KICK_DOWN, false); },
+			[&]() { return IsAnimeEnd(); },
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
+
+	AddState(
+		(int)STATE::SKILL_3,
+		new GrapePlayerShotState(
+			[&]() { ChangeState((int)STATE::SKILL_3); },
+			[&]() { return state == (int)STATE::SKILL_3; },
+			*SubObjSerch<GrapePlayerShotCollOperator>(),
+			120,
+			trans.pos, trans.angle,
+			bossPos,
+			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
+			[&]() { return IsAnimeEnd(); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	bossPos;
 
 	// 移動状態を追加する
 	AddState(
@@ -141,7 +174,7 @@ void GrapePlayer::PlayerLoad(void)
 	//// 移動状態 -> スキル2 の遷移を登録
 	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	//// 移動状態 -> スキル3 の遷移を登録
-	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion 
 
@@ -211,16 +244,16 @@ void GrapePlayer::PlayerLoad(void)
 		//	)
 		//);
 
-		//// スキル1のUI
-		//ui_ArrayIns.emplace_back(
-		//	new PlayerSkillUI(
-		//		SKILL3_UI_DRAW_POS,
-		//		dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-		//		60,
-		//		PlayerSkillUI::SKILL_UI_COLOR::RED,
-		//		"SkillSlotSimpleAttack"
-		//	)
-		//);
+		// スキル3のUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL3_UI_DRAW_POS,
+				dynamic_cast<GrapePlayerShotState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+				120,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				"SkillSlotSimpleAttack"
+			)
+		);
 	}
 
 	// ミスUIの生成

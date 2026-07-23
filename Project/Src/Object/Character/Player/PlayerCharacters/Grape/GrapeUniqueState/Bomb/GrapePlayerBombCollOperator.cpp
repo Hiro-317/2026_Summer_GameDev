@@ -1,5 +1,6 @@
 #include "GrapePlayerBombCollOperator.h"
 
+#include "../../../../../../../Manager/Effect/EffectManager.h"
 #include "../../../../../../Common/Collider/SphereCollider.h"
 
 GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
@@ -84,6 +85,7 @@ void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::TOMATO_BOSS_DISTANCE:
 			isHit = true;
+			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos);
 			break;
 		default:break;
 		}
