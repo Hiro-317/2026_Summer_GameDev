@@ -24,9 +24,10 @@ public:
 
 		// 取得したキャラを生成
 		switch (chara) {
-		case CHARA_TYPE::Orange: { ret.instance = new GrapePlayer(id); break; }	// オレンジ
+		case CHARA_TYPE::Orange: { ret.instance = new OrangePlayer(id); break; }	// オレンジ
 		case CHARA_TYPE::Tomato: { ret.instance = new TomatoPlayer(id); break; }	// トマト
 		case CHARA_TYPE::Peach: { ret.instance = new PeachPlayer(id); break; }	// トマト
+		case CHARA_TYPE::Grape: { ret.instance = new GrapePlayer(id); break; }	// ブドウ
 		default: { ret.instance = nullptr; break; }
 		}
 

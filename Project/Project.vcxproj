@@ -360,6 +360,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.h" />
+    <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Grape\GrapeCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Orange\OrangeCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Peach\PeachCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Tomato\TomatoCharaSelectPreview.h" />
@@ -386,6 +387,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.h" />
+    <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Grape\LobbyCharaPreviewGrape.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Orange\LobbyCharaPreviewOrange.h" />
