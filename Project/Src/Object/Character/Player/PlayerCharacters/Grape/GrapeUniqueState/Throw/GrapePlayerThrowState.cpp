@@ -43,7 +43,10 @@ void GrapePlayerThrowState::Enter(void)
 	PlayAnime();
 
 	collOperator.SetInit();
+}
 
+void GrapePlayerThrowState::Update(void)
+{
 	// “Ëi•ûŒü‚Ìæ“¾
 	moveDir = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
 	// ƒ{ƒX‚Ö‚Ì•ûŒü‚ğæ“¾
@@ -58,10 +61,7 @@ void GrapePlayerThrowState::Enter(void)
 	if (AnimeRatio() < 0.3f) {
 		collOperator.SetTargetVec(moveDir);
 	}
-}
 
-void GrapePlayerThrowState::Update(void)
-{
 	if (IsAnimeEnd()) {
 		DefaultChangeState();
 	}

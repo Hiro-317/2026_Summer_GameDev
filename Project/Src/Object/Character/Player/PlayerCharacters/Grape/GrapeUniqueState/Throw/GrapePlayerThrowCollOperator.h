@@ -26,8 +26,6 @@ public:
 
 	// ロード
 	void Load(void)override;
-	// 更新処理
-	void Update(void)override;
 
 	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
@@ -58,14 +56,11 @@ public:
 		targetVec = vec;
 	}
 
-	void SetInit(void) {
-		trans.pos = playerPos;
-		trans.pos.y = trans.pos.y + 100.0f;
-		SetIsDraw(true);
-		gravity = 10.0f;
-		ResetIsHit();
-	}
+	void SetInit(void);
 private:
+
+	// 更新処理
+	void SubUpdate(void)override;
 
 #pragma region 定数
 
@@ -96,4 +91,8 @@ private:
 	Vector3 targetVec;
 
 	float gravity;
+
+	float bouncePower;
+
+	bool isBounce = false;
 };

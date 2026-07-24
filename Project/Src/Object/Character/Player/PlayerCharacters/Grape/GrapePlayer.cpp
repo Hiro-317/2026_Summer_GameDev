@@ -60,7 +60,7 @@ void GrapePlayer::PlayerLoad(void)
 	subObjArray.emplace_back(
 		new GrapePlayerShotCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			200,
+			250,
 			trans.pos,trans.angle,
 			operatorSenderId,
 			characterStats
@@ -70,7 +70,7 @@ void GrapePlayer::PlayerLoad(void)
 	subObjArray.emplace_back(
 		new GrapePlayerThrowCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			300,
+			560,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
@@ -110,7 +110,7 @@ void GrapePlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::SKILL_2); },
 			[&]() { return state == (int)STATE::SKILL_2; },
 			*SubObjSerch<GrapePlayerThrowCollOperator>(),
-			120,
+			240,
 			trans.pos, trans.angle,
 			bossPos,
 			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
@@ -266,7 +266,7 @@ void GrapePlayer::PlayerLoad(void)
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
 				dynamic_cast<GrapePlayerThrowState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-				120,
+				240,
 				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
 				"SkillSlotGrapeBombThrow"
 			)

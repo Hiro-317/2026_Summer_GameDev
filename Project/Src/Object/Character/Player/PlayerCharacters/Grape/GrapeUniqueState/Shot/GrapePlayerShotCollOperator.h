@@ -77,7 +77,7 @@ private:
 	// UŒ‚‚Ì’iŠK‚²‚Æ‚Ìƒ^ƒO
 	COLLIDER_TAG COLL_TAG;
 
-	const short LIFE_TIME = 60;
+	const short LIFE_TIME = 40;
 
 #pragma endregion
 
