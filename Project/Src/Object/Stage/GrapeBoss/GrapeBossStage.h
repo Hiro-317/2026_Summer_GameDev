@@ -25,11 +25,14 @@ private:
 
     const std::vector<ColliderInfo> WALL_COLLISION_INFO =
     {
-        { GetParameterToVector3("Collider","WallCollPos1"), GetParameterToVector3("Collider","WallCollSize1"), Deg2Rad(GetParameter("Collider","WallCollYAngle1")) },
-        { GetParameterToVector3("Collider","WallCollPos2"), GetParameterToVector3("Collider","WallCollSize2"), Deg2Rad(GetParameter("Collider","WallCollYAngle2")) },
-        { GetParameterToVector3("Collider","WallCollPos3"), GetParameterToVector3("Collider","WallCollSize3"), Deg2Rad(GetParameter("Collider","WallCollYAngle3")) },
-        { GetParameterToVector3("Collider","WallCollPos4"), GetParameterToVector3("Collider","WallCollSize4"), Deg2Rad(GetParameter("Collider","WallCollYAngle4")) },
-        { GetParameterToVector3("Collider","WallCollPos5"), GetParameterToVector3("Collider","WallCollSize5"), Deg2Rad(GetParameter("Collider","WallCollYAngle5")) },
+        { GetParameterToVector3("Collider","WallCollPos1"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle1")) },
+        { GetParameterToVector3("Collider","WallCollPos2"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle2")) },
+        { GetParameterToVector3("Collider","WallCollPos3"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle3")) },
+        { GetParameterToVector3("Collider","WallCollPos4"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle4")) },
+        { GetParameterToVector3("Collider","WallCollPos5"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle4")) },
+        { GetParameterToVector3("Collider","WallCollPos6"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle3")) },
+        { GetParameterToVector3("Collider","WallCollPos7"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle2")) },
+        { GetParameterToVector3("Collider","WallCollPos8"), GetParameterToVector3("Collider","WallCollSize"), Deg2Rad(GetParameter("Collider","WallCollYAngle1")) },
     };
 
 #pragma endregion
