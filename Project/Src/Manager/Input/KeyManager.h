@@ -58,6 +58,8 @@ public:
 		// スペシャルスキル（キャラごとの「必殺技」）
 		PLAYER_SPECIAL_SKILL,
 
+		PLAYER_TO_PLAYER_TARGET,
+
 #pragma endregion
 
 #pragma region ロビー操作

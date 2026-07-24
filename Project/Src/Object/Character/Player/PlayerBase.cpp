@@ -160,7 +160,7 @@ void PlayerBase::CharacterUpdate(void)
 	// 下位クラスの更新処理
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::TO_DAMAGE).down) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_TO_PLAYER_TARGET).down) {
 		TargetPlayerNext();
 	}
 

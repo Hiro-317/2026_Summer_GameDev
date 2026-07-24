@@ -32,8 +32,8 @@ private:
 
 	const Vector3 CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::Max] = {
 		Vector3::XZonly(-350.0f, -300.0f),
-		Vector3::XZonly(350.0f, 300.0f),
+		Vector3::XZonly(350.0f, -300.0f),
 		Vector3::XZonly(-700.0f, -600.0f),
-		Vector3::XZonly(700.0f, 600.0f),
+		Vector3::XZonly(700.0f, -600.0f),
 	};
 };
