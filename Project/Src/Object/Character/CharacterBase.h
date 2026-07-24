@@ -149,6 +149,7 @@ protected:
 	bool IsAnimeEnd(void)const { return anime->GetAnimEnd(); }
 
 	float GetAnimeRatio(void)const { return anime->GetAnimeRatio();}
+	float GetAnimeTotalTime(void)const { return anime->GetAnimeTotalTime();}
 
 	int GetAnimePlayType(void)const { return anime->GetPlayType(); }
 

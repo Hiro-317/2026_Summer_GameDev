@@ -1,35 +1,40 @@
 #include "GrapeBossDeathState.h"
 
 #include "../../../../../../Scene/Game/GameScene.h"
+#include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
 GrapeBossDeathState::GrapeBossDeathState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	Vector3& scale, const Vector3& defaultScale,
+	const std::function<void(void)> DeathAnim,
+	const std::function<float(void)> AnimeTotalTime,
+	const std::function<bool(void)> IsAnimEnd,
 	const std::function<void(void)> IsDeath
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	scale(scale), defaultScale(defaultScale),
-	IsDeath(IsDeath)
+	DeathAnim(DeathAnim), AnimeTotalTime(AnimeTotalTime),
+	IsAnimEnd(IsAnimEnd), IsDeath(IsDeath)
 {
 }
 
 void GrapeBossDeathState::Enter(void)
 {
-	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, CHANGE_COUNT);
+	DeathAnim();
+	changeTime = ((int)AnimeTotalTime() + DEATH_LAST_TIME);
+	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, changeTime);
 }
 
 void GrapeBossDeathState::Update(void)
 {
-	if (cnt <= CHANGE_COUNT) {
-
-		float rate = ((float)cnt - SCALE_REVERSE) * ((float)cnt - SCALE_REVERSE);
-		scale = defaultScale * (rate * BOMB_RATE);
-		cnt++;
+	// アニメーションが終わっていたらシーン移行
+	if(changeTime >= cnt){
+		Net::GetIns().Send(MsgDataBossIsDeath(true));
+		IsDeath();
 	}
 	else {
-		IsDeath();
+		// チェンジ用のカウント
+		cnt++;
 	}
 }
 

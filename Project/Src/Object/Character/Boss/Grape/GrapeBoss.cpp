@@ -40,7 +40,7 @@ GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vec
 		playerPos, playerLive)
 {
 
-	coolTime = 12000;
+	coolTime = 120;
 	Snd::GetIns().AddScene("GrapeBoss");
 }
 
@@ -72,7 +72,7 @@ void GrapeBoss::PlayerLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	//subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
+	subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
 	subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
 	subObjArray.push_back(new GrapeStampCollOperator(operatorSenderId, characterStats));
 
@@ -312,8 +312,12 @@ void GrapeBoss::PlayerLoad(void)
 			[&]() { state = static_cast<int>(STATE::DEATH); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::DEATH); },
-			// ボスのサイズ
-			trans.scale, MODEL_SCALE,
+			// ボス死亡アニメーション
+			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			// アニメーションの全体時間
+			[&]() { return GetAnimeTotalTime(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
 			// 死んだフラグを立てる
 			[&]() {	SetIsDeath(true); }
 		)
@@ -459,4 +463,9 @@ void GrapeBoss::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
+}
+
+void GrapeBoss::PlayDamage(void)
+{
+	AnimePlay((int)ANIME_TYPE::DAMAGE, false);
 }

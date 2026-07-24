@@ -232,12 +232,15 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
+			PlayDamage();
+			// ダメージとクリティカル情報を送信する
+			Net::GetIns().Send(MsgDataBossHit(collisionPoint, damage, isClitical), other.GetSkillStats().operatorSenderId);
+
 			// HPがゼロ以下になったら死亡状態に遷移
 			if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 				ChangeState((int)STATE::DEATH);
+				return;
 			}
-			// ダメージとクリティカル情報を送信する
-			Net::GetIns().Send(MsgDataBossHit(collisionPoint, damage, isClitical), other.GetSkillStats().operatorSenderId);
 
 			// 与ダメを足す
 			damaged[static_cast<int>(other.GetSkillStats().operatorSenderId)] += damage;
@@ -314,12 +317,19 @@ void BossBase::ReceptionUpdate(void)
 		// 座標/角度を同期
 		trans.pos = dataPtr->pos;
 		trans.angle = dataPtr->angle;
+		trans.scale = dataPtr->scale;
 		delete dataPtr;
 	}
 
 	// アニメーション
 	while (MsgDataBossAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAnimeType>(operatorSenderId)) {
 		AnimePlay(dataPtr->animeType);
+		delete dataPtr;
+	}
+
+	// 死亡判定
+	while (MsgDataBossIsDeath* dataPtr = Net::GetIns().GetMsgData<MsgDataBossIsDeath>(operatorSenderId)) {
+		SetIsDeath(dataPtr->flg);
 		delete dataPtr;
 	}
 

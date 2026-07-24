@@ -154,6 +154,8 @@ public:
 
 		DrawLine3D(vertices[3].ToVECTOR(), vertices[7].ToVECTOR(), color);
 		// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`ëOñ Ç∆îwñ Çê⁄ë±
+
+		DrawCube3D(vertices[0].ToVECTOR(), vertices[7].ToVECTOR(), 0xffff00, 0xddddff, true);
 	}
 private:
 	Vector3 size;

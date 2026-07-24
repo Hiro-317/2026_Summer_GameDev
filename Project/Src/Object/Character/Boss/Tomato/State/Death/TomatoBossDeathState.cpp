@@ -1,6 +1,7 @@
 #include "TomatoBossDeathState.h"
 
 #include "../../../../../../Scene/Game/GameScene.h"
+#include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
 TomatoBossDeathState::TomatoBossDeathState(
@@ -30,6 +31,7 @@ void TomatoBossDeathState::Update(void)
 		cnt++;
 	}
 	else {
+		Net::GetIns().Send(MsgDataBossIsDeath(true));
 		IsDeath();
 	}
 }

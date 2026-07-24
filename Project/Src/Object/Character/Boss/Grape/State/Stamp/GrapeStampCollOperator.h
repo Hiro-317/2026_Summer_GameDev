@@ -48,6 +48,7 @@ private:
 
 	void SubUpdate(void) override;
 	void SubAlphaDraw(void) override;
+	void SubRelease(void) override;
 
 	Transform collBack;
 	Transform collFront;

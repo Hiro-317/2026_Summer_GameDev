@@ -61,6 +61,7 @@ private:
 protected:
 
 	void AnimePlay(int type, bool loop = true)override;
+	virtual void PlayDamage(void){}
 
 #pragma region ’è”’è‹`
 	// ƒ‚ƒfƒ‹``````````````````````````````

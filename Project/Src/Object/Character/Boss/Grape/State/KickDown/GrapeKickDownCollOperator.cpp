@@ -51,3 +51,9 @@ void GrapeKickDownCollOperator::SubAlphaDraw(void)
 		SetUseLighting(true);
 	}
 }
+
+void GrapeKickDownCollOperator::SubRelease(void)
+{
+	collBack.Release();
+	collFront.Release();
+}
