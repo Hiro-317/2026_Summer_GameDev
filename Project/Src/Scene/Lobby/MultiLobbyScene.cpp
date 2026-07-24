@@ -88,7 +88,7 @@ void MultiLobbyScene::Init(void)
 	ButtonSelectionStateReload();
 
 	// カメラの設定
-	Camera::GetIns().ChangeModeFixedPoint(Vector3(330, 530, -1000), Vector3::Xonly(Deg2Rad(16.0f)));
+	Camera::GetIns().ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 
 	// 自信のキャラクタータイプを初期化する
 	SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));

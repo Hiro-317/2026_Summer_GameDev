@@ -121,6 +121,7 @@
     <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
     <ClCompile Include="Src\Manager\Effect\TackleCharge\TackleCharge.cpp" />
     <ClCompile Include="Src\Scene\Common\Option\OptionScene.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -347,6 +348,7 @@
     <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
     <ClInclude Include="Src\Manager\Effect\TackleCharge\TackleCharge.h" />
     <ClInclude Include="Src\Scene\Common\Option\OptionScene.h" />
+    <ClInclude Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

@@ -3,10 +3,12 @@
 #include "../../../Manager/Input/KeyManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
+#include "../../../Manager/Font/FontManager.h"
 
 #include "../../SceneManager/SceneManager.h"
 
 #include "MatchingLoadingScene.h"
+#include "Password/PasswordScene.h"
 
 MultiPopupScene::MultiPopupScene() : 
 	SceneBase(),
@@ -47,6 +49,11 @@ void MultiPopupScene::Load(void)
 	enterKeyImage[(int)false] = LoadGraph(KEYBOARD_ENTER_KEY_PATH.c_str());
 	enterKeyImage[(int)true] = LoadGraph(CONTROLLER_ENTER_KEY_PATH.c_str());
 
+	passwordFrameImage = LoadGraph(PASSWORD_BACK_PATH.c_str());
+
+	passwordButtonImage[(int)true] = LoadGraph(PASSWORD_CONTROLLER_BUTTON_PATH.c_str());
+	passwordButtonImage[(int)false] = LoadGraph(PASSWORD_KEYBOARD_BUTTON_PATH.c_str());
+
 	// 画面左上に配置するとじるキー
 	exitKeyImage[(int)false] = LoadGraph(KEYBOARD_EXIT_KEY_PATH.c_str());
 	exitKeyImage[(int)true] = LoadGraph(CONTROLLER_EXIT_KEY_PATH.c_str());
@@ -78,6 +85,18 @@ void MultiPopupScene::Update(void)
 		SceneManager::GetIns().PopScene();
 
 		// 以降はthisがnullptrとなっているため終了
+		return;
+	}
+
+	// パスワード入力
+	if (Key::GetIns().GetInfo(KEY_TYPE::MULTI_POP_UP_PASSWORD).down) {
+		// 効果音
+		Snd::GetIns().Play("SystemButton");
+
+		// 専用のシーンを追加する
+		SceneManager::GetIns().PushScene(std::make_shared<PasswordScene>());
+
+		// 安全
 		return;
 	}
 
@@ -168,7 +187,15 @@ void MultiPopupScene::Draw(void)
 	if (CheckHitKey(KEY_INPUT_DOWN) == 1) { tempPos.y++; }
 	if (CheckHitKey(KEY_INPUT_LEFT) == 1) { tempPos.x--; }
 	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x++; }
-	
+
+	DrawRotaGraph(1100, 130, 1, 0, passwordFrameImage, true);
+	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawFormatStringToHandle(
+		1060, 119,
+		0x000000, Font::GetIns().GetFont(FontKinds::DEFAULT_45),
+		std::to_string(Net::GetIns().GetAddressProviderPassword()).c_str()
+	);
+
 	// 選択肢
 	for (int i = 0; i < (int)SELECT::Max; i++) {
 		DrawRotaGraph(SELECT_POS[i].x, SELECT_POS[i].y, (i == (int)select) ? 1 + selectEasing : 1, 0, selectImage[i], true);
@@ -210,6 +237,10 @@ void MultiPopupScene::Release(void)
 
 	// 選択中を示す矢印
 	DeleteGraph(selectArrowImage);
+
+	DeleteGraph(passwordFrameImage);
+	DeleteGraph(passwordButtonImage[(int)true]);
+	DeleteGraph(passwordButtonImage[(int)false]);
 
 	// 選択中のボタンの上に表示する決定キー
 	DeleteGraph(enterKeyImage[(int)true]);

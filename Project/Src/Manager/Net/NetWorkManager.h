@@ -152,6 +152,11 @@ public:
 	// 接続状況を取得
 	const ConnectStatus& GetConnectStatus(void)const { return connectStatus; }
 
+	// あいことば設定
+	unsigned short GetAddressProviderPassword(void)const { return addressProviderPassword; }
+	// あいことば設定
+	void SetAddressProviderPassword(unsigned short password) { addressProviderPassword = password; }
+
 	// 切断要求を送る（ホスト・クライアント共通）
 	void Disconnection(void) {
 		if (state == NetState::None) { return; }
@@ -170,7 +175,7 @@ public:
 
 #pragma region ホスト操作
 	// ホストとして受付開始
-	bool StartHost(unsigned short roomNumber = 0) {
+	bool StartHost(void) {
 		// 接続受付を開始する
 		ENetAddress address = ENetAddress(ENET_HOST_ANY, PORT_NUMBER);
 		host = enet_host_create(&address, (size_t)MSG_SENDER_ID::Max, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
@@ -190,7 +195,7 @@ public:
 		connectStatus.Reset();
 
 		// ブロードキャスト送信のためのUDPソケットを生成する
-		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, roomNumber);
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword);
 
 		// ウィンドウテキストを設定
 		SetWindowText("<ホスト> P1");
@@ -218,10 +223,10 @@ public:
 #pragma region クライアント操作
 
 	// クライアントとして接続
-	void ConnectClient(unsigned short roomNumber = 0) {
+	void ConnectClient(void) {
 		bool socketCreate = false;
 		while (!socketCreate) {
-			hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, roomNumber);
+			hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, addressProviderPassword);
 			socketCreate = hostAddressProvider->SocketCreateResult();
 			if (!socketCreate) {
 				hostAddressProvider->End();
@@ -276,6 +281,8 @@ private:
 
 	// ホストアドレス取得用
 	HostAddressProvider* hostAddressProvider;
+	// アドレス取得用あいことば
+	unsigned short addressProviderPassword;
 
 	// 送信ID
 	MSG_SENDER_ID senderId;
@@ -448,6 +455,9 @@ private:
 
 		// 状態を「未接続」に戻す
 		state = NetState::None;
+
+		// あいことばをリセット
+		addressProviderPassword = 0;
 
 		// ウィンドウテキストを消す
 		SetWindowText("");
