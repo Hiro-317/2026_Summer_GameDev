@@ -80,4 +80,6 @@ void GrapeBossWeaponManager::SubRelease()
 		delete i.weaponIns;
 		i.weaponIns = nullptr;
 	}
+	MV1DeleteModel(frontModel);
+	MV1DeleteModel(backModel);
 }

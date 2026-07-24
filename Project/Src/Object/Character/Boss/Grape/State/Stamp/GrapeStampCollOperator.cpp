@@ -58,3 +58,9 @@ void GrapeStampCollOperator::SubAlphaDraw(void)
 		SetUseLighting(true);
 	}
 }
+
+void GrapeStampCollOperator::SubRelease(void)
+{
+	collBack.Release();
+	collFront.Release();
+}
