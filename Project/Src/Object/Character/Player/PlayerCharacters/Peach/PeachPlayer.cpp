@@ -263,7 +263,7 @@ void PeachPlayer::PlayerLoad(void)
 				SKILL1_UI_DRAW_POS,
 				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
 				SKILL_1_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
 				"SkillSlotSimpleAttack"
 			)
 		);
@@ -285,8 +285,8 @@ void PeachPlayer::PlayerLoad(void)
 				SKILL3_UI_DRAW_POS,
 				dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
 				60,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
-				"SkillSlotSimpleAttack"
+				PlayerSkillUI::SKILL_UI_COLOR::INDIGO,
+				"SkillSlotMoveSpeedBuff"
 			)
 		);
 	}

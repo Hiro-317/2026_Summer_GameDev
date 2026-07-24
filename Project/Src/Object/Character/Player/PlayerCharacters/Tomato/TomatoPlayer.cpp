@@ -260,7 +260,7 @@ void TomatoPlayer::PlayerLoad(void)
 				// クールタイムの最大値
 				SKILL1_COOL_TIME,
 				// UIの色指定
-				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
 				// 描画する画像
 				"SkillSlotSimpleAttack"
 			)
@@ -278,7 +278,7 @@ void TomatoPlayer::PlayerLoad(void)
 				// UIの色指定
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				// 描画する画像
-				"SkillSlotSimpleAttack",
+				"SkillSlotTomatoTackle",
 				true
 			)
 		);
@@ -295,7 +295,7 @@ void TomatoPlayer::PlayerLoad(void)
 				// UIの色指定
 				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				// 描画する画像
-				"SkillSlotSimpleAttack"
+				"SkillSlotTomatoStamp"
 			)
 		);
 	}

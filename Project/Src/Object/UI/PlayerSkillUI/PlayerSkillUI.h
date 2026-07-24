@@ -20,6 +20,10 @@ public:
 		GREEN,
 		BLUE,
 		RED,
+		PURPLE,
+		YELLOW,
+		ORANGE,
+		INDIGO,
 
 		MAX
 	};
@@ -66,21 +70,31 @@ private:
 	};
 
 #pragma region 画像パス
-	// チャージ中の色別に分けた画像
-	std::map<SKILL_UI_COLOR, std::string> chargingImagePath =
-	{
-		{ SKILL_UI_COLOR::GREEN, "SkillSlotGreenCharging" },
-		{ SKILL_UI_COLOR::BLUE, "SkillSlotBlueCharging" },
-		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharging" }
-	};
 
 	// チャージしていない時の色別の画像
 	std::map<SKILL_UI_COLOR, std::string> chargeImagePath =
 	{
 		{ SKILL_UI_COLOR::GREEN, "SkillSlotGreenCharge" },
 		{ SKILL_UI_COLOR::BLUE, "SkillSlotBlueCharge" },
-		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharge" }
+		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharge" },
+		{ SKILL_UI_COLOR::PURPLE, "SkillSlotPurpleCharge" },
+		{ SKILL_UI_COLOR::YELLOW, "SkillSlotYellowCharge" },
+		{ SKILL_UI_COLOR::ORANGE, "SkillSlotOrangeCharge" },
+		{ SKILL_UI_COLOR::INDIGO, "SkillSlotIndigoCharge" }
 	};
+
+	// チャージ中の色別に分けた画像
+	std::map<SKILL_UI_COLOR, std::string> chargingImagePath =
+	{
+		{ SKILL_UI_COLOR::GREEN, "SkillSlotGreenCharging" },
+		{ SKILL_UI_COLOR::BLUE, "SkillSlotBlueCharging" },
+		{ SKILL_UI_COLOR::RED, "SkillSlotRedCharging" },
+		{ SKILL_UI_COLOR::PURPLE, "SkillSlotPurpleCharging" },
+		{ SKILL_UI_COLOR::YELLOW, "SkillSlotYellowCharging" },
+		{ SKILL_UI_COLOR::ORANGE, "SkillSlotOrangeCharging" },
+		{ SKILL_UI_COLOR::INDIGO, "SkillSlotIndigoCharging" }
+	};
+
 #pragma endregion 
 
 	// スキルの画像サイズ

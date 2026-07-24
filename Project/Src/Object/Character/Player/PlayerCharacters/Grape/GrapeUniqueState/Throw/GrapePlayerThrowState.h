@@ -1,29 +1,28 @@
 #pragma once
-
 #include "../../../../../CharacterStateBase.h"
 
-#include "GrapePlayerBombCollOperator.h"
+#include "GrapePlayerThrowCollOperator.h"
 
-class GrapePlayerBombState : public CharacterStateBase
+class GrapePlayerThrowState : public CharacterStateBase
 {
 public:
 
 	// コンストラクタ
-	GrapePlayerBombState(
+	GrapePlayerThrowState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		GrapePlayerBombCollOperator& collOperator,
+		GrapePlayerThrowCollOperator& collOperator,
 		const int COOL_TIME,
-		const int ATTACK_COUNT_TIME,
-		const int ATTACK_START_TIME,
-		Vector3& pos,
+		Vector3& pos, Vector3& angle,
+		const Vector3*& bossPos,
 		const std::function<void(void)> PlayAnime,
 		const std::function<bool(void)> IsAnimeEnd,
+		const std::function<float(void)> AnimeRatio,
 		const std::function<void(void)> DefaultChangeState
 	);
 
 	// デストラクタ
-	~GrapePlayerBombState()override = default;
+	~GrapePlayerThrowState()override = default;
 
 	// 自分の状態に遷移する条件関数
 	void OwnStateConditionUpdate(void)override;
@@ -42,11 +41,6 @@ private:
 	// クールタイム
 	const int COOL_TIME;
 
-	// 爆発するまでのカウント時間
-	const float ATTACK_COUNT_TIME;
-
-	// 爆弾待機時間
-	const float ATTACK_START_TIME; 
 #pragma endregion 
 
 #pragma region 変数定義
@@ -54,16 +48,20 @@ private:
 	// 座標の参照
 	Vector3& pos;
 
-	GrapePlayerBombCollOperator& collOperator;
+	Vector3& angle;
 
-	// 終了までのカウント用
-	short timeCounter;
+	const Vector3*& bossPos;
+
+	GrapePlayerThrowCollOperator& collOperator;
 
 	const std::function<void(void)> PlayAnime;
 	const std::function<bool(void)> IsAnimeEnd;
-		// 攻撃終了後の状態遷移関数のポインタ
+	const std::function<float(void)> AnimeRatio;
+
+	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
 
 #pragma endregion 
-	bool isInit;
+
+	Vector3 moveDir;
 };

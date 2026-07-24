@@ -1,4 +1,4 @@
-PlayerHP,600
+PlayerHP,400
 PlayerMoveSpeed,10
-PlayerAttackPower,200
-PlayerDefensePower,400
+PlayerAttackPower,180
+PlayerDefensePower,500

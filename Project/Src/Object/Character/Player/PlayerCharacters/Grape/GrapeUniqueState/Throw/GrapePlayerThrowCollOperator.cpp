@@ -1,9 +1,9 @@
-#include "GrapePlayerShotCollOperator.h"
+#include "GrapePlayerThrowCollOperator.h"
 
 #include "../../../../../../../Manager/Effect/EffectManager.h"
 #include "../../../../../../Common/Collider/SphereCollider.h"
 
-GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
+GrapePlayerThrowCollOperator::GrapePlayerThrowCollOperator(
 	COLLIDER_TAG COLL_TAG,
 	const short ATTACK_RATE_PERCENT,
 	const Vector3& playerPos, const Vector3& playerAngle,
@@ -17,12 +17,12 @@ GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
 	isHit(false),
-	targetVec(Vector3()), 
-	lifeCounter(0)
+	targetVec(Vector3()),
+	gravity(0)
 {
 }
 
-void GrapePlayerShotCollOperator::Load(void)
+void GrapePlayerThrowCollOperator::Load(void)
 {
 #pragma region 基底クラスにある機能の挙動設定
 
@@ -30,10 +30,10 @@ void GrapePlayerShotCollOperator::Load(void)
 	SetDynamicFlg(true);
 
 	// 重力を無効にする
-	SetGravityFlg(false);
+	SetGravityFlg(true);
 
 	// 衝突時の押し出しを無効にする
-	SetPushFlg(false);
+	SetPushFlg(true);
 
 #pragma endregion
 
@@ -50,40 +50,39 @@ void GrapePlayerShotCollOperator::Load(void)
 	// スキルのダメージ量の設定
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
-	// 弾のモデルをロード、スケールの設定
 	trans.Load("Character/Grape/Bomb");
-	trans.scale = 0.1f;
-
-	// 発射地点を初期化、プレイヤーの足元から少し上から発射するようにする
-	trans.pos.y = trans.pos.y + 30.0f;
-
-	// カウンタを設定
-	lifeCounter = LIFE_TIME;
+	trans.scale = 0.5f;
 }
 
-void GrapePlayerShotCollOperator::Update(void)
+void GrapePlayerThrowCollOperator::Update()
 {
-	// 撃った瞬間から弾の生存時間を減らす
-	if (lifeCounter > 0) {
-		lifeCounter--;
-	}
+	// 重力を加える
+	gravity -= 0.5f;
 
-	// 生存時間がなくなるか、敵に当たったら弾を消す処理を行う
-	if (lifeCounter <= 0 || isHit) {
-		lifeCounter = 0;
+	// ヒットしたら消える
+	if (isHit) {
 		CollOff();
 		SetIsDraw(false);
 		return;
 	}
 
-	// 弾を飛ばす処理
 	if (GetIsDraw()) {
-		trans.pos += targetVec * 40.0f;
-		CollOn();
+
+		// 前方向へ移動
+		trans.pos += targetVec * 10.0f;
+
+		// 縦方向へ移動
+		trans.pos.y += gravity;
+
+		// 地面まで落ちたら消す
+		if (gravity <= 0) {
+			CollOn();
+			return;
+		}
 	}
 }
 
-void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void GrapePlayerThrowCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
 	// 攻撃の当たり判定
 	switch (other.GetTag())

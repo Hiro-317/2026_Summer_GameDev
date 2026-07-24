@@ -1,9 +1,8 @@
 #pragma once
 #include "../../../../../../ActorBase.h"
 #include "../../../../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../../../../Manager/Effect/EffectManager.h"
 
-class GrapePlayerBombCollOperator : public ActorBase
+class GrapePlayerThrowCollOperator : public ActorBase
 {
 public:
 
@@ -16,14 +15,14 @@ public:
 	/// <param name="playerAngle">プレイヤーアングルram>
 	/// <param name="operatorSenderId"></param>
 	/// <param name="playerStats">プレイヤーのステータス情報</param>
-	GrapePlayerBombCollOperator(
+	GrapePlayerThrowCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		const short ATTACK_RATE_PERCENT,
 		const Vector3& playerPos, const Vector3& playerAngle,
 		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
 	);
-	~GrapePlayerBombCollOperator()override = default;
+	~GrapePlayerThrowCollOperator()override = default;
 
 	// ロード
 	void Load(void)override;
@@ -35,45 +34,36 @@ public:
 
 	// 攻撃の判定を発生させる
 	void CollOn(void) {
-		if (!isHit) ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
-		SetIsEnemySerch(false);
+		SetJudge(true);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
 		}
 	}
-
 	// 攻撃の判定を消す
 	void CollOff(void) {
-		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false);
+		SetJudge(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
 		}
 	}
 
-	// 敵を探す
-	void SetIsEnemySerch(bool isJudge) {
-		if (GetIsHit()) { return; }
-		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
-	}
-
-	void PlayEffect(void) { EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos); }
-
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }
-	void ResetIsTargetFind(void) { isAttackTargetFind = false; }
 
 	// 攻撃ヒット管理フラグを取得する
 	const bool GetIsHit(void) { return isHit; }
 
-	// 攻撃対象を見つけたかどうか
-	const bool GetIsAttackTargetFind(void) { return isAttackTargetFind; }
-
-	// 爆弾の描画するかどうか
-	void SetIsBombDraw(bool isDraw_) { SetIsDraw(isDraw_); }
-
 	// プレイヤーの位置に爆弾を設置する
-	void SetPos(void) {
+	void SetTargetVec(const Vector3& vec) {
+		targetVec = vec;
+	}
+
+	void SetInit(void) {
 		trans.pos = playerPos;
+		trans.pos.y = trans.pos.y + 100.0f;
+		SetIsDraw(true);
+		gravity = 10.0f;
+		ResetIsHit();
 	}
 private:
 
@@ -103,5 +93,7 @@ private:
 	// 攻撃のヒット管理のフラグ
 	bool isHit;
 
-	bool isAttackTargetFind;
+	Vector3 targetVec;
+
+	float gravity;
 };

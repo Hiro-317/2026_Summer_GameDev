@@ -1,9 +1,9 @@
-#include "GrapePlayerShotState.h"
+#include "GrapePlayerThrowState.h"
 
-GrapePlayerShotState::GrapePlayerShotState(
+GrapePlayerThrowState::GrapePlayerThrowState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	GrapePlayerShotCollOperator& collOperator,
+	GrapePlayerThrowCollOperator& collOperator,
 	const int COOL_TIME,
 	Vector3& pos, Vector3& angle,
 	const Vector3*& bossPos,
@@ -21,33 +21,29 @@ GrapePlayerShotState::GrapePlayerShotState(
 	IsAnimeEnd(IsAnimeEnd),
 	AnimeRatio(AnimeRatio),
 	DefaultChangeState(DefaultChangeState),
-	timeCounter(0),
 	moveDir(Vector3())
 {
 }
 
-void GrapePlayerShotState::OwnStateConditionUpdate(void)
+void GrapePlayerThrowState::OwnStateConditionUpdate(void)
 {
 	// 攻撃のクールタイム中は状態遷移しない
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).down) {
 		OwnChangeState();
 	}
 }
 
-void GrapePlayerShotState::Enter(void)
+void GrapePlayerThrowState::Enter(void)
 {
 	coolTimeCounter = COOL_TIME;
 
 	PlayAnime();
 
 	collOperator.SetInit();
-}
 
-void GrapePlayerShotState::Update(void)
-{
 	// 突進方向の取得
 	moveDir = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
 	// ボスへの方向を取得
@@ -62,13 +58,16 @@ void GrapePlayerShotState::Update(void)
 	if (AnimeRatio() < 0.3f) {
 		collOperator.SetTargetVec(moveDir);
 	}
+}
 
+void GrapePlayerThrowState::Update(void)
+{
 	if (IsAnimeEnd()) {
 		DefaultChangeState();
 	}
 }
 
-void GrapePlayerShotState::AlwaysUpdate(void)
+void GrapePlayerThrowState::AlwaysUpdate(void)
 {
 	// 自身の状態でないときは、攻撃のクールタイムを減らす
 	if (!IsOwnState()) {

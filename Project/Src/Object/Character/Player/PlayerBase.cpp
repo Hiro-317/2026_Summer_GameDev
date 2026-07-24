@@ -167,6 +167,7 @@ void PlayerBase::CharacterUpdate(void)
 	// HP‚ªƒ[ƒˆÈ‰º‚É‚È‚Á‚½‚ç€–Só‘Ô‚É‘JˆÚ
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
+		SetJudge(false);
 	}
 
 #ifdef _DEBUG		// ƒN[ƒ‹ƒ^ƒCƒ€—p
@@ -182,8 +183,6 @@ void PlayerBase::CharacterUpdate(void)
 void PlayerBase::CharacterRemoteUpdate(void)
 {
 	for (ActorBase*& c : subObjArray) { c->Update(); }
-	// HP‚ªƒ[ƒˆÈ‰º‚É‚È‚Á‚½‚ç€–Só‘Ô‚É‘JˆÚ
-	//if (characterStats.hp <= 0) { GetIsDeath() = true; }
 }
 
 void PlayerBase::CharacterDraw(void)

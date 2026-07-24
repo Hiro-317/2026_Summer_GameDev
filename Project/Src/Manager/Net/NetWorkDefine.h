@@ -694,7 +694,10 @@ struct MsgDataPlayerCollOperator
         PeachPlayerHeal,
         PeachPlayerBuff,
 
-        
+        GrapePlayerShot,
+        GrapePlayerBomb,
+        GrapePlayerThrow,
+
         Max
     };
     // “–‚½‚è”»’è‚Ìí—Ş‚Ì—ñ‹“Œ^’è‹`‚Ì•Ï”’è‹`

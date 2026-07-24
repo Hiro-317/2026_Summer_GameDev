@@ -5,9 +5,11 @@
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 #include "GrapeUniqueState/Bomb/GrapePlayerBombState.h"
 #include "GrapeUniqueState/Shot/GrapePlayerShotState.h"
+#include "GrapeUniqueState/Throw/GrapePlayerThrowState.h"
 
 #include "GrapeUniqueState/Bomb/GrapePlayerBombCollOperator.h"
 #include "GrapeUniqueState/Shot/GrapePlayerShotCollOperator.h"
+#include "GrapeUniqueState/Throw/GrapePlayerThrowCollOperator.h"
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -58,8 +60,18 @@ void GrapePlayer::PlayerLoad(void)
 	subObjArray.emplace_back(
 		new GrapePlayerShotCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			100,
+			200,
 			trans.pos,trans.angle,
+			operatorSenderId,
+			characterStats
+		)
+	);
+
+	subObjArray.emplace_back(
+		new GrapePlayerThrowCollOperator(
+			COLLIDER_TAG::PLAYER_ATTACK,
+			300,
+			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
 		)
@@ -93,12 +105,28 @@ void GrapePlayer::PlayerLoad(void)
 	);
 
 	AddState(
+		(int)STATE::SKILL_2,
+		new GrapePlayerThrowState(
+			[&]() { ChangeState((int)STATE::SKILL_2); },
+			[&]() { return state == (int)STATE::SKILL_2; },
+			*SubObjSerch<GrapePlayerThrowCollOperator>(),
+			120,
+			trans.pos, trans.angle,
+			bossPos,
+			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
+			[&]() { return IsAnimeEnd(); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() { ChangeState((int)STATE::MOVE); }
+		)
+	);
+
+	AddState(
 		(int)STATE::SKILL_3,
 		new GrapePlayerShotState(
 			[&]() { ChangeState((int)STATE::SKILL_3); },
 			[&]() { return state == (int)STATE::SKILL_3; },
 			*SubObjSerch<GrapePlayerShotCollOperator>(),
-			120,
+			70,
 			trans.pos, trans.angle,
 			bossPos,
 			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
@@ -172,7 +200,7 @@ void GrapePlayer::PlayerLoad(void)
 	//// ˆÚ“®ó‘Ô -> ƒXƒLƒ‹1 ‚Ì‘JˆÚ‚ð“o˜^
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
 	//// ˆÚ“®ó‘Ô -> ƒXƒLƒ‹2 ‚Ì‘JˆÚ‚ð“o˜^
-	//AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
+	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
 	//// ˆÚ“®ó‘Ô -> ƒXƒLƒ‹3 ‚Ì‘JˆÚ‚ð“o˜^
 	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
 
@@ -228,30 +256,30 @@ void GrapePlayer::PlayerLoad(void)
 				SKILL1_UI_DRAW_POS,
 				dynamic_cast<GrapePlayerBombState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
 				1800,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
-				"SkillSlotSimpleAttack"
+				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
+				"SkillSlotGrapeBombPut"
 			)
 		);
 
-		//// ƒXƒLƒ‹1‚ÌUI
-		//ui_ArrayIns.emplace_back(
-		//	new PlayerSkillUI(
-		//		SKILL2_UI_DRAW_POS,
-		//		dynamic_cast<PlayerSingleModifierState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-		//		600,
-		//		PlayerSkillUI::SKILL_UI_COLOR::RED,
-		//		"SkillSlotSimpleAttack"
-		//	)
-		//);
+		// ƒXƒLƒ‹2‚ÌUI
+		ui_ArrayIns.emplace_back(
+			new PlayerSkillUI(
+				SKILL2_UI_DRAW_POS,
+				dynamic_cast<GrapePlayerThrowState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
+				120,
+				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
+				"SkillSlotGrapeBombThrow"
+			)
+		);
 
 		// ƒXƒLƒ‹3‚ÌUI
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,
 				dynamic_cast<GrapePlayerShotState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-				120,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
-				"SkillSlotSimpleAttack"
+				70,
+				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
+				"SkillSlotShot"
 			)
 		);
 	}
@@ -270,64 +298,64 @@ void GrapePlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
 
-	//while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
 
-	//	switch (dataPtr->collKinds) {
+		switch (dataPtr->collKinds) {
 
-	//	case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack: {
-	//		// ’ÊíUŒ‚
-	//		if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
-	//		else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }
-	//		break;
-	//	}
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb: {
+			// ’ÊíUŒ‚
+			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerBombCollOperator>()->CollOn(); }
+			else { SubObjSerch<GrapePlayerBombCollOperator>()->CollOff(); }
+			break;
+		}
 
-	//	case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal: {
-	//		// ‰ñ•œ
-	//		if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOn(); }
-	//		else { SubObjSerch<PlayerSingleModifierCollOperator>()->CollOff(); }
-	//		break;
-	//	}
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerThrow: {
+			// ƒXƒ^ƒ“ƒv
+			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerThrowCollOperator>(1)->CollOn(); }
+			else { SubObjSerch<GrapePlayerThrowCollOperator>(1)->CollOff(); }
 
-	//	case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff: {
-	//		// ƒXƒ^ƒ“ƒv
-	//		if (dataPtr->isCollider) { SubObjSerch<PlayerSingleModifierCollOperator>(1)->CollOn(); }
-	//		else { SubObjSerch<PlayerSingleModifierCollOperator>(1)->CollOff(); }
+			break;
+		}
 
-	//		break;
-	//	}
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot: {
+			// ‰ñ•œ
+			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerShotCollOperator>()->CollOn(); }
+			else { SubObjSerch<GrapePlayerShotCollOperator>()->CollOff(); }
+			break;
+		}
 
-	//	default: { break; }	// —áŠO
-	//	}
+		default: { break; }	// —áŠO
+		}
 
-	//	delete dataPtr;
-	//}
+		delete dataPtr;
+	}
 
-	//while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
-	//	state = dataPtr->state;
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
 
-	//	switch ((STATE)state) {
-	//	case PlayerBase::STATE::SKILL_1: {
-	//		SubObjSerch<PlayerSimpleAttackCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::SKILL_2: {
-	//		SubObjSerch<PlayerSingleModifierCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::SKILL_3: {
-	//		SubObjSerch<PlayerSingleModifierCollOperator>(1)->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::DEATH: {
-	//		PlayerDeathSetting();
-	//		break;
-	//	}
+		switch ((STATE)state) {
+		case PlayerBase::STATE::SKILL_1: {
+			SubObjSerch<GrapePlayerBombCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_2: {
+			SubObjSerch<GrapePlayerThrowCollOperator>()->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::SKILL_3: {
+			SubObjSerch<GrapePlayerShotCollOperator>(1)->ResetIsHit();
+			break;
+		}
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
+			break;
+		}
 
-	//	default: { break; }
-	//	}
+		default: { break; }
+		}
 
-	//	delete dataPtr;
-	//}
+		delete dataPtr;
+	}
 }
 
 void GrapePlayer::SendUpdate(void)
