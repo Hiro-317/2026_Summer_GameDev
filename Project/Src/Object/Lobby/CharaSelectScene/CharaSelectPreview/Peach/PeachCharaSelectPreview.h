@@ -33,8 +33,8 @@ private:
 		DEFENCE = GetParameterToInt("PeachParameter", "PlayerDefensePower");
 		SPEED = GetParameterToInt("PeachParameter", "PlayerMoveSpeed");
 
-		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
-		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");
-		skill_3_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill3.png");
+		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Peach/Skill1.png");
+		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Peach/Skill2.png");
+		skill_3_image = LoadGraph("Data/Image/Lobby/CharaSelect/Peach/Skill3.png");
 	}
 };

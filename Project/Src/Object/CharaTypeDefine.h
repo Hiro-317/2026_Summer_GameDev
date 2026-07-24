@@ -6,9 +6,9 @@ enum class CHARA_TYPE {
 	Orange,
 	Tomato,
 	Peach,
-	Grape,
 
-	Max
+	Max,
+	Grape,
 };
 
 enum class BOSS_TYPE {
