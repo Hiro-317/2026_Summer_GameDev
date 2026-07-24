@@ -58,3 +58,9 @@ void TomatoHeadbuttCollOperator::SubAlphaDraw(void)
 		SetUseLighting(true);
 	}
 }
+
+void TomatoHeadbuttCollOperator::SubRelease(void)
+{
+	collFront.Release();
+	collBack.Release();
+}

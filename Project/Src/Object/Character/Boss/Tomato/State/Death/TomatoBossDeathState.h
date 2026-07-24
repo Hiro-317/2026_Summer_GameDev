@@ -17,7 +17,7 @@ public:
 	TomatoBossDeathState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& scale, const Vector3& defaultScale,
+		Vector3& scale, Vector3& angle,
 		const std::function<void(void)> IsDeath
 	);
 	~TomatoBossDeathState()override = default;
@@ -38,6 +38,9 @@ private:
 	// ボスのサイズ
 	Vector3& scale;
 
+	// ボスの角度
+	Vector3& angle;
+
 	// ボスの初期サイズ
 	const Vector3& defaultScale;
 
@@ -48,11 +51,11 @@ private:
 
 #pragma region 定数定義
 
-	static constexpr int CHANGE_COUNT = 120;
-	static constexpr float SCALE_REVERSE = 22.0f;
-	static constexpr float BOMB_RATE = 0.0020661157f;
+	static constexpr float CHANGE_COUNT = 120.0f;
+	static constexpr float ROTATION_POW = 0.349066f;
+	static constexpr float SCALE_POW = 0.975f;
 
 #pragma endregion 定数定義
 
-	int cnt;
+	float cnt;
 };

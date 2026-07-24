@@ -215,8 +215,8 @@ void TomatoBoss::PlayerLoad(void)
 			[&]() { state = static_cast<int>(STATE::DEATH); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::DEATH); },
-			// ボスのサイズとスケール
-			trans.scale, MODEL_SCALE,
+			// ボスのサイズと角度
+			trans.scale, trans.angle,
 			// 死んだフラグを立てる
 			[&]() {	SetIsDeath(true); }
 			)
