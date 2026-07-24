@@ -9,12 +9,12 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="COLL_TAG">コライダーに着けるタグ</param>
-	/// <param name="SKILL_2_ATTACK_RATE_PERCENT">攻撃倍率</param>
-	/// <param name="playerPos">プレイヤー座標</param>
-	/// <param name="playerAngle">プレイヤーアングルram>
-	/// <param name="operatorSenderId"></param>
-	/// <param name="playerStats">プレイヤーのステータス情報</param>
+	/// <param name="COLL_TAG">コライダーのタグ</param>
+	/// <param name="ATTACK_RATE_PERCENT">ショットのダメージ倍率</param>
+	/// <param name="playerPos">プレイヤーの座標</param>
+	/// <param name="playerAngle">プレイヤーの角度</param>
+	/// <param name="operatorSenderId">送信ID</param>
+	/// <param name="playerStats">プレイヤーのステータス</param>
 	GrapePlayerShotCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		const short ATTACK_RATE_PERCENT,
@@ -22,6 +22,8 @@ public:
 		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
 	);
+
+	// デストラクタ
 	~GrapePlayerShotCollOperator()override = default;
 
 	// ロード
@@ -53,26 +55,29 @@ public:
 	// 攻撃ヒット管理フラグを取得する
 	const bool GetIsHit(void) { return isHit; }
 
-	// プレイヤーの位置に爆弾を設置する
+	// 投げる対象のベクトルを取得
 	void SetTargetVec(const Vector3& vec) {
 		targetVec = vec;
 	}
 	
+	// 初期化処理
 	void SetInit(void) {
 		ResetIsHit();
 		trans.pos = playerPos;
 		SetIsDraw(true);
-		timeCounter = 120;
+		lifeCounter = LIFE_TIME;
 	}
 private:
 
 #pragma region 定数
 
-	// 三段攻撃の攻撃倍率
+	// 攻撃倍率
 	const short ATTACK_RATE_PERCENT;
 
 	// 攻撃の段階ごとのタグ
 	COLLIDER_TAG COLL_TAG;
+
+	const short LIFE_TIME = 40;
 
 #pragma endregion
 
@@ -83,6 +88,7 @@ private:
 	// プレイヤーの向き
 	const Vector3& playerAngle;
 
+	// 送信ID
 	const MSG_SENDER_ID operatorSenderId;
 
 	// プレイヤーのステータス
@@ -92,7 +98,9 @@ private:
 	// 攻撃のヒット管理のフラグ
 	bool isHit;
 
+	// 投げる対象（ターゲット）
 	Vector3 targetVec;
 
-	short timeCounter;
+	// 弾の生存時間
+	short lifeCounter;
 };

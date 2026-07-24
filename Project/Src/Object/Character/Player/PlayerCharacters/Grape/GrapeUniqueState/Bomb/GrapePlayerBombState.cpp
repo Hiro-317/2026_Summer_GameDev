@@ -10,7 +10,7 @@ GrapePlayerBombState::GrapePlayerBombState(
 	const int ATTACK_COUNT_TIME,
 	const int ATTACK_START_TIME,
 	Vector3& pos,
-	const std::function<void(void)> BombFallAnime,
+	const std::function<void(void)> PlayAnime,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState
 ) :
@@ -20,7 +20,7 @@ GrapePlayerBombState::GrapePlayerBombState(
 	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
 	ATTACK_START_TIME(ATTACK_START_TIME),
 	pos(pos),
-	BombFallAnime(BombFallAnime),
+	PlayAnime(PlayAnime),
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
@@ -61,11 +61,12 @@ void GrapePlayerBombState::Enter(void)
 	timeCounter = ATTACK_COUNT_TIME;
 
 	// アニメーションを再生
-	BombFallAnime();
+	PlayAnime();
 }
 
 void GrapePlayerBombState::Update(void)
 {
+	// アニメーションが終了したら、爆弾設置ステート終了
 	if (IsAnimeEnd()) {
 		DefaultChangeState();
 	}
@@ -100,6 +101,7 @@ void GrapePlayerBombState::AlwaysUpdate(void)
 	if (timeCounter == 1 || collOperator.GetIsAttackTargetFind()) {
 		collOperator.CollOn();
 		collOperator.SetIsBombDraw(false);
+		collOperator.PlayEffect();
 		timeCounter = 0;
 	}
 

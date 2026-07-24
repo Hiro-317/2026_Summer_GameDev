@@ -311,7 +311,7 @@ void OrangePlayer::PlayerLoad(void)
 				SKILL1_UI_DRAW_POS,
 				dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
 				SKILL_1_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
 				"SkillSlotTripleAttack"
 			)
 		);
@@ -322,7 +322,7 @@ void OrangePlayer::PlayerLoad(void)
 				SKILL2_UI_DRAW_POS,
 				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
 				SKILL_2_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+				PlayerSkillUI::SKILL_UI_COLOR::RED,
 				"SkillSlotSimpleAttack"
 			)
 		);
@@ -333,7 +333,7 @@ void OrangePlayer::PlayerLoad(void)
 				SKILL3_UI_DRAW_POS,
 				dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
 				SKILL_3_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::GREEN,
+				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
 				"SkillSlotDodge"
 			)
 		);

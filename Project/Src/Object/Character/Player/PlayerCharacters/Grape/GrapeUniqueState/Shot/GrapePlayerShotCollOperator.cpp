@@ -18,7 +18,7 @@ GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
 	playerStats(playerStats),
 	isHit(false),
 	targetVec(Vector3()), 
-	timeCounter(0)
+	lifeCounter(0)
 {
 }
 
@@ -50,37 +50,37 @@ void GrapePlayerShotCollOperator::Load(void)
 	// スキルのダメージ量の設定
 	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
+	// 弾のモデルをロード、スケールの設定
 	trans.Load("Character/Grape/Bomb");
 	trans.scale = 0.1f;
 
-	trans.pos = playerPos;
+	// 発射地点を初期化、プレイヤーの足元から少し上から発射するようにする
 	trans.pos.y = trans.pos.y + 30.0f;
 
-	timeCounter = 120;
+	// カウンタを設定
+	lifeCounter = LIFE_TIME;
 }
 
 void GrapePlayerShotCollOperator::Update(void)
 {
-	if (timeCounter > 0) {
-		timeCounter--;
+	// 撃った瞬間から弾の生存時間を減らす
+	if (lifeCounter > 0) {
+		lifeCounter--;
 	}
 
-	if (timeCounter <= 0) {
-		timeCounter = 0;
+	// 生存時間がなくなるか、敵に当たったら弾を消す処理を行う
+	if (lifeCounter <= 0 || isHit) {
+		lifeCounter = 0;
 		CollOff();
 		SetIsDraw(false);
 		return;
 	}
 
-	// 発射処理
-	if (GetJudgeFlg()) {
-		SetIsDraw(true);
-		trans.pos += targetVec * 30.0f;
-		if (isHit) {
-			CollOff();
-		}
+	// 弾を飛ばす処理
+	if (GetIsDraw()) {
+		trans.pos += targetVec * 40.0f;
+		CollOn();
 	}
-
 }
 
 void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)

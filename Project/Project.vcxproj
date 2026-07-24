@@ -209,6 +209,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Shot\GrapePlayerShotCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Shot\GrapePlayerShotState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Throw\GrapePlayerThrowCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Throw\GrapePlayerThrowState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Tomato\TomatoBoss.cpp" />
@@ -341,6 +343,8 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Shot\GrapePlayerShotCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Shot\GrapePlayerShotState.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Throw\GrapePlayerThrowCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Grape\GrapeUniqueState\Throw\GrapePlayerThrowState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Orange\OrangePlayer.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Move\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Tomato\TomatoBoss.h" />
