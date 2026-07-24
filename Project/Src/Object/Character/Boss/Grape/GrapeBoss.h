@@ -24,6 +24,11 @@ public:
 
 	virtual void ReceptionUpdate(void)override;
 
+protected:
+
+	// ダメージアニメーション再生
+	void PlayDamage(void) override;
+
 private:
 
 #pragma region 定数定義
@@ -123,9 +128,9 @@ private:
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "WalkAnimeSpeed"),	// WALK
 		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
-		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
-		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
-		GetParameter("Anime", "RunAnimeSpeed"),		// RUN
+		GetParameter("Anime", "DamageAnimeSpeed"),		// RUN
+		GetParameter("Anime", "DownAnimeSpeed"),		// RUN
+		GetParameter("Anime", "DeathAnimeSpeed"),		// RUN
 
 		GetParameter("Anime", "KickAnimeSpeed"),	// KICK
 		GetParameter("Anime", "OverhandAnimeSpeed"),	// OVERHAND

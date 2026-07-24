@@ -192,7 +192,18 @@ void GameScene::Update(void)
 	
 	// ÉQÅ[ÉÄÉNÉäÉAîªíË
 	if (ObjSerch<BossBase>()->GetIsDeath()) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xff0000, 0x000000);
+
+		switch (SceneManager::GetIns().GetSelectBossType())
+		{
+		case BOSS_TYPE::Tomato:
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0xe33434, 0x000000);
+			break;
+		case BOSS_TYPE::Grape:
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::CLEAR, 90, 0x9338e8, 0x000000);
+			break;
+		default:
+			break;
+		}
 		return;
 	}
 

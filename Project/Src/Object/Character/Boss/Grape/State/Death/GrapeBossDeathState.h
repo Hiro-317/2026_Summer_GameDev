@@ -18,7 +18,9 @@ public:
 	GrapeBossDeathState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& scale, const Vector3& defaultScale,
+		const std::function<void(void)> DeathAnim,
+		const std::function<float(void)> AnimeTotalTime,
+		const std::function<bool(void)> IsAnimEnd,
 		const std::function<void(void)> IsDeath
 	);
 	~GrapeBossDeathState()override = default;
@@ -39,11 +41,14 @@ public:
 private:
 #pragma region 参照関数
 
-	// ボスのサイズ
-	Vector3& scale;
+	// 死亡アニメーション
+	const std::function<void(void)> DeathAnim;
 
-	// ボスの初期サイズ
-	const Vector3& defaultScale;
+	// アニメーションの全体時間
+	const std::function<float(void)> AnimeTotalTime;
+
+	// アニメーション終了判定
+	const std::function<bool(void)> IsAnimEnd;
 
 	// 死亡判定移行
 	const std::function<void(void)> IsDeath;
@@ -52,11 +57,13 @@ private:
 
 #pragma region 定数定義
 
-	static constexpr int CHANGE_COUNT = 120;
 	static constexpr float SCALE_REVERSE = 22.0f;
 	static constexpr float BOMB_RATE = 0.0020661157f;
+	static constexpr int DEATH_LAST_TIME = 60;
 
 #pragma endregion 定数定義
+
+	int changeTime;
 
 	int cnt;
 };

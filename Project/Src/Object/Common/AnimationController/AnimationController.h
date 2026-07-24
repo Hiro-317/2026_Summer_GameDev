@@ -41,6 +41,7 @@ public:
 	bool GetAnimEnd(void)const { return playAnim.step >= playAnim.totalTime; }
 
 	float GetAnimeRatio(void)const { return (playAnim.step / playAnim.totalTime); }
+	float GetAnimeTotalTime(void)const { return playAnim.totalTime / playAnim.speed; }
 
 	// 再生ステップを取得
 	float GetStep(void)const { return playAnim.step; }
