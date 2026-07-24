@@ -6,11 +6,11 @@
 TomatoBossDeathState::TomatoBossDeathState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	Vector3& scale, const Vector3& defaultScale,
+	Vector3& scale, Vector3& angle,
 	const std::function<void(void)> IsDeath
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	scale(scale), defaultScale(defaultScale),
+	scale(scale), angle(angle), defaultScale(defaultScale),
 	IsDeath(IsDeath)
 {
 }
@@ -22,12 +22,12 @@ void TomatoBossDeathState::Enter(void)
 
 void TomatoBossDeathState::Update(void)
 {
-	// îöî≠Ç≥ÇπÇÈ
+	// âÒì]ÇµÇ»Ç™ÇÁè¨Ç≥Ç≠Ç≥ÇπÇÈ
 	if (cnt <= CHANGE_COUNT) {
 
-		float rate = ((float)cnt - SCALE_REVERSE) * ((float)cnt - SCALE_REVERSE);
-		scale = defaultScale * (rate * BOMB_RATE);
 		cnt++;
+		angle.y += ROTATION_POW;
+		scale = scale * SCALE_POW;
 	}
 	else {
 		IsDeath();
