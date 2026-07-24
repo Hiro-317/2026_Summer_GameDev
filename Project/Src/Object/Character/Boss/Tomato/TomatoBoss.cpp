@@ -33,7 +33,7 @@ TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::v
 
 		playerPos, playerLive)
 {
-	coolTime = 10000/*DEFAULT_COOLTIME*/;
+	coolTime = DEFAULT_COOLTIME;
 	rockHit = false;
 	Snd::GetIns().AddScene("TomatoBoss");
 }
