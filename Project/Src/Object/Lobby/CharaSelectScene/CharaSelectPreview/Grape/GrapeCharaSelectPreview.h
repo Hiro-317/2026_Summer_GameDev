@@ -33,8 +33,8 @@ private:
 		DEFENCE = 0;
 		SPEED = 0;
 
-		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill1.png");
-		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill2.png");
-		skill_3_image = LoadGraph("Data/Image/Lobby/CharaSelect/Orange/Skill3.png");
+		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Grape/Skill1.png");
+		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Grape/Skill2.png");
+		skill_3_image = LoadGraph("Data/Image/Lobby/CharaSelect/Grape/Skill3.png");
 	}
 };
