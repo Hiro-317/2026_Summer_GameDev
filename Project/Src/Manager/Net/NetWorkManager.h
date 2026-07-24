@@ -322,6 +322,7 @@ private:
 		case MSG_DATA_TYPE::BossAttackDrawFlg: { MsgDataRecv<MsgDataBossAttackDrawFlg>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAttackDraw: { MsgDataRecv<MsgDataBossAttackDraw>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossIsDeath: { MsgDataRecv<MsgDataBossIsDeath>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAnimeType: { MsgDataRecv<MsgDataBossAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossBombInform: { MsgDataRecv<MsgDataBossBombInform>(event, headerData->senderId); break; }
@@ -420,6 +421,7 @@ private:
 					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAttackDraw: { delete static_cast<MsgDataBossAttackDraw*>(ptr); break; }
 					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
+					case MSG_DATA_TYPE::BossIsDeath: { delete static_cast<MsgDataBossIsDeath*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }

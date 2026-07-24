@@ -31,18 +31,18 @@ enum class MSG_DATA_TYPE
     // <ホスト>ボスセレクト
     BossSelect,
     // <ホスト/クライアント>キャラセレクト
-	CharaSelect,
-	// <クライアント>ロビーでの準備完了
-	ClientReady,
+    CharaSelect,
+    // <クライアント>ロビーでの準備完了
+    ClientReady,
 
     // <ホスト/クライアント>プレイヤー：自分の座標/角度
     PlayerTrans,
     // <ホスト/クライアント>プレイヤー：アニメの種類
     PlayerAnimeType,
-	// <ホスト/クライアント>プレイヤー：自分の入力
-	PlayerInput,
-	// <ホスト>プレイヤー：HP
-	PlayerHp,
+    // <ホスト/クライアント>プレイヤー：自分の入力
+    PlayerInput,
+    // <ホスト>プレイヤー：HP
+    PlayerHp,
     // <ホスト>プレイヤー：被ダメ
     PlayerDamage,
     // <ホスト>プレイヤー：HP回復
@@ -66,6 +66,8 @@ enum class MSG_DATA_TYPE
     BossAttackDraw,
     // <ホスト/クライアント>ボス : HPとクリティカル情報
     BossHit,
+    // <ホスト>ボス : 死亡判定
+    BossIsDeath,
     // <ホスト>ボスのターゲット情報
     BossTarget,
     // <ホスト>ボス : アニメーションの種類
@@ -905,6 +907,32 @@ struct MsgDataBossHit
         collisionPoint(),
         damage(),
         clitical()
+    {
+    }
+};
+
+// <ホスト>ボス移動情報送信構造体
+struct MsgDataBossIsDeath
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossIsDeath;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    bool flg;
+
+    MsgDataBossIsDeath(const bool& flg) :
+        header(DATA_TYPE),
+        flg(flg)
+    {
+    }
+    MsgDataBossIsDeath(void) :
+        header(DATA_TYPE),
+        flg(false)
     {
     }
 };

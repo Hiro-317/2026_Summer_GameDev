@@ -1,6 +1,7 @@
 #include "GrapeBossDeathState.h"
 
 #include "../../../../../../Scene/Game/GameScene.h"
+#include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
 GrapeBossDeathState::GrapeBossDeathState(
@@ -29,6 +30,7 @@ void GrapeBossDeathState::Update(void)
 		cnt++;
 	}
 	else {
+		Net::GetIns().Send(MsgDataBossIsDeath(true));
 		IsDeath();
 	}
 }

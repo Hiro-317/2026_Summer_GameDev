@@ -314,12 +314,19 @@ void BossBase::ReceptionUpdate(void)
 		// 座標/角度を同期
 		trans.pos = dataPtr->pos;
 		trans.angle = dataPtr->angle;
+		trans.scale = dataPtr->scale;
 		delete dataPtr;
 	}
 
 	// アニメーション
 	while (MsgDataBossAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAnimeType>(operatorSenderId)) {
 		AnimePlay(dataPtr->animeType);
+		delete dataPtr;
+	}
+
+	// 死亡判定
+	while (MsgDataBossIsDeath* dataPtr = Net::GetIns().GetMsgData<MsgDataBossIsDeath>(operatorSenderId)) {
+		SetIsDeath(dataPtr->flg);
 		delete dataPtr;
 	}
 
