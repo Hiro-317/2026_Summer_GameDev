@@ -63,7 +63,7 @@ public:
 #pragma region ロビー操作
 
 		// マルチ選択のルームナンバー画面を開く
-		MULTI_POP_UP_ROOM_NUMBER,
+		MULTI_POP_UP_PASSWORD,
 
 #pragma endregion
 

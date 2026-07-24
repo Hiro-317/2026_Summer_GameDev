@@ -264,6 +264,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.cpp" />
     <ClCompile Include="Src\Scene\Select\BossSelect.cpp" />
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
@@ -426,6 +427,7 @@ winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.h" />
+    <ClInclude Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.h" />
     <ClInclude Include="Src\Scene\Select\BossSelect.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\SceneManager\SceneManager.h" />

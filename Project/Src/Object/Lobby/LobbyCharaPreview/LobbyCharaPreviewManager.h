@@ -31,9 +31,9 @@ private:
 	LobbyCharaPreviewBase* charaPreview[(int)MSG_SENDER_ID::Max];
 
 	const Vector3 CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::Max] = {
-		Vector3(-50.0f, 0.0f, 700.0f),
-		Vector3(550.0f, 0.0f, 400.0f),
-		Vector3(-450.0f, 0.0f, 200.0f),
-		Vector3(1400.0f, 0.0f, 600.0f),
+		Vector3::XZonly(-350.0f, -300.0f),
+		Vector3::XZonly(350.0f, 300.0f),
+		Vector3::XZonly(-700.0f, -600.0f),
+		Vector3::XZonly(700.0f, 600.0f),
 	};
 };

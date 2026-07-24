@@ -62,6 +62,14 @@ private:
 	const std::string CONTROLLER_EXIT_KEY_PATH = DIRECTORY_PATH + "ExitController.png";
 	const std::string KEYBOARD_EXIT_KEY_PATH = DIRECTORY_PATH + "ExitKeyboard.png";
 
+	// “ü—Í’†‚Ì‚ ‚¢‚±‚Æ‚Î‚ğ‘‚­‚½‚ß‚Ì”wŒi
+	const std::string PASSWORD_BACK_PATH = DIRECTORY_PATH + "MultiPopup/PasswordFrame.png";
+
+	// ‚ ‚¢‚±‚Æ‚Î“ü—Í‚Ìƒ{ƒ^ƒ“‚ÌƒCƒ‰ƒXƒg(ƒRƒ“ƒgƒ[ƒ‰[)
+	const std::string PASSWORD_CONTROLLER_BUTTON_PATH = DIRECTORY_PATH + "MultiPopup/PasswordControllerButton.png";
+	// ‚ ‚¢‚±‚Æ‚Î“ü—Í‚Ìƒ{ƒ^ƒ“‚ÌƒCƒ‰ƒXƒg(ƒL[ƒ{[ƒh)
+	const std::string PASSWORD_KEYBOARD_BUTTON_PATH = DIRECTORY_PATH + "MultiPopup/PasswordKeyboardButton.png";
+
 	// ````````````````````````````‰æ‘œ‚ÌƒpƒX
 
 	// Še‰æ‘œ‚Ì•`‰æÀ•W`````````````````````````
@@ -81,6 +89,14 @@ private:
 
 	// ‰æ–Ê¶ã‚É”z’u‚·‚é‚Æ‚¶‚éƒL[
 	const Vector2I EXIT_KEY_POS = Vector2I(288, 131);
+
+	// “ü—Í’†‚Ì‚ ‚¢‚±‚Æ‚Î‚Ì”wŒi
+	const Vector2I PASSWORD_BACK_POS = Vector2I();
+	// “ü—Í’†‚Ì‚ ‚¢‚±‚Æ‚Î
+	const Vector2I PASSWORD_POS = Vector2I();
+
+	// ‚ ‚¢‚±‚Æ‚Î“ü—Í‚Ìƒ{ƒ^ƒ“‚ÌƒCƒ‰ƒXƒg
+	const Vector2I PASSWORD_BUTTON_POS = Vector2I();
 
 	// `````````````````````````Še‰æ‘œ‚Ì•`‰æÀ•W
 
@@ -105,6 +121,9 @@ private:
 
 	// ‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚Ìã‚É•\¦‚·‚éŒˆ’èƒL[
 	int enterKeyImage[2];
+
+	int passwordFrameImage;
+	int passwordButtonImage[2];
 
 	// ‰æ–Ê¶ã‚É”z’u‚·‚é‚Æ‚¶‚éƒL[
 	int exitKeyImage[2];

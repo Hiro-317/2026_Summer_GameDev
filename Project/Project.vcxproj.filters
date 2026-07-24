@@ -135,6 +135,7 @@
     <ClCompile Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.cpp" />
 =======
 >>>>>>> Game/Boss/BananaBoss
+    <ClCompile Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
@@ -376,6 +377,7 @@
     <ClInclude Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.h" />
 =======
 >>>>>>> Game/Boss/BananaBoss
+    <ClInclude Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h">

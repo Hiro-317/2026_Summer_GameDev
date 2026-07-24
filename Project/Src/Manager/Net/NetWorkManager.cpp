@@ -7,6 +7,7 @@ NetWorkManager::NetWorkManager() :
     stateUpdate(),
 
     hostAddressProvider(nullptr),
+    addressProviderPassword(0),
 
     senderId(MSG_SENDER_ID::None),
     connectInfo(),
