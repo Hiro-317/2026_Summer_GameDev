@@ -77,3 +77,9 @@ void TomatoTackleCollOperator::SubAlphaDraw(void)
 		SetUseLighting(true);
 	}
 }
+
+void TomatoTackleCollOperator::SubRelease(void)
+{
+	collFront.Release();
+	collBack.Release();
+}

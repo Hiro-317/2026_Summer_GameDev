@@ -78,3 +78,9 @@ void TomatoStampCollOperator::SubAlphaDraw(void)
 		SetUseLighting(true);
 	}
 }
+
+void TomatoStampCollOperator::SubRelease(void)
+{
+	collFront.Release();
+	collBack.Release();
+}
