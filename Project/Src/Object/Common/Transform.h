@@ -25,6 +25,9 @@ struct Transform
 	// スケール
 	Vector3 scale;
 
+	// 動的オブジェクトかどうか（true = 動的オブジェクト、false = 静的オブジェクト）
+	bool dynamicFlg;
+
 	/// 生成
 	Transform(void) :
 		model(-1),
@@ -37,10 +40,11 @@ struct Transform
 		angle(),
 		localAngle(),
 
-		scale(1)
+		scale(1),
+
+		dynamicFlg(true)
 	{
 	}
-
 
 	// 角度を行列化したもの
 	MATRIX AngleMat(void)const { return MatrixAllMultXZY({ angle }); }
@@ -67,7 +71,7 @@ struct Transform
 	/// モデルをロード
 	/// </summary>
 	/// <param name="path">モデルのパス（Data/Model/～～.mv1）</param>
-	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); }
+	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); Attach(); }
 
 	/// <summary>
 	/// モデルを複製
@@ -84,9 +88,9 @@ struct Transform
 	// 制御情報をモデルに適用
 	void Attach(void) { MV1ModelMatrix(model, scale, pos + centerDiff.TransMat(MatrixAllMultZXY({ localAngle,angle })), { localAngle,angle }); }
 
-	// モデルを描画（変数情報をモデルに適用してから
+	// モデルを描画（変数情報をモデルに適用してから）
 	void Draw(void) {
-		Attach();
+		if (dynamicFlg) { Attach(); }
 		MV1DrawModel(model);
 	}
 

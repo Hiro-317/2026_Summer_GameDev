@@ -3,14 +3,15 @@
 #include "../../../Manager/Net/NetWorkDefine.h"
 
 #include "../../ActorBase.h"
-#include "CharaSelectPreview/CharaSelectPreviewBase.h"
 
 #include "../../CharaTypeDefine.h"
+
+class CharaSelectPreviewBase;
 
 class CharaSelectPreviewManager : public ActorBase
 {
 public:
-	CharaSelectPreviewManager();
+	CharaSelectPreviewManager(CHARA_TYPE selectCharacter);
 	~CharaSelectPreviewManager()override = default;
 
 	void Load(void)override;
@@ -20,7 +21,8 @@ public:
 	void AlphaDraw(void)override {}
 	void Release(void)override;
 
-	const CHARA_TYPE GetCharaType(void) { return selectCharaType; }
+	void ChangeCharacter(CHARA_TYPE select);
+
 private:
 
 #pragma region 定数定義
@@ -28,7 +30,6 @@ private:
 	const Vector2I EXIT_IMAGE_POS = Vector2I(174, 77);
 
 #pragma endregion
-
 
 	// 枠の画像
 	int frameImage;
@@ -48,8 +49,5 @@ private:
 	float easingRate;
 
 	// 選択中キャラのプレビューオブジェクト配列
-	CharaSelectPreviewBase* charaPreview[(int)CHARA_TYPE::Max];
-
-	// 選択中のキャラタイプ
-	CHARA_TYPE selectCharaType;
+	CharaSelectPreviewBase* charaPreview;
 };

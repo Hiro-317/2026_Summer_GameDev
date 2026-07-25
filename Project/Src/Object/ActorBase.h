@@ -155,6 +155,7 @@ protected:
 	/// <param name="flg">true = 「移動する」に切り替える、false = 「移動しない」に切り替える</param>
 	void SetDynamicFlg(bool flg) {
 		dynamicFlg = flg;
+		trans.dynamicFlg = flg;
 		for (ColliderBase*& collider : collider) {
 			collider->SetDynamicFlg(flg);
 		}

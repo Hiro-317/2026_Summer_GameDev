@@ -12,17 +12,16 @@
 #include "CharaSelectPreview/Grape/GrapeCharaSelectPreview.h"
 #include "CharaSelectPreview/Unknow/UnknowCharaSelectPreview.h"
 
-CharaSelectPreviewManager::CharaSelectPreviewManager() :
-	charaPreview{nullptr, nullptr},
-	selectCharaType(CHARA_TYPE::None),
+CharaSelectPreviewManager::CharaSelectPreviewManager(CHARA_TYPE selectCharacter) :
+	charaPreview(nullptr),
 
 	frameImage(-1), arrowImage(-1),
 	enterImage{ -1, -1 },
 	exitImage{ -1, -1 },
 
-
 	easingCounter(0.0f), easingRate(0.0f)
 {
+	ChangeCharacter(selectCharacter);
 }
 
 void CharaSelectPreviewManager::Load(void)
@@ -42,60 +41,18 @@ void CharaSelectPreviewManager::Load(void)
 	exitImage[(int)true] = LoadGraph("Data/Image/Lobby/ExitController.png");
 	exitImage[(int)false] = LoadGraph("Data/Image/Lobby/ExitKeyboard.png");
 #pragma endregion
-
-	// プレビュー生成ラムダ関数
-	auto CharaPreviewCreate = [&](CHARA_TYPE type)->CharaSelectPreviewBase* {
-		switch (type) {
-		case CHARA_TYPE::Orange: { return new OrangeCharaSelectPreview(); }
-		case CHARA_TYPE::Tomato: { return new TomatoCharaSelectPreview(); }
-		case CHARA_TYPE::Peach: { return new PeachCharaSelectPreview(); }
-		case CHARA_TYPE::Grape: { return new GrapeCharaSelectPreview(); }
-		default: { return new UnknowCharaSelectPreview(); }
-		}
-		};
-	// 各プレビューの生成
-	for (int type = 0; type < (int)CHARA_TYPE::Max; type++) {
-		charaPreview[type] = CharaPreviewCreate((CHARA_TYPE)type);
-		charaPreview[type]->Load();
-	}
 }
 
 void CharaSelectPreviewManager::Init(void)
 {
-	MSG_SENDER_ID sederId = Net::GetIns().GetSenderId();
-	selectCharaType = SceneManager::GetIns().GetSelectCharaType(sederId == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : sederId);
-	if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
-
-	// 各キャラタイププレビューの初期化処理
-	for (CharaSelectPreviewBase* cp : charaPreview) { cp->Init(); }
-
+	// 演出用の変数を初期化
 	easingCounter = easingRate = 0.0f;
 }
 
 void CharaSelectPreviewManager::Update(void)
 {
-	// 操作権者による操作によって選択キャラを変える
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
-		// 1つ前のタイプへ
-		selectCharaType = (CHARA_TYPE)((int)selectCharaType - 1);
-		// 範囲外だったら逆の端へ
-		if (selectCharaType <= CHARA_TYPE::None) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::Max - 1); }
-		// 変更したことをプレビュー管理クラスへ伝える
-		charaPreview[(int)selectCharaType]->Select();
-	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
-		// 1つ次のタイプへ
-		selectCharaType = (CHARA_TYPE)((int)selectCharaType + 1);
-		// 範囲外だったら逆の端へ
-		if (selectCharaType >= CHARA_TYPE::Max) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
-		// 変更したことをプレビュー管理クラスへ伝える
-		charaPreview[(int)selectCharaType]->Select();
-	}
-
 	// 選択中のキャラタイプのプレビューを更新
-	charaPreview[(int)selectCharaType]->Update();
-
-	if (easingCounter > 100000.0f) { easingCounter = 0.0f; }
+	charaPreview->Update();
 
 #pragma region イージング
 	easingCounter += 0.08f;
@@ -110,7 +67,7 @@ void CharaSelectPreviewManager::Draw(void)
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1, 0, frameImage, true);
 
 	// 選択中のキャラタイプのプレビューの描画処理
-	charaPreview[(int)selectCharaType]->Draw();
+	charaPreview->Draw();
 
 	// 矢印の描画
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1 + easingRate, 0, arrowImage, true);
@@ -124,16 +81,41 @@ void CharaSelectPreviewManager::Draw(void)
 
 void CharaSelectPreviewManager::Release(void)
 {
-	// 各キャラタイププレビューの削除
-	for (CharaSelectPreviewBase* cp : charaPreview) {
-		if (cp == nullptr) { continue; }
-		cp->Release();
-		delete cp;
-		cp = nullptr;
+	// プレビューを破棄
+	if (charaPreview) {
+		charaPreview->Release();
+		delete charaPreview;
+		charaPreview = nullptr;
 	}
 
 	for (int& image : enterImage) { DeleteGraph(image); }
 
 	DeleteGraph(arrowImage);
 	DeleteGraph(frameImage);
+}
+
+void CharaSelectPreviewManager::ChangeCharacter(CHARA_TYPE select)
+{
+	// 範囲チェック
+	if (select <= CHARA_TYPE::None || CHARA_TYPE::Max <= select) { return; }
+
+	// 現在のプレビューを破棄
+	if (charaPreview) {
+		charaPreview->Release();
+		delete charaPreview;
+		charaPreview = nullptr;
+	}
+
+	// 新たに選択されたキャラのプレビューを生成
+	switch (select) {
+	case CHARA_TYPE::Orange: { charaPreview = new OrangeCharaSelectPreview(); break; }
+	case CHARA_TYPE::Tomato: { charaPreview = new TomatoCharaSelectPreview(); break; }
+	case CHARA_TYPE::Peach: { charaPreview = new PeachCharaSelectPreview(); break; }
+	case CHARA_TYPE::Grape: { charaPreview = new GrapeCharaSelectPreview(); break; }
+	default: { charaPreview = new UnknowCharaSelectPreview(); break; }
+	}
+
+	// 読み込み/初期化
+	charaPreview->Load();
+	charaPreview->Init();
 }
