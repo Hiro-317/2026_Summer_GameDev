@@ -120,7 +120,7 @@ void PasswordScene::Draw(void)
 	for (int i = 0; i < nowTypingPass.size(); i++) {
 		std::string c(1, nowTypingPass.at(i));
 		int defaultPosX = PASS_SPACE_POS.x - 150;
-		DrawFormatStringToHandle(defaultPosX + (i * 130), PASS_SPACE_POS.y - 32, 0x000000, Font::GetIns().GetFont(FontKinds::DEFAULT_64), c.c_str());
+		DrawFormatStringToHandle(defaultPosX + (i * 130), PASS_SPACE_POS.y - 32, 0x000000, Font::GetIns().GetFont(FontKinds::DELASUKO_GOTHIC_64), c.c_str());
 	}
 
 	// ƒeƒ“ƒL[
