@@ -167,7 +167,6 @@ void PlayerBase::CharacterUpdate(void)
 	// HPがゼロ以下になったら死亡状態に遷移
 	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
 		ChangeState((int)STATE::DEATH);
-		SetJudge(false);
 	}
 
 #ifdef _DEBUG		// クールタイム用

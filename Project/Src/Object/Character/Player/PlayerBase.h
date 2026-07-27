@@ -298,7 +298,10 @@ protected:
 	// モデルアニメーションプレイ関数
 	void AnimePlay(int type, bool loop = true)override;
 
-	void PlayerDeathSetting(void) { SetJudge(false); SetIsDraw(false); }
+	void PlayerDeathSetting(void) { 
+		SetJudge(false);
+		SetIsDraw(false); 
+	}
 
 #pragma endregion
 };
