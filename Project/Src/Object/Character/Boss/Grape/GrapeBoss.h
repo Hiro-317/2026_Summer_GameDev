@@ -36,18 +36,18 @@ private:
 	// 当たり判定情報～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 	// カプセルコライダーの半径
-	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate");
+	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate");
 
-	// カプセルコライダーのローカルX始点座標（モデルの中心点からのオフセット）
+	// カプセルコライダーのローカルY始点座標（モデルの中心点からのオフセット）
 	const Vector3 CAPSULE_COLLIDER_START_POS =
-		Vector3::Xonly(
-			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
+		Vector3::Yonly(
+			(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
 	// カプセルコライダーのローカルX終点座標（モデルの中心点からのオフセット）
 	const Vector3 CAPSULE_COLLIDER_END_POS =
-		-Vector3::Xonly(
-			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
+		-Vector3::Yonly(
+			(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 			- CAPSULE_COLLIDER_RADIUS
 		);
 

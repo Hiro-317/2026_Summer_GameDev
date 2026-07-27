@@ -44,9 +44,11 @@ void GrapeBossKickDownState::Enter(void)
 	SetCoolTime();
 	target = GetTarget();
 	angle.y = atan2f(playerPos.at(target)->x - pos.x, playerPos.at(target)->z - pos.z);
-	Vector3 tmp = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
-	collOperator->SetPos(tmp);
+	attackPos = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
+	collOperator->SetPos(attackPos);
 	collOperator->SetDrawArea(true);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
+	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, attackPos, 0.0f));
 }
 
 void GrapeBossKickDownState::Update(void)
@@ -111,6 +113,7 @@ void GrapeBossKickDownState::Update(void)
 	else {
 		// UŒ‚•`‰æ‚ðXV
 		collOperator->SetScale(GetAnimPlayRatio());
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, attackPos, GetAnimPlayRatio()));
 	}
 }
 
@@ -119,6 +122,7 @@ void GrapeBossKickDownState::Exit(void)
 	// ƒtƒŒ[ƒ€ˆÊ’u‚ÉUŒ‚‚ðÁ‹Ž
 	collOperator->CollSet(false);
 	collOperator->SetDrawArea(false);
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 }
 
 void GrapeBossKickDownState::AlwaysUpdate(void)

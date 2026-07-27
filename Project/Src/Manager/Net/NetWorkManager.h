@@ -333,6 +333,8 @@ private:
 		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAnimeType: { MsgDataRecv<MsgDataBossAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossBombInform: { MsgDataRecv<MsgDataBossBombInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::EffectCreate: { MsgDataRecv<MsgDataEffectCreate>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::EffectFollow: { MsgDataRecv<MsgDataEffectFollow>(event, headerData->senderId); break; }
 		}
 
 		// パケットの解放
@@ -432,6 +434,8 @@ private:
 					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
+					case MSG_DATA_TYPE::EffectCreate: { delete static_cast<MsgDataEffectCreate*>(ptr); break; }
+					case MSG_DATA_TYPE::EffectFollow: { delete static_cast<MsgDataEffectFollow*>(ptr); break; }
 					}
 				}
 				msgData[dataType][senderId].clear();

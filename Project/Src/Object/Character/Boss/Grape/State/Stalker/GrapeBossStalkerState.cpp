@@ -60,7 +60,7 @@ void GrapeBossStalkerState::Update(void)
 				bombType[num].weaponIns->SetViewPosCircle();
 
 				// ‹N“®‚ð’Ê’m
-				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::SingleBomb, num, tmpPos));
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::StalkerBomb, num, tmpPos));
 
 				// ‹N“®
 				bombType[num].live = true;

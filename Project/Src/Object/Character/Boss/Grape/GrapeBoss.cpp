@@ -365,12 +365,6 @@ void GrapeBoss::ReceptionUpdate(void)
 			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
-		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
-		{
-			SubObjSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
-			break;
-		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
 			SubObjSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);

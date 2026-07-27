@@ -120,4 +120,7 @@ private:
 
 	// ターゲット番号の保持
 	int target;
+
+	// 攻撃座標
+	Vector3 attackPos;
 };

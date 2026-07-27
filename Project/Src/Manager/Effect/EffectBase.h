@@ -4,6 +4,7 @@
 
 #include "../../Utility/Utility.h"
 
+#include "../Net/NetWorkManager.h"
 #include "../../Object/Common/Transform.h"
 #include "../../Object/Common/DataLoad/ParameterLoad.h"
 
@@ -83,10 +84,12 @@ public:
 				}
 				// çXêV
 				SetRotationPlayingEffekseer3DEffect(playHandle, temp.x, temp.y, temp.z);
+				Net::GetIns().Send(MsgDataEffectFollow((int)info.name, pos, temp));
 			}
 			else {
 				// äpìxÇÃí«è]ÇµÇ»Ç¢Ç»ÇÁèâä˙ílÇì¸ÇÍÇÈ
 				SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+				Net::GetIns().Send(MsgDataEffectFollow((int)info.name, pos, info.trans.angle));
 			}
 		}
 		// í«è]ÇµÇ»Ç¢Ç»ÇÁ
@@ -111,6 +114,12 @@ public:
 		StopEffekseer3DEffect(playHandle);
 		playHandle = -1;
 		Release();
+	}
+
+	void SetFollowReception(Vector3 pos, Vector3 angle) {
+
+		SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.y, pos.z);
+		SetRotationPlayingEffekseer3DEffect(playHandle, angle.x, angle.y, angle.z);
 	}
 
 	bool IsEnd(void) { return end; }
