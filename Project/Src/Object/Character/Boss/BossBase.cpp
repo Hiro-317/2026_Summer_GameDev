@@ -225,7 +225,10 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
-			PlayDamage();
+			// アイドルだとアニメーションの再生
+			if (state == (int)STATE::IDLE) {
+				PlayDamage();
+			}
 			// ダメージとクリティカル情報を送信する
 			Net::GetIns().Send(MsgDataBossHit(collisionPoint, damage, isClitical), other.GetSkillStats().operatorSenderId);
 
