@@ -28,12 +28,12 @@ void PlayerDeathState::Enter(void)
 void PlayerDeathState::Update(void)
 {
 	if (IsAnimeEnd()) {
-		PlayerDeathSetting();
 		DefaultChangeState();
 	}
 }
 
 void PlayerDeathState::Exit(void)
 {
+	PlayerDeathSetting();
 	PlayerIsDeathTrue();
 }
