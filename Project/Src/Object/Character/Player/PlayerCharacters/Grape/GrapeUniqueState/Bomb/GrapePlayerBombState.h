@@ -14,8 +14,6 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		GrapePlayerBombCollOperator& collOperator,
 		const int COOL_TIME,
-		const int ATTACK_COUNT_TIME,
-		const int ATTACK_START_TIME,
 		Vector3& pos,
 		const std::function<void(void)> PlayAnime,
 		const std::function<bool(void)> IsAnimeEnd,
@@ -42,11 +40,7 @@ private:
 	// クールタイム
 	const int COOL_TIME;
 
-	// 爆発するまでのカウント時間
-	const float ATTACK_COUNT_TIME;
 
-	// 爆弾待機時間
-	const float ATTACK_START_TIME; 
 #pragma endregion 
 
 #pragma region 変数定義
@@ -55,9 +49,6 @@ private:
 	Vector3& pos;
 
 	GrapePlayerBombCollOperator& collOperator;
-
-	// 終了までのカウント用
-	short timeCounter;
 
 	const std::function<void(void)> PlayAnime;
 	const std::function<bool(void)> IsAnimeEnd;

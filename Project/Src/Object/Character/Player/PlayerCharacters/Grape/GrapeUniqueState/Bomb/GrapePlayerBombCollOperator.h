@@ -18,7 +18,9 @@ public:
 	/// <param name="playerStats">プレイヤーのステータス情報</param>
 	GrapePlayerBombCollOperator(
 		COLLIDER_TAG COLL_TAG,
-		const short ATTACK_RATE_PERCENT,
+		short ATTACK_RATE_PERCENT,
+		float ATTACK_COUNT_TIME,
+		float ATTACK_START_TIME,
 		const Vector3& playerPos, const Vector3& playerAngle,
 		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
@@ -58,10 +60,6 @@ public:
 
 	void PlayEffect(void) { EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos); }
 
-	// 攻撃のヒット管理のフラグをリセットする
-	void ResetIsHit(void) { isHit = false; }
-	void ResetIsTargetFind(void) { isAttackTargetFind = false; }
-
 	// 攻撃ヒット管理フラグを取得する
 	const bool GetIsHit(void) { return isHit; }
 
@@ -74,6 +72,8 @@ public:
 	// プレイヤーの位置に爆弾を設置する
 	void SetPos(void) {
 		trans.pos = playerPos;
+		isHit = false;
+		isAttackTargetFind = false;
 	}
 private:
 
@@ -84,6 +84,12 @@ private:
 
 	// 攻撃の段階ごとのタグ
 	COLLIDER_TAG COLL_TAG;
+
+	// 爆発するまでのカウント時間
+	const float ATTACK_COUNT_TIME;
+
+	// 爆弾待機時間
+	const float ATTACK_START_TIME;
 
 #pragma endregion
 
@@ -104,4 +110,7 @@ private:
 	bool isHit;
 
 	bool isAttackTargetFind;
+
+	// 終了までのカウント用
+	short timeCounter;
 };

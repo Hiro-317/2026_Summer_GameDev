@@ -4,7 +4,9 @@
 
 GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	COLLIDER_TAG COLL_TAG,
-	const short ATTACK_RATE_PERCENT,
+	short ATTACK_RATE_PERCENT,
+	float ATTACK_COUNT_TIME,
+	float ATTACK_START_TIME,
 	const Vector3& playerPos, const Vector3& playerAngle,
 	MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& playerStats
@@ -12,11 +14,14 @@ GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	ActorBase(),
 	COLL_TAG(COLL_TAG),
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
+	ATTACK_START_TIME(ATTACK_START_TIME),
 	playerPos(playerPos), playerAngle(playerAngle),
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
 	isHit(false),
-	isAttackTargetFind(false)
+	isAttackTargetFind(false),
+	timeCounter(0)
 {
 }
 
@@ -37,7 +42,6 @@ void GrapePlayerBombCollOperator::Load(void)
 
 	// コライダー生成
 	ColliderCreate(new SphereCollider(COLL_TAG, 500.0f));
-	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 100.0f));
 
 	// 初期化処理
 	SetJudge(false);
@@ -58,6 +62,30 @@ void GrapePlayerBombCollOperator::Update(void)
 {
 	if (isHit) {
 		CollOff();
+	}
+
+	if (GetIsHit() || timeCounter == 0) {
+		CollOff();
+		return;
+	}
+
+	// タイマースタート
+	if (timeCounter > 1) {
+		timeCounter--;
+		SetIsBombDraw(true);
+	}
+
+	if (timeCounter < (ATTACK_COUNT_TIME - ATTACK_START_TIME)) {
+		// 敵を探し始める
+		SetIsEnemySerch(true);
+	}
+
+	// タイマーが終了するか、爆弾の範囲内に敵が入ったら爆発する
+	if (timeCounter == 1 || GetIsAttackTargetFind()) {
+		CollOn();
+		SetIsBombDraw(false);
+		PlayEffect();
+		timeCounter = 0;
 	}
 }
 

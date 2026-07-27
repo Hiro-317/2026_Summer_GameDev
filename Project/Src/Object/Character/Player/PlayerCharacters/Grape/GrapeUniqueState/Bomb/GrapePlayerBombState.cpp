@@ -7,8 +7,6 @@ GrapePlayerBombState::GrapePlayerBombState(
 	const std::function<bool(void)>& isOwnState,
 	GrapePlayerBombCollOperator& collOperator,
 	const int COOL_TIME,
-	const int ATTACK_COUNT_TIME,
-	const int ATTACK_START_TIME,
 	Vector3& pos,
 	const std::function<void(void)> PlayAnime,
 	const std::function<bool(void)> IsAnimeEnd,
@@ -17,8 +15,6 @@ GrapePlayerBombState::GrapePlayerBombState(
 	CharacterStateBase(ownChangeState, isOwnState),
 	collOperator(collOperator),
 	COOL_TIME(COOL_TIME),
-	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
-	ATTACK_START_TIME(ATTACK_START_TIME),
 	pos(pos),
 	PlayAnime(PlayAnime),
 	IsAnimeEnd(IsAnimeEnd),
@@ -57,9 +53,6 @@ void GrapePlayerBombState::Enter(void)
 	// クールタイムをセット
 	coolTimeCounter = COOL_TIME;
 
-	// タイマーを開始
-	timeCounter = ATTACK_COUNT_TIME;
-
 	// アニメーションを再生
 	PlayAnime();
 }
@@ -79,32 +72,4 @@ void GrapePlayerBombState::AlwaysUpdate(void)
 		// 攻撃のクールタイムを減らす
 		if (coolTimeCounter > 0) { coolTimeCounter--; }
 	}
-
-#pragma region 設置後の処理
-	if (collOperator.GetIsHit() || timeCounter == 0) { 
-		collOperator.CollOff();
-		return; 
-	}
-
-	// タイマースタート
-	if (timeCounter > 1) { 
-		timeCounter--; 
-		collOperator.SetIsBombDraw(true);
-	}
-
-	// 設置してから二十秒後
-	if (timeCounter < (ATTACK_COUNT_TIME - ATTACK_START_TIME)) {
-		// 敵を探し始める
-		collOperator.SetIsEnemySerch(true);
-	}
-
-	// タイマーが終了するか、爆弾の範囲内に敵が入ったら爆発する
-	if (timeCounter == 1 || collOperator.GetIsAttackTargetFind()) {
-		collOperator.CollOn();
-		collOperator.SetIsBombDraw(false);
-		collOperator.PlayEffect();
-		timeCounter = 0;
-	}
-
-#pragma endregion 
 }
