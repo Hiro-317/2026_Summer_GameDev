@@ -55,7 +55,7 @@ void GrapeBossStampState::Enter(void)
 	collOperator->SetPos(*playerPos.at(target));
 	attackPos = Vector3();
 	attackDistRate = Vector3();
-	collOperator->SetDrawArea(true);
+	collOperator->DrawAreaOn();
 	nowAttackTime = 0;
 	prevPos = pos.y - 0.5f;
 	attackCnt = 0;
@@ -150,7 +150,7 @@ void GrapeBossStampState::Update(void)
 				bombType[i].live = true;
 			}
 			// 位置に攻撃を発生
-			collOperator->CollSet(true);
+			collOperator->CollOn();
 		}
 		// 二度目は通さないようにフラグを折る
 		first = false;
@@ -161,8 +161,7 @@ void GrapeBossStampState::Update(void)
 		// 攻撃持続時間の判定
 		if (cnt > ATTACK_DURATION) {
 			// フレーム位置に攻撃を消去
-			collOperator->CollSet(false);
-			collOperator->SetDrawArea(false);
+			collOperator->Off();
 			Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 			collOperator->SetScale(0.0f);
 			Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, 0.0f));

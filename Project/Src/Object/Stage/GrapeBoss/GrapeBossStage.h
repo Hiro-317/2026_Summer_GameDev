@@ -9,9 +9,9 @@ private:
 #pragma region 定数定義
 
     // 地面の当たり判定のサイズ
-    const Vector3 GROUND_COLLISION_SIZE = Vector3(10077.034f, 90.0f, 9234.112f);
+    const Vector3 GROUND_COLLISION_SIZE = Vector3(10077.034f, 70.0f, 9234.112f);
     // モデルの描画位置と当たり判定の中心座標の差分
-    const Vector3 MODEL_CENTER_DIFF = Vector3::Yonly(-110.0f);
+    const Vector3 MODEL_CENTER_DIFF = Vector3::Yonly(-105.0f);
 
     // 壁の高さ
     const float WALL_HEIGHT = 1000.0f;

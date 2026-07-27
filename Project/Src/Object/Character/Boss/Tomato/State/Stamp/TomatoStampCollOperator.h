@@ -28,9 +28,10 @@ public:
 	void SetScale(float scale) { collFront.scale = SCALE * scale; }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æÝ’è
-	void SetDrawArea(bool flg) { isDrawArea = flg; }
+	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
+	void CollOn(void) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
+	void Off(void) { SetJudge(false); isDrawArea = false; }
 	void SetPos(const Vector3& pos){ trans.pos = pos; }
-	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
 private:
 

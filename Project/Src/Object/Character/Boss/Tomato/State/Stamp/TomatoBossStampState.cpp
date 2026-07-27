@@ -39,7 +39,7 @@ void TomatoBossStampState::Enter(void)
 	collOperator->SetPos(*playerPos.at(target)); 
 	attackPos = Vector3();
 	attackDistRate = Vector3();
-	collOperator->SetDrawArea(true);
+	collOperator->DrawAreaOn();
 	nowAttackTime = 0;
 	prevPos = pos.y - 0.5f;
 	attackCnt = 0;
@@ -79,7 +79,7 @@ void TomatoBossStampState::Update(void)
 		// 初めなら攻撃を出し音を出す
 		if (attackCnt == 0) {
 			SoundManager::GetIns().Play("StampLand");
-			collOperator->CollSet(true);
+			collOperator->CollOn();
 			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::STAMP_LAND, collOperator->GetAttackPos());
 		}
 		// 持続時間過ぎたらステートを変える
@@ -112,8 +112,7 @@ void TomatoBossStampState::Update(void)
 
 void TomatoBossStampState::Exit(void)
 {
-	collOperator->SetDrawArea(false);
-	collOperator->CollSet(false);
+	collOperator->Off();
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB, false));
 }
 

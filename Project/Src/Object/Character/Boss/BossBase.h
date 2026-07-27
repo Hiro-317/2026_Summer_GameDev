@@ -149,10 +149,10 @@ protected:
 	const std::vector<const Vector3*> playerPos;
 
 	// プレイヤーの生存判定の参照(読み取り専用)
-	const std::vector<const bool*> playerLive;
+	const std::vector<const bool*> playerDeath;
 
 	// プレイヤーの現在の生存判定保持
-	std::vector<bool> nowLive;
+	std::vector<bool> nowDeath;
 
 	// コライダーの当たり判定描画のパラメーター
 	ParameterLoad* collParam;

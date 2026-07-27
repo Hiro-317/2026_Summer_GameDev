@@ -18,18 +18,18 @@ BossBase::BossBase(
 	std::string modelPath,
 
 	const std::vector<const Vector3*> playerPos,
-	const std::vector<const bool*> playerLive
+	const std::vector<const bool*> playerDeath
 ) :
 	CharacterBase(
 		"Parameter",
-		"HP_" + std::to_string(playerLive.size()),
+		"HP_" + std::to_string(playerDeath.size()),
 		"AttackPower",
 		"DefensePower",
 		"MoveSpeed",
 		parameterPath),
 	
 	playerPos(playerPos),
-	playerLive(playerLive)
+	playerDeath(playerDeath)
 {
 	trans.Load(("Character/" + modelPath).c_str());
 
@@ -45,7 +45,7 @@ BossBase::BossBase(
 	}
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		nowLive.emplace_back(true);
+		nowDeath.emplace_back(false);
 	}
 	mostDamaged = 0;
 }
@@ -137,29 +137,22 @@ void BossBase::CharacterUpdate(void)
 	for (ActorBase*& c : subObjArray) { c->Update(); }
 
 	// プレイヤーの生存判定をする
-	for (int i = 0; i < playerLive.size(); i++) {
+	for (int i = 0; i < playerDeath.size(); i++) {
 		// 今死んだ場合
-		if (!*playerLive.at(i) && nowLive.at(i)) {
-			// 生きているを消す
-			nowLive[i] = false;
+		if (*playerDeath.at(i) && !nowDeath.at(i)) {
+			// 死んでる判定にする
+			nowDeath[i] = true;
 
 			// 最大ダメージの再判定
-			mostDamaged = 0;
+			mostDamaged = -1;
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+				// センダーIDと死んだ奴が同じならスキップ
+				if (id == i) { continue; }
 				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
 				if (mostDamaged < damaged.at(id)) {
 					mostDamaged = damaged.at(id);
 					targetNum = id;
-				}
-			}
-			// 死んだ奴とターゲットが同じならずらす
-			if (targetNum == i) {
-				for (int j = 0; j < playerLive.size(); j++) {
-					if (nowLive.at(j)) {
-						targetNum = j;
-						break;
-					}
 				}
 			}
 		}

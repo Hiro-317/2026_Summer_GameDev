@@ -5,7 +5,7 @@
 class TomatoBoss : public BossBase
 {
 public:
-	TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive);
+	TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath);
 	~TomatoBoss()override = default;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—

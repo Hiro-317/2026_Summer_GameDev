@@ -5,7 +5,7 @@
 class GrapeBoss : public BossBase
 {
 public:
-	GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive);
+	GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath);
 	~GrapeBoss()override = default;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
