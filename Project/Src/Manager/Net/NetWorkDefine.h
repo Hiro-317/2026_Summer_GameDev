@@ -49,6 +49,10 @@ enum class MSG_DATA_TYPE
     PlayerHeal,
     // <ホスト>プレイヤー：バフ・デバフ
     PlayerModifier,
+    // <ホスト/クライアント>プレイヤー：ショットの発射
+    PlayerShotStart,
+    // <ホスト/クライアント>プレイヤー：ショットの終了
+    PlayerShotEnd,
     // <クライアント>プレイヤー：味方ターゲット
     PlayerToPlayerTarget,
     // <ホスト>プレイヤー：ミスUIパケット
@@ -57,6 +61,7 @@ enum class MSG_DATA_TYPE
     PlayerState,
     // <クライアント>当たり判定情報送信構造体
     PlayerCollOperator,
+
 
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
@@ -665,6 +670,63 @@ struct MsgDataPlayerModifier
     {
     }
 };
+
+// <ホスト/クライアント>ショットの発射
+struct MsgDataPlayerShotStart
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerShotStart;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    Vector3 vec;
+
+    MsgDataPlayerShotStart(const Vector3& pos, const Vector3& vec) :
+        header(DATA_TYPE),
+        pos(pos),
+        vec(vec)
+    {
+    }
+    MsgDataPlayerShotStart(void) :
+        header(DATA_TYPE),
+        pos(),
+        vec()
+    {
+    }
+};
+
+// <ホスト/クライアント>ショットの終了
+struct MsgDataPlayerShotEnd
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerShotEnd;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataPlayerShotEnd(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataPlayerShotEnd(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
 
 // <クライアント>味方へのターゲット
 struct MsgDataPlayerToPlayerTarget

@@ -1,7 +1,8 @@
 #include "GrapePlayerShotCollOperator.h"
 
-#include "../../../../../../../Manager/Effect/EffectManager.h"
+#include "../../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Common/Collider/SphereCollider.h"
+#include "../../../../../../../Manager/Effect/EffectManager.h"
 
 GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
 	COLLIDER_TAG COLL_TAG,
@@ -17,8 +18,9 @@ GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
 	isHit(false),
-	targetVec(Vector3()), 
-	lifeCounter(0)
+	moveVec(Vector3()),
+	lifeCounter(0),
+	isAlive(false)
 {
 }
 
@@ -63,38 +65,81 @@ void GrapePlayerShotCollOperator::Load(void)
 
 void GrapePlayerShotCollOperator::Update(void)
 {
+	if (!isAlive) { return; }
+
 	// Œ‚‚Á‚½uŠÔ‚©‚ç’e‚Ì¶‘¶ŠÔ‚ğŒ¸‚ç‚·
 	if (lifeCounter > 0) {
 		lifeCounter--;
 	}
 
 	// ¶‘¶ŠÔ‚ª‚È‚­‚È‚é‚©A“G‚É“–‚½‚Á‚½‚ç’e‚ğÁ‚·ˆ—‚ğs‚¤
-	if (lifeCounter <= 0 || isHit) {
-		lifeCounter = 0;
-		CollOff();
-		SetIsDraw(false);
+	if (lifeCounter <= 0) {
+		LocalShotEnd();
 		return;
 	}
 
 	// ’e‚ğ”ò‚Î‚·ˆ—
-	if (GetIsDraw()) {
-		trans.pos += targetVec * 40.0f;
+	if (isAlive) {
+		trans.pos += moveVec * 40.0f;
 		CollOn();
 	}
 }
 
 void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
+	if (!Net::GetIns().IsHost()) { return; }
+
 	// UŒ‚‚Ì“–‚½‚è”»’è
-	switch (other.GetTag())
-	{
-	case COLLIDER_TAG::BOSS:
+	switch (other.GetTag()) {
+
 	case COLLIDER_TAG::ENEMY:
 	case COLLIDER_TAG::BOSS_DISTANCE:
-		isHit = true;
-		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
-		SetIsDraw(false);
+		LocalShotEnd();
 		break;
 	default:break;
 	}
+}
+
+void GrapePlayerShotCollOperator::CollOn(void) {
+	SetJudge(true);
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
+	}
+}
+
+void GrapePlayerShotCollOperator::CollOff(void) {
+	SetJudge(false);
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
+	}
+}
+
+void GrapePlayerShotCollOperator::RemoteShotStart(const Vector3& pos, const Vector3& vec) {
+	trans.pos = pos;
+	moveVec = vec;
+	SetIsDraw(true);
+	lifeCounter = LIFE_TIME;
+	isAlive = true;
+}
+
+void GrapePlayerShotCollOperator::RemoteShotEnd(const Vector3& pos) {
+	lifeCounter = 0;
+	CollOff();
+	isAlive = false;
+	EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, pos);
+	SetIsDraw(false);
+}
+
+void GrapePlayerShotCollOperator::LocalShotStart(const Vector3& pos, const Vector3& vec)
+{
+	RemoteShotStart(pos, vec);
+
+	Net::GetIns().Send(MsgDataPlayerShotStart(pos, vec), operatorSenderId);
+}
+
+void GrapePlayerShotCollOperator::LocalShotEnd()
+{
+	RemoteShotEnd(trans.pos);
+
+	Net::GetIns().Send(MsgDataPlayerShotEnd(trans.pos), operatorSenderId);
 }

@@ -82,6 +82,7 @@ void GrapePlayerBombState::AlwaysUpdate(void)
 
 #pragma region İ’uŒã‚Ìˆ—
 	if (collOperator.GetIsHit() || timeCounter == 0) { 
+		collOperator.CollOff();
 		return; 
 	}
 

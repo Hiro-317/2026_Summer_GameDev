@@ -1,6 +1,5 @@
 #pragma once
 #include "../../../../../../ActorBase.h"
-#include "../../../../../../../Manager/Net/NetWorkManager.h"
 
 class GrapePlayerShotCollOperator : public ActorBase
 {
@@ -35,19 +34,9 @@ public:
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 	// 攻撃の判定を発生させる
-	void CollOn(void) {
-		SetJudge(true);
-		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
-		}
-	}
+	void CollOn(void);
 	// 攻撃の判定を消す
-	void CollOff(void) {
-		SetJudge(false);
-		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
-		}
-	}
+	void CollOff(void);
 
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }
@@ -55,18 +44,10 @@ public:
 	// 攻撃ヒット管理フラグを取得する
 	const bool GetIsHit(void) { return isHit; }
 
-	// 投げる対象のベクトルを取得
-	void SetTargetVec(const Vector3& vec) {
-		targetVec = vec;
-	}
-	
-	// 初期化処理
-	void SetInit(void) {
-		ResetIsHit();
-		trans.pos = playerPos;
-		SetIsDraw(true);
-		lifeCounter = LIFE_TIME;
-	}
+	void RemoteShotStart(const Vector3& pos, const Vector3& vec);
+	void RemoteShotEnd(const Vector3& pos);
+
+	void LocalShotStart(const Vector3& pos, const Vector3& vec);
 private:
 
 #pragma region 定数
@@ -99,8 +80,14 @@ private:
 	bool isHit;
 
 	// 投げる対象（ターゲット）
-	Vector3 targetVec;
+	Vector3 moveVec;
 
 	// 弾の生存時間
 	short lifeCounter;
+
+	bool isAlive;
+
+	void LocalShotEnd();
 };
+
+

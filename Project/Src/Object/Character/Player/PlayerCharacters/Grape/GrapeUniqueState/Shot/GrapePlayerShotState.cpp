@@ -22,7 +22,8 @@ GrapePlayerShotState::GrapePlayerShotState(
 	AnimeRatio(AnimeRatio),
 	DefaultChangeState(DefaultChangeState),
 	timeCounter(0),
-	moveDir(Vector3())
+	moveDir(Vector3()),
+	isShot(false)
 {
 }
 
@@ -43,24 +44,29 @@ void GrapePlayerShotState::Enter(void)
 
 	PlayAnime();
 
-	collOperator.SetInit();
+	isShot = false;
 }
 
 void GrapePlayerShotState::Update(void)
 {
-	// 突進方向の取得
-	moveDir = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
-	// ボスへの方向を取得
-	Vector3 bossVec = (*bossPos - pos).Normalized();
-
-	// 内積をとってなす角を取得する
-	float dot = moveDir.Dot(bossVec);
-
-	// 一定範囲内なら、ボスの方を向かせる補正をかける
-	if (dot > Deg2Rad(30.0f)) { angle.y = atan2f(bossVec.x, bossVec.z); }
-
 	if (AnimeRatio() < 0.3f) {
-		collOperator.SetTargetVec(moveDir);
+		// 発射の瞬間までじわじわボスの方を向かせる
+
+		// プレイヤーの前方方向を取得
+		moveDir = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
+		// ボスへの方向を取得
+		Vector3 bossVec = (*bossPos - pos).Normalized();
+		// 内積をとってなす角を取得する
+		float dot = moveDir.Dot(bossVec);
+		// 一定範囲内なら、ボスの方を向かせる補正をかける
+		if (dot > Deg2Rad(30.0f)) { angle.y = atan2f(bossVec.x, bossVec.z); }
+	}
+	else {
+		if (!isShot) {
+			// 発射
+			collOperator.LocalShotStart(pos, moveDir);
+			isShot = true;
+		}
 	}
 
 	if (IsAnimeEnd()) {

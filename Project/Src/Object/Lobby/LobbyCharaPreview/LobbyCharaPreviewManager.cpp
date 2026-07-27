@@ -134,6 +134,10 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 	}
 
 	default: { return; }	// 例外
+
+
+
+
 	}
 
 	// キャラプレビューのロードと初期化

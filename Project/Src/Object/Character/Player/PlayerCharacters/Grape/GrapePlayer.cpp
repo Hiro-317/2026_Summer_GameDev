@@ -311,8 +311,8 @@ void GrapePlayer::ReceptionUpdate(void)
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerThrow: {
 			// ƒXƒ^ƒ“ƒv
-			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerThrowCollOperator>(1)->CollOn(); }
-			else { SubObjSerch<GrapePlayerThrowCollOperator>(1)->CollOff(); }
+			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerThrowCollOperator>()->CollOn(); }
+			else { SubObjSerch<GrapePlayerThrowCollOperator>()->CollOff(); }
 
 			break;
 		}
@@ -343,7 +343,7 @@ void GrapePlayer::ReceptionUpdate(void)
 			break;
 		}
 		case PlayerBase::STATE::SKILL_3: {
-			SubObjSerch<GrapePlayerShotCollOperator>(1)->ResetIsHit();
+			SubObjSerch<GrapePlayerShotCollOperator>()->ResetIsHit();
 			break;
 		}
 		case PlayerBase::STATE::DEATH: {
@@ -353,6 +353,20 @@ void GrapePlayer::ReceptionUpdate(void)
 
 		default: { break; }
 		}
+
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(operatorSenderId)) {
+	
+		SubObjSerch<GrapePlayerShotCollOperator>()->RemoteShotStart(dataPtr->pos, dataPtr->vec);
+		
+		delete dataPtr;
+	}
+
+	while (MsgDataPlayerShotEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotEnd>(operatorSenderId)) {
+
+		SubObjSerch<GrapePlayerShotCollOperator>()->RemoteShotEnd(dataPtr->pos);
 
 		delete dataPtr;
 	}

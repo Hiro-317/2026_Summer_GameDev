@@ -67,4 +67,6 @@ private:
 #pragma endregion 
 
 	Vector3 moveDir;
+
+	bool isShot;
 };

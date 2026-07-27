@@ -320,6 +320,8 @@ private:
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerHeal: { MsgDataRecv<MsgDataPlayerHeal>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerModifier: { MsgDataRecv<MsgDataPlayerModifier>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerShotStart: { MsgDataRecv<MsgDataPlayerShotStart>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::PlayerShotEnd: { MsgDataRecv<MsgDataPlayerShotEnd>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerToPlayerTarget: { MsgDataRecv<MsgDataPlayerToPlayerTarget>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerMissNotice: { MsgDataRecv<MsgDataPlayerMissNotice>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerState: { MsgDataRecv<MsgDataPlayerState>(event, headerData->senderId); break; }
@@ -419,6 +421,8 @@ private:
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHeal: { delete static_cast<MsgDataPlayerHeal*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerModifier: { delete static_cast<MsgDataPlayerModifier*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerShotStart: { delete static_cast<MsgDataPlayerShotStart*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerShotEnd: { delete static_cast<MsgDataPlayerShotEnd*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerToPlayerTarget: { delete static_cast<MsgDataPlayerToPlayerTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
