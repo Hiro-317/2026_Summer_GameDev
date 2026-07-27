@@ -21,6 +21,7 @@ GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	playerStats(playerStats),
 	isBlast(false),
 	isAttackTargetFind(false),
+	isInit(false),
 	timeCounter(0)
 {
 }
@@ -41,13 +42,14 @@ void GrapePlayerBombCollOperator::Load(void)
 #pragma endregion
 
 	// コライダー生成
-	ColliderCreate(new SphereCollider(COLL_TAG, 700.0f));
-	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 200.0f));
+	ColliderCreate(new SphereCollider(COLL_TAG, 300.0f));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 100.0f));
 
 	// 初期化処理
 	SetJudge(false);
 	isBlast = false;
 	isAttackTargetFind = false;
+	isInit = false;
 
 	// 最初は描画しない
 	SetIsDraw(false);
@@ -61,6 +63,8 @@ void GrapePlayerBombCollOperator::Load(void)
 
 void GrapePlayerBombCollOperator::Update(void)
 {
+	if (!isInit) { return; }
+
 	// もし爆発していたら早期リターン
 	if (isBlast) {
 		CollOff();
@@ -68,7 +72,7 @@ void GrapePlayerBombCollOperator::Update(void)
 	}
 
 	// タイマースタート
-	if (timeCounter > 1) {
+	if (timeCounter > 0) {
 		timeCounter--;
 		SetIsDraw(true);
 	}
@@ -79,9 +83,8 @@ void GrapePlayerBombCollOperator::Update(void)
 	}
 
 	// タイマーが終了するか、爆弾の範囲内に敵が入ったら爆発する
-	if (timeCounter == 1 || GetIsAttackTargetFind()) {
+	if (timeCounter <= 0 || GetIsAttackTargetFind()) {
 		CollOn();
-		timeCounter = 0;
 		LocalBombSetEnd();
 	}
 }

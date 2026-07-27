@@ -45,18 +45,17 @@ public:
 		}
 	}
 
-	// 攻撃のヒット管理のフラグをリセットする
-	void ResetIsHit(void) { isHit = false; }
-
-	// 攻撃ヒット管理フラグを取得する
-	const bool GetIsHit(void) { return isHit; }
-
 	// プレイヤーの位置に爆弾を設置する
 	void SetTargetVec(const Vector3& vec) {
-		targetVec = vec;
 	}
 
-	void SetInit(void);
+
+	void RemoteThrowBombStart(const Vector3& pos, const Vector3& vec);
+	void RemoteThrowBombEnd(void);
+
+	void LocalThrowBombStart(const Vector3& pos, const Vector3& vec);
+	void LocalThrowBombEnd(void);
+
 private:
 
 	// 更新処理
@@ -85,14 +84,11 @@ private:
 	const CharacterStats& playerStats;
 #pragma endregion
 
-	// 攻撃のヒット管理のフラグ
-	bool isHit;
-
 	Vector3 targetVec;
 
 	float gravity;
 
 	float bouncePower;
 
-	bool isBounce = false;
+	bool isBlast;
 };

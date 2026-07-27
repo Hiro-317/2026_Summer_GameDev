@@ -63,5 +63,7 @@ private:
 
 #pragma endregion 
 
-	Vector3 moveDir;
+	Vector3 moveVec;
+
+	bool isThrow;
 };

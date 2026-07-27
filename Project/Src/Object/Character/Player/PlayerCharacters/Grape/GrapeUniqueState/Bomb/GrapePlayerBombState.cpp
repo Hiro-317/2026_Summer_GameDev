@@ -18,8 +18,7 @@ GrapePlayerBombState::GrapePlayerBombState(
 	pos(pos),
 	PlayAnime(PlayAnime),
 	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState),
-	isInit(false)
+	DefaultChangeState(DefaultChangeState)
 {
 }
 
@@ -36,8 +35,6 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 
 void GrapePlayerBombState::Enter(void)
 {
-	isInit = true;
-
 	collOperator.LocalBombSetStart(pos);
 
 	// クールタイムをセット

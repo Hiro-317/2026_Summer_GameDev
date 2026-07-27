@@ -16,17 +16,15 @@ GrapePlayerThrowCollOperator::GrapePlayerThrowCollOperator(
 	playerPos(playerPos), playerAngle(playerAngle),
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
-	isHit(false),
 	targetVec(Vector3()),
 	gravity(0),
-	bouncePower(0.0f)
+	bouncePower(0.0f),
+	isBlast(false)
 {
 }
 
 void GrapePlayerThrowCollOperator::Load(void)
 {
-
-
 #pragma region 基底クラスにある機能の挙動設定
 
 	// 動的オブジェクトとしての挙動を無効にする
@@ -40,11 +38,11 @@ void GrapePlayerThrowCollOperator::Load(void)
 #pragma endregion
 
 	// コライダー生成
-	ColliderCreate(new SphereCollider(COLL_TAG, 100.0f));
+	ColliderCreate(new SphereCollider(COLL_TAG, 50.0f));
 
 	// 初期化処理
 	SetJudge(false);
-	isHit = false;
+	isBlast = false;
 
 	// 最初は描画しない
 	SetIsDraw(false);
@@ -58,30 +56,30 @@ void GrapePlayerThrowCollOperator::Load(void)
 
 void GrapePlayerThrowCollOperator::SubUpdate()
 {
-	// 重力を加える
-	gravity -= 0.5f;
-
 	// ヒットしたら消える
-	if (isHit) {
+	if (isBlast) {
 		CollOff();
 		SetIsDraw(false);
 		return;
 	}
 
-	if (GetIsDraw()) {
+	// 重力を加える
+	gravity -= 0.5f;
+
+	if (!isBlast) {
 		CollOn();
 
+		// 投げた爆弾が地面についたら、前回より跳躍力を弱めながら
+		// バウンドしていく
 		if (isGround) {
 			bouncePower /= 1.5f;
 			gravity = bouncePower;
 
-			if (bouncePower <= 0.1f) {
-				SetPushFlg(false);
+			// 跳躍力がある程度減少したら、爆発させる
+			if (bouncePower <= 0.1f ) {
 				ColliderSerch<SphereCollider>(COLL_TAG).back()->SetRadius(300.0f);
 				bouncePower = 0.0f;
-				EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos);
-				SetIsDraw(false);
-				isHit = true;
+				LocalThrowBombEnd();
 				return;
 			}
 		}
@@ -97,32 +95,53 @@ void GrapePlayerThrowCollOperator::SubUpdate()
 
 void GrapePlayerThrowCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
-	if (ownTag == COLL_TAG) {
-		// 攻撃の当たり判定
-		switch (other.GetTag())
-		{
-		case COLLIDER_TAG::BOSS:
-		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::BOSS_DISTANCE:
-			isHit = true;
-			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
-			SetIsDraw(false);
-			break;
+	if (!Net::GetIns().IsHost()) { return; }
+	// 攻撃の当たり判定
+	switch (other.GetTag())
+	{
+	case COLLIDER_TAG::BOSS:
+	case COLLIDER_TAG::ENEMY:
+	case COLLIDER_TAG::BOSS_DISTANCE:
+		LocalThrowBombEnd();
+		break;
 
-		default:break;
-		}
+	default:break;
 	}
 }
 
-void GrapePlayerThrowCollOperator::SetInit(void)
+
+void GrapePlayerThrowCollOperator::RemoteThrowBombStart(const Vector3& pos, const Vector3& vec)
 {
 	ColliderSerch<SphereCollider>(COLL_TAG).back()->SetRadius(100.0f);
-	SetPushFlg(true);
-	trans.pos = playerPos;
-	trans.pos.y = trans.pos.y + 100.0f;
-	SetIsDraw(true);
+
+	targetVec = vec;
+	trans.pos = pos;
 	bouncePower = 10.0f;
 	gravity = bouncePower;
-	ResetIsHit();
+
+	isBlast = false;
+	SetIsDraw(true);
+	SetPushFlg(true);
 	CollOff();
+}
+
+void GrapePlayerThrowCollOperator::RemoteThrowBombEnd(void)
+{
+	isBlast = true;
+	EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
+	SetIsDraw(false);
+}
+
+void GrapePlayerThrowCollOperator::LocalThrowBombStart(const Vector3& pos, const Vector3& vec)
+{
+	RemoteThrowBombStart(pos, vec);
+
+	Net::GetIns().Send(MsgDataGrapePlayerBombThrowStart(trans.pos, vec), operatorSenderId);
+}
+
+void GrapePlayerThrowCollOperator::LocalThrowBombEnd(void)
+{
+	RemoteThrowBombEnd();
+
+	Net::GetIns().Send(MsgDataGrapePlayerBombThrowEnd(), operatorSenderId);
 }

@@ -54,14 +54,11 @@ public:
 
 	// 敵を探す
 	void SetIsEnemySerch(bool isJudge) {
-		if (GetIsAlive()) { return; }
+		if (isBlast) { return; }
 		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
 	}
 
 	void PlayEffect(void) { EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos); }
-
-	// 攻撃ヒット管理フラグを取得する
-	const bool GetIsAlive(void) { return isBlast; }
 
 	// 攻撃対象を見つけたかどうか
 	const bool GetIsAttackTargetFind(void) { return isAttackTargetFind; }
@@ -76,6 +73,9 @@ public:
 		trans.pos = pos;
 		isBlast = false;
 		isAttackTargetFind = false;
+		timeCounter = ATTACK_COUNT_TIME;
+
+		isInit = true;
 	}
 
 	void RemoteBombSetEnd(void) {
@@ -95,7 +95,7 @@ public:
 
 		RemoteBombSetEnd();
 
-		Net::GetIns().Send(MsgDataGrapePlayerBombStart(trans.pos), operatorSenderId);
+		Net::GetIns().Send(MsgDataGrapePlayerBombEnd(), operatorSenderId);
 	}
 private:
 
@@ -132,6 +132,8 @@ private:
 	bool isBlast;
 
 	bool isAttackTargetFind;
+
+	bool isInit;
 
 	// 終了までのカウント用
 	short timeCounter;

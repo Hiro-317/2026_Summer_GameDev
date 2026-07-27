@@ -21,7 +21,8 @@ GrapePlayerThrowState::GrapePlayerThrowState(
 	IsAnimeEnd(IsAnimeEnd),
 	AnimeRatio(AnimeRatio),
 	DefaultChangeState(DefaultChangeState),
-	moveDir(Vector3())
+	moveVec(Vector3()),
+	isThrow(false)
 {
 }
 
@@ -42,24 +43,27 @@ void GrapePlayerThrowState::Enter(void)
 
 	PlayAnime();
 
-	collOperator.SetInit();
+	isThrow = false;
 }
 
 void GrapePlayerThrowState::Update(void)
 {
 	// 突進方向の取得
-	moveDir = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
+	moveVec = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
 	// ボスへの方向を取得
 	Vector3 bossVec = (*bossPos - pos).Normalized();
 
 	// 内積をとってなす角を取得する
-	float dot = moveDir.Dot(bossVec);
+	float dot = moveVec.Dot(bossVec);
 
 	// 一定範囲内なら、ボスの方を向かせる補正をかける
 	if (dot > Deg2Rad(30.0f)) { angle.y = atan2f(bossVec.x, bossVec.z); }
 
 	if (AnimeRatio() < 0.3f) {
-		collOperator.SetTargetVec(moveDir);
+		if (!isThrow) {
+			collOperator.LocalThrowBombStart(pos, moveVec);
+			isThrow = true;
+		}
 	}
 
 	if (IsAnimeEnd()) {

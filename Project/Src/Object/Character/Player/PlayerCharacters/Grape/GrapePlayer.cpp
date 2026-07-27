@@ -65,7 +65,7 @@ void GrapePlayer::PlayerLoad(void)
 		new GrapePlayerShotCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			250,
-			trans.pos,trans.angle,
+			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
 		)
@@ -385,6 +385,22 @@ void GrapePlayer::ReceptionUpdate(void)
 
 		// グレープショットの発射終了の瞬間で行う処理
 		SubObjSerch<GrapePlayerBombCollOperator>()->RemoteBombSetEnd();
+
+		delete dataPtr;
+	}
+
+	while (MsgDataGrapePlayerBombThrowStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowStart>(operatorSenderId)) {
+
+		// グレープショットの発射終了の瞬間で行う処理
+		SubObjSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombStart(dataPtr->pos, dataPtr->vec);
+
+		delete dataPtr;
+	}
+
+	while (MsgDataGrapePlayerBombThrowEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowEnd>(operatorSenderId)) {
+
+		// グレープショットの発射終了の瞬間で行う処理
+		SubObjSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombEnd();
 
 		delete dataPtr;
 	}
