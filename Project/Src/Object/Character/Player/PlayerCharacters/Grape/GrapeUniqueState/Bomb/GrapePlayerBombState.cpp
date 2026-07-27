@@ -19,7 +19,6 @@ GrapePlayerBombState::GrapePlayerBombState(
 	PlayAnime(PlayAnime),
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
-	timeCounter(0),
 	isInit(false)
 {
 }
@@ -37,18 +36,9 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 
 void GrapePlayerBombState::Enter(void)
 {
-	// 
 	isInit = true;
-	
-	// すべて初期化
-	collOperator.CollOff();
-	collOperator.ResetIsHit();
-	collOperator.ResetIsTargetFind();
-	collOperator.SetIsBombDraw(true);
-	collOperator.SetIsEnemySerch(false);
 
-	// 爆弾の設置場所を設定
-	collOperator.SetPos();
+	collOperator.LocalBombSetStart(pos);
 
 	// クールタイムをセット
 	coolTimeCounter = COOL_TIME;

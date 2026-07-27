@@ -38,15 +38,12 @@ public:
 	// 攻撃の判定を消す
 	void CollOff(void);
 
-	// 攻撃のヒット管理のフラグをリセットする
-	void ResetIsHit(void) { isHit = false; }
-
-	// 攻撃ヒット管理フラグを取得する
-	const bool GetIsHit(void) { return isHit; }
-
+	// 受信処理時、弾を発射するときに呼び出す処理
 	void RemoteShotStart(const Vector3& pos, const Vector3& vec);
+	// 受信処理時、弾が爆散したときに呼び出す処理
 	void RemoteShotEnd(const Vector3& pos);
 
+	// 弾を発射するときに呼び出す処理
 	void LocalShotStart(const Vector3& pos, const Vector3& vec);
 private:
 
@@ -76,17 +73,16 @@ private:
 	const CharacterStats& playerStats;
 #pragma endregion
 
-	// 攻撃のヒット管理のフラグ
-	bool isHit;
-
 	// 投げる対象（ターゲット）
 	Vector3 moveVec;
 
 	// 弾の生存時間
 	short lifeCounter;
 
+	// 弾が生存しているかどうか
 	bool isAlive;
 
+	// 弾が爆散したときに呼び出す処理
 	void LocalShotEnd();
 };
 

@@ -51,6 +51,10 @@ void GrapePlayer::PlayerLoad(void)
 		new GrapePlayerBombCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL1_ATTACK_RATE,
+			// 爆発するまでの時間
+			ATTACK_COUNT_TIME,
+			// 爆弾の待機時間
+			ATTACK_START_TIME,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
@@ -92,10 +96,6 @@ void GrapePlayer::PlayerLoad(void)
 			*SubObjSerch<GrapePlayerBombCollOperator>(),
 			// クールタイム
 			SKILL1_COOL_TIME,
-			// 爆発するまでの時間
-			ATTACK_COUNT_TIME,
-			// 爆弾の待機時間
-			ATTACK_START_TIME,
 			// プレイヤーの座標
 			trans.pos,
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK_DOWN, false); },
@@ -330,35 +330,36 @@ void GrapePlayer::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
-		state = dataPtr->state;
+	//while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+	//	state = dataPtr->state;
 
-		switch ((STATE)state) {
-		case PlayerBase::STATE::SKILL_1: {
-			SubObjSerch<GrapePlayerBombCollOperator>()->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::SKILL_2: {
-			SubObjSerch<GrapePlayerThrowCollOperator>()->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::SKILL_3: {
-			SubObjSerch<GrapePlayerShotCollOperator>()->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::DEATH: {
-			PlayerDeathSetting();
-			break;
-		}
+	//	switch ((STATE)state) {
+	//	case PlayerBase::STATE::SKILL_1: {
+	//		SubObjSerch<GrapePlayerBombCollOperator>()->ResetIsHit();
+	//		break;
+	//	}
+	//	case PlayerBase::STATE::SKILL_2: {
+	//		SubObjSerch<GrapePlayerThrowCollOperator>()->ResetIsHit();
+	//		break;
+	//	}
+	//	case PlayerBase::STATE::SKILL_3: {
+	//		SubObjSerch<GrapePlayerShotCollOperator>()->ResetIsHit();
+	//		break;
+	//	}
+	//	case PlayerBase::STATE::DEATH: {
+	//		PlayerDeathSetting();
+	//		break;
+	//	}
 
-		default: { break; }
-		}
+	//	default: { break; }
+	//	}
 
-		delete dataPtr;
-	}
+	//	delete dataPtr;
+	//}
 
 	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(operatorSenderId)) {
-	
+		
+		// グレープショットの発射の瞬間で行う処理
 		SubObjSerch<GrapePlayerShotCollOperator>()->RemoteShotStart(dataPtr->pos, dataPtr->vec);
 		
 		delete dataPtr;
@@ -366,7 +367,24 @@ void GrapePlayer::ReceptionUpdate(void)
 
 	while (MsgDataPlayerShotEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotEnd>(operatorSenderId)) {
 
+		// グレープショットの発射終了の瞬間で行う処理
 		SubObjSerch<GrapePlayerShotCollOperator>()->RemoteShotEnd(dataPtr->pos);
+
+		delete dataPtr;
+	}
+
+	while (MsgDataGrapePlayerBombStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombStart>(operatorSenderId)) {
+
+		// グレープショットの発射の瞬間で行う処理
+		SubObjSerch<GrapePlayerBombCollOperator>()->RemoteBombSetStart(dataPtr->pos);
+
+		delete dataPtr;
+	}
+
+	while (MsgDataGrapePlayerBombEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombEnd>(operatorSenderId)) {
+
+		// グレープショットの発射終了の瞬間で行う処理
+		SubObjSerch<GrapePlayerBombCollOperator>()->RemoteBombSetEnd();
 
 		delete dataPtr;
 	}

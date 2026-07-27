@@ -19,7 +19,7 @@ GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	playerPos(playerPos), playerAngle(playerAngle),
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
-	isHit(false),
+	isBlast(false),
 	isAttackTargetFind(false),
 	timeCounter(0)
 {
@@ -41,11 +41,12 @@ void GrapePlayerBombCollOperator::Load(void)
 #pragma endregion
 
 	// コライダー生成
-	ColliderCreate(new SphereCollider(COLL_TAG, 500.0f));
+	ColliderCreate(new SphereCollider(COLL_TAG, 700.0f));
+	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 200.0f));
 
 	// 初期化処理
 	SetJudge(false);
-	isHit = false;
+	isBlast = false;
 	isAttackTargetFind = false;
 
 	// 最初は描画しない
@@ -60,11 +61,8 @@ void GrapePlayerBombCollOperator::Load(void)
 
 void GrapePlayerBombCollOperator::Update(void)
 {
-	if (isHit) {
-		CollOff();
-	}
-
-	if (GetIsHit() || timeCounter == 0) {
+	// もし爆発していたら早期リターン
+	if (isBlast) {
 		CollOff();
 		return;
 	}
@@ -72,7 +70,7 @@ void GrapePlayerBombCollOperator::Update(void)
 	// タイマースタート
 	if (timeCounter > 1) {
 		timeCounter--;
-		SetIsBombDraw(true);
+		SetIsDraw(true);
 	}
 
 	if (timeCounter < (ATTACK_COUNT_TIME - ATTACK_START_TIME)) {
@@ -83,14 +81,15 @@ void GrapePlayerBombCollOperator::Update(void)
 	// タイマーが終了するか、爆弾の範囲内に敵が入ったら爆発する
 	if (timeCounter == 1 || GetIsAttackTargetFind()) {
 		CollOn();
-		SetIsBombDraw(false);
-		PlayEffect();
 		timeCounter = 0;
+		LocalBombSetEnd();
 	}
 }
 
 void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
+	if (!Net::GetIns().IsHost()) { return; }
+
 	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
 		// 攻撃の当たり判定
 		switch (other.GetTag())
@@ -111,7 +110,8 @@ void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 		case COLLIDER_TAG::BOSS:
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::BOSS_DISTANCE:
-			isHit = true;
+			isBlast = true;
+			LocalBombSetEnd();
 			break;
 		default:break;
 		}

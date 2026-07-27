@@ -37,7 +37,7 @@ public:
 
 	// 攻撃の判定を発生させる
 	void CollOn(void) {
-		if (!isHit) ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
+		if (!isBlast) ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
 		SetIsEnemySerch(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
@@ -54,26 +54,48 @@ public:
 
 	// 敵を探す
 	void SetIsEnemySerch(bool isJudge) {
-		if (GetIsHit()) { return; }
+		if (GetIsAlive()) { return; }
 		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
 	}
 
 	void PlayEffect(void) { EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos); }
 
 	// 攻撃ヒット管理フラグを取得する
-	const bool GetIsHit(void) { return isHit; }
+	const bool GetIsAlive(void) { return isBlast; }
 
 	// 攻撃対象を見つけたかどうか
 	const bool GetIsAttackTargetFind(void) { return isAttackTargetFind; }
 
-	// 爆弾の描画するかどうか
-	void SetIsBombDraw(bool isDraw_) { SetIsDraw(isDraw_); }
+	// ボム設置時に呼び出す処理
+	void RemoteBombSetStart(const Vector3& pos) {
+		// すべて初期化
+		CollOff();
+		SetIsDraw(true);
+		SetIsEnemySerch(false);
 
-	// プレイヤーの位置に爆弾を設置する
-	void SetPos(void) {
-		trans.pos = playerPos;
-		isHit = false;
+		trans.pos = pos;
+		isBlast = false;
 		isAttackTargetFind = false;
+	}
+
+	void RemoteBombSetEnd(void) {
+		SetIsDraw(false);
+		PlayEffect();
+		isBlast = true;
+	}
+
+	void LocalBombSetStart(const Vector3& pos) {
+
+		RemoteBombSetStart(pos);
+
+		Net::GetIns().Send(MsgDataGrapePlayerBombStart(pos), operatorSenderId);
+	}
+
+	void LocalBombSetEnd(void) {
+
+		RemoteBombSetEnd();
+
+		Net::GetIns().Send(MsgDataGrapePlayerBombStart(trans.pos), operatorSenderId);
 	}
 private:
 
@@ -107,10 +129,12 @@ private:
 #pragma endregion
 
 	// 攻撃のヒット管理のフラグ
-	bool isHit;
+	bool isBlast;
 
 	bool isAttackTargetFind;
 
 	// 終了までのカウント用
 	short timeCounter;
+
+
 };

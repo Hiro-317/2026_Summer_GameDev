@@ -17,7 +17,6 @@ GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
 	playerPos(playerPos), playerAngle(playerAngle),
 	operatorSenderId(operatorSenderId),
 	playerStats(playerStats),
-	isHit(false),
 	moveVec(Vector3()),
 	lifeCounter(0),
 	isAlive(false)
@@ -44,7 +43,6 @@ void GrapePlayerShotCollOperator::Load(void)
 
 	// ‰Šú‰»ˆ—
 	SetJudge(false);
-	isHit = false;
 
 	// Å‰‚Í•`‰æ‚µ‚È‚¢
 	SetIsDraw(false);

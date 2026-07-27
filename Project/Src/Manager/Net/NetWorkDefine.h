@@ -62,6 +62,11 @@ enum class MSG_DATA_TYPE
     // <クライアント>当たり判定情報送信構造体
     PlayerCollOperator,
 
+    // <ホスト/クライアント>グレーププレイヤー：爆弾開始
+    GrapePlayerBombStart,
+    // <ホスト/クライアント>グレーププレイヤー：爆弾終了
+    GrapePlayerBombEnd,
+
 
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
@@ -809,6 +814,56 @@ struct MsgDataPlayerCollOperator
         header(DATA_TYPE),
         isCollider(),
         collKinds()
+    {
+    }
+};
+
+struct MsgDataGrapePlayerBombStart
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombStart;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerBombStart(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerBombStart(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+struct MsgDataGrapePlayerBombEnd
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombEnd;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerBombEnd(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerBombEnd(void) :
+        header(DATA_TYPE),
+        pos()
     {
     }
 };
