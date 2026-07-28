@@ -14,7 +14,6 @@ public:
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> PlayDeathAnime,
 		const std::function<void(void)> PlayerDeathSetting,
-		const std::function<void(void)> PlayerIsDeathTrue,
 		const std::function<void(void)> DefaultChangeState
 	);
 
@@ -40,8 +39,6 @@ private:
 	const std::function<void(void)> PlayDeathAnime;
 	// 死亡後の設定
 	const std::function<void(void)> PlayerDeathSetting;
-	// 死亡フラグをtrueにする関数のポインタ
-	const std::function<void(void)> PlayerIsDeathTrue;
 	// ダメージ状態終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
 };

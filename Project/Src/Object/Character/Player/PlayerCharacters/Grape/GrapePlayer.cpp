@@ -46,7 +46,7 @@ void GrapePlayer::PlayerLoad(void)
 	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED);
 
 
-	// 頭突き攻撃の当たり判定を生成
+	// ポリフェノールインパクトの生成
 	subObjArray.emplace_back(
 		new GrapePlayerBombCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
@@ -61,25 +61,28 @@ void GrapePlayer::PlayerLoad(void)
 		)
 	);
 
+	// BUDOOOON!の生成
 	subObjArray.emplace_back(
-		new GrapePlayerShotCollOperator(
+		new GrapePlayerThrowCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			250,
+			SKILL2_ATTACK_RATE,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
 		)
 	);
 
+	// 巨砲の生成
 	subObjArray.emplace_back(
-		new GrapePlayerThrowCollOperator(
+		new GrapePlayerShotCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
-			560,
+			SKILL3_ATTACK_RATE,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
 		)
 	);
+
 
 #pragma endregion 
 
@@ -93,13 +96,17 @@ void GrapePlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
+			// 設置爆弾の
 			*SubObjSerch<GrapePlayerBombCollOperator>(),
 			// クールタイム
 			SKILL1_COOL_TIME,
 			// プレイヤーの座標
 			trans.pos,
+			// アニメーション再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICK_DOWN, false); },
+			// アニメーション終了フラグゲット関数のポインタ
 			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
@@ -107,15 +114,25 @@ void GrapePlayer::PlayerLoad(void)
 	AddState(
 		(int)STATE::SKILL_2,
 		new GrapePlayerThrowState(
+			// 自分の状態に遷移する関数
 			[&]() { ChangeState((int)STATE::SKILL_2); },
+			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
+			// 当たり判定管理クラスのポインタ
 			*SubObjSerch<GrapePlayerThrowCollOperator>(),
-			240,
+			// クールタイム
+			SKILL2_COOL_TIME,
+			// 座標 / 角度
 			trans.pos, trans.angle,
+			// ボスの座標
 			bossPos,
+			// アニメーション再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
+			// アニメーション終了管理フラグのポインタ
 			[&]() { return IsAnimeEnd(); },
+			// アニメーション再生割合ゲット関数のポインタ
 			[&]() { return GetAnimeRatio(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
@@ -126,12 +143,13 @@ void GrapePlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::SKILL_3); },
 			[&]() { return state == (int)STATE::SKILL_3; },
 			*SubObjSerch<GrapePlayerShotCollOperator>(),
-			70,
+			SKILL3_COOL_TIME,
 			trans.pos, trans.angle,
 			bossPos,
 			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
 			[&]() { return IsAnimeEnd(); },
 			[&]() { return GetAnimeRatio(); },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
@@ -179,13 +197,19 @@ void GrapePlayer::PlayerLoad(void)
 	AddState(
 		(int)STATE::DEATH,
 		new PlayerDeathState(
+			// 自分の状態に関する関数
 			[&]() { ChangeState((int)STATE::DEATH); },
+			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DEATH; },
+			// 座標 / 角度
 			trans.pos, trans.angle,
+			// アニメーション終了判定ゲット関数のポインタ
 			[&]() { return IsAnimeEnd(); },
+			// 死亡アニメーション再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			// 死亡後の設定関数のポインタ
 			[&]() { PlayerDeathSetting(); },
-			[&]() { SetIsDeath(true); },
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
 		)
 	);
@@ -266,7 +290,7 @@ void GrapePlayer::PlayerLoad(void)
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
 				dynamic_cast<GrapePlayerThrowState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-				240,
+				SKILL2_COOL_TIME,
 				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
 				"SkillSlotGrapeBombThrow"
 			)
@@ -277,7 +301,7 @@ void GrapePlayer::PlayerLoad(void)
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,
 				dynamic_cast<GrapePlayerShotState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-				70,
+				SKILL3_COOL_TIME,
 				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
 				"SkillSlotShot"
 			)

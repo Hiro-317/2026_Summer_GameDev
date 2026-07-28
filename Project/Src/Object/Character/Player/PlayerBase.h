@@ -301,6 +301,7 @@ protected:
 	void PlayerDeathSetting(void) { 
 		SetJudge(false);
 		SetIsDraw(false); 
+		SetIsDeath(true);
 	}
 
 #pragma endregion

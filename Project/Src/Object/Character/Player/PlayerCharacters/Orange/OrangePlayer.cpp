@@ -154,9 +154,8 @@ void OrangePlayer::PlayerLoad(void)
 
 	// 三段攻撃状態を追加する
 	AddState(
-		(int)STATE::SKILL_1,	// stateNum
-
-		new PlayerTripleAttackState(	// stateIns
+		(int)STATE::SKILL_1,	
+		new PlayerTripleAttackState(
 			// 自分の状態に遷移する関数
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			// 自分の状態かどうかを返す関数
@@ -234,13 +233,19 @@ void OrangePlayer::PlayerLoad(void)
 	AddState(
 		(int)STATE::DEATH,
 		new PlayerDeathState(
+			// 自分の状態に関する関数
 			[&]() { ChangeState((int)STATE::DEATH); },
+			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DEATH; },
+			// 座標 / 角度
 			trans.pos, trans.angle,
+			// アニメーション終了判定ゲット関数のポインタ
 			[&]() { return IsAnimeEnd(); },
+			// 死亡アニメーション再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
+			// 死亡後の設定関数のポインタ
 			[&]() { PlayerDeathSetting(); },
-			[&]() { SetIsDeath(true); },
+			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
 		)
 	);

@@ -101,14 +101,14 @@ void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 void GrapePlayerShotCollOperator::CollOn(void) {
 	SetJudge(true);
 	if (!Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot));
 	}
 }
 
 void GrapePlayerShotCollOperator::CollOff(void) {
 	SetJudge(false);
 	if (!Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot));
 	}
 }
 

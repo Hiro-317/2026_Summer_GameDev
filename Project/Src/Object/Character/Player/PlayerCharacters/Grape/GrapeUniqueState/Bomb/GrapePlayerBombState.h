@@ -40,7 +40,6 @@ private:
 	// クールタイム
 	const int COOL_TIME;
 
-
 #pragma endregion 
 
 #pragma region 変数定義
@@ -50,9 +49,11 @@ private:
 
 	GrapePlayerBombCollOperator& collOperator;
 
+	// アニメーションプレイ関数のポインタ
 	const std::function<void(void)> PlayAnime;
+	// アニメーション終了フラグゲット関数のポインタ
 	const std::function<bool(void)> IsAnimeEnd;
-		// 攻撃終了後の状態遷移関数のポインタ
+	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
 
 #pragma endregion 

@@ -7,7 +7,6 @@ PlayerDeathState::PlayerDeathState(
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> PlayDeathAnime,
 	const std::function<void(void)> PlayerDeathSetting,
-	const std::function<void(void)> PlayerIsDeathTrue,
 	const std::function<void(void)> DefaultChangeState
 ):
 	CharacterStateBase(ownChangeState,isOwnState),
@@ -15,7 +14,6 @@ PlayerDeathState::PlayerDeathState(
 	IsAnimeEnd(IsAnimeEnd),
 	PlayDeathAnime(PlayDeathAnime),
 	PlayerDeathSetting(PlayerDeathSetting),
-	PlayerIsDeathTrue(PlayerIsDeathTrue),
 	DefaultChangeState(DefaultChangeState)
 {
 }
@@ -35,5 +33,4 @@ void PlayerDeathState::Update(void)
 void PlayerDeathState::Exit(void)
 {
 	PlayerDeathSetting();
-	PlayerIsDeathTrue();
 }

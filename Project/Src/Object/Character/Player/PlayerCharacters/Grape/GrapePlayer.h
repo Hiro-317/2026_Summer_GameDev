@@ -72,11 +72,17 @@ private:
 
 #pragma region スキル2の定数定義
 
+	const short SKILL2_ATTACK_RATE = 560;
+
+	const int SKILL2_COOL_TIME = 240;
 
 #pragma endregion 
 
 #pragma region スキル3の定数定義
 
+	const short SKILL3_ATTACK_RATE = 250;
+
+	const int SKILL3_COOL_TIME = 70;
 
 #pragma endregion 
 };

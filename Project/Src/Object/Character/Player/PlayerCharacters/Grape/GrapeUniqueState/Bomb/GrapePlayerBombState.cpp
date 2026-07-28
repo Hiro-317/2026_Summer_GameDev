@@ -35,13 +35,14 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 
 void GrapePlayerBombState::Enter(void)
 {
-	collOperator.LocalBombSetStart(pos);
-
 	// クールタイムをセット
 	coolTimeCounter = COOL_TIME;
 
 	// アニメーションを再生
 	PlayAnime();
+
+	// 爆弾設置処理
+	collOperator.LocalBombSetStart(pos);
 }
 
 void GrapePlayerBombState::Update(void)

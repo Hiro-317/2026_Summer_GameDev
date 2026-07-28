@@ -40,7 +40,7 @@ public:
 		if (!isBlast) ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
 		SetIsEnemySerch(false);
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb));
 		}
 	}
 
@@ -48,7 +48,7 @@ public:
 	void CollOff(void) {
 		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false);
 		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt));
+			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb));
 		}
 	}
 
