@@ -28,7 +28,7 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_1).down) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
 		OwnChangeState();
 	}
 }

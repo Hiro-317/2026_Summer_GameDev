@@ -62,9 +62,9 @@ private:
 
 #pragma region スキル1の定数定義
 
-	const short SKILL1_ATTACK_RATE = 1000;
+	const short SKILL3_ATTACK_RATE = 1000;
 
-	const int SKILL1_COOL_TIME = 1800;
+	const int SKILL3_COOL_TIME = 1800;
 	const int ATTACK_COUNT_TIME = 1200;
 	const int ATTACK_START_TIME = 120;
 
@@ -80,9 +80,9 @@ private:
 
 #pragma region スキル3の定数定義
 
-	const short SKILL3_ATTACK_RATE = 250;
+	const short SKILL1_ATTACK_RATE = 250;
 
-	const int SKILL3_COOL_TIME = 70;
+	const int SKILL1_COOL_TIME = 70;
 
 #pragma endregion 
 };
