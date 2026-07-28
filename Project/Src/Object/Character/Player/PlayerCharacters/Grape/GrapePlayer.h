@@ -62,27 +62,28 @@ private:
 
 #pragma region スキル1の定数定義
 
-	const short SKILL3_ATTACK_RATE = 1000;
+	const short SKILL1_ATTACK_RATE = GetParameter("GrapeShot", "AttackRate");
 
-	const int SKILL3_COOL_TIME = 1800;
-	const int ATTACK_COUNT_TIME = 1200;
-	const int ATTACK_START_TIME = 120;
+	const int SKILL1_COOL_TIME = GetParameter("GrapeShot", "CoolTime");
 
-#pragma endregion
+#pragma endregion 
 
 #pragma region スキル2の定数定義
 
-	const short SKILL2_ATTACK_RATE = 560;
+	const short SKILL2_ATTACK_RATE = GetParameter("GrapeThrowBomb", "AttackRate");
 
-	const int SKILL2_COOL_TIME = 240;
+	const int SKILL2_COOL_TIME = GetParameter("GrapeThrowBomb", "CoolTime");
 
 #pragma endregion 
 
 #pragma region スキル3の定数定義
 
-	const short SKILL1_ATTACK_RATE = 250;
+	const short SKILL3_ATTACK_RATE = GetParameter("GrapeBomb", "AttackRate");
+	const int SKILL3_COOL_TIME = GetParameter("GrapeBomb", "CoolTime");
 
-	const int SKILL1_COOL_TIME = 70;
+	const int ATTACK_COUNT_TIME = GetParameter("GrapeBomb", "CountTime");
+	const int ATTACK_START_TIME = GetParameter("GrapeBomb", "StartTime");
 
-#pragma endregion 
+#pragma endregion
+
 };
