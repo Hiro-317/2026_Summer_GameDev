@@ -192,7 +192,7 @@ void MultiPopupScene::Draw(void)
 	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Key::GetIns().LastInputKinds()], true);
 	DrawFormatStringToHandle(
 		1060, 119,
-		0x000000, Font::GetIns().GetFont(FontKinds::DEFAULT_45),
+		0x000000, Font::GetIns().GetFont(FontKinds::DELASUKO_GOTHIC_45),
 		std::to_string(Net::GetIns().GetAddressProviderPassword()).c_str()
 	);
 

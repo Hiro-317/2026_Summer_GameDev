@@ -9,12 +9,18 @@
 #include "../../../Object/Lobby/CharaSelectScene/CharaSelectPreviewManager.h"
 
 CharaSelectScene::CharaSelectScene(const std::function<void(void)>& LobbyPreviewCharaChange) :
-	LobbyPreviewCharaChange(LobbyPreviewCharaChange)
+	LobbyPreviewCharaChange(LobbyPreviewCharaChange),
+	selectCharaType(CHARA_TYPE::None)
 {
 }
 
 void CharaSelectScene::Load(void)
 {
+	// 選択キャラの初期化
+	MSG_SENDER_ID sederId = Net::GetIns().GetSenderId();
+	selectCharaType = SceneManager::GetIns().GetSelectCharaType(sederId == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : sederId);
+	if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
+
 	// 初期化も含めたオブジェクト生成のラムダ関数
 	auto ObjAdd = [&](ActorBase* newClass)->void {
 		// 配列の末尾に追加
@@ -23,19 +29,12 @@ void CharaSelectScene::Load(void)
 		objects.back()->Load();
 		};
 
-	ObjAdd(new CharaSelectPreviewManager());
-}
-
-void CharaSelectScene::Init(void)
-{
-	// 初期化
-	for (ActorBase* obj : objects) { obj->Init(); }
+	ObjAdd(new CharaSelectPreviewManager(selectCharaType));
 }
 
 void CharaSelectScene::Update(void)
 {
-	// 更新
-	for (ActorBase* obj : objects) { obj->Update(); }
+	SceneBase::Update();
 
 	// 戻る
 	if(Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -47,19 +46,40 @@ void CharaSelectScene::Update(void)
 		return;
 	}
 
+	// キャラ変更を記録
+	bool changeCharacter = false;;
+
+	// 操作権者による操作によって選択キャラを変える
+	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+		// 1つ前のタイプへ
+		selectCharaType = (CHARA_TYPE)((int)selectCharaType - 1);
+		// 範囲外だったら逆の端へ
+		if (selectCharaType <= CHARA_TYPE::None) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::Max - 1); }
+		// キャラを変更したことを記録
+		changeCharacter = true;
+	}
+	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+		// 1つ次のタイプへ
+		selectCharaType = (CHARA_TYPE)((int)selectCharaType + 1);
+		// 範囲外だったら逆の端へ
+		if (selectCharaType >= CHARA_TYPE::Max) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
+		// キャラを変更したことを記録
+		changeCharacter = true;
+	}
+	// プレビューを変更
+	if (changeCharacter) { ObjSerch<CharaSelectPreviewManager>()->ChangeCharacter(selectCharaType); }
+
 	// キャラ確定
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 
-		// 現在CharaSelectPreviewManagerクラスで選択されているキャラを取得
-		CHARA_TYPE nowSelect = ObjSerch<CharaSelectPreviewManager>()->GetCharaType();
-
-		if (nowSelect == CHARA_TYPE::None) { return; }
+		// 範囲チェック
+		if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { return; }
 
 		// 選択中のキャラで、SceneManagerが抱えているキャラ選択情報を書き換える
-		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId() == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : Net::GetIns().GetSenderId(), nowSelect);
+		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId() == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : Net::GetIns().GetSenderId(), selectCharaType);
 
 		// キャラ変更情報を送信
-		Net::GetIns().Send(MsgDataCharaSelect((int)nowSelect));
+		Net::GetIns().Send(MsgDataCharaSelect((int)selectCharaType));
 
 		// このパソコンのロビーシーンのプレビューを更新する
 		LobbyPreviewCharaChange();
@@ -79,15 +99,5 @@ void CharaSelectScene::Draw(void)
 	DrawBox(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	for (ActorBase* obj : objects) { obj->Draw(); }
-}
-
-void CharaSelectScene::Release(void)
-{
-	for (ActorBase*& obj : objects) {
-		obj->Release();
-		delete obj;
-		obj = nullptr;
-	}
-	objects.clear();
+	SceneBase::Draw();
 }

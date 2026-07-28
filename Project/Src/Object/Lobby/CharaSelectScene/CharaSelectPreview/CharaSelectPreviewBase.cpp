@@ -11,14 +11,44 @@ CharaSelectPreviewBase::CharaSelectPreviewBase() :
 	ActorBase(),
 
 	anime(nullptr),
-	playAnimeType(0)
+	playAnimeType(0),
+
+	modelPreviewScreen(-1),
+
+	camera(nullptr),
+
+	CHARA_NAME(),
+
+	HP(),
+	ATTACK(),
+	DEFENCE(),
+	SPEED(),
+
+	skill_1_image(-1),
+	skill_2_image(-1),
+	skill_3_image(-1)
 {
 }
 CharaSelectPreviewBase::CharaSelectPreviewBase(const std::string& parameterPath) :
 	ActorBase(parameterPath),
 
 	anime(nullptr),
-	playAnimeType(0)
+	playAnimeType(0),
+
+	modelPreviewScreen(-1),
+
+	camera(nullptr),
+
+	CHARA_NAME(),
+
+	HP(),
+	ATTACK(),
+	DEFENCE(),
+	SPEED(),
+
+	skill_1_image(-1),
+	skill_2_image(-1),
+	skill_3_image(-1)
 {
 }
 
@@ -53,15 +83,6 @@ void CharaSelectPreviewBase::SubInit(void)
 	if (anime) { anime->Play(playAnimeType); }
 }
 
-void CharaSelectPreviewBase::Select(void)
-{
-	// ÉAÉjÉÅÅ[ÉVÉáÉìÇç≈èâÇ©ÇÁçƒê∂ÇµÇ»Ç®Ç∑
-	if (anime) {
-		anime->Stop();
-		anime->Play(playAnimeType);
-	}
-}
-
 void CharaSelectPreviewBase::Update(void)
 {
 	if (camera) { camera->Update(); }
@@ -71,34 +92,34 @@ void CharaSelectPreviewBase::Update(void)
 
 void CharaSelectPreviewBase::Draw(void)
 {
+	// ÉÇÉfÉãï`âÊÇ1ñáäGÇ…Ç∑ÇÈÅ`Å`Å`Å`Å`Å`Å`Å`
 	SetDrawScreen(modelPreviewScreen);
 	ClearDrawScreen();
 	camera->Apply();
 	trans.Draw();
+	// Å`Å`Å`Å`Å`Å`Å`Å`ÉÇÉfÉãï`âÊÇ1ñáäGÇ…Ç∑ÇÈ
+
+	// ï`âÊêÊÇñﬂÇ∑
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	//static Vector2I temp = Vector2I();
-
-	//if (CheckHitKey(KEY_INPUT_T)) { temp.y -= 5; }
-	//if (CheckHitKey(KEY_INPUT_G)) { temp.y += 5; }
-	//if (CheckHitKey(KEY_INPUT_F)) { temp.x -= 5; }
-	//if (CheckHitKey(KEY_INPUT_H)) { temp.x += 5; }
-
+	// ÉLÉÉÉâÇÃñºëO
 	DrawStringToHandle(340, 120, CHARA_NAME.c_str(), 0xffffff, Font::GetIns().GetFont(Font::FONT_KINDS_SIZE::GOKUSYOU_32));
 
+	// äeéÌÉpÉâÉÅÅ[É^Å[Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 	DrawFormatStringToHandle(850, 185, 0xffffff, Font::GetIns().GetFont(Font::FONT_KINDS_SIZE::GOKUSYOU_32), "%d", HP);
 	DrawFormatStringToHandle(1160, 185, 0xffffff, Font::GetIns().GetFont(Font::FONT_KINDS_SIZE::GOKUSYOU_32), "%d", ATTACK);
 	DrawFormatStringToHandle(850, 300, 0xffffff, Font::GetIns().GetFont(Font::FONT_KINDS_SIZE::GOKUSYOU_32), "%d", DEFENCE);
 	DrawFormatStringToHandle(1160, 300, 0xffffff, Font::GetIns().GetFont(Font::FONT_KINDS_SIZE::GOKUSYOU_32), "%d", SPEED);
+	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`äeéÌÉpÉâÉÅÅ[É^Å[
 
+	// 1ñáäGÇ…ÇµÇΩÉÇÉfÉãï`âÊ
 	DrawRotaGraph(400, 455, 1, 0, modelPreviewScreen, true);
 
+	// äeéÌÉXÉLÉãÅ`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 	DrawGraph(660, 465, skill_1_image, true);
 	DrawGraph(660, 545, skill_2_image, true);
 	DrawGraph(660, 630, skill_3_image, true);
-
-	// tempÇÃï`âÊ
-	//DrawFormatString(0, 750, 0xffffff, "Temp X: %d, Y: %d", temp.x, temp.y);
+	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`äeéÌÉXÉLÉã
 }
 
 void CharaSelectPreviewBase::SubRelease(void)

@@ -21,9 +21,6 @@ public:
 	void AlphaDraw(void)override {}
 	// ````````````````
 
-	// ©•ª‚ªV‚½‚É‘I‘ğ‚³‚ê‚½‚Æ‚«‚Ìˆ—
-	void Select(void);
-
 private:
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[
@@ -55,8 +52,6 @@ protected:
 	int skill_1_image;
 	int skill_2_image;
 	int skill_3_image;
-
-
 
 	// ƒ‚ƒfƒ‹‚É‚­‚Á‚Â‚¢‚Ä‚éFBXƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚·‚é
 	void AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType);

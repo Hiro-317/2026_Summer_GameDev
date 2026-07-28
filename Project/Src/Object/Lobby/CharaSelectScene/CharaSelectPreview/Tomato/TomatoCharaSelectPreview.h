@@ -16,12 +16,10 @@ private:
 	void SubLoad(void)override {
 		// モデルを読み込む
 		trans.Load("Character/Tomato/Tomato");
-		// ライティングの調整
-		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
-		trans.scale = 2;
-		trans.centerDiff = Vector3::Yonly(-250);
+
+		trans.scale = 2.5f;
+		trans.centerDiff = Vector3::Yonly(-200);
 
 		CHARA_NAME = "リコピン";
 

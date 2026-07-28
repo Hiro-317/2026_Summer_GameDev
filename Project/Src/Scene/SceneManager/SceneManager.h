@@ -18,7 +18,9 @@ private:
 	SceneManager(void) :
 		scenes(),
 		selectCharaType{ CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None },
-		selectBossType(BOSS_TYPE::None)
+		selectBossType(BOSS_TYPE::None),
+		fillLight(-1),
+		rimLight(-1)
 	{
 	}
 	~SceneManager(void) = default;
@@ -125,6 +127,9 @@ private:
 
 	// ‚R‚c‚Ì‰Šúİ’è
 	void Init3D(void);
+
+	int fillLight;
+	int rimLight;
 
 	// ‘I‘ğƒLƒƒƒ‰‚Ì•Û‘¶”z—ñ
 	CHARA_TYPE selectCharaType[(int)MSG_SENDER_ID::Max];

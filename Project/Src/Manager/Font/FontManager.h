@@ -44,6 +44,9 @@ public:
 		HIT_UI_32,
 		HIT_UI_64,
 
+		DELASUKO_GOTHIC_45,
+		DELASUKO_GOTHIC_64,
+
 		MAX
 	};
 
@@ -56,15 +59,21 @@ public:
 		20,		// DEFAULT_20
 		45,		// DEFAULT_45
 		64,		// DEFAULT_64
+
 		32,		// GOKUSYOU_32
 		60,		// GOKUSYOU_60
 		64,		// GOKUSYOU_64
 		80,		// GOKUSYOU_80
 		110,	// GOKUSYOU_110
+
 		50,		// MARUMINYA_50
 		80,		// MARUMINYA_80
+
 		32,		// HIT_UI_32
 		64,		// HIT_UI_64
+
+		45,		// DELASUKO_GOTHIC_45
+		64,		// DELASUKO_GOTHIC_64
 	};
 
 private:
@@ -82,15 +91,21 @@ private:
 		nullptr,				// DEFAULT_20
 		nullptr,				// DEFAULT_45
 		nullptr,				// DEFAULT_64
+
 		"x10y12pxDonguriDuel",	// GOKUSYOU_32
 		"x10y12pxDonguriDuel",	// GOKUSYOU_60
 		"x10y12pxDonguriDuel",	// GOKUSYOU_64
 		"x10y12pxDonguriDuel",	// GOKUSYOU_80
 		"x10y12pxDonguriDuel",	// GOKUSYOU_110
+
 		"x12y12pxMaruMinya",	// MARUMINYA_50
 		"x12y12pxMaruMinya",	// MARUMINYA_80
-		"KKM-アナログテレビフォントv2"	// HIT_UI_32
-		"KKM-アナログテレビフォントv2"	// HIT_UI_64
+
+		"KKM-アナログテレビフォントv2",	// HIT_UI_32
+		"KKM-アナログテレビフォントv2",	// HIT_UI_64
+
+		"DelaSukoGothicOne",	// DELASUKO_GOTHIC_45
+		"DelaSukoGothicOne",	// DELASUKO_GOTHIC_64
 	};
 
 	// フォントの太さテーブル
@@ -99,15 +114,21 @@ private:
 		-1,	// DEFAULT_20
 		-1,	// DEFAULT_45
 		-1,	// DEFAULT_64
+
 		-1,	// GOKUSYOU_32
 		-1,	// GOKUSYOU_60
 		-1,	// GOKUSYOU_64
 		-1,	// GOKUSYOU_80
 		-1,	// GOKUSYOU_110
+
 		-1,	// MARUMINYA_50
 		20,	// MARUMINYA_80
+
 		-1, // HIT_UI_32
 		-1,	// HIT_UI_64
+
+		-1,	// DELASUKO_GOTHIC_45
+		-1,	// DELASUKO_GOTHIC_64
 	};
 
 #pragma region フォントのタイプ一覧
@@ -129,24 +150,31 @@ private:
 		0x01,	// DEFAULT_20
 		0x01,	// DEFAULT_45
 		0x01,	// DEFAULT_64
+
 		0x01,	// GOKUSYOU_32
 		0x01,	// GOKUSYOU_60
 		0x01,	// GOKUSYOU_64
 		0x01,	// GOKUSYOU_80
 		0x01,	// GOKUSYOU_110
+
 		0x01,	// MARUMINYA_50
 		0x01,	// MARUMINYA_80
+
 		0x01,	// HIT_UI_32
 		0x01,	// HIT_UI_64
+
+		0x02,	// DELASUKO_GOTHIC_45
+		0x02,	// DELASUKO_GOTHIC_64
 	};
 
 
 	// フォントをウィンドウズに一時保持するためのフォントデータパス
-	const char* FONT_PATH_TABLE[3] =
+	const char* FONT_PATH_TABLE[4] =
 	{
 		"Data/Font/x10y12pxDonguriDuel.ttf",
 		"Data/Font/x12y12pxMaruMinya.ttf",
 		"Data/Font/DamageUi.ttf",
+		"Data/Font/DelaSukoGothicOne.ttf",
 	};
 
 };

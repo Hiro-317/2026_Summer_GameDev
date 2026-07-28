@@ -40,10 +40,6 @@ void OrangePlayer::PlayerLoad(void)
 
 #pragma region ƒ‚ƒfƒ‹
 
-	// ‰e‚ğÁ‚·iÁ‚³‚È‚©‚Á‚½‚çA•Ï‚ÈF‡‚¢‚É‚È‚é‚Ì‚Åj
-	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-
 	// ƒAƒjƒ[ƒVƒ‡ƒ“````````````````````````````
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ğ¶¬‚·‚é

@@ -83,6 +83,8 @@ void SceneManager::Release(void)
 	for (auto& scene : scenes) { scene->Release(); }
 	scenes.clear();
 
+	DeleteLightHandleAll();
+
 	// ロード画面の削除
 	Loading::GetInstance()->Release();
 	Loading::GetInstance()->DeleteInstance();
@@ -291,42 +293,80 @@ void SceneManager::AnyPopAndChangeScene(char popNum, std::shared_ptr<SceneBase> 
 
 void SceneManager::Init3D(void)
 {
-	// 背景色設定
+#pragma region 基本描画設定
+
 	SetBackgroundColor(0, 0, 0);
-
-	// Zバッファを有効にする
 	SetUseZBuffer3D(true);
-	// Zバッファへの書き込みを有効にする
 	SetWriteZBuffer3D(true);
-
-	// バックカリングを有効にする
 	SetUseBackCulling(true);
+	SetTextureAddressMode(DX_TEXADDRESS_WRAP);
+	SetDrawBright(255, 255, 255);
 
-	// フォグ設定
+#pragma endregion
+
+#pragma region フォグ設定
+
 	SetFogEnable(true);
-	// フォグの色
 	SetFogColor(200, 200, 200);
-	// フォグを発生させる奥行きの最小、最大距離
 	SetFogStartEnd(5000.0f, 10000.0f);
 
-	SetTextureAddressMode(DX_TEXADDRESS_WRAP);
+#pragma endregion
 
-	// ---- ライティング全体設定 ----
+#pragma region ライティング全体設定
+
 	SetUseLighting(true);
-	ChangeLightTypeDir({ 0.00f, -1.00f, 0.00f });
-	SetLightDirection({ 0.00f, -1.00f, 0.00f });
 	SetUseSpecular(false);
+	SetGlobalAmbientLight(GetColorF(0.38f, 0.38f, 0.38f, 1.0f));
 
-	// ---- マテリアル（頂点カラー + 白拡散 + そこそこAmbient）----
-	MATERIALPARAM m{};
-	m.Diffuse = GetColorF(1.0f, 1.0f, 1.0f, 1.0f);
-	m.Ambient = GetColorF(0.6f, 0.6f, 0.6f, 1.0f);  // 真っ黒回避
-	m.Specular = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
-	m.Emissive = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
-	m.Power = 0.0f;
-	SetMaterialParam(m);
+#pragma endregion
 
-	// 影響しうる「真っ黒系」設定を念のためオフ
-	SetGlobalAmbientLight(GetColorF(0, 0, 0, 0));  // 使っていれば好みで
-	SetDrawBright(255, 255, 255);               // 明度補正が落ちていないか
+#pragma region メインライト設定
+
+	VECTOR mainDirection = VNorm(VGet(0.0f, 0.35f, 1.0f));
+	ChangeLightTypeDir(mainDirection);
+	SetLightDirection(mainDirection);
+	SetLightEnable(true);
+	SetLightDifColor(GetColorF(0.62f, 0.62f, 0.62f, 1.0f));
+	SetLightAmbColor(GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	SetLightSpcColor(GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
+#pragma endregion
+
+#pragma region 補助ライト設定
+
+	fillLight = CreateDirLightHandle(VNorm(VGet(0.05f, 0.15f, 1.0f)));
+
+	if (fillLight >= 0) {
+		SetLightDifColorHandle(fillLight, GetColorF(0.20f, 0.20f, 0.20f, 1.0f));
+		SetLightAmbColorHandle(fillLight, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		SetLightSpcColorHandle(fillLight, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		SetLightEnableHandle(fillLight, true);
+	}
+
+#pragma endregion
+
+#pragma region リムライト設定
+
+	rimLight = CreateDirLightHandle(VNorm(VGet(0.0f, 0.10f, -1.0f)));
+
+	if (rimLight >= 0) {
+		SetLightDifColorHandle(rimLight, GetColorF(0.13f, 0.13f, 0.13f, 1.0f));
+		SetLightAmbColorHandle(rimLight, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		SetLightSpcColorHandle(rimLight, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		SetLightEnableHandle(rimLight, true);
+	}
+
+#pragma endregion
+
+#pragma region マテリアル設定
+
+	MATERIALPARAM material{};
+	material.Diffuse = GetColorF(1.0f, 1.0f, 1.0f, 1.0f);
+	material.Ambient = GetColorF(0.6f, 0.6f, 0.6f, 1.0f);
+	material.Specular = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
+	material.Emissive = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
+	material.Power = 0.0f;
+	SetMaterialParam(material);
+
+#pragma endregion
 }

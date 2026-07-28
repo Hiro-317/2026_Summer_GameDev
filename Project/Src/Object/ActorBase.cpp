@@ -51,6 +51,8 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 void ActorBase::Init(void)
 {
 	SubInit();
+
+	trans.Attach();
 	
 	// ƒpƒ‰ƒ[ƒ^‚Ì‰ğ•ú
 	if (parameter != nullptr) {

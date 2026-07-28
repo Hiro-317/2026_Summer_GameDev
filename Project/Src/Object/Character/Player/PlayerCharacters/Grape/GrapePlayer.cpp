@@ -33,10 +33,6 @@ GrapePlayer::GrapePlayer(MSG_SENDER_ID operatorSenderId) :
 
 void GrapePlayer::PlayerLoad(void)
 {
-	// 影を消す（消さなかったら、変な色になるので）
-	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-
 #pragma region 下位オブジェクトの生成
 
 	// アニメーションコントローラーを生成する

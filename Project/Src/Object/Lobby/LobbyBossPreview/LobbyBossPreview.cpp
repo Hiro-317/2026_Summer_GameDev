@@ -26,14 +26,10 @@ void LobbyBossPreview::UiDraw(void)
 		DrawRotaGraph(pos.x, pos.y, scale, 0, imageHandle, true);
 		};
 
+	// 枠
 	DrawImageToVector2I(FRAME_IMAGE_POS, frameImage);
 
-	static Vector2I tempPos = Vector2I();
-	if (CheckHitKey(KEY_INPUT_UP)) { tempPos.y--; }
-	if (CheckHitKey(KEY_INPUT_DOWN)) { tempPos.y++; }
-	if (CheckHitKey(KEY_INPUT_LEFT)) { tempPos.x--; }
-	if (CheckHitKey(KEY_INPUT_RIGHT)) { tempPos.x++; }
-
+	// 選択されたボスの画像
 	DrawImageToVector2I(BOSS_SELECT_IMAGE_POS, bossSelectImage, 0.23f);
 }
 
@@ -47,6 +43,9 @@ void LobbyBossPreview::SetSelectBossType(BOSS_TYPE selectBossType)
 {
 	// BOSS_TYPEの範囲外の値が渡された場合は処理を中断する
 	if (selectBossType <= BOSS_TYPE::None || BOSS_TYPE::Max <= selectBossType) { return; }
+
+	// 前のを消す
+	DeleteGraph(bossSelectImage);
 
 	// 選択されたボスの画像をロードする
 	bossSelectImage = LoadGraph(BOSS_SELECT_IMAGE_PATH[(int)selectBossType].c_str());
