@@ -34,10 +34,6 @@ TomatoPlayer::TomatoPlayer(MSG_SENDER_ID operatorSenderId) :
 
 void TomatoPlayer::PlayerLoad(void)
 {
-	// 影を消す（消さなかったら、変な色になるので）
-	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
-
 #pragma region 下位オブジェクトの生成
 
 	// 頭突き攻撃の当たり判定を生成

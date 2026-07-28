@@ -16,12 +16,13 @@ private:
 	void SubLoad(void)override {
 		// モデルを読み込む
 		trans.Load("Character/Peach/PeachModel");
+
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
-		trans.scale = 2;
-		trans.centerDiff = Vector3::Yonly(-250);
+		trans.scale = 2.5f;
+		trans.centerDiff = Vector3::Yonly(-225);
 
 		// アニメーションを登録する
 		AddInFbxAnimation(7, 1.0f, 0);
