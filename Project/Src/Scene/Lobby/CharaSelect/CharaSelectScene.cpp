@@ -8,8 +8,12 @@
 
 #include "../../../Object/Lobby/CharaSelectScene/CharaSelectPreviewManager.h"
 
-CharaSelectScene::CharaSelectScene(const std::function<void(void)>& LobbyPreviewCharaChange) :
+CharaSelectScene::CharaSelectScene(
+	const std::function<void(void)>& LobbyPreviewCharaChange,
+	const std::function<void(void)>& LobbyReceptionUpdate
+) :
 	LobbyPreviewCharaChange(LobbyPreviewCharaChange),
+	LobbyReceptionUpdate(LobbyReceptionUpdate),
 	selectCharaType(CHARA_TYPE::None)
 {
 }
@@ -90,6 +94,9 @@ void CharaSelectScene::Update(void)
 		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
+
+	// マルチロビー画面の受信処理
+	if (LobbyReceptionUpdate != nullptr) { LobbyReceptionUpdate(); }
 }
 
 void CharaSelectScene::Draw(void)

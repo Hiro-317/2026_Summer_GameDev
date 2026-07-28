@@ -4,10 +4,14 @@
 
 #include "../../SceneManager/SceneManager.h"
 
-BossSelectScene::BossSelectScene(const std::function<void(void)>& LobbyPreviewBossChange):
+BossSelectScene::BossSelectScene(
+	const std::function<void(void)>& LobbyPreviewBossChange,
+	const std::function<void(void)>& LobbyReceptionUpdate
+):
 	SceneBase(),
 	
 	LobbyPreviewBossChange(LobbyPreviewBossChange),
+	LobbyReceptionUpdate(LobbyReceptionUpdate),
 
 	bossSelectImage(),
 	arrowImage(-1),
@@ -98,6 +102,8 @@ void BossSelectScene::Update(void)
 	if (easingCounter > 100000.0f) { easingCounter = 0.0f; }
 	easingRate += sinf(easingCounter) * 0.001f;
 #pragma endregion
+
+	if (LobbyReceptionUpdate != nullptr) { LobbyReceptionUpdate(); }
 }
 
 void BossSelectScene::Draw(void)

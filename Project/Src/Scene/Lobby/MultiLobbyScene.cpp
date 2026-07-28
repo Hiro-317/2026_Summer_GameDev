@@ -190,7 +190,8 @@ void MultiLobbyScene::Update(void)
 			SceneManager::GetIns().PushScene(
 				std::make_shared<BossSelectScene>(
 					// ボス変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
+					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); },
+					std::bind(&MultiLobbyScene::ReceptionUpdate,this)
 				)
 			);
 
@@ -207,7 +208,8 @@ void MultiLobbyScene::Update(void)
 			SceneManager::GetIns().PushScene(
 				std::make_shared<CharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId()); }
+					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId()); },
+					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
 				)
 			);
 
@@ -255,130 +257,8 @@ void MultiLobbyScene::Update(void)
 
 #pragma endregion
 
-#pragma region 受信処理
-
-	// 接続/切断 の受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
-
-		switch (dataPtr->inform)
-		{
-		case MsgDataConnectInform::INFORM_TYPE::None: { break; }
-
-		case MsgDataConnectInform::INFORM_TYPE::Connect: {
-
-			if (Net::GetIns().IsHost()) {
-				// 現状の選択キャラを送る
-				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-					if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-					if (id == (int)dataPtr->header.senderId) { continue; }
-
-					Net::GetIns().Send(
-						MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
-						(MSG_SENDER_ID)id,
-						dataPtr->header.senderId
-					);
-				}
-				// 現状の選択ボスを送る
-				Net::GetIns().Send(MsgDataBossSelect((int)SceneManager::GetIns().GetSelectBossType()));
-			}
-
-			// ボタンごとの選択状態を更新
-			ButtonSelectionStateReload();
-
-			break;
-		}
-
-		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
-			if (!Net::GetIns().IsHost()) {
-				Net::GetIns().Disconnection();
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
-				return;
-			}
-
-			// 切断されたID以降の選択キャラをソートして正す
-			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max - 1; id++) {
-				SceneManager::GetIns().SetSelectCharaType(
-					(MSG_SENDER_ID)id,
-					SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)((int)id + 1))
-				);
-			}
-
-			// キャラプレビューを更新する
-			ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
-
-			// 最新状態の選択キャラを送りなおす
-			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-				Net::GetIns().Send(
-					MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
-					(MSG_SENDER_ID)id
-				);
-			}
-
-			// ボタンごとの選択状態を更新
-			ButtonSelectionStateReload();
-
-			break;
-		}
-
-		default: { break; }
-		}
-
-		delete dataPtr;
-
-	}
-
-	// 選択ボスの受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
-
-		// 受け取ったボスタイプを保存する
-		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
-
-		// ボスプレビューを更新する
-		ObjSerch<LobbyBossPreview>()->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
-
-		delete dataPtr;
-	}
-
-	// 選択キャラの受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true)) {
-
-		// 受け取ったキャラタイプを保存する
-		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
-
-		// キャラプレビューを更新する
-		ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
-
-		delete dataPtr;
-	}
-
-	// 準備完了の受信
-	while(auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>(MSG_SENDER_ID::None, true)) {
-
-		// 受け取った準備完了フラグを保存する
-		readyList.at((int)dataPtr->header.senderId) = (unsigned char)dataPtr->ready;
-
-		// ボタンごとの選択状態を更新
-		ButtonSelectionStateReload();
-
-		delete dataPtr;
-	}
-	
-	// システム通知の受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
-		
-		// シーン遷移の受信
-		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
-			// ゲームシーン遷移
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
-
-			delete dataPtr;
-			return;
-		}
-
-		delete dataPtr;
-	}
-
-#pragma endregion
+	// 受信処理
+	ReceptionUpdate();
 }
 
 void MultiLobbyScene::Draw(void)
@@ -471,4 +351,129 @@ void MultiLobbyScene::ButtonSelectionStateReload(void)
 			break;
 		}
 	}
+}
+
+void MultiLobbyScene::ReceptionUpdate(void)
+{
+	// 接続/切断 の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		switch (dataPtr->inform) {
+
+		case MsgDataConnectInform::INFORM_TYPE::None: { break; }
+
+		case MsgDataConnectInform::INFORM_TYPE::Connect: {
+
+			if (Net::GetIns().IsHost()) {
+				// 現状の選択キャラを送る
+				for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+					if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+					if (id == (int)dataPtr->header.senderId) { continue; }
+
+					Net::GetIns().Send(
+						MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
+						(MSG_SENDER_ID)id,
+						dataPtr->header.senderId
+					);
+				}
+				// 現状の選択ボスを送る
+				Net::GetIns().Send(MsgDataBossSelect((int)SceneManager::GetIns().GetSelectBossType()));
+			}
+
+			// ボタンごとの選択状態を更新
+			ButtonSelectionStateReload();
+
+			break;
+		}
+
+		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
+			if (!Net::GetIns().IsHost()) {
+				Net::GetIns().Disconnection();
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+				delete dataPtr;
+				return;
+			}
+
+			// 切断されたID以降の選択キャラをソートして正す
+			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max - 1; id++) {
+				SceneManager::GetIns().SetSelectCharaType(
+					(MSG_SENDER_ID)id,
+					SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)((int)id + 1))
+				);
+			}
+
+			// キャラプレビューを更新する
+			ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+
+			// 最新状態の選択キャラを送りなおす
+			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+				Net::GetIns().Send(
+					MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id)),
+					(MSG_SENDER_ID)id
+				);
+			}
+
+			// ボタンごとの選択状態を更新
+			ButtonSelectionStateReload();
+
+			break;
+		}
+
+		default: { break; }
+		}
+
+		delete dataPtr;
+	}
+
+	// 選択ボスの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
+
+		// 受け取ったボスタイプを保存する
+		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+
+		// ボスプレビューを更新する
+		ObjSerch<LobbyBossPreview>()->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+
+		delete dataPtr;
+	}
+
+	// 選択キャラの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true)) {
+
+		// 受け取ったキャラタイプを保存する
+		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
+
+		// キャラプレビューを更新する
+		ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+
+		delete dataPtr;
+	}
+
+	// 準備完了の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>(MSG_SENDER_ID::None, true)) {
+
+		// 受け取った準備完了フラグを保存する
+		readyList.at((int)dataPtr->header.senderId) = (unsigned char)dataPtr->ready;
+
+		// ボタンごとの選択状態を更新
+		ButtonSelectionStateReload();
+
+		delete dataPtr;
+	}
+
+	// システム通知の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
+
+		// シーン遷移の受信
+		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
+			// ゲームシーン遷移
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+
+			delete dataPtr;
+			return;
+		}
+
+		delete dataPtr;
+	}
+
 }

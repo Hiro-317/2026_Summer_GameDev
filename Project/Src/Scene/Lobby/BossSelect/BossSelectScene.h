@@ -11,7 +11,10 @@
 class BossSelectScene : public SceneBase
 {
 public:
-	BossSelectScene(const std::function<void(void)>& LobbyPreviewBossChange);
+	BossSelectScene(
+		const std::function<void(void)>& LobbyPreviewBossChange,
+		const std::function<void(void)>& LobbyReceptionUpdate = nullptr
+	);
 	~BossSelectScene()override = default;
 
 	// 読み込み
@@ -83,4 +86,7 @@ private:
 	BOSS_TYPE selectBossType;
 
 	const std::function<void(void)> LobbyPreviewBossChange;
+
+	// マルチロビー画面の受信処理を受け取る
+	const std::function<void(void)> LobbyReceptionUpdate;
 };

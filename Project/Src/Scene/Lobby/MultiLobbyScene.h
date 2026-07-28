@@ -106,4 +106,7 @@ private:
 
 	// 選択中のボタンの上に表示する決定キーの画像
 	int enterKeyImage[2];
+
+	// 受信処理をまとめた関数
+	void ReceptionUpdate(void);
 };

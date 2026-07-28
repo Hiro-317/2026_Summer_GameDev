@@ -9,7 +9,10 @@
 class CharaSelectScene : public SceneBase
 {
 public:
-	CharaSelectScene(const std::function<void(void)>& LobbyPreviewCharaChange);
+	CharaSelectScene(
+		const std::function<void(void)>& LobbyPreviewCharaChange,
+		const std::function<void(void)>& LobbyReceptionUpdate = nullptr
+	);
 	~CharaSelectScene()override = default;
 
 	// 読み込み
@@ -21,7 +24,11 @@ public:
 
 private:
 	
+	// ロビー画面のキャラプレビューを更新する関数のポインターを受け取る
 	const std::function<void(void)> LobbyPreviewCharaChange;
+
+	// マルチロビー画面の受信処理を受け取る
+	const std::function<void(void)> LobbyReceptionUpdate;
 
 	// 選択中のキャラタイプ
 	CHARA_TYPE selectCharaType;
