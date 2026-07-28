@@ -41,16 +41,11 @@ void GrapePlayer::PlayerLoad(void)
 	// アニメーションの読み込み
 	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED);
 
-
-	// ポリフェノールインパクトの生成
+	// 巨砲の生成
 	subObjArray.emplace_back(
-		new GrapePlayerBombCollOperator(
+		new GrapePlayerShotCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL1_ATTACK_RATE,
-			// 爆発するまでの時間
-			ATTACK_COUNT_TIME,
-			// 爆弾の待機時間
-			ATTACK_START_TIME,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
@@ -68,40 +63,40 @@ void GrapePlayer::PlayerLoad(void)
 		)
 	);
 
-	// 巨砲の生成
+	// ポリフェノールインパクトの生成
 	subObjArray.emplace_back(
-		new GrapePlayerShotCollOperator(
+		new GrapePlayerBombCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL3_ATTACK_RATE,
+			// 爆発するまでの時間
+			ATTACK_COUNT_TIME,
+			// 爆弾の待機時間
+			ATTACK_START_TIME,
 			trans.pos, trans.angle,
 			operatorSenderId,
 			characterStats
 		)
 	);
 
-
 #pragma endregion 
 
 #pragma region 状態設定
 
-	// 設置型爆弾
+
+
+
 	AddState(
 		(int)STATE::SKILL_1,
-		new GrapePlayerBombState(
-			// 自分の状態に遷移する関数
+		new GrapePlayerShotState(
 			[&]() { ChangeState((int)STATE::SKILL_1); },
-			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
-			// 設置爆弾の
-			*SubObjSerch<GrapePlayerBombCollOperator>(),
-			// クールタイム
-			SKILL1_COOL_TIME,
-			// プレイヤーの座標
-			trans.pos,
-			// アニメーション再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::KICK_DOWN, false); },
-			// アニメーション終了フラグゲット関数のポインタ
+			*SubObjSerch<GrapePlayerShotCollOperator>(),
+			SKILL3_COOL_TIME,
+			trans.pos, trans.angle,
+			bossPos,
+			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
 			[&]() { return IsAnimeEnd(); },
+			[&]() { return GetAnimeRatio(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -133,22 +128,29 @@ void GrapePlayer::PlayerLoad(void)
 		)
 	);
 
+	// 設置型爆弾
 	AddState(
 		(int)STATE::SKILL_3,
-		new GrapePlayerShotState(
+		new GrapePlayerBombState(
+			// 自分の状態に遷移する関数
 			[&]() { ChangeState((int)STATE::SKILL_3); },
+			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
-			*SubObjSerch<GrapePlayerShotCollOperator>(),
-			SKILL3_COOL_TIME,
-			trans.pos, trans.angle,
-			bossPos,
-			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
+			// 設置爆弾の
+			*SubObjSerch<GrapePlayerBombCollOperator>(),
+			// クールタイム
+			SKILL1_COOL_TIME,
+			// プレイヤーの座標
+			trans.pos,
+			// アニメーション再生関数のポインタ
+			[&]() { AnimePlay((int)ANIME_TYPE::KICK_DOWN, false); },
+			// アニメーション終了フラグゲット関数のポインタ
 			[&]() { return IsAnimeEnd(); },
-			[&]() { return GetAnimeRatio(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
+
 
 	bossPos;
 
@@ -274,10 +276,10 @@ void GrapePlayer::PlayerLoad(void)
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
-				dynamic_cast<GrapePlayerBombState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-				1800,
-				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
-				"SkillSlotGrapeBombPut"
+				dynamic_cast<GrapePlayerShotState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
+				SKILL1_COOL_TIME,
+				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
+				"SkillSlotShot"
 			)
 		);
 
@@ -296,10 +298,10 @@ void GrapePlayer::PlayerLoad(void)
 		ui_ArrayIns.emplace_back(
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,
-				dynamic_cast<GrapePlayerShotState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
+				dynamic_cast<GrapePlayerBombState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
 				SKILL3_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
-				"SkillSlotShot"
+				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
+				"SkillSlotGrapeBombPut"
 			)
 		);
 	}
