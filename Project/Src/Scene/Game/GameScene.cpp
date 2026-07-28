@@ -222,6 +222,7 @@ void GameScene::Update(void)
 #endif // _DEBUG
 
 	EffectManager::GetIns()->Update();
+	EffectManager::GetIns()->ReceptionUpdate();
 	UpdateEffekseer3D();
 
 #pragma endregion

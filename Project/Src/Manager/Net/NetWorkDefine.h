@@ -88,6 +88,11 @@ enum class MSG_DATA_TYPE
     // <ホスト>ボス : ボムの種類
     BossBombInform,
 
+    // <ホスト/クライアント>エフェクト : エフェクトの作成
+    EffectCreate,
+    // <ホスト/クライアント>エフェクト : エフェクトの追従情報
+    EffectFollow,
+
 	Max
 };
 
@@ -1209,6 +1214,76 @@ struct MsgDataBossBombInform
         index(),
         pos(),
         moveDir()
+    {
+    }
+};
+
+// <ホスト/クライアント>エフェクト生成送信構造体
+struct MsgDataEffectCreate
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::EffectCreate;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // エフェクトのフラグ
+    bool flg;
+    // エフェクトの名前
+    int name;
+    // エフェクトのローカル座標
+    Vector3 local;
+
+    MsgDataEffectCreate(bool flg, int type = -1, Vector3 local = Vector3()) :
+        header(DATA_TYPE),
+        flg(flg),
+        name(type),
+        local(local)
+    {
+    }
+    MsgDataEffectCreate(void) :
+        header(DATA_TYPE),
+        flg(),
+        name(),
+        local()
+    {
+    }
+};
+
+// <ホスト/クライアント>エフェクト追従情報送信構造体
+struct MsgDataEffectFollow
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::EffectFollow;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // エフェクトの名前
+    int name;
+    // 座標
+    Vector3 pos;
+    // 角度
+    Vector3 angle;
+
+    MsgDataEffectFollow(int name, Vector3 pos, Vector3 angle) :
+        header(DATA_TYPE),
+        name(name),
+        pos(pos),
+        angle(angle)
+    {
+    }
+    MsgDataEffectFollow(void) :
+        header(DATA_TYPE),
+        name(),
+        pos(),
+        angle()
     {
     }
 };

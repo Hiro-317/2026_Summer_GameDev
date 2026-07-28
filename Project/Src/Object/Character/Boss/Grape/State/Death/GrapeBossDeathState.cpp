@@ -23,19 +23,18 @@ void GrapeBossDeathState::Enter(void)
 	DeathAnim();
 	changeTime = ((int)AnimeTotalTime() + DEATH_LAST_TIME);
 	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, changeTime);
+	cnt = 0;
 }
 
 void GrapeBossDeathState::Update(void)
 {
 	// アニメーションが終わっていたらシーン移行
-	if(changeTime >= cnt){
+	if (cnt >= changeTime) {
 		Net::GetIns().Send(MsgDataBossIsDeath(true));
 		IsDeath();
 	}
-	else {
-		// チェンジ用のカウント
-		cnt++;
-	}
+	// チェンジ用のカウント
+	cnt++;
 }
 
 void GrapeBossDeathState::Exit(void)

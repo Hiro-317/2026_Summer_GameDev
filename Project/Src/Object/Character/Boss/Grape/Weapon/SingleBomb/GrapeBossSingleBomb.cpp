@@ -78,7 +78,10 @@ void GrapeBossSingleBomb::SubUpdate(void)
 			now = false;
 			count = 0;
 			SetViewScaleCircle(0.0f);
-			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos);
+			// ホストのみエフェクト再生
+			if (Net::GetIns().IsHost()) {
+				EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos);
+			}
 		}
 	}
 }

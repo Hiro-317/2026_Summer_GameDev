@@ -2,6 +2,7 @@
 
 #include "EffectManager.h"
 
+
 EffectManager*  EffectManager::ins = nullptr;
 
 EffectManager::EffectManager(void)
@@ -25,10 +26,45 @@ void EffectManager::Update(void) {
 	}
 }
 
+void EffectManager::ReceptionUpdate(void) {
+
+	while (MsgDataEffectCreate* dataPtr = Net::GetIns().GetMsgData<MsgDataEffectCreate>(MSG_SENDER_ID::None, true)) {
+		if (dataPtr->flg) {
+			effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, (EFFECT_NAME)dataPtr->name, dataPtr->local, nullptr, false, false, false));
+		}
+		else {
+			if (dataPtr->name == -1) {
+				for (auto effect : effectInfo) {
+					effect->StopEffect();
+					delete effect;
+					effect = nullptr;
+				}
+				effectInfo.clear();
+			}
+			else {
+				for (auto info = effectInfo.begin(); info != effectInfo.end();) {
+					if ((*info)->GetName() == (EFFECT_NAME)dataPtr->name) { (*info)->StopEffect(); delete (*info); (*info) = nullptr; info = effectInfo.erase(info); }
+					else { info++; }
+				}
+			}
+		}
+		delete dataPtr;
+	}
+
+	while (MsgDataEffectFollow* dataPtr = Net::GetIns().GetMsgData<MsgDataEffectFollow>(MSG_SENDER_ID::None, true)) {
+
+		for (auto info : effectInfo) {
+			if (info->GetName() == (EFFECT_NAME)dataPtr->name) { info->SetFollowReception(dataPtr->pos, dataPtr->angle); }
+		}
+		delete dataPtr;
+	}
+}
+
 void EffectManager::CreateEffect(EFFECT_NAME name, const Vector3& local, const Transform* follow,
 	bool followRotX, bool followRotY, bool followRotZ) {
 
 	effectInfo.emplace_back(EffectFactory::CreateEffect(*parameter, name, local, follow, followRotX, followRotY, followRotZ));
+	Net::GetIns().Send(MsgDataEffectCreate(true, (int)name, local));
 }
 
 void EffectManager::StopEffect(EFFECT_NAME name) {
@@ -37,6 +73,7 @@ void EffectManager::StopEffect(EFFECT_NAME name) {
 		if ((*info)->GetName() == name) { (*info)->StopEffect(); delete (*info); (*info) = nullptr; info = effectInfo.erase(info); }
 		else { info++; }
 	}
+	Net::GetIns().Send(MsgDataEffectCreate(false, (int)name));
 }
 
 void EffectManager::StopEffectAll(void)
@@ -47,4 +84,5 @@ void EffectManager::StopEffectAll(void)
 		effect = nullptr;
 	}
 	effectInfo.clear();
+	Net::GetIns().Send(MsgDataEffectCreate(false));
 }

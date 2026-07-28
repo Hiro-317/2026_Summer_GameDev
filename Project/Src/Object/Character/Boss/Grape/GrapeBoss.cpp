@@ -32,12 +32,12 @@
 #include "../../../UI/HitUI/HitUI.h"
 
 
-GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
+GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath) :
 	BossBase(
 		"Data/Parameter/Character/Boss/Grape/",
 		"Grape/GrapeModel",
 
-		playerPos, playerLive)
+		playerPos, playerDeath)
 {
 
 	coolTime = 120;
@@ -365,12 +365,6 @@ void GrapeBoss::ReceptionUpdate(void)
 			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
-		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
-		{
-			SubObjSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
-			break;
-		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
 			SubObjSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
@@ -395,7 +389,12 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
-			SubObjSerch<GrapeStampCollOperator>()->SetDrawArea(dataPtr->flg);
+			if (dataPtr->flg) {
+				SubObjSerch<GrapeStampCollOperator>()->DrawAreaOn();
+			}
+			else {
+				SubObjSerch<GrapeStampCollOperator>()->Off();
+			}
 			break;
 		}
 		default:

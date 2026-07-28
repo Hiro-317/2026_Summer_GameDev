@@ -26,12 +26,12 @@
 #include "../../../UI/CharacterHpUI/CharacterHpUI.h"
 #include "../../../UI/HitUI/HitUI.h"
 
-TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
+TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath) :
 	BossBase(
 		"Data/Parameter/Character/Boss/Tomato/",
 		"Tomato/Tomato",
 
-		playerPos, playerLive)
+		playerPos, playerDeath)
 {
 	coolTime = DEFAULT_COOLTIME;
 	rockHit = false;
@@ -311,7 +311,12 @@ void TomatoBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
 		{
-			SubObjSerch<TomatoStampCollOperator>()->SetDrawArea(dataPtr->flg);
+			if (dataPtr->flg) {
+				SubObjSerch<TomatoStampCollOperator>()->DrawAreaOn();
+			}
+			else {
+				SubObjSerch<TomatoStampCollOperator>()->Off();
+			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:

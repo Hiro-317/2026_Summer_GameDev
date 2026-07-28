@@ -5,6 +5,8 @@
 #include "EffectFactory.h"
 
 #include "../../Object/Common/DataLoad/ParameterLoad.h"
+#include "../Net/NetWorkManager.h"
+
 
 class EffectManager {
 public:
@@ -15,6 +17,7 @@ public:
 	static void DeleteIns(void) { if (ins != nullptr) { delete ins; ins = nullptr; } }
 
 	void Update(void);
+	void ReceptionUpdate(void);
 
 	void CreateEffect(EFFECT_NAME name, const Vector3& local, const Transform* follow = nullptr,
 		bool followRotX = true, bool followRotY = true, bool followRotZ = true);

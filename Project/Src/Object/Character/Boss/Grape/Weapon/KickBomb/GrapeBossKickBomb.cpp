@@ -13,7 +13,7 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model, int front, int back)
 	ColliderCreate(
 		new XZCircleCollider(
 			COLLIDER_TAG::BOSS_ATTACK,
-			GetParameter("KickBomb", "Range"),
+			ATTACK_RANGE,
 			1000.0f
 		)
 	);
@@ -22,7 +22,7 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model, int front, int back)
 	ColliderCreate(
 		new SphereCollider(
 			COLLIDER_TAG::BOSS_ATTACK_AREA,
-			GetParameter("KickBomb", "Radius") * ATTACK_SIZE
+			MODEL_RADIUS * ATTACK_SIZE
 		)
 	);
 
@@ -79,7 +79,10 @@ void GrapeBossKickBomb::SubUpdate(void)
 			now = false;
 			count = 0;
 			SetViewScaleCircle(0.0f);
-			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
+			// ホストのみエフェクト再生
+			if (Net::GetIns().IsHost()) {
+				EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
+			}
 		}
 	}
 }

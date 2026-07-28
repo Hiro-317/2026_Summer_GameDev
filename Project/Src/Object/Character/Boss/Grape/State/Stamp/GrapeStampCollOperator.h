@@ -16,16 +16,15 @@ public:
 	~GrapeStampCollOperator()override = default;
 
 	void Load(void)override;
-
-	void CollSet(bool flg) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
-
 	Vector3 GetAttackPos(void) { return trans.pos; }
 
 	void SetPos(const Vector3& pos) { trans.pos = pos; }
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æÝ’è
-	void SetDrawArea(bool flg) { isDrawArea = flg; }
+	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
+	void CollOn(void) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
+	void Off(void) { SetJudge(false); isDrawArea = false; }
 
 private:
 
