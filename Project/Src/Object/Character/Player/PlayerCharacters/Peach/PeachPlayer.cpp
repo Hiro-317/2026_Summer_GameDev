@@ -55,7 +55,7 @@ void PeachPlayer::PlayerLoad(void)
 			operatorSenderId,
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal,
 			targetPlayerPos,
-			150
+			100
 		)
 	);
 
@@ -67,7 +67,7 @@ void PeachPlayer::PlayerLoad(void)
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff,
 			targetPlayerPos,
 			80,
-			300,
+			150,
 			ModifierType::PeachPlayerSkillBuff
 		)
 	);

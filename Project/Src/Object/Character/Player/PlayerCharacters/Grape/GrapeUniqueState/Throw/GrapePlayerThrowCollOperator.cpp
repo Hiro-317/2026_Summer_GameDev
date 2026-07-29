@@ -127,6 +127,7 @@ void GrapePlayerThrowCollOperator::RemoteThrowBombStart(const Vector3& pos, cons
 
 void GrapePlayerThrowCollOperator::RemoteThrowBombEnd(void)
 {
+	if (isBlast) { return; }
 	isBlast = true;
 	EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
 	SetIsDraw(false);
