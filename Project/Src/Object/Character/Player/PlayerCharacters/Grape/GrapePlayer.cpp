@@ -344,32 +344,20 @@ void GrapePlayer::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	//while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
-	//	state = dataPtr->state;
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
 
-	//	switch ((STATE)state) {
-	//	case PlayerBase::STATE::SKILL_1: {
-	//		SubObjSerch<GrapePlayerBombCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::SKILL_2: {
-	//		SubObjSerch<GrapePlayerThrowCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::SKILL_3: {
-	//		SubObjSerch<GrapePlayerShotCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::DEATH: {
-	//		PlayerDeathSetting();
-	//		break;
-	//	}
+		switch ((STATE)state) {
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
+			break;
+		}
 
-	//	default: { break; }
-	//	}
+		default: { break; }
+		}
 
-	//	delete dataPtr;
-	//}
+		delete dataPtr;
+	}
 
 	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(operatorSenderId)) {
 		
