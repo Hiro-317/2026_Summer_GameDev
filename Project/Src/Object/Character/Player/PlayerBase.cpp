@@ -4,8 +4,11 @@
 #include "../../../Manager/Font/FontManager.h"
 #include "../../../Manager/Effect/EffectManager.h"
 
+#include "CommonPlayerState/Ascension/PlayerAscensionCollOperator.h"
+
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
+#include "CommonPlayerState/Ascension/PlayerAscensionState.h"
 
 #include "../../UI/HitUI/HitUI.h"
 
@@ -55,7 +58,10 @@ PlayerBase::PlayerBase(
 		parameterPath
 	),
 	otherPlayerTrans(),
-	bossPos(nullptr)
+	bossPos(nullptr),
+	targetPlayerIndex(),
+	targetPlayerPos(),
+	isPrevention(false)
 {
 	trans.Load(("Character/" + modelPath).c_str());
 
@@ -68,6 +74,16 @@ void PlayerBase::CharacterLoad(void)
 	PlayerLoad();
 
 	if(Net::GetIns().GetConnectStatus().EntryCount() != 1) {
+
+		subObjArray.emplace_back(
+			new PlayerAscensionCollOperator(
+				COLLIDER_TAG::PLAYER_ASCENTION_PREVENTION,
+				trans.pos, 
+				400.0f,
+				operatorSenderId
+			)
+		);
+
 		// 観戦モード
 		AddState(
 			(int)STATE::OTHER_WATCH,
@@ -80,6 +96,19 @@ void PlayerBase::CharacterLoad(void)
 				otherPlayerTrans,
 				// ボスの座標
 				bossPos
+			)
+		);
+
+		AddState(
+			(int)STATE::ASCENTION,
+			new PlayerAscensionState(
+				// 自分の状態に遷移する関数
+				[&]() { ChangeState((int)STATE::ASCENTION); },
+				// 自分の状態かどうかを返す関数
+				[&]() { return state == (int)STATE::ASCENTION; },
+				[&]() { return isPrevention; },
+				*SubObjSerch<PlayerAscensionCollOperator>(),
+				[&]() { ChangeState((int)STATE::ASCENTION); }
 			)
 		);
 	}

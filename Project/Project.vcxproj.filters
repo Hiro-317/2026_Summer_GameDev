@@ -133,6 +133,9 @@
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Ascension\PlayerAscensionState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Ascension\PlayerAscensionCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Prevention\PlayerPreventionState.cpp" />
+    <ClCompile Include="Src\Object\Character\Player\CommonPlayerState\Prevention\PlayerPreventionCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -299,6 +302,9 @@
     <ClInclude Include="Src\Scene\Title\TitleScene.h" />
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Ascension\PlayerAscensionState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Ascension\PlayerAscensionCollOperator.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Prevention\PlayerPreventionState.h" />
+    <ClInclude Include="Src\Object\Character\Player\CommonPlayerState\Prevention\PlayerPreventionCollOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

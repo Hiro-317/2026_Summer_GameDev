@@ -786,12 +786,12 @@ struct MsgDataPlayerCollOperator
     {
         Non = -1,
 
+        CommonPlayerAscention,
+
         CommonPlayerTripleAttack_1,
         CommonPlayerTripleAttack_2,
         CommonPlayerTripleAttack_3,
         CommonPlayerSimpleAttack,
-
-        //CommonPlayerSingleModifier,
 
         TomatoPlayerTackle,
         TomatoPlayerHeadButt,
@@ -806,6 +806,7 @@ struct MsgDataPlayerCollOperator
 
         Max
     };
+
     // “–‚½‚è”»’è‚Ìí—Ş‚Ì—ñ‹“Œ^’è‹`‚Ì•Ï”’è‹`
     COLLIDER_TYPE collKinds;
 

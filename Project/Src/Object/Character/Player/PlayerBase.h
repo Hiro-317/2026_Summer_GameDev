@@ -71,6 +71,7 @@ public:
 
 	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
 	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
+	const bool& GetIsPrevention(void) { return isPrevention; }
 
 	// 自身以外のプレイヤー座標を取得
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
@@ -202,6 +203,7 @@ protected:
 		DAMAGE,			// ダメージ
 		DEATH,			// 倒される
 		OTHER_WATCH,
+		ASCENTION,
 
 		MAX
 	};
@@ -263,6 +265,7 @@ protected:
 	
 	Vector2I targetIconPos;
 
+	bool isPrevention;
 
 #pragma region 関数定義
 
