@@ -8,7 +8,7 @@ BananaBossScratchState::BananaBossScratchState(
 	const std::function<bool(void)>& isOwnState,
 	const float MOVE_SPEED, const float ATTACK_TIME,
 	Vector3& pos, Vector3& angle, const std::vector<const Vector3*> playerPos,
-	TomatoHeadbuttCollOperator* collOperator,
+	BananaScratchCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> DeleteColl,
 	const std::function<void(void)> ReviveColl,
@@ -46,12 +46,12 @@ void BananaBossScratchState::Update(void)
 	if (time < 0) {
 
 		angle.y = atan2f(moveDir.x, moveDir.z);
-		Vector3 s = Vector3::Xonly(((float)time + 100.0f) / 100.0f);
+		float s = ((float)time + 100.0f) / 100.0f;
 
 		collOperator->SetScale(s);
 		collOperator->SetViewPos(pos);
 		collOperator->SetAngle(angle);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle.y));
 		return;
 	}
 	// èâÇﬂÇ»ÇÁâπÇ∆ìñÇΩÇËîªíËÇèoÇ∑

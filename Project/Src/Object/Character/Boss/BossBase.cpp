@@ -161,10 +161,6 @@ void BossBase::CharacterUpdate(void)
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
 		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
 	}
-	if (state == (int)STATE::DEATH) {
-		// 不動オブジェクトにする
-		SetDynamicFlg(false);
-	}
 #endif // _DEBUG
 }
 
@@ -205,7 +201,7 @@ void BossBase::CharacterUiDraw(void)
 
 void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
-	if (!Net::GetIns().IsHost()) return;
+	if (!Net::GetIns().IsHost() || state == (int)STATE::DEATH) return;
 
 	// ボスとプレイヤーの攻撃との当たり判定
 	if (ownTag == COLLIDER_TAG::BOSS_DISTANCE) {
