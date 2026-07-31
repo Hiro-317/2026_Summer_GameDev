@@ -8,6 +8,7 @@ class PlayerPreventionCollOperator : public ActorBase
 {
 public:
 
+	// 昇天阻止クラス
 	PlayerPreventionCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		// プレイヤーの座標
@@ -50,4 +51,7 @@ private:
 	const float PREVENTION_RADIUS;	// 昇天を阻止できる範囲の半径
 
 	MSG_SENDER_ID operatorSenderId;		// 送信ID
+
+	float chargeCounter;
+	bool isCharge;
 };

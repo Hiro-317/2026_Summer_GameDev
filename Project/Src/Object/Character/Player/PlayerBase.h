@@ -203,7 +203,8 @@ protected:
 		DAMAGE,			// ダメージ
 		DEATH,			// 倒される
 		OTHER_WATCH,
-		ASCENTION,
+		ASCENTION,		// 昇天
+		PREVENTION,		// 昇天阻止
 
 		MAX
 	};

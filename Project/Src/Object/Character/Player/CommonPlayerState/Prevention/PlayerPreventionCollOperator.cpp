@@ -11,7 +11,9 @@ PlayerPreventionCollOperator::PlayerPreventionCollOperator(
 	COLL_TAG(COLL_TAG),
 	playerPos(playerPos),
 	PREVENTION_RADIUS(PREVENTION_RADIUS),
-	operatorSenderId(operatorSenderId)
+	operatorSenderId(operatorSenderId),
+
+	isCharge(false)
 {
 }
 
@@ -43,15 +45,17 @@ void PlayerPreventionCollOperator::Load(void)
 void PlayerPreventionCollOperator::Update(void)
 {
 	trans.pos = playerPos;
+
 }
 
 void PlayerPreventionCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
+	if (!Net::GetIns().IsHost()) { return; }
+
 	switch (other.GetTag())
 	{
 	case COLLIDER_TAG::PLAYER_ASCENTION_PREVENTION:
 	{
-
 
 		break;
 	}

@@ -5,10 +5,12 @@
 #include "../../../Manager/Effect/EffectManager.h"
 
 #include "CommonPlayerState/Ascension/PlayerAscensionCollOperator.h"
+#include "CommonPlayerState/Prevention/PlayerPreventionCollOperator.h"
 
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
 #include "CommonPlayerState/Ascension/PlayerAscensionState.h"
+#include "CommonPlayerState/Prevention/PlayerPreventionState.h"
 
 #include "../../UI/HitUI/HitUI.h"
 
@@ -84,6 +86,15 @@ void PlayerBase::CharacterLoad(void)
 			)
 		);
 
+		subObjArray.emplace_back(
+			new PlayerPreventionCollOperator(
+				COLLIDER_TAG::PLAYER_ASCENTION_PREVENTION,
+				trans.pos,
+				400.0f,
+				operatorSenderId
+			)
+		);
+
 		// äœêÌÉÇÅ[Éh
 		AddState(
 			(int)STATE::OTHER_WATCH,
@@ -99,6 +110,7 @@ void PlayerBase::CharacterLoad(void)
 			)
 		);
 
+		// è∏ìV
 		AddState(
 			(int)STATE::ASCENTION,
 			new PlayerAscensionState(
@@ -108,7 +120,21 @@ void PlayerBase::CharacterLoad(void)
 				[&]() { return state == (int)STATE::ASCENTION; },
 				[&]() { return isPrevention; },
 				*SubObjSerch<PlayerAscensionCollOperator>(),
-				[&]() { ChangeState((int)STATE::ASCENTION); }
+				[&]() { ChangeState((int)STATE::MOVE); }
+			)
+		);
+
+		// è∏ìVëjé~
+		AddState(
+			(int)STATE::PREVENTION,
+			new PlayerAscensionState(
+				// é©ï™ÇÃèÛë‘Ç…ëJà⁄Ç∑ÇÈä÷êî
+				[&]() { ChangeState((int)STATE::PREVENTION); },
+				// é©ï™ÇÃèÛë‘Ç©Ç«Ç§Ç©Çï‘Ç∑ä÷êî
+				[&]() { return state == (int)STATE::PREVENTION; },
+				false,
+				*SubObjSerch<PlayerAscensionCollOperator>(),
+				[&]() { ChangeState((int)STATE::MOVE); }
 			)
 		);
 	}

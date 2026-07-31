@@ -7,22 +7,18 @@
 PlayerPreventionState::PlayerPreventionState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-	Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats,
+	Vector3& accelSum,Vector3& angle, const CharacterStats& playerStats,
 	const std::function<void(void)>& PlayIdleAnime,
 	const std::function<void(void)>& PlayWalkAnime,
 	const std::function<void(void)>& PlayRunAnime,
 	PlayerPreventionCollOperator& collOperator
 ) :
 	CharacterStateBase(ownChangeState, isOwnState),
-	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX), ATTENUATION(ATTENUATION),
-	accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle), playerStats(playerStats),
+	accelSum(accelSum), angle(angle), playerStats(playerStats),
 	PlayIdleAnime(PlayIdleAnime),
 	PlayWalkAnime(PlayWalkAnime),
 	PlayRunAnime(PlayRunAnime),
-	collOperator(collOperator),
-
-	isDash(false), dashStamina(DASH_STAMINA_MAX), isTired(false)
+	collOperator(collOperator)
 {
 }
 
@@ -46,6 +42,17 @@ void PlayerPreventionState::Enter(void)
 }
 
 void PlayerPreventionState::Update(void)
+{
+	if()
+	Move();
+}
+
+void PlayerPreventionState::Exit(void)
+{
+	accelSum = 0.0f; // 加速度をリセット
+}
+
+void PlayerPreventionState::Move(void)
 {
 	// コントローラーの入力を取得
 	Vector3 vec = Key::GetIns().GetLeftStickVec().ToVector3XZ();
@@ -84,10 +91,5 @@ void PlayerPreventionState::Update(void)
 
 	// 角度を入力方向に向ける
 	if (vec != 0.0f) { angle.y = atan2f(vec.x, vec.z); }
-}
-
-void PlayerPreventionState::Exit(void)
-{
-	accelSum = 0.0f; // 加速度をリセット
 }
 

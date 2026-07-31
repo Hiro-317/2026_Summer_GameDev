@@ -14,10 +14,7 @@ public:
 	/// </summary>
 	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
 	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="DASH_SPEED_RATE">ダッシュの移動量倍率</param>
-	/// <param name="DASH_STAMINA_MAX">ダッシュのスタミナの最大量（1フレームずつデクリメント）</param>
 	/// <param name="accelSum">移動量の参照</param>
-	/// <param name="ACCEL_MAX">横軸加速度の最大値の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="PlayIdleAnime">待機アニメーションの再生関数のポインタ</param>
 	/// <param name="PlayWalkAnime">歩きアニメーションの再生関数のポインタ</param>
@@ -25,8 +22,7 @@ public:
 	PlayerPreventionState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats,
+		Vector3& accelSum, Vector3& angle, const CharacterStats& playerStats,
 		const std::function<void(void)>& PlayIdleAnime,
 		const std::function<void(void)>& PlayWalkAnime,
 		const std::function<void(void)>& PlayRunAnime,
@@ -46,6 +42,8 @@ public:
 	void Exit(void)override;
 
 private:
+
+	void Move(void);
 
 #pragma region 定数
 
