@@ -16,6 +16,7 @@ enum class BOSS_TYPE {
 
 	Tomato,
 	Grape,
+	Banana,
 
 	Max
 };
