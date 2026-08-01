@@ -6,22 +6,20 @@
 BananaBossScratchState::BananaBossScratchState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	const float MOVE_SPEED, const float ATTACK_TIME,
-	Vector3& pos, Vector3& angle, const std::vector<const Vector3*> playerPos,
 	BananaScratchCollOperator* collOperator,
-	const std::function<int(void)> GetTarget,
-	const std::function<void(void)> DeleteColl,
-	const std::function<void(void)> ReviveColl,
+	const std::function<void(void)> UpdateFrame,
+	const std::function<void(void)> PlayAttackAnim,
+	const std::function<float(void)> GetAnimPlayRatio,
+	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	MOVE_SPEED(MOVE_SPEED), ATTACK_TIME(ATTACK_TIME),
-	pos(pos), angle(angle), playerPos(playerPos),
 	collOperator(collOperator),
-	GetTarget(GetTarget),
-	DeleteColl(DeleteColl),
-	ReviveColl(ReviveColl),
+	UpdateFrame(UpdateFrame),
+	PlayAttackAnim(PlayAttackAnim),
+	GetAnimPlayRatio(GetAnimPlayRatio),
+	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
 	SetCoolTime(SetCoolTime)
 {
@@ -29,54 +27,46 @@ BananaBossScratchState::BananaBossScratchState(
 
 void BananaBossScratchState::Enter(void)
 {
-	target = GetTarget();
-	moveDir = (*playerPos.at(target) - pos).Normalized();
-	time = START_CNT;
-	DeleteColl();
+	first = true;
 	SetCoolTime();
+	PlayAttackAnim();
 	collOperator->SetDrawArea(true);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
 }
 
 void BananaBossScratchState::Update(void)
 {
-	// 前隙用の時間加算
-	time++;
-	// 前隙中は予測線の更新
-	if (time < 0) {
-
-		angle.y = atan2f(moveDir.x, moveDir.z);
-		float s = ((float)time + 100.0f) / 100.0f;
-
-		collOperator->SetScale(s);
-		collOperator->SetViewPos(pos);
-		collOperator->SetAngle(angle);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle.y));
-		return;
-	}
-	// 初めなら音と当たり判定を出す
-	if (time == 0) {
-		SoundManager::GetIns().Play("Headbutt");
-		if (Net::GetIns().IsHost()) {
+	// アニメーションが終わっていたらステートを抜ける
+	if (GetAnimPlayRatio() >= ATTACK_RATE) {
+		// アニメーションの再生割合で生成
+		if (first) {
+			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
+			//Snd::GetIns().Play("Scratch");
 		}
-	}
-	// 持続時間を超えたらステートを変える
-	if (time > ATTACK_TIME) {
-		DefaultChangeState();
+		// 二度目は通さないようにフラグを折る
+		first = false;
+		// 攻撃持続時間の加算
+		cnt++;
+
+		// 攻撃持続時間の判定
+		if (IsAnimeEnd()) {
+
+			DefaultChangeState();
+		}
+		UpdateFrame();
+		collOperator->SetColliderFrame();
 	}
 	else {
-		// 位置の更新
-		float cnt = time <= ATTACK_TIME / 2.0f ? time : time - (ATTACK_TIME + 1.0f);
-		pos += moveDir * MOVE_SPEED * cnt;
+		// 攻撃描画を更新
+		collOperator->SetScale(GetAnimPlayRatio());
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, Vector3(), GetAnimPlayRatio()));
 	}
-	collOperator->SetPos(pos);
 }
 
 void BananaBossScratchState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
-	ReviveColl();
 	collOperator->CollSet(false);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 }

@@ -30,36 +30,10 @@ private:
 
 #pragma region ’è”’è‹`
 
-	// “–‚½‚è”»’èî•ñ`````````````````````````````````````````
-
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ì”¼Œa
-	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate");
-
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹Xn“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
-	const Vector3 CAPSULE_COLLIDER_START_POS =
-		Vector3::Xonly(
-			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹XI“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
-	const Vector3 CAPSULE_COLLIDER_END_POS =
-		-Vector3::Xonly(
-			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìâ‘Î‚É“–‚½‚ç‚È‚¢‚¨‚¨‚æ‚»‚Ì‹——£
-	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE =
-		(CAPSULE_COLLIDER_START_POS - CAPSULE_COLLIDER_END_POS).Length()
-		+ CAPSULE_COLLIDER_RADIUS;
-
-	// ````````````````````````````````````````````````
-
-
 	// UŒ‚``````````````````````````````````````````````
 
-	//// ‚©‚©‚Æ—‚Æ‚µ‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	//const int KICKDOWN_COOLTIME = GetParameterToInt("Attack", "KickDownCoolTime");
+	// ‚©‚©‚Æ—‚Æ‚µ‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int SCRATCH_COOLTIME = GetParameterToInt("Attack", "ScratchCoolTime");
 	//// ’¼ü“Š±‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	//const int STRAIGHT_COOLTIME = GetParameterToInt("Attack", "StraightCoolTime");
 	//// ƒXƒ^ƒ“ƒvUŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
@@ -130,7 +104,9 @@ private:
 	const float ANIME_SPEED_TABLE[(int)ANIME_TYPE::MAX] =
 	{
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+
+		GetParameter("Anime", "ScratchAnimeSpeed"),	// SCRATCH
+		
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
@@ -146,7 +122,6 @@ private:
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 
-		//GetParameter("Anime", "ScratchAnimeSpeed"),	// SCRATCH
 		//GetParameter("Anime", "ScratchStartAnimeSpeed"),	// SCRATCH_START
 		//GetParameter("Anime", "ScratchLoopAnimeSpeed"),	// SCRATCH_LOOP
 		//GetParameter("Anime", "ScratchEndAnimeSpeed"),	// SCRATCH_END
@@ -174,14 +149,10 @@ private:
 	void PlayerLoad(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
-	// ƒgƒ}ƒg‚ÌŒü‚¢‚Ä‚¢‚éŒü‚«
-	Vector3 moveDir;
-
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	int coolTime;
 
-	// ƒQ[ƒ€ƒNƒŠƒA‚ÌƒJƒEƒ“ƒgƒ_ƒEƒ“
-	int gameOverCnt;
-
-	
+	// ‚Ğ‚Á‚©‚«UŒ‚‚ÌƒtƒŒ[ƒ€À•W
+	Vector3 StartFrame;
+	Vector3 EndFrame;
 };

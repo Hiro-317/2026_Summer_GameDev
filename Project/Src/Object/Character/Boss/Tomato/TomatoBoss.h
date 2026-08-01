@@ -138,9 +138,6 @@ private:
 	const Vector2I HP_GAUGE_OFFSET = Vector2I(18, 0);
 	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, 0);
 
-	// ゲームクリア時の変更時間
-	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
-
 	// デフォルトのクールタイム
 	static constexpr int DEFAULT_COOLTIME = 120;
 
@@ -150,15 +147,10 @@ private:
 	void PlayerLoad(void)override;
 	// ～～～～～～～～～～～～～～メイン処理
 
-	// トマトの向いている向き
-	Vector3 moveDir;
-
 	// 岩に当たったか
 	bool rockHit;
 
 	// 攻撃のクールタイム
 	int coolTime;
 
-	// ゲームクリア時のカウントダウン
-	int gameOverCnt;
 };

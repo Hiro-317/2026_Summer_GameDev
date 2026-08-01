@@ -96,7 +96,7 @@ void GameScene::Load(void)
 	switch (SceneManager::GetIns().GetSelectBossType())
 	{
 	case BOSS_TYPE::Tomato:
-		ObjAdd(new TomatoBoss(pos, live));
+		ObjAdd(new BananaBoss(pos, live));
 		ObjAdd(new TomatoBossStage());
 		break;
 	case BOSS_TYPE::Grape:

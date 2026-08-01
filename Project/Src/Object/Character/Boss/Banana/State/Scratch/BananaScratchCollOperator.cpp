@@ -1,20 +1,16 @@
 #include "BananaScratchCollOperator.h"
 
-#include "../../../../../Common/Collider/CapsuleCollider.h"
 
 BananaScratchCollOperator::BananaScratchCollOperator(
-	const float TO_PLAYER_DISTANCE,
 	const MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& stats,
-	const ParameterLoad& collParam,
-	const std::function<Vector3(void)> StartPos,
-	const std::function<Vector3(void)> EndPos
+	const Vector3& StartPos,
+	const Vector3& EndPos
 ) :
 	operatorSenderId(operatorSenderId),
 	stats(stats),
-	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
-	collBack(),
-	collFront()
+	StartPos(StartPos), EndPos(EndPos),
+	collBack(),	collFront()
 {
 }
 
@@ -22,11 +18,11 @@ void BananaScratchCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos(), EndPos(), 30.0f)
+		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos, EndPos, 100.0f)
 	);
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
-
+	SetPushFlg(false);
 	SetJudge(false);
 
 	collBack.Load("Range/CircleRangeBack");

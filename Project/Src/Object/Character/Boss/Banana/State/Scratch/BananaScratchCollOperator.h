@@ -2,6 +2,9 @@
 
 #include "../../../../../ActorBase.h"
 
+#include "../../../../../Common/Collider/CapsuleCollider.h"
+
+
 class BananaScratchCollOperator : public ActorBase
 {
 public:
@@ -10,12 +13,10 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	BananaScratchCollOperator(
-		const float TO_PLAYER_DISTANCE,
 		const MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& stats,
-		const ParameterLoad& collParam,
-		const std::function<Vector3(void)> StartPos,
-		const std::function<Vector3(void)> EndPos
+		const Vector3& StartPos,
+		const Vector3& EndPos
 	);
 	~BananaScratchCollOperator()override = default;
 
@@ -28,13 +29,16 @@ public:
 	void SetAngle(const Vector3& angle) { collBack.angle = angle; collFront.angle = angle; }
 	void SetScale(const float& scale) { collFront.scale = Vector3(scale); }
 
+	// 攻撃フレームの更新
+	void SetColliderFrame(void) { 
+		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back());
+		coll->SetStartPos(StartPos); coll->SetEndPos(EndPos);
+	}
+
 	// 攻撃範囲の描画設定
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
 
 private:
-
-	// XZサークルコライダーの半径
-	const float TO_PLAYER_DISTANCE;
 
 	// コライダー描画の高さ
 	const float HEIGHT = 37.0f;
@@ -48,9 +52,9 @@ private:
 
 	const CharacterStats& stats;
 
-	const std::function<Vector3(void)> StartPos;
+	const Vector3& StartPos;
 
-	const std::function<Vector3(void)> EndPos;
+	const Vector3& EndPos;
 
 #pragma endregion
 

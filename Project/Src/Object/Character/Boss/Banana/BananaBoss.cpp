@@ -10,8 +10,8 @@
 #include "../../../Common/Collider/XZCircleCollider.h"
 
 #include "State/Idle/BananaBossIdleState.h"
-//#include "State/KickDown/GrapeBossKickDownState.h"
-//#include "State/KickDown/GrapeKickDownCollOperator.h"
+#include "State/Scratch/BananaBossScratchState.h"
+#include "State/Scratch/BananaScratchCollOperator.h"
 //#include "State/Straight/GrapeBossStraightState.h"
 //#include "State/Stamp/GrapeBossStampState.h"
 //#include "State/Stamp/GrapeStampCollOperator.h"
@@ -30,7 +30,7 @@
 
 BananaBoss::BananaBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
-		"Data/Parameter/Character/Boss/Banana/",
+		"Data/Parameter/Character/Boss/Banagon/",
 		"Banana/Banagon",
 
 		playerPos, playerLive)
@@ -51,23 +51,12 @@ void BananaBoss::PlayerLoad(void)
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-#pragma region 当たり判定情報設定
-
-	// 当たり判定を生成する（カプセルコライダー）
-	ColliderCreate(
-		new CapsuleCollider(
-			COLLIDER_TAG::BOSS_DISTANCE,
-			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
-			CAPSULE_COLLIDER_RADIUS
-		)
-	);
-
-#pragma endregion
-
-
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	//subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
+	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Shoulder.R")));
+	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Hand.R")));
+
+	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, StartFrame, EndFrame));
 
 	AddState(
 		static_cast<int>(STATE::IDLE),
@@ -83,9 +72,9 @@ void BananaBoss::PlayerLoad(void)
 			// ターゲット番号の取得
 			[&]() { return targetNum; },
 			// アイドルアニメーションの再生
-			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); }//,
-			//// 踏みつけへの状態遷移関数のポインタ
-			//[&]() { ChangeState((int)STATE::ATTACK_A); },
+			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
+			// ひっかきへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_A); }//,
 			//// 投擲への状態遷移関数のポインタ
 			//[&]() { ChangeState((int)STATE::ATTACK_B); },
 			//// スタンプへの状態遷移関数のポインタ
@@ -96,6 +85,33 @@ void BananaBoss::PlayerLoad(void)
 			//[&]() { ChangeState((int)STATE::ATTACK_E); },
 			//// たくさんランダムへの状態遷移関数のポインタ
 			//[&]() { ChangeState((int)STATE::ATTACK_F); }
+		)
+	);
+
+	AddState(
+		static_cast<int>(STATE::ATTACK_A),
+		new BananaBossScratchState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
+			// コライダへのポインタ
+			SubObjSerch<BananaScratchCollOperator>(),
+			// フレーム座標の更新
+			[&]() {
+				StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Shoulder.R")));
+				EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Hand.R")));
+			},
+			// 攻撃アニメーションの再生
+			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH, false); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = SCRATCH_COOLTIME; }
 		)
 	);
 

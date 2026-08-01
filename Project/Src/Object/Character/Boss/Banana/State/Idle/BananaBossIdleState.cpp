@@ -9,8 +9,8 @@ BananaBossIdleState::BananaBossIdleState(
 	const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
-	const std::function<void(void)> PlayIdleAnim/*,
-	const std::function<void(void)> KickDownChangeState,
+	const std::function<void(void)> PlayIdleAnim,
+	const std::function<void(void)> ScratchChangeState/*,
 	const std::function<void(void)> StraightChangeState,
 	const std::function<void(void)> StampChangeState,
 	const std::function<void(void)> SingleChangeState,
@@ -23,8 +23,8 @@ BananaBossIdleState::BananaBossIdleState(
 	CoolTime(CoolTime),
 	GetTarget(GetTarget),
 	PlayIdleAnim(PlayIdleAnim),
-	/*KickDownChangeState(KickDownChangeState),
-	StraightChangeState(StraightChangeState),
+	ScratchChangeState(ScratchChangeState),
+	/*StraightChangeState(StraightChangeState),
 	StampChangeState(StampChangeState),
 	SingleChangeState(SingleChangeState),
 	StalkerChangeState(StalkerChangeState),
@@ -52,6 +52,8 @@ void BananaBossIdleState::Update(void)
 	// ãóó£Ç∆ämó¶ÇèoÇ∑
 	float distance = (*playerPos.at(target) - pos).Length();
 	int luck = GetRand(RANDOM);
+
+	ScratchChangeState();
 
 	//// ämó¶Ç≈ïœÇ¶ÇÈ
 	//if (luck <= KICKDOWN_LUCK) {

@@ -56,20 +56,6 @@ void GrapeBoss::PlayerLoad(void)
 
 	// ```````````````````````````````````
 
-#pragma region “–‚½‚è”»’èî•ñİ’è
-
-	// “–‚½‚è”»’è‚ğ¶¬‚·‚éiƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[j
-	ColliderCreate(
-		new CapsuleCollider(
-			COLLIDER_TAG::BOSS,
-			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
-			CAPSULE_COLLIDER_RADIUS
-		)
-	);
-
-#pragma endregion
-
-
 #pragma region ƒvƒŒƒCƒ„[‚ª•ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğ¶¬‚·‚é
 
 	subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
