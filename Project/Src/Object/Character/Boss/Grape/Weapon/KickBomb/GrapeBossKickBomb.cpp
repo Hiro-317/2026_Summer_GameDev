@@ -28,9 +28,9 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model, int front, int back)
 
 	trans.scale = Vector3(ATTACK_SIZE);
 
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetPushFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetPushFlg(false);
 	SetGravityFlg(true);
 	count = 0;
 }
@@ -70,11 +70,11 @@ void GrapeBossKickBomb::SubUpdate(void)
 		}
 		// 攻撃判定オン
 		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
 		}
 		//攻撃判定オフ、終わり
 		else {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 			end = true;
 			now = false;
 			count = 0;

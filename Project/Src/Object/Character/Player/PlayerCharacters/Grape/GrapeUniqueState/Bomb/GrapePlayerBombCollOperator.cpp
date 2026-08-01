@@ -101,7 +101,7 @@ void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 		case COLLIDER_TAG::ENEMY:
 		case COLLIDER_TAG::BOSS_DISTANCE:
 			isAttackTargetFind = true;
-			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
 			break;
 		default:break;
 		}

@@ -39,7 +39,7 @@ void TomatoTackleCollOperator::Load(void)
 	CreateAttackSkill(operatorSenderId, 150, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
 	SetJudge(true);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 
 	collBack.Load("Range/LineRangeBack");
 	collFront.Load("Range/LineRangeFront");

@@ -2,7 +2,7 @@
 
 #include "../../../../../../../Manager/Input/KeyManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../../../../Manager/Effect/EffectManager.h"
 
 TomatoPlayerTackleState::TomatoPlayerTackleState(
@@ -106,7 +106,7 @@ void TomatoPlayerTackleState::Update(void)
 		moveDir.Normalize();
 
 		// ˆÚ“®•ûŒü‚ğƒJƒƒ‰‚Å‰ñ“]‚³‚¹‚é
-		moveDir.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
+		moveDir.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 		// Šp“x‚ğ“ü—Í•ûŒü‚ÉŒü‚¯‚é
 		if (moveDir != 0.0f) { angle.y = atan2f(moveDir.x, moveDir.z); }

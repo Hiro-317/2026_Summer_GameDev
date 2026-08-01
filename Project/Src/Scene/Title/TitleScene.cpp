@@ -16,6 +16,7 @@
 #include "End/EndScene.h"
 
 TitleScene::TitleScene():
+	SceneBase(),
 
 	nowSelect(SELECT::None),
 
@@ -53,7 +54,7 @@ TitleScene::TitleScene():
 {
 }
 
-void TitleScene::Load(void)
+void TitleScene::SubPostLoad(void)
 {
 	// 音声のシーン切り替え
 	Snd::GetIns().ChangeScene("Title");
@@ -93,11 +94,8 @@ void TitleScene::Load(void)
 #pragma endregion
 }
 
-void TitleScene::Init(void)
+void TitleScene::SubPostInit(void)
 {
-	// カメラの初期化
-	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
-
 	Net::GetIns().Disconnection();
 
 	// 現在選択中の選択肢を初期化
@@ -114,7 +112,7 @@ void TitleScene::Init(void)
 	// 演出更新
 	EasingUpdate();
 }
-void TitleScene::Update(void)
+void TitleScene::SubPostUpdate(void)
 {
 #pragma region 操作/進行
 
@@ -127,9 +125,8 @@ void TitleScene::Update(void)
  		Snd::GetIns().Play("SystemSelect");
 
 		// ゲーム終了用のイベントシーンを挿入
-		SceneManager::GetIns().PushScene(std::make_shared<EndScene>());
+		SceneManager::GetIns().PushScene(std::make_unique<EndScene>());
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
@@ -168,8 +165,7 @@ void TitleScene::Update(void)
 			// ロビー画面へ
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
 
-			// 以降はthisがnullptrとなっているため終了
-			return;
+			break;
 		}
 
 		case TitleScene::SELECT::Option: {
@@ -179,7 +175,7 @@ void TitleScene::Update(void)
 			Snd::GetIns().Play("SystemSelect");
 
 			// 専用のシーンを追加
-			SceneManager::GetIns().PushScene(std::make_shared<OptionScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<OptionScene>());
 
 			break;
 		}
@@ -193,7 +189,7 @@ void TitleScene::Update(void)
 			Snd::GetIns().Play("SystemSelect");
 
 			// 専用のシーンを追加
-			SceneManager::GetIns().PushScene(std::make_shared<EndScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<EndScene>());
 
 			break;
 		}
@@ -207,7 +203,7 @@ void TitleScene::Update(void)
 	EasingUpdate();
 }
 
-void TitleScene::Draw(void)
+void TitleScene::SubPostDraw(void)
 {
 	// 画像描画のラムダ関数
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f, bool reverse = false)->void {
@@ -247,7 +243,7 @@ void TitleScene::Draw(void)
 	drawImage(frameImage, FRAME_POS);
 #pragma endregion
 }
-void TitleScene::Release(void)
+void TitleScene::SubPreRelease(void)
 {
 #pragma region 各画像の解放
 

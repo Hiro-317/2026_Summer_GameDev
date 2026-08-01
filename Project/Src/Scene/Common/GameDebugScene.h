@@ -15,36 +15,54 @@
 class GameDebugScene : public SceneBase
 {
 public:
-	GameDebugScene(std::function<void(void)>CameraReset, std::function<void(void)>TopUpdate) : SceneBase(),
-		CameraReset(std::move(CameraReset)),
-		TopUpdate(std::move(TopUpdate))
+	GameDebugScene(Camera& camera, std::function<void(void)>CameraReset, std::function<void(void)>TopUpdate) : SceneBase(),
+		camera(camera),
+		TopUpdate(std::move(TopUpdate)),
+		CameraReset(std::move(CameraReset))
 	{
 	}
 	~GameDebugScene() = default;
 
-	void Load(void)override { Camera::GetIns().ChangeModeFree(Deg2Rad(2.0f), 10.0f, Camera::GetIns().GetPos(), Camera::GetIns().GetAngle()); }
-	void Init(void) override { Snd::GetIns().AllStop(); }
-	void Update(void) override {
+private:
+
+#pragma region 主要関数再定義
+	// 初期化
+	void SubPostInit(void)override { 
+		camera.ChangeModeFree(Deg2Rad(2.0f), 10.0f, camera.GetPos(), camera.GetAngle()); 
+
+		Snd::GetIns().AllStop();
+	}
+
+	// 更新
+	void SubPostUpdate(void)override {
 
 		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_TOPUPDATE).now) { TopUpdate(); Snd::GetIns().PausePlay(); }
 		else { Snd::GetIns().AllStop(); }
+
+		camera.Update();
 
 		if (
 			Key::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_SWITCH).down ||
 			Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down
 			) {
 			SceneManager::GetIns().PopScene();
-			return;
 		}
 	}
-	void Draw(void) override {
-		//SetFontSize(20);
-		//DrawString(0, 0, "デバッグモード", 0xffffff);
-		//SetFontSize(16);
-	}
-	void Release(void) override { CameraReset(); Snd::GetIns().PausePlay(); }
 
-private:
-	std::function<void(void)>CameraReset;
+	// 終了
+	void SubPreRelease(void) { CameraReset(); Snd::GetIns().PausePlay(); }
+#pragma endregion
+
+	bool IsUseLoadingScreen(void)const { return false; }
+
+	// カメラは使用しない
+	bool UseCamera(void)const override { return false; }
+
+	// 当たり判定管理は使用しない
+	bool UseCollisionManager(void)const override { return false; }
+
+	Camera& camera;
+
 	std::function<void(void)>TopUpdate;
+	std::function<void(void)>CameraReset;
 };

@@ -14,7 +14,7 @@ PasswordScene::PasswordScene() :
 {
 }
 
-void PasswordScene::Load(void)
+void PasswordScene::SubPostLoad(void)
 {
 	// Œ»İ‚Ì‚ ‚¢‚±‚Æ‚Î‚ğæ“¾
 	unsigned short nowPassword = Net::GetIns().GetAddressProviderPassword();
@@ -83,12 +83,12 @@ void PasswordScene::Load(void)
 
 }
 
-void PasswordScene::Init(void)
+void PasswordScene::SubPostInit(void)
 {
 	nowNumberKey = NUMBER_KEY::One;
 }
 
-void PasswordScene::Update(void)
+void PasswordScene::SubPostUpdate(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		SceneManager::GetIns().PopScene();
@@ -98,7 +98,7 @@ void PasswordScene::Update(void)
 	NumberKeyOperator[(int)nowNumberKey]();
 }
 
-void PasswordScene::Draw(void)
+void PasswordScene::SubPostDraw(void)
 {
 	// ‰æ–Ê‘S‘Ì‚ğ”¼“§–¾•`‰æ
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -134,7 +134,7 @@ void PasswordScene::Draw(void)
 #pragma endregion
 }
 
-void PasswordScene::Release(void)
+void PasswordScene::SubPreRelease(void)
 {
 #pragma region Še‰æ‘œ‚Ì‰ğ•ú
 	// ˜g

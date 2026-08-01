@@ -2,6 +2,7 @@
 #include "GrapeBossWeaponBase.h"
 #include "../../../../ActorBase.h"
 
+struct CharacterStats;
 
 static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {
 	int ret = 0;

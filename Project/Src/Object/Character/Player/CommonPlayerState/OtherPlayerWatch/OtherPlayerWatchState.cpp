@@ -1,6 +1,6 @@
 #include "OtherPlayerWatchState.h"
 
-#include "../../../../../Manager/Camera/Camera.h"
+#include "../../../../../Manager/Camera/CurrentCamera.h"
 
 #include "../../../../../Manager/Input/KeyManager.h"
 
@@ -19,7 +19,7 @@ OtherPlayerWatchState::OtherPlayerWatchState(
 
 void OtherPlayerWatchState::Enter(void)
 {
-	Camera::GetIns().ChangeModeFollowAuto(*playerTrans.front(), bossPos);
+	CurrentCamera::Get().ChangeModeFollowAuto(*playerTrans.front(), bossPos);
 }
 
 void OtherPlayerWatchState::Update(void)

@@ -10,15 +10,9 @@
 
 #include"../SceneManager/SceneManager.h"
 
-ClearScene::ClearScene()
-{
-}
+ClearScene::ClearScene() : SceneBase() {}
 
-ClearScene::~ClearScene()
-{
-}
-
-void ClearScene::Load(void)
+void ClearScene::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("Clear");
 
@@ -27,11 +21,7 @@ void ClearScene::Load(void)
 	image = LoadGraph("Data/Image/Clear/GameClearImage.png");
 }
 
-void ClearScene::Init(void)
-{
-}
-
-void ClearScene::Update(void)
+void ClearScene::SubPostUpdate(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down ||
 		Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -41,12 +31,12 @@ void ClearScene::Update(void)
 	}
 }
 
-void ClearScene::Draw(void)
+void ClearScene::SubPostDraw(void)
 {
 	DrawExtendGraph(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, image, true);
 }
 
-void ClearScene::Release(void)
+void ClearScene::SubPreRelease(void)
 {
 	DeleteGraph(image);
 }

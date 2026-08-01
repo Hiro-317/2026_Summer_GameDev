@@ -1,9 +1,24 @@
 #pragma once
 
+#include <string>
+#include <vector>
 #include <map>
 
-#include"Common/Collider/ColliderBase.h"
-#include"Common/DataLoad/ParameterLoad.h"
+#include "Common/Transform.h"
+
+#include "Common/DataLoad/ParameterLoad.h"
+
+#include "../Manager/Net/SenderID_Define.h"
+
+#include "Common/Collider/ColliderTagDefine.h"
+
+#include "Character/ModifierDefine.h"
+
+class ColliderBase;
+
+struct CharacterStats;
+struct SkillStats;
+
 
 class ActorBase
 {
@@ -50,13 +65,7 @@ public:
 	/// 当たり判定フラグの取得
 	/// </summary>
 	/// <returns>どれか一つでも「判定する」状態ならtrue</returns>
-	bool GetJudgeFlg(void) {
-		for (ColliderBase*& c : collider) {
-			if (!c) { continue; }
-			if (c->GetJudge()) { return true; }
-		}
-		return false;
-	}
+	bool GetJudgeFlg(void);
 
 	// 描画判定の取得
 	bool GetIsDraw(void)const { return isDraw; }
@@ -117,49 +126,15 @@ protected:
 	// 接地判定(派生先で参照用)
 	const bool& isGround = isGroundMaster;
 
-	/// <summary>
-	/// 特定のコライダーを探す
-	/// </summary>
-	/// <typeparam name="T">探したいクラス</typeparam>
-	/// <param name="tag">タグ種類</param>
-	/// <returns></returns>
-	template<typename T = ColliderBase>
-	std::vector<T*> ColliderSerch(COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		std::vector<T*> out;
-		out.reserve(collider.size());
-
-		for (auto c : collider) {
-			if (!c) continue;
-			if (auto* ptr = dynamic_cast<T*>(c)) {
-				if (c->GetTag() == tag || tag == COLLIDER_TAG::NON) { out.push_back(ptr); }
-			}
-		}
-		return out;
-	}
 #pragma region 初期設定
 	// 当たり判定情報を生成
-	void ColliderCreate(ColliderBase* newClass) {
-		collider.emplace_back(newClass);
-		collider.back()->SetTransformPtr(&trans);
-		collider.back()->SetDynamicFlg((dynamicFlg) ? true : false);
-		collider.back()->SetPushFlg(pushFlg);
-		collider.back()->SetPushWeight(pushWeight);
-		collider.back()->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) { this->OnCollision(ownTag, other, collisionPoint); });
-		collider.back()->SetOnGroundedFunc([this](void) { this->OnGrounded(); });
-		ColliderToSetSkill();
-	}
+	void ColliderCreate(ColliderBase* newClass);
 
 	/// <summary>
 	/// 移動するかを切り替える
 	/// </summary>
 	/// <param name="flg">true = 「移動する」に切り替える、false = 「移動しない」に切り替える</param>
-	void SetDynamicFlg(bool flg) {
-		dynamicFlg = flg;
-		trans.dynamicFlg = flg;
-		for (ColliderBase*& collider : collider) {
-			collider->SetDynamicFlg(flg);
-		}
-	}
+	void SetDynamicFlg(bool flg);
 
 	/// <summary>
 	/// 重力を適用するかを切り替える
@@ -171,25 +146,17 @@ protected:
 	/// 衝突時押し出しを行うかを設定する
 	/// </summary>
 	/// <param name="flg">true = 押し出す、false = 押し出さず通り抜ける</param>
-	void SetPushFlg(bool flg) {
-		pushFlg = flg;
-		for (ColliderBase*& coll : collider) { coll->SetPushFlg(flg); }
-	}
+	void SetPushFlg(bool flg);
 
 	/// <summary>
 	/// 押し出しを行う際の重さ
 	/// </summary>
 	/// <param name="weight">0 ～ 100 で設定（数値が大きいほど重い）</param>
-	void SetPushWeight(unsigned char weight) {
-		pushWeight = weight;
-		for (ColliderBase*& coll : collider) { coll->SetPushWeight(weight); }
-	}
+	void SetPushWeight(unsigned char weight);
 
 #pragma region パラメーター外部ファイル管理に関する関数
-	bool IsParameterExist(const std::string& fileName, const std::string& parameterName)const {
-		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->IsParameterExist(fileName, parameterName);
-	}
+
+	bool IsParameterExist(const std::string& fileName, const std::string& parameterName)const;
 
 	/// <summary>
 	/// パラメーター外部ファイル管理クラスから指定のパラメーターの指定の配列番号の値だけを取得する
@@ -197,20 +164,14 @@ protected:
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <param name="index">配列番号（指定なしで0）</param>
 	/// <returns></returns>
-	float GetParameter(const std::string& fileName, const std::string& parameterName, int index = 0)const {
-		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->GetParameter(fileName, parameterName, index);
-	}
+	float GetParameter(const std::string& fileName, const std::string& parameterName, int index = 0)const;
 
 	/// <summary>
 	/// パラメーター外部ファイル管理クラスから指定のパラメーターを配列ごと取得する
 	/// </summary>
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <returns></returns>
-	const std::vector<float>& GetParameterArray(const std::string& fileName, const std::string& parameterName)const {
-		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->GetParameterArray(fileName, parameterName);
-	}
+	const std::vector<float>& GetParameterArray(const std::string& fileName, const std::string& parameterName)const;
 
 	/// <summary>
 	/// パラメーター外部ファイル管理クラスから指定のパラメーターの指定の配列番号の値だけをint型にキャストして取得する
@@ -218,60 +179,37 @@ protected:
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <param name="index">配列番号（指定なしで0）</param>
 	/// <returns></returns>
-	int GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index = 0)const {
-		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->GetParameterToInt(fileName, parameterName, index);
-	}
+	int GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index = 0)const;
 
 	/// <summary>
 	/// パラメーター外部ファイル管理クラスから指定のパラメーターをVector3構造体にして取得する
 	/// </summary>
 	/// <param name="parameterName">パラメーターのID</param>
 	/// <returns></returns>
-	Vector3 GetParameterToVector3(const std::string& fileName, const std::string& parameterName) {
-		if (parameter == nullptr) { throw std::runtime_error("ParameterLoadクラスが生成されていません"); }
-		return parameter->GetParameterToVector3(fileName, parameterName);
-	}
+	Vector3 GetParameterToVector3(const std::string& fileName, const std::string& parameterName);
+
 #pragma endregion
 
 #pragma region スキル設定
 
-	// 攻撃スキル詳細生成
-	void CreateAttackSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, characterStats, tag));
-		ColliderToSetSkill();
-	}
-	// 回復スキル詳細生成
-	void CreateHealSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, nullptr, tag));
-		ColliderToSetSkill();
-	}
-	// バフ/デバフスキル詳細生成
-	void CreateModifierSkill(MSG_SENDER_ID operatorSenderId, ModifierType modifierType, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
-		skillStats.emplace_back(new SkillStats(operatorSenderId, modifierType, SKILL_POWER, SKILL_TIME, tag));
-		ColliderToSetSkill();
-	}
-
 	// コライダーにスキル詳細を設定
-	void ColliderToSetSkill(void) {
-		for (const SkillStats* skill : skillStats) {
-			for (ColliderBase* coll : collider) {
-				if (skill->COLL_TAG == coll->GetTag() || skill->COLL_TAG == COLLIDER_TAG::NON) { coll->SetSkillStats(skill); }
-			}
-		}
-	}
+	void ColliderToSetSkill(void);
+
+	// 攻撃スキル詳細生成
+	void CreateAttackSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag = COLLIDER_TAG::NON);
+
+	// 回復スキル詳細生成
+	void CreateHealSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, COLLIDER_TAG tag = COLLIDER_TAG::NON);
+
+	// バフ/デバフスキル詳細生成
+	void CreateModifierSkill(MSG_SENDER_ID operatorSenderId, ModifierType modifierType, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag = COLLIDER_TAG::NON);
 
 #pragma endregion
 
 #pragma endregion
 
 	// 当たり判定の設定（true = 「判定する」、false = 「判定しない」）
-	void SetJudge(bool flg) {
-		for (ColliderBase*& c : collider) {
-			if (!c) { continue; }
-			c->SetJudgeFlg(flg);
-		}
-	}
+	void SetJudge(bool flg);
 
 	bool GetDynamicFlg(void)const { return dynamicFlg; }
 	bool GetGravityFlg(void)const { return isGravity; }

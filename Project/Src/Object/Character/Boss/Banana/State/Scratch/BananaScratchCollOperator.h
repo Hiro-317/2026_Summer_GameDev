@@ -2,6 +2,8 @@
 
 #include "../../../../../ActorBase.h"
 
+struct CharacterStats;
+
 class BananaScratchCollOperator : public ActorBase
 {
 public:

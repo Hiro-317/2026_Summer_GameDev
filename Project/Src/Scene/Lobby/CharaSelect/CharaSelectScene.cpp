@@ -6,47 +6,39 @@
 
 #include "../../SceneManager/SceneManager.h"
 
+#include "../../ObjectUseDefine.h"
+
 #include "../../../Object/Lobby/CharaSelectScene/CharaSelectPreviewManager.h"
 
 CharaSelectScene::CharaSelectScene(
 	const std::function<void(void)>& LobbyPreviewCharaChange,
 	const std::function<void(void)>& LobbyReceptionUpdate
 ) :
+	SceneBase(),
 	LobbyPreviewCharaChange(LobbyPreviewCharaChange),
 	LobbyReceptionUpdate(LobbyReceptionUpdate),
 	selectCharaType(CHARA_TYPE::None)
 {
 }
 
-void CharaSelectScene::Load(void)
+void CharaSelectScene::SubPostLoad(void)
 {
 	// 選択キャラの初期化
 	MSG_SENDER_ID sederId = Net::GetIns().GetSenderId();
 	selectCharaType = SceneManager::GetIns().GetSelectCharaType(sederId == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : sederId);
 	if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
 
-	// 初期化も含めたオブジェクト生成のラムダ関数
-	auto ObjAdd = [&](ActorBase* newClass)->void {
-		// 配列の末尾に追加
-		objects.emplace_back(newClass);
-		// 共通の読み込み処理
-		objects.back()->Load();
-		};
-
-	ObjAdd(new CharaSelectPreviewManager(selectCharaType));
+	CreateObject<CharaSelectPreviewManager>(selectCharaType);
 }
 
-void CharaSelectScene::Update(void)
+void CharaSelectScene::SubPostUpdate(void)
 {
-	SceneBase::Update();
-
 	// 戻る
-	if(Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 
 		// このシーンを破棄
 		SceneManager::GetIns().PopScene();
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
@@ -71,7 +63,7 @@ void CharaSelectScene::Update(void)
 		changeCharacter = true;
 	}
 	// プレビューを変更
-	if (changeCharacter) { ObjSerch<CharaSelectPreviewManager>()->ChangeCharacter(selectCharaType); }
+	if (changeCharacter) { ObjSerch<CharaSelectPreviewManager>(objects)->ChangeCharacter(selectCharaType); }
 
 	// キャラ確定
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
@@ -99,12 +91,10 @@ void CharaSelectScene::Update(void)
 	if (LobbyReceptionUpdate != nullptr) { LobbyReceptionUpdate(); }
 }
 
-void CharaSelectScene::Draw(void)
+void CharaSelectScene::SubPreDraw(void)
 {
 	// 画面全体を半透明の黒で塗りつぶす
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	DrawBox(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	SceneBase::Draw();
 }

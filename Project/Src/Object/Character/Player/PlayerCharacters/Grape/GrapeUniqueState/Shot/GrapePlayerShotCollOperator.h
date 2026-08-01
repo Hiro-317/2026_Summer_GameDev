@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../../../../ActorBase.h"
 
+struct CharacterStats;
+
 class GrapePlayerShotCollOperator : public ActorBase
 {
 public:

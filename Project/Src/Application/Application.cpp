@@ -5,7 +5,6 @@
 #include "../Manager/FPS/FPS.h"
 #include "../Manager/Net/NetWorkManager.h"
 #include "../Manager/Input/KeyManager.h"
-#include "../Manager/Camera/Camera.h"
 #include "../Manager/Sound/SoundManager.h"
 #include "../Manager/Font/FontManager.h"
 #include "../Manager/Effect/EffectManager.h"
@@ -76,9 +75,6 @@ void Application::Init(void)
 	// 入力管理クラスの生成 / 初期化処理
 	Key::CreateIns();
 
-	// カメラ
-	Camera::CreateIns();
-
 	// サウンド管理クラスの生成 / 初期化処理
 	Snd::CreateIns();
 
@@ -105,13 +101,10 @@ void Application::Run(void)
 		Net::GetIns().Update();
 
 		// 入力管理クラスの更新
-		if (GetWindowActiveFlag()) { KeyManager::GetIns().Update(); }
+		KeyManager::GetIns().Update();
 
 		// シーン管理更新
 		SceneManager::GetIns().Update();
-
-		// カメラ更新
-		Camera::GetIns().Update();
 
 		// 音声管理クラスの更新
 		Snd::GetIns().Update();
@@ -124,9 +117,6 @@ void Application::Run(void)
 
 		// 背面描画画面をクリア
 		ClearDrawScreen();
-
-		// カメラ情報を適用
-		Camera::GetIns().Apply();
 
 		// シーン管理描画
 		SceneManager::GetIns().Draw();
@@ -155,9 +145,6 @@ void Application::Release(void)
 
 	// サウンド管理解放・削除
 	Snd::DeleteIns();
-
-	// カメラ
-	Camera::DeleteIns();
 
 	// 入力制御削除
 	Key::DeleteIns();

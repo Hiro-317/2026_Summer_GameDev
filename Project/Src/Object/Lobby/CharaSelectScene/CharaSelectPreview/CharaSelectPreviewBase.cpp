@@ -92,6 +92,9 @@ void CharaSelectPreviewBase::Update(void)
 
 void CharaSelectPreviewBase::Draw(void)
 {
+	// ‚à‚Æ‚Ì•`‰ææ‚ğ•Û‘¶
+	int oldDrawScreen = GetDrawScreen();
+
 	// ƒ‚ƒfƒ‹•`‰æ‚ğ1–‡ŠG‚É‚·‚é````````
 	SetDrawScreen(modelPreviewScreen);
 	ClearDrawScreen();
@@ -100,7 +103,7 @@ void CharaSelectPreviewBase::Draw(void)
 	// ````````ƒ‚ƒfƒ‹•`‰æ‚ğ1–‡ŠG‚É‚·‚é
 
 	// •`‰ææ‚ğ–ß‚·
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(oldDrawScreen);
 
 	// ƒLƒƒƒ‰‚Ì–¼‘O
 	DrawStringToHandle(340, 120, CHARA_NAME.c_str(), 0xffffff, Font::GetIns().GetFont(Font::FONT_KINDS_SIZE::GOKUSYOU_32));

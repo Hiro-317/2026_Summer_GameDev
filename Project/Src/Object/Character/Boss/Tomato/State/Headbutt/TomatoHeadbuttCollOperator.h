@@ -2,6 +2,8 @@
 
 #include "../../../../../ActorBase.h"
 
+struct CharacterStats;
+
 class TomatoHeadbuttCollOperator : public ActorBase
 {
 public:

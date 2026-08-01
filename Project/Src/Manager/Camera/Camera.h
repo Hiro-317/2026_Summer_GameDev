@@ -4,19 +4,9 @@
 
 class Camera
 {
-private:
-
+public:
 	Camera(void);
 	~Camera(void) = default;
-
-	// インスタンス
-	static Camera* ins;
-
-public:
-
-	static void CreateIns(void) { if (ins == nullptr) { ins = new Camera(); ins->Init(); } }
-	static Camera& GetIns(void) { return *ins; }
-	static void DeleteIns(void) { if (ins) { ins->Release(); delete ins; ins = nullptr; } }
 
 	// カメラのクリップ範囲
 	static constexpr float VIEW_NEAR = 10.0f;
@@ -111,6 +101,8 @@ public:
 	void FollowAutoToLookTargetChange(const Vector3* lookTarget) { if (mode == MODE::FOLLOW_AUTO) { this->lookTarget = lookTarget; } }
 #pragma endregion
 
+	// 初期化
+	void Init(void);
 	// 解放
 	void Release(void);
 
@@ -119,8 +111,6 @@ private:
 	// マウス感度
 	static constexpr float MOUSE_SENSI = 35.0f;
 
-	// 初期化
-	void Init(void);
 
 	// モード
 	MODE mode;

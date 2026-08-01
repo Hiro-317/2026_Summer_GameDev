@@ -6,8 +6,8 @@ enum class CHARA_TYPE {
 	Orange,
 	Tomato,
 	Peach,
-
 	Grape,
+
 	Max,
 };
 

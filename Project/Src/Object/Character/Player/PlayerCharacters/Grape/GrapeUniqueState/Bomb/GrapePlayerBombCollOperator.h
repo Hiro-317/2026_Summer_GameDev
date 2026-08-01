@@ -3,6 +3,10 @@
 #include "../../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../../Manager/Effect/EffectManager.h"
 
+#include "../../../../../../Common/Collider/ColliderBase.h"
+
+struct CharacterStats;
+
 class GrapePlayerBombCollOperator : public ActorBase
 {
 public:
@@ -37,7 +41,7 @@ public:
 
 	// UŒ‚‚Ì”»’è‚ð”­¶‚³‚¹‚é
 	void CollOn(void) {
-		if (!isBlast) ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
+		if (!isBlast) ColliderSerch(GetCollider(), COLL_TAG).back()->SetJudgeFlg(true);
 		SetIsEnemySerch(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb));
@@ -46,7 +50,7 @@ public:
 
 	// UŒ‚‚Ì”»’è‚ðÁ‚·
 	void CollOff(void) {
-		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false);
+		ColliderSerch(GetCollider(), COLL_TAG).back()->SetJudgeFlg(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb));
 		}
@@ -55,7 +59,7 @@ public:
 	// “G‚ð’T‚·
 	void SetIsEnemySerch(bool isJudge) {
 		if (isBlast) { return; }
-		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
+		ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
 	}
 
 	void PlayEffect(void) { EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos); }

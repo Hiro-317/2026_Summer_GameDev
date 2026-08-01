@@ -27,7 +27,7 @@ MultiPopupScene::MultiPopupScene() :
 {
 }
 
-void MultiPopupScene::Load(void)
+void MultiPopupScene::SubPostLoad(void)
 {
 #pragma region 画像を読み込む
 
@@ -61,7 +61,7 @@ void MultiPopupScene::Load(void)
 #pragma endregion
 }
 
-void MultiPopupScene::Init(void)
+void MultiPopupScene::SubPostInit(void)
 {
 	// 選択の初期化
 	select = SELECT::MakeRoom;
@@ -71,10 +71,8 @@ void MultiPopupScene::Init(void)
 	selectEasing = 0.0f;
 }
 
-void MultiPopupScene::Update(void)
+void MultiPopupScene::SubPostUpdate(void)
 {
-#pragma region 操作
-
 	// タイトル画面に戻る
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 
@@ -84,7 +82,6 @@ void MultiPopupScene::Update(void)
 		// 自身を破棄する
 		SceneManager::GetIns().PopScene();
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
@@ -94,9 +91,8 @@ void MultiPopupScene::Update(void)
 		Snd::GetIns().Play("SystemButton");
 
 		// 専用のシーンを追加する
-		SceneManager::GetIns().PushScene(std::make_shared<PasswordScene>());
+		SceneManager::GetIns().PushScene(std::make_unique<PasswordScene>());
 
-		// 安全
 		return;
 	}
 
@@ -151,7 +147,7 @@ void MultiPopupScene::Update(void)
 			clsDx();
 
 			// マッチング中シーンを追加
-			SceneManager::GetIns().PushScene(std::make_shared<MatchingLoadingScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<MatchingLoadingScene>());
 
 			// 以降はthisがnullptrとなっているため終了
 			return;
@@ -159,10 +155,7 @@ void MultiPopupScene::Update(void)
 
 		default: { break; }	// 例外
 		}
-
 	}
-
-#pragma endregion
 
 #pragma region イージング
 	selectEasingCounter += 0.08f;
@@ -172,7 +165,7 @@ void MultiPopupScene::Update(void)
 
 }
 
-void MultiPopupScene::Draw(void)
+void MultiPopupScene::SubPostDraw(void)
 {
 	// 背景色
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -221,7 +214,7 @@ void MultiPopupScene::Draw(void)
 
 }
 
-void MultiPopupScene::Release(void)
+void MultiPopupScene::SubPreRelease(void)
 {
 
 #pragma region 画像を解放

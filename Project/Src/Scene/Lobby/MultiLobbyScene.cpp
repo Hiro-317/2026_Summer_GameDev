@@ -1,5 +1,7 @@
 #include "MultiLobbyScene.h"
 
+#include "../../pch.h"
+
 #include "../../Manager/Input/KeyManager.h"
 #include "../../Manager/Camera/Camera.h"
 
@@ -7,6 +9,8 @@
 #include "../../Manager/Sound/SoundManager.h"
 
 #include "../../Scene/SceneManager/SceneManager.h"
+
+#include "../ObjectUseDefine.h"
 
 #include "BossSelect/BossSelectScene.h"
 #include "CharaSelect/CharaSelectScene.h"
@@ -22,23 +26,13 @@ MultiLobbyScene::MultiLobbyScene() :
 {
 }
 
-void MultiLobbyScene::Load(void)
+void MultiLobbyScene::SubPostLoad(void)
 {
-	// 初期化も含めたオブジェクト生成のラムダ関数
-	auto ObjAdd = [&](ActorBase* newClass)->void {
-		// 配列の末尾に追加
-		objects.emplace_back(newClass);
-		// 共通の読み込み処理
-		objects.back()->Load();
-		};
-
-	// オブジェクト生成（生成の順番がそのまま(更新/描画)順）
-	//<例>ObjAdd(new Player());
-
-	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
-	ObjAdd(new LobbyCharaPreviewManager());
-	ObjAdd(new LobbyBossPreview());
+	// オブジェクト生成
+	CreateObject<SkyDome>();
+	CreateObject<LobbyStage>();
+	CreateObject<LobbyCharaPreviewManager>();
+	CreateObject<LobbyBossPreview>();
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
 	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
@@ -70,12 +64,9 @@ void MultiLobbyScene::Load(void)
 #pragma endregion
 }
 
-void MultiLobbyScene::Init(void)
+void MultiLobbyScene::SubPostInit(void)
 {
 	SetFogEnable(false);
-
-	// オブジェクト全ての初期化処理
-	for (ActorBase* obj : objects) { obj->Init(); }
 
 	// クライアントの準備完了状態を初期化
 	for (unsigned char& ready : readyList) { ready = (unsigned char)false; }
@@ -88,7 +79,7 @@ void MultiLobbyScene::Init(void)
 	ButtonSelectionStateReload();
 
 	// カメラの設定
-	Camera::GetIns().ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
+	camera->ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 
 	// 自信のキャラクタータイプを初期化する
 	SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
@@ -97,16 +88,11 @@ void MultiLobbyScene::Init(void)
 	Net::GetIns().Send(MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId())));
 
 	// キャラプレビューの初期化
-	ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId());
+	ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(Net::GetIns().GetSenderId());
 }
 
-void MultiLobbyScene::Update(void)
+void MultiLobbyScene::SubPostUpdate(void)
 {
-	// オブジェクト全ての更新処理
-	for (ActorBase* obj : objects) { obj->Update(); }
-
-#pragma region 操作
-
 	// タイトル画面に戻る
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 
@@ -188,10 +174,10 @@ void MultiLobbyScene::Update(void)
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_shared<BossSelectScene>(
+				std::make_unique<BossSelectScene>(
 					// ボス変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); },
-					std::bind(&MultiLobbyScene::ReceptionUpdate,this)
+					[&]() { ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); },
+					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
 				)
 			);
 
@@ -206,9 +192,9 @@ void MultiLobbyScene::Update(void)
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_shared<CharaSelectScene>(
+				std::make_unique<CharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId()); },
+					[&]() { ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(Net::GetIns().GetSenderId()); },
 					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
 				)
 			);
@@ -255,21 +241,12 @@ void MultiLobbyScene::Update(void)
 		}
 	}
 
-#pragma endregion
-
 	// 受信処理
 	ReceptionUpdate();
 }
 
-void MultiLobbyScene::Draw(void)
+void MultiLobbyScene::SubPostDraw(void)
 {
-	// オブジェクト全ての描画処理
-	for (ActorBase* obj : objects) { obj->Draw(); }
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	for (ActorBase* obj : objects) { obj->UiDraw(); }
-
 	// ボードの描画
 	DrawRotaGraph(BOARD_POS.x, BOARD_POS.y, 1, 0, boardImage, true);
 
@@ -279,10 +256,9 @@ void MultiLobbyScene::Draw(void)
 	}
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
-
 }
 
-void MultiLobbyScene::Release(void)
+void MultiLobbyScene::SubPreRelease(void)
 {
 #pragma region 画像の解放
 
@@ -305,14 +281,6 @@ void MultiLobbyScene::Release(void)
 
 #pragma endregion
 
-	// オブジェクト全ての解放処理
-	for (ActorBase* obj : objects) {
-		if (!obj) { continue; }
-		obj->Release();
-		delete obj;
-		obj = nullptr;
-	}
-
 	SetFogEnable(true);
 }
 
@@ -327,8 +295,7 @@ void MultiLobbyScene::ButtonSelectionStateReload(void)
 	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
 		// choice(選択中のボタンの種類) を参照し、
 		// そのボタンを 選択中の場合「Select」/ 選択中の場合「NotSelect」
-		buttonSelectionState[choiceIndex] =
-			((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
+		buttonSelectionState[choiceIndex] = ((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
 	}
 
 	if (!IS_HOST) {
@@ -403,7 +370,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 			}
 
 			// キャラプレビューを更新する
-			ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+			ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(dataPtr->header.senderId);
 
 			// 最新状態の選択キャラを送りなおす
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
@@ -432,7 +399,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
 
 		// ボスプレビューを更新する
-		ObjSerch<LobbyBossPreview>()->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+		ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
 
 		delete dataPtr;
 	}
@@ -444,7 +411,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
 
 		// キャラプレビューを更新する
-		ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+		ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(dataPtr->header.senderId);
 
 		delete dataPtr;
 	}
@@ -475,5 +442,4 @@ void MultiLobbyScene::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
-
 }

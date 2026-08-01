@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../Utility/Utility.h"
-
 #include "../../Manager/Net/SenderID_Define.h"
 
 #pragma region バフ/デバフ に関する定義
@@ -91,7 +89,7 @@ struct ModifierData
 	/// <param name="id">ID（同IDの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(unsigned char id, short rate, short time) : id(id), rate(PercentConversion(rate)), time(time) {}
+	ModifierData(unsigned char id, short rate, short time) : id(id), rate(((float)rate * 0.01f)), time(time) {}
 
 	ModifierData(void) :id(0), rate(0.0f), time(0) {}
 };

@@ -1,6 +1,8 @@
-#include"ActorBase.h"
+#include "ActorBase.h"
 
-#include"../Application/Application.h"
+#include "../Application/Application.h"
+
+#include "Common/Collider/ColliderBase.h"
 
 ActorBase::ActorBase() :
 	trans(),
@@ -141,6 +143,15 @@ void ActorBase::Release(void)
 	trans.Release();
 }
 
+bool ActorBase::GetJudgeFlg(void)
+{
+	for (ColliderBase*& c : collider) {
+		if (!c) { continue; }
+		if (c->GetJudge()) { return true; }
+	}
+	return false;
+}
+
 void ActorBase::AccelUpdate(void)
 {
 	// â°é≤(â°é≤ÇÕå∏êäÇ‡Ç∑ÇÈ)Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
@@ -172,4 +183,110 @@ void ActorBase::Gravity(void)
 {
 	accelSum.y += GRAVITY;
 	if (accelSum.y < GRAVITY_MAX) { accelSum.y = GRAVITY_MAX; }
+}
+
+void ActorBase::ColliderCreate(ColliderBase* newClass)
+{
+	collider.emplace_back(newClass);
+	collider.back()->SetTransformPtr(&trans);
+	collider.back()->SetDynamicFlg((dynamicFlg) ? true : false);
+	collider.back()->SetPushFlg(pushFlg);
+	collider.back()->SetPushWeight(pushWeight);
+	collider.back()->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) { this->OnCollision(ownTag, other, collisionPoint); });
+	collider.back()->SetOnGroundedFunc([this](void) { this->OnGrounded(); });
+	ColliderToSetSkill();
+}
+
+void ActorBase::SetDynamicFlg(bool flg)
+{
+	dynamicFlg = flg;
+	trans.dynamicFlg = flg;
+	for (ColliderBase*& collider : collider) {
+		collider->SetDynamicFlg(flg);
+	}
+}
+
+void ActorBase::SetPushFlg(bool flg)
+{
+	pushFlg = flg;
+	for (ColliderBase*& coll : collider) { coll->SetPushFlg(flg); }
+}
+
+void ActorBase::SetPushWeight(unsigned char weight)
+{
+	pushWeight = weight;
+	for (ColliderBase*& coll : collider) { coll->SetPushWeight(weight); }
+}
+#pragma region ÉpÉâÉÅÅ[É^Å[äOïîÉtÉ@ÉCÉãä«óùÇ…ä÷Ç∑ÇÈä÷êî
+
+bool ActorBase::IsParameterExist(const std::string& fileName, const std::string& parameterName)const
+{
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadÉNÉâÉXÇ™ê∂ê¨Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ"); }
+	return parameter->IsParameterExist(fileName, parameterName);
+}
+
+float ActorBase::GetParameter(const std::string& fileName, const std::string& parameterName, int index)const
+{
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadÉNÉâÉXÇ™ê∂ê¨Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ"); }
+	return parameter->GetParameter(fileName, parameterName, index);
+}
+
+const std::vector<float>& ActorBase::GetParameterArray(const std::string& fileName, const std::string& parameterName)const
+{
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadÉNÉâÉXÇ™ê∂ê¨Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ"); }
+	return parameter->GetParameterArray(fileName, parameterName);
+}
+
+int ActorBase::GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index)const
+{
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadÉNÉâÉXÇ™ê∂ê¨Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ"); }
+	return parameter->GetParameterToInt(fileName, parameterName, index);
+}
+
+Vector3 ActorBase::GetParameterToVector3(const std::string& fileName, const std::string& parameterName)
+{
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadÉNÉâÉXÇ™ê∂ê¨Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ"); }
+	return parameter->GetParameterToVector3(fileName, parameterName);
+}
+
+#pragma endregion
+
+
+#pragma region ÉXÉLÉãê›íË
+
+void ActorBase::ColliderToSetSkill(void)
+{
+	for (const SkillStats* skill : skillStats) {
+		for (ColliderBase* coll : collider) {
+			if (skill->COLL_TAG == coll->GetTag() || skill->COLL_TAG == COLLIDER_TAG::NON) { coll->SetSkillStats(skill); }
+		}
+	}
+}
+
+void ActorBase::CreateAttackSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, const CharacterStats* characterStats, COLLIDER_TAG tag)
+{
+	skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, characterStats, tag));
+	ColliderToSetSkill();
+}
+
+void ActorBase::CreateHealSkill(MSG_SENDER_ID operatorSenderId, short SKILL_POWER, COLLIDER_TAG tag)
+{
+	skillStats.emplace_back(new SkillStats(operatorSenderId, SKILL_POWER, nullptr, tag));
+	ColliderToSetSkill();
+}
+
+void ActorBase::CreateModifierSkill(MSG_SENDER_ID operatorSenderId, ModifierType modifierType, short SKILL_POWER, short SKILL_TIME, COLLIDER_TAG tag)
+{
+	skillStats.emplace_back(new SkillStats(operatorSenderId, modifierType, SKILL_POWER, SKILL_TIME, tag));
+	ColliderToSetSkill();
+}
+
+#pragma endregion
+
+void ActorBase::SetJudge(bool flg)
+{
+	for (ColliderBase*& c : collider) {
+		if (!c) { continue; }
+		c->SetJudgeFlg(flg);
+	}
 }

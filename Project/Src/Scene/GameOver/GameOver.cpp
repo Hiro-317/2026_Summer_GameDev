@@ -10,15 +10,9 @@
 
 #include"../SceneManager/SceneManager.h"
 
-GameOver::GameOver()
-{
-}
+GameOver::GameOver() : SceneBase() {}
 
-GameOver::~GameOver()
-{
-}
-
-void GameOver::Load(void)
+void GameOver::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("GameOver");
 
@@ -27,11 +21,7 @@ void GameOver::Load(void)
 	image = LoadGraph("Data/Image/GameOver/GameOverImage.png");
 }
 
-void GameOver::Init(void)
-{
-}
-
-void GameOver::Update(void)
+void GameOver::SubPostUpdate(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down ||
 		Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -41,12 +31,12 @@ void GameOver::Update(void)
 	}
 }
 
-void GameOver::Draw(void)
+void GameOver::SubPostDraw(void)
 {
 	DrawExtendGraph(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, image, true);
 }
 
-void GameOver::Release(void)
+void GameOver::SubPreRelease(void)
 {
 	DeleteGraph(image);
 }

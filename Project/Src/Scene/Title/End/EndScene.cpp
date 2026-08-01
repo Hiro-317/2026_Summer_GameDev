@@ -8,6 +8,8 @@
 #include"../../../Manager/Sound/SoundManager.h"
 
 EndScene::EndScene() :
+	SceneBase(),
+
 	nowSelect(),
 
 	frameImage(),
@@ -22,7 +24,7 @@ EndScene::EndScene() :
 {
 }
 
-void EndScene::Load(void)
+void EndScene::SubPostLoad(void)
 {
 
 #pragma region ‰æ‘œ‚ğ“Ç‚İ‚Ş
@@ -43,7 +45,7 @@ void EndScene::Load(void)
 
 }
 
-void EndScene::Init(void)
+void EndScene::SubPostInit(void)
 {
 	// Œ»İ‚Ì‘I‘ğó‘Ô‚ğ‰Šú‰»
 	nowSelect = SELECT::No;
@@ -55,7 +57,7 @@ void EndScene::Init(void)
 	charaEasingRotate = 0.0f;
 }
 
-void EndScene::Update(void)
+void EndScene::SubPostUpdate(void)
 {
 	// –ß‚éƒ{ƒ^ƒ“‚Åƒ^ƒCƒgƒ‹‚É–ß‚é
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -67,7 +69,7 @@ void EndScene::Update(void)
 
 	// ‘I‘ğˆ‚É‚æ‚Á‚Ä•ªŠò
 	switch (nowSelect) {
-		
+
 	case EndScene::SELECT::Yes: {
 		// ‘I‘ğó‘ÔuYesv’†‚Ìˆ—
 
@@ -140,7 +142,7 @@ void EndScene::Update(void)
 	// ``````````````````````````````‰‰oXV
 }
 
-void EndScene::Draw(void) 
+void EndScene::SubPreDraw(void)
 {
 	// ‰æ–Ê‘S‘Ì‚ğ”¼“§–¾•`‰æ
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -166,7 +168,7 @@ void EndScene::Draw(void)
 	drawImage(charaImage, CHARA_POS, 1.0f, charaEasingRotate);
 }
 
-void EndScene::Release(void) 
+void EndScene::SubPreRelease(void)
 {
 
 #pragma region ‰æ‘œ‚ğ‰ğ•ú

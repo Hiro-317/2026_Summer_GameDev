@@ -1,8 +1,12 @@
 #pragma once
 
+#include <string>
+
 #include "../../../SceneBase.h"
 
 #include "../../../../Application/Application.h"
+
+#include "../../../../Common/Vector2.h"
 
 #include <functional>
 
@@ -15,18 +19,34 @@ public:
 	PasswordScene();
 	~PasswordScene()override = default;
 
-	// 読み込み
-	void Load(void)override;
-	// 初期化処理
-	void Init(void)override;
-	// 更新ステップ
-	void Update(void)override;
-	// 描画処理
-	void Draw(void)override;
-	// 解放処理
-	void Release(void)override;
-
 private:
+
+#pragma region 主要関数再定義
+
+	// 読み込み
+	void SubPostLoad(void)override;
+
+	// 初期化
+	void SubPostInit(void)override;
+
+	// 更新
+	void SubPostUpdate(void)override;
+
+	// 描画
+	void SubPostDraw(void)override;
+
+	// 終了
+	void SubPreRelease(void);
+
+#pragma endregion
+
+	bool IsUseLoadingScreen(void)const override { return false; }
+
+	// カメラは使用しない
+	bool UseCamera(void)const override { return false; }
+
+	// 当たり判定管理は使用しない
+	bool UseCollisionManager(void)const override { return false; }
 
 	// テンキー
 	enum class NUMBER_KEY {

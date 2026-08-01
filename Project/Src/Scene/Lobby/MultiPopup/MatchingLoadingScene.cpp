@@ -14,17 +14,13 @@ MatchingLoadingScene::MatchingLoadingScene():
 {
 }
 
-void MatchingLoadingScene::Load(void)
-{
-}
-
-void MatchingLoadingScene::Init(void)
+void MatchingLoadingScene::SubPostInit(void)
 {
 	// 接続待ち時間を設定
 	waitCounter = MATCHING_WAIT_TIME;
 }
 
-void MatchingLoadingScene::Update(void)
+void MatchingLoadingScene::SubPostUpdate(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		// 接続状況をリセットする
@@ -33,7 +29,6 @@ void MatchingLoadingScene::Update(void)
 		// このシーンを破棄して、戻る
 		SceneManager::GetIns().PopScene();
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
@@ -43,7 +38,6 @@ void MatchingLoadingScene::Update(void)
 		// 接続完了したため、マルチ用のロビーに移動する
 		SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
@@ -54,14 +48,13 @@ void MatchingLoadingScene::Update(void)
 		Net::GetIns().Disconnection();
 
 		// このシーンを破棄して、戻る
-		SceneManager::GetIns().PopScene(); 
+		SceneManager::GetIns().PopScene();
 
-		// 以降はthisがnullptrとなっているため終了
-		return; 
+		return;
 	}
 }
 
-void MatchingLoadingScene::Draw(void)
+void MatchingLoadingScene::SubPostDraw(void)
 {
 	// 画面全体を暗めに
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
@@ -80,8 +73,4 @@ void MatchingLoadingScene::Draw(void)
 	SetFontSize(32);
 	DrawString(App::SCREEN_SIZE_X_HALF- (32 * 10 / 2), App::SCREEN_SIZE_Y_HALF-16, "マッチング中・・・", 0xffffff);
 	SetFontSize(16);
-}
-
-void MatchingLoadingScene::Release(void)
-{
 }

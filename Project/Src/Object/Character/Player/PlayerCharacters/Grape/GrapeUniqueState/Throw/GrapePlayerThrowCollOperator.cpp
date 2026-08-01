@@ -77,7 +77,7 @@ void GrapePlayerThrowCollOperator::SubUpdate()
 
 			// ’µ–ô—Í‚ª‚ ‚é’ö“xŒ¸­‚µ‚½‚çA”š”­‚³‚¹‚é
 			if (bouncePower <= 0.1f ) {
-				ColliderSerch<SphereCollider>(COLL_TAG).back()->SetRadius(300.0f);
+				ColliderSerch<SphereCollider>(GetCollider(), COLL_TAG).back()->SetRadius(300.0f);
 				bouncePower = 0.0f;
 				LocalThrowBombEnd();
 				return;
@@ -112,7 +112,7 @@ void GrapePlayerThrowCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collid
 
 void GrapePlayerThrowCollOperator::RemoteThrowBombStart(const Vector3& pos, const Vector3& vec)
 {
-	ColliderSerch<SphereCollider>(COLL_TAG).back()->SetRadius(100.0f);
+	ColliderSerch<SphereCollider>(GetCollider(), COLL_TAG).back()->SetRadius(100.0f);
 
 	targetVec = vec;
 	trans.pos = pos;

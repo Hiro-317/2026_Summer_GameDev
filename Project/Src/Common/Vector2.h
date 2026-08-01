@@ -77,6 +77,11 @@ struct Vector2I
 
 #pragma endregion
 
+	bool operator==(const Vector2I value)const { return (x == value.x && y == value.y); }
+	bool operator==(const int value)const { return (x == value && y == value); }
+	bool operator!=(const Vector2I value)const { return (x != value.x || y != value.y); }
+	bool operator!=(const int value)const { return (x != value || y != value); }
+
 	Vector2 ToVector2(void)const;
 
 	float LengthSq(void)const { return (float)(x * x + y * y); }

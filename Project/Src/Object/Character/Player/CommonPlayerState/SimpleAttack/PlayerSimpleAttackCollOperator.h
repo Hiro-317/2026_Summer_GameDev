@@ -3,6 +3,10 @@
 #include "../../../../ActorBase.h"
 #include "../../../../../Manager/Net/NetWorkManager.h"
 
+#include "../../../../Common/Collider/ColliderBase.h"
+
+struct CharacterStats;
+
 class PlayerSimpleAttackCollOperator : public ActorBase
 {
 public:
@@ -37,7 +41,7 @@ public:
 
 	// UŒ‚‘ÎÛ‚ð’Tõ
 	void TargetSerch(void) {
-		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true);
+		ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true);
 	}
 
 	// UŒ‚‘ÎÛ‚ªŒ©‚Â‚©‚Á‚½‚©‚Ç‚¤‚©‚ðŽæ“¾
@@ -47,7 +51,7 @@ public:
 
 	// UŒ‚‚Ì”»’è‚ð”­¶‚³‚¹‚é
 	void CollOn(void) { 
-		if (!isHit)ColliderSerch(COLL_TAG).back()->SetJudgeFlg(true);
+		if (!isHit)ColliderSerch(GetCollider(), COLL_TAG).back()->SetJudgeFlg(true);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
 		}
@@ -55,7 +59,7 @@ public:
 
 	// UŒ‚‚Ì”»’è‚ðÁ‚·
 	void CollOff(void) { 
-		ColliderSerch(COLL_TAG).back()->SetJudgeFlg(false); 
+		ColliderSerch(GetCollider(), COLL_TAG).back()->SetJudgeFlg(false);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
 		}

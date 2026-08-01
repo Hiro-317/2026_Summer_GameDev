@@ -38,7 +38,7 @@ public:
 
 	// 攻撃対象を探索
 	void TargetSerch(void) {
-		ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true); 
+		ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true);
 	}
 
 	// 攻撃対象が見つかったかどうかを取得
@@ -48,7 +48,7 @@ public:
 
 	// 指定の段の攻撃の判定を発生させる
 	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage) {
-		if(!isHit)ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(true);
+		if(!isHit)ColliderSerch(GetCollider(), COLL_TAG).at((int)stage)->SetJudgeFlg(true);
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, (MsgDataPlayerCollOperator::COLLIDER_TYPE)stage));
 		}
@@ -58,10 +58,10 @@ public:
 	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::NON) {
 		if (stage == PLAYER_TRIPLE_ATTACK_STAGE::NON) {
 			// 指定がない場合は全ての段の判定を消す
-			for (ColliderBase* coll : ColliderSerch(COLL_TAG)) { coll->SetJudgeFlg(false); }
+			for (ColliderBase* coll : ColliderSerch(GetCollider(), COLL_TAG)) { coll->SetJudgeFlg(false); }
 		}
 		// 指定がある場合はその段の判定を消す
-		else { ColliderSerch(COLL_TAG).at((int)stage)->SetJudgeFlg(false); }
+		else { ColliderSerch(GetCollider(), COLL_TAG).at((int)stage)->SetJudgeFlg(false); }
 
 		// コライダー消去通知を送信
 		if (!Net::GetIns().IsHost()) {

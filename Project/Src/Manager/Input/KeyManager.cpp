@@ -228,6 +228,8 @@ void KeyManager::Release(void)
 
 void KeyManager::KeyUpdate(void)
 {
+	bool windowActive = GetWindowActiveFlag();
+
 	for (int i = 0; i < (int)KEY_TYPE::MAX; i++) {
 		keyInfo[i].prev = keyInfo[i].now;
 
@@ -254,6 +256,7 @@ void KeyManager::KeyUpdate(void)
 			if (b) { break; }
 			if (ControllerOthersInput(input)) { b = true; lastInputKinds = true; }
 		}
+		b = (windowActive) ? b : false;
 
 		keyInfo[i].now = b;
 

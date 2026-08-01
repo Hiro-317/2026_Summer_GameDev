@@ -42,7 +42,6 @@ void HitUI::SubRelease(void)
 
 void HitUI::DamageSetting(const Vector3& collisionPos, const short damage, const bool isCritical)
 {
-    Camera::GetIns().Apply();
     Vector3 temp = ConvWorldPosToScreenPos(collisionPos.ToVECTOR());
     Vector2 drawPos = Vector2(temp.x, temp.y);
 

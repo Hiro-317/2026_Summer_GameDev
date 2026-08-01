@@ -68,7 +68,7 @@ void PlayerTripleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 		case COLLIDER_TAG::BOSS_DISTANCE:
 			isFindAttackTarget = true;
 			targetPos = &other.GetTransform().pos;
-			ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
 			break;
 		default:break;
 		}
@@ -90,5 +90,5 @@ void PlayerTripleAttackCollOperator::SubUpdate(void)
 {
 	trans.pos = playerPos;
 	trans.angle = playerAngle;
-	ColliderSerch(COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
 }

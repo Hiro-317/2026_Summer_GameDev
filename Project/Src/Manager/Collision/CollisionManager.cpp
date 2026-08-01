@@ -1811,7 +1811,7 @@ bool CollisionManager::BoxToModel(BoxCollider* box, ModelCollider* model, Vector
 #pragma region デバッグ描画
 
 // チャンクのグリッド線描画
-void CollisionManager::DrawChunkGrid(void) const
+void CollisionManager::DrawChunkGrid(const Vector3& cameraPos) const
 {
 	if (!App::GetIns().IsDrawDebug()) { return; }
 
@@ -1820,16 +1820,14 @@ void CollisionManager::DrawChunkGrid(void) const
 	// カメラ周辺どこまで描くか
 	const float drawRange = 3000.0f;
 
-	const Vector3 camPos = Camera::GetIns().GetPos();
+	int minX = ToChunkIndex(cameraPos.x - drawRange, CHUNK_SIZE);
+	int maxX = ToChunkIndex(cameraPos.x + drawRange, CHUNK_SIZE);
 
-	int minX = ToChunkIndex(camPos.x - drawRange, CHUNK_SIZE);
-	int maxX = ToChunkIndex(camPos.x + drawRange, CHUNK_SIZE);
+	int minY = ToChunkIndex(cameraPos.y - drawRange, CHUNK_SIZE);
+	int maxY = ToChunkIndex(cameraPos.y + drawRange, CHUNK_SIZE);
 
-	int minY = ToChunkIndex(camPos.y - drawRange, CHUNK_SIZE);
-	int maxY = ToChunkIndex(camPos.y + drawRange, CHUNK_SIZE);
-
-	int minZ = ToChunkIndex(camPos.z - drawRange, CHUNK_SIZE);
-	int maxZ = ToChunkIndex(camPos.z + drawRange, CHUNK_SIZE);
+	int minZ = ToChunkIndex(cameraPos.z - drawRange, CHUNK_SIZE);
+	int maxZ = ToChunkIndex(cameraPos.z + drawRange, CHUNK_SIZE);
 
 	for (int x = minX; x <= maxX; x++) {
 		for (int y = minY; y <= maxY; y++) {

@@ -1,7 +1,15 @@
-ï»¿#include "SceneManager.h"
+#include "SceneManager.h"
 
-#include "../../Manager/Loading/Loading.h"
+#include <algorithm>
+#include <stdexcept>
+#include "../../pch.h"
+
 #include "../../Manager/Effect/EffectManager.h"
+#include "../../Manager/Loading/Loading.h"
+
+#include "../../Manager/Camera/CurrentCamera.h"
+
+#include "../SceneBase.h"
 
 #include "../Title/TitleScene.h"
 #include "../Lobby/LobbyScene.h"
@@ -10,290 +18,552 @@
 #include "../Clear/ClearScene.h"
 #include"../GameOver/GameOver.h"
 
-#include "../Common/Fade/FadeInScene.h"
-#include "../Common/Fade/FadeOutScene.h"
+#include "../Common/Fade/Default/DefaultFadeScene.h"
 
 SceneManager* SceneManager::ins = nullptr;
 
-// åˆæœŸåŒ–
+SceneManager::SceneManager(void) :
+
+	scenes(),
+
+	requests(),
+
+	loadingScene(nullptr),
+	loadCommit(LOAD_COMMIT::NONE),
+
+	fade(nullptr),
+	fadeScene(nullptr),
+
+	isWaitFadeOut(false),
+
+	fadeCommit(LOAD_COMMIT::NONE),
+
+	fillLight(-1),
+	rimLight(-1),
+
+	selectCharaType{ CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None, CHARA_TYPE::None },
+	selectBossType(BOSS_TYPE::None)
+{
+}
+
+SceneManager::~SceneManager(void) = default;
+
 void SceneManager::Init(void)
 {
-	// ãƒ­ãƒ¼ãƒ‰ç”»é¢ç”Ÿæˆ
-	Loading::GetInstance()->CreateInstance();
+	// ƒ[ƒfƒBƒ“ƒO‰æ–ÊŠÇ—ƒNƒ‰ƒX‚Ì¶¬
+	Loading::CreateInstance();
 	Loading::GetInstance()->Init();
 	Loading::GetInstance()->Load();
 
+	// DxLib‚Ì3D•`‰æİ’è
 	Init3D();
 
-	// æœ€åˆã¯ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã‹ã‚‰
-	ChangeScene(SCENE_ID::TITLE);
+	// Å‰‚Ìƒ^ƒCƒgƒ‹ƒV[ƒ“‚Í—\–ñ‚ğŒo—R‚¹‚¸A‚±‚Ì‰Šú‰»ˆ—“à‚Å“Ç‚İ‚İ‚ğŠJn‚·‚é
+	StartLoad(CreateScene(SCENE_ID::TITLE), LOAD_COMMIT::JUMP);
 }
 
-
-// æ›´æ–°
-void SceneManager::Update(void)
-{
-	// ã‚·ãƒ¼ãƒ³ãŒãªã‘ã‚Œã°çµ‚äº†
-	if (scenes.empty()) { return; }
-
-	// ãƒ­ãƒ¼ãƒ‰ä¸­
-	if (Loading::GetInstance()->IsLoading())
-	{
-		// ãƒ­ãƒ¼ãƒ‰æ›´æ–°
-		Loading::GetInstance()->Update();
-
-		// ãƒ­ãƒ¼ãƒ‰ã®æ›´æ–°ãŒçµ‚äº†ã—ã¦ã„ãŸã‚‰
-		if (Loading::GetInstance()->IsLoading() == false)
-		{
-			// ãƒ­ãƒ¼ãƒ‰å¾Œã®åˆæœŸåŒ–
-			for (auto& scene : scenes) { scene->Init(); }
-		}
-		
-	}		
-	// é€šå¸¸ã®æ›´æ–°å‡¦ç†
-	else
-	{
-		// ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³ã®æ›´æ–°
-		scenes.back()->Update();
-	}
-}
-
-// æç”»
-void SceneManager::Draw(void)
-{
-	// ãƒ­ãƒ¼ãƒ‰ä¸­ãªã‚‰ãƒ­ãƒ¼ãƒ‰ç”»é¢ã‚’æç”»
-	if (Loading::GetInstance()->IsLoading()) {
-		// ãƒ­ãƒ¼ãƒ‰ã®æç”»
-		Loading::GetInstance()->Draw();
-	}
-	// é€šå¸¸ã®æ›´æ–°
-	else {
-		// ç©ã¾ã‚Œã¦ã„ã‚‹ã‚‚ã®å…¨ã¦ã‚’æç”»ã™ã‚‹
-		for (auto& scene : scenes)
-		{
-			scene->Draw();
-		}
-	}
-}
-
-// è§£æ”¾
 void SceneManager::Release(void)
 {
-	//å…¨ã¦ã®ã‚·ãƒ¼ãƒ³ã®è§£æ”¾ãƒ»å‰Šé™¤
-	for (auto& scene : scenes) { scene->Release(); }
+	// —\–ñ’†‚ÌƒV[ƒ“‚ğ”jŠü
+	requests.clear();
+	fadeScene.reset();
+
+	// ƒ[ƒh“r’†‚ÌƒV[ƒ“‚à³‚µ‚­‰ğ•ú‚·‚é
+	if (loadingScene != nullptr) {
+		loadingScene->Release();
+		loadingScene.reset();
+	}
+
+	// ƒXƒ^ƒbƒN“à‚Ì‘SƒV[ƒ“‰ğ•ú
+	for (std::unique_ptr<SceneBase>& scene : scenes) {
+		if (scene != nullptr) { scene->Release(); }
+	}
 	scenes.clear();
 
-	DeleteLightHandleAll();
+	if (fade != nullptr) {
+		fade->Release();
+		fade.reset();
+	}
 
-	// ãƒ­ãƒ¼ãƒ‰ç”»é¢ã®å‰Šé™¤
-	Loading::GetInstance()->Release();
-	Loading::GetInstance()->DeleteInstance();
+	// SceneManager‚Å¶¬‚µ‚½ƒ‰ƒCƒg‚ğ‚Ü‚Æ‚ß‚Äíœ
+	DeleteLightHandleAll();
+	fillLight = -1;
+	rimLight = -1;
+
+	// Loading‰ğ•ú
+	if (Loading::GetInstance() != nullptr)	{
+		Loading::GetInstance()->Release();
+		Loading::DeleteInstance();
+	}
 }
 
-// çŠ¶æ…‹é·ç§»é–¢æ•°
-void SceneManager::ChangeScene(std::shared_ptr<SceneBase>scene)
+void SceneManager::Update(void)
 {
-	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®é–‹æ”¾
-	EffectManager::GetIns()->StopEffectAll();
-	// ã‚·ãƒ¼ãƒ³ãŒç©ºã‹ï¼Ÿ
-	if (scenes.empty()) {
-		//ç©ºãªã®ã§æ–°ã—ãå…¥ã‚Œã‚‹
-		scenes.push_back(scene);
-	}
-	else {
-		//æœ«å°¾ã®ã‚‚ã®ã‚’æ–°ã—ã„ç‰©ã«å…¥ã‚Œæ›¿ãˆã‚‹
-		scenes.back()->Release();
-		scenes.back() = scene;
+	// ƒtƒF[ƒhƒV[ƒ“‚Í’ÊíƒV[ƒ“‚Æ‚Í•Ê˜g‚ÅÅ‘O–Ê‚ÉXV‚·‚é
+	if (fade != nullptr) {
+
+		fade->Update();
+
+		if (isWaitFadeOut && fade->IsFadeOutEnd()) {
+			isWaitFadeOut = false;
+			StartLoad(std::move(fadeScene), fadeCommit);
+		}
+
+		if (fade->IsEnd()) {
+			fade->Release();
+			fade.reset();
+		}
 	}
 
-	// èª­ã¿è¾¼ã¿(éåŒæœŸ)
-	Loading::GetInstance()->StartAsyncLoad();
-	scenes.back()->Load();
-	Loading::GetInstance()->EndAsyncLoad();
+	if (loadingScene != nullptr) { UpdateLoading(); return; }
+
+	if (!scenes.empty()) {
+		// ‰º‚ÌƒV[ƒ“‚ÌXV‚ğ~‚ß‚éƒV[ƒ“‚ª‚ ‚ê‚ÎA‚»‚±‚©‚çã‚¾‚¯‚ğXV‚·‚é
+		const std::size_t firstIndex = GetFirstUpdateIndex();
+		for (std::size_t i = firstIndex; i < scenes.size(); i++) { scenes[i]->Update(); }
+	}
+
+	// ƒV[ƒ“‘JˆÚ—v‹‚ª‚ ‚ê‚Î1Œ‚¸‚Â“K—p‚·‚é
+	ApplyRequest();
+}
+
+void SceneManager::Draw(void)
+{
+	// ƒV[ƒ“‚ª‘¶İ‚·‚éê‡A“§–¾ƒV[ƒ“‚Ì”ÍˆÍ‚¾‚¯‰º‚©‚ç•`‰æ‚·‚é
+	if (!scenes.empty())	{
+		// “§–¾ƒV[ƒ“‚Ì‰º‚à•`‰æ‘ÎÛ‚ÉŠÜ‚ß‚é‚½‚ßA•`‰æŠJnƒCƒ“ƒfƒbƒNƒX‚ğæ“¾‚·‚é
+		const std::size_t firstIndex = GetFirstDrawIndex();
+		for (std::size_t i = firstIndex; i < scenes.size(); i++) { scenes[i]->Draw(); }
+	}
+
+	// ƒ[ƒh’†‚ÍƒV[ƒ“‚Ìã‚ÖLoading‰æ–Ê‚ğ•`‰æ‚·‚é
+	if (loadingScene != nullptr) { Loading::GetInstance()->Draw(); }
+
+	// ƒtƒF[ƒh‚Í•K‚¸Å‘O–Ê‚Ö•`‰æ‚·‚é
+	if (fade != nullptr) { fade->Draw(); }
+}
+
+#pragma region ŒöŠJƒV[ƒ“‘JˆÚŠÖ”
+
+void SceneManager::ChangeScene(std::unique_ptr<SceneBase> scene)
+{
+	// nullptr‚Ì‘JˆÚæ‚Í“o˜^‚µ‚È‚¢iPop‚¾‚¯‚Íscene‚ğ‚½‚È‚¢‚½‚ß—áŠOj
+	SceneRequest request;
+
+	// ƒV[ƒ“Ø‚è‘Ö‚¦—v‹‚ğ“o˜^‚·‚éBŠù‚É‘JˆÚ—v‹‚ª‚ ‚éAƒ[ƒh’†AƒtƒF[ƒh’†‚Ìê‡‚ÍV‚µ‚¢—v‹‚ğó‚¯•t‚¯‚È‚¢
+	request.type = REQUEST_TYPE::CHANGE;
+
+	// ‘JˆÚæ‚ÌƒV[ƒ“‚ğƒ€[ƒu‚µ‚Ä“o˜^‚·‚éBstd::move‚ğg‚¤‚±‚Æ‚ÅŠ—LŒ ‚ğˆÚ“®‚³‚¹A•s—v‚ÈƒRƒs[‚ğ”ğ‚¯‚é
+	request.scene = std::move(scene);
+
+	// ƒV[ƒ“‘JˆÚ—v‹‚ğƒLƒ…[‚É’Ç‰Á‚·‚éBstd::move‚ğg‚¤‚±‚Æ‚ÅŠ—LŒ ‚ğˆÚ“®‚³‚¹A•s—v‚ÈƒRƒs[‚ğ”ğ‚¯‚é
+	AddRequest(std::move(request));
 }
 
 void SceneManager::ChangeScene(SCENE_ID scene)
 {
-	switch (scene)
-	{
-	case SCENE_ID::TITLE:
-		ChangeScene(std::make_shared<TitleScene>());
-		break;
-	case SCENE_ID::LOBBY:
-		ChangeScene(std::make_shared<LobbyScene>());
-		break;
-	case SCENE_ID::MULTI_LOBBY:
-		ChangeScene(std::make_shared<MultiLobbyScene>());
-		break;
-	case SCENE_ID::GAME:
-		ChangeScene(std::make_shared<GameScene>());
-		break;
-	case SCENE_ID::CLEAR:
-		ChangeScene(std::make_shared<ClearScene>());
-		break;
-	case SCENE_ID::GAMEOVER:
-		ChangeScene(std::make_shared<GameOver>());
-		break;
-	default:
-		break;
-	}
+	ChangeScene(CreateScene(scene));
 }
 
-void SceneManager::ChangeSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR)
+void SceneManager::ChangeSceneFade(std::unique_ptr<SceneBase> scene, FADE_TYPE fadeType, unsigned short FADE_TIME, unsigned int FADE_OUT_COLOR, unsigned int FADE_IN_COLOR)
 {
-	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, FADE_OUT_COLOR, true));
+	// ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é```````````
+
+	SceneRequest request;
+
+	// ƒV[ƒ“‚ÌØ‚è‘Ö‚¦—v‹í—Ş
+	request.type = REQUEST_TYPE::CHANGE_FADE;
+
+	// ‘JˆÚæ‚ÌƒV[ƒ“
+	request.scene = std::move(scene);
+
+	// ƒtƒF[ƒh‚Ìí—Ş
+	request.fadeType = fadeType;
+
+	// ƒtƒF[ƒh1ƒtƒŒ[ƒ€–¢–‚Í–³Œø‚Æ‚µAÅ’á1ƒtƒŒ[ƒ€‚ÌƒtƒF[ƒhŠÔ‚ğ•ÛØ‚·‚é
+	request.fadeTime = (std::max)(static_cast<unsigned short>(1), FADE_TIME);
+
+	// ƒtƒF[ƒhƒAƒEƒg‚ÌF
+	request.fadeOutColor = FADE_OUT_COLOR;
+	// ƒtƒF[ƒhƒCƒ“‚ÌF
+	request.fadeInColor = FADE_IN_COLOR;
+
+	// ```````````ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é
+
+	// ì¬‚µ‚½ƒV[ƒ“‘JˆÚ—v‹‚ğƒLƒ…[‚É’Ç‰Á‚·‚é
+	AddRequest(std::move(request));
 }
 
-void SceneManager::ChangeSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR, unsigned int FADE_OUT_COLOR)
+void SceneManager::ChangeSceneFade(SCENE_ID scene, FADE_TYPE fadeType, unsigned short FADE_TIME, unsigned int FADE_OUT_COLOR, unsigned int FADE_IN_COLOR)
 {
-	switch (scene)
-	{
-	case SCENE_ID::TITLE:
-		ChangeSceneFade(std::make_shared<TitleScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
-		break;
-	case SCENE_ID::LOBBY:
-		ChangeSceneFade(std::make_shared<LobbyScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
-		break;
-	case SCENE_ID::MULTI_LOBBY:
-		ChangeSceneFade(std::make_shared<MultiLobbyScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
-		break;
-	case SCENE_ID::GAME:
-		ChangeSceneFade(std::make_shared<GameScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
-		break;
-	case SCENE_ID::CLEAR:
-		ChangeSceneFade(std::make_shared<ClearScene>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
-		break;
-	case SCENE_ID::GAMEOVER:
-		ChangeSceneFade(std::make_shared<GameOver>(), FADE_TIME, FADE_COLOR, FADE_OUT_COLOR);
-		break;
-	default:
-		break;
-	}
+	ChangeSceneFade(CreateScene(scene), fadeType, FADE_TIME, FADE_OUT_COLOR, FADE_IN_COLOR);
 }
 
-void SceneManager::PushScene(std::shared_ptr<SceneBase> scene)
+void SceneManager::PushScene(std::unique_ptr<SceneBase> scene)
 {
-	//æ–°ã—ãç©ã‚€ã®ã§ã‚‚ã¨ã‚‚ã¨å…¥ã£ã¦ã„ã‚‹å¥´ã¯ã¾ã å‰Šé™¤ã•ã‚Œãªã„
-	scenes.push_back(scene);
-	scenes.back()->Load();
-	scenes.back()->Init();
+	// ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é```````````
+
+	SceneRequest request;
+
+	// ƒV[ƒ“‚ÌØ‚è‘Ö‚¦—v‹í—Ş
+	request.type = REQUEST_TYPE::PUSH;
+
+	// ‘JˆÚæ‚ÌƒV[ƒ“
+	request.scene = std::move(scene);
+
+	// ```````````ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é
+
+	// ì¬‚µ‚½ƒV[ƒ“‘JˆÚ—v‹‚ğƒLƒ…[‚É’Ç‰Á‚·‚é
+	AddRequest(std::move(request));
 }
 
-void SceneManager::PushScene(SCENE_ID scene)
+void SceneManager::PopScene(std::size_t popNum)
 {
-	switch (scene)
-	{
-	case SCENE_ID::TITLE:
-		PushScene(std::make_shared<TitleScene>());
-		break;
-	case SCENE_ID::LOBBY:
-		PushScene(std::make_shared<LobbyScene>());
-		break;
-	case SCENE_ID::MULTI_LOBBY:
-		PushScene(std::make_shared<MultiLobbyScene>());
-		break;
-	case SCENE_ID::GAME:
-		PushScene(std::make_shared<GameScene>());
-		break;
-	case SCENE_ID::CLEAR:
-		PushScene(std::make_shared<ClearScene>());
-		break;
-	case SCENE_ID::GAMEOVER:
-		PushScene(std::make_shared<GameOver>());
-		break;
-	default:
-		break;
-	}
+	// ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é```````````
+
+	SceneRequest request;
+
+	// ƒV[ƒ“‚ÌØ‚è‘Ö‚¦—v‹í—Ş
+	request.type = REQUEST_TYPE::POP;
+
+	// ƒ|ƒbƒv‚·‚éƒV[ƒ“‚Ì”‚ğİ’è‚·‚éBƒXƒ^ƒbƒN”‚ğ’´‚¦‚é’l‚ªw’è‚³‚ê‚Ä‚à”ÍˆÍ“à‚ÉŠÛ‚ß‚é
+	request.popNum = popNum;
+
+	// ```````````ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é
+
+	// ì¬‚µ‚½ƒV[ƒ“‘JˆÚ—v‹‚ğƒLƒ…[‚É’Ç‰Á‚·‚é
+	AddRequest(std::move(request));
 }
 
-void SceneManager::PopScene(void)
+void SceneManager::JumpScene(std::unique_ptr<SceneBase> scene)
 {
-	//ç©ã‚“ã§ã‚ã‚‹ã‚‚ã®ã‚’æ¶ˆã—ã¦ã€ã‚‚ã¨ã‚‚ã¨ã‚ã£ãŸã‚‚ã®ã‚’æœ«å°¾ã«ã™ã‚‹
-	if (scenes.size() > 0) 
-	{
-		scenes.back()->Release();
-		scenes.pop_back();
-	}
-}
+	// ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é```````````
 
-void SceneManager::JumpScene(std::shared_ptr<SceneBase> scene)
-{
-	// å…¨ã¦è§£æ”¾
-	for (auto& s : scenes) { s->Release(); }
-	scenes.clear();
+	SceneRequest request;
 
-	// æ–°ã—ãç©ã‚€
-	ChangeScene(scene);
+	// ƒV[ƒ“‚ÌØ‚è‘Ö‚¦—v‹í—Ş
+	request.type = REQUEST_TYPE::JUMP;
+
+	// ‘JˆÚæ‚ÌƒV[ƒ“
+	request.scene = std::move(scene);
+
+	// ```````````ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é
+
+	// ì¬‚µ‚½ƒV[ƒ“‘JˆÚ—v‹‚ğƒLƒ…[‚É’Ç‰Á‚·‚é
+	AddRequest(std::move(request));
 }
 
 void SceneManager::JumpScene(SCENE_ID scene)
 {
-	switch (scene)
-	{
-	case SCENE_ID::TITLE:
-		JumpScene(std::make_shared<TitleScene>());
+	JumpScene(CreateScene(scene));
+}
+
+void SceneManager::JumpSceneFade(std::unique_ptr<SceneBase> scene, FADE_TYPE fadeType, unsigned short FADE_TIME, unsigned int FADE_OUT_COLOR, unsigned int FADE_IN_COLOR)
+{
+	// ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é```````````
+
+	SceneRequest request;
+
+	// ƒV[ƒ“‚ÌØ‚è‘Ö‚¦—v‹í—Ş
+	request.type = REQUEST_TYPE::JUMP_FADE;
+
+	// ‘JˆÚæ‚ÌƒV[ƒ“
+	request.scene = std::move(scene);
+
+	// ƒtƒF[ƒh‚Ìí—Ş
+	request.fadeType = fadeType;
+
+	// ƒtƒF[ƒh1ƒtƒŒ[ƒ€–¢–‚Í–³Œø‚Æ‚µAÅ’á1ƒtƒŒ[ƒ€‚ÌƒtƒF[ƒhŠÔ‚ğ•ÛØ‚·‚é
+	request.fadeTime = (std::max)(static_cast<unsigned short>(1), FADE_TIME);
+
+	// ƒtƒF[ƒhƒAƒEƒg‚ÌF
+	request.fadeOutColor = FADE_OUT_COLOR;
+	// ƒtƒF[ƒhƒCƒ“‚ÌF
+	request.fadeInColor = FADE_IN_COLOR;
+
+	// ```````````ˆê•Ï”‚ÉƒV[ƒ“‘JˆÚ—v‹‚ğì¬‚µA•K—v‚Èî•ñ‚ğİ’è‚·‚é
+
+	// ì¬‚µ‚½ƒV[ƒ“‘JˆÚ—v‹‚ğƒLƒ…[‚É’Ç‰Á‚·‚é
+	AddRequest(std::move(request));
+}
+
+void SceneManager::JumpSceneFade(SCENE_ID scene, FADE_TYPE fadeType, unsigned short FADE_TIME, unsigned int FADE_OUT_COLOR, unsigned int FADE_IN_COLOR)
+{
+	JumpSceneFade(CreateScene(scene), fadeType, FADE_TIME, FADE_IN_COLOR, FADE_OUT_COLOR);
+}
+
+#pragma endregion
+
+void SceneManager::AddRequest(SceneRequest request)
+{
+	// nullptr‚Ì‘JˆÚæ‚Í“o˜^‚µ‚È‚¢iPop‚¾‚¯‚Íscene‚ğ‚½‚È‚¢‚½‚ß—áŠOj
+	if (request.type != REQUEST_TYPE::POP && request.scene == nullptr) { return; }
+
+	// Šù‚É‘JˆÚ—v‹‚ª‚ ‚éAƒ[ƒh’†AƒtƒF[ƒh’†‚Ìê‡‚ÍV‚µ‚¢—v‹‚ğó‚¯•t‚¯‚È‚¢
+	// “¯ˆêƒtƒŒ[ƒ€‚ÉClear‚ÆGameOver‚ª“¯”­¶‚µ‚Ä‚àAÅ‰‚Ì—v‹‚¾‚¯‚ğÌ—p‚·‚é
+	if (IsTransition()) { return; }
+
+	requests.emplace_back(std::move(request));
+}
+
+void SceneManager::ApplyRequest(void)
+{
+	if (requests.empty()) { return; }
+	if (loadingScene != nullptr) { return; }
+
+	// 1ƒtƒŒ[ƒ€‚Å•¡”‚Ì\‘¢•ÏX‚ğs‚í‚¸A•K‚¸1Œ‚¸‚Â“K—p‚·‚é
+	SceneRequest request = std::move(requests.front());
+
+	requests.pop_front();
+
+	ApplyRequest(std::move(request));
+}
+
+void SceneManager::ApplyRequest(SceneRequest request)
+{
+	switch (request.type) {
+
+	case REQUEST_TYPE::CHANGE: { StartLoad(std::move(request.scene), LOAD_COMMIT::CHANGE); break; }
+
+	case REQUEST_TYPE::PUSH: { StartLoad(std::move(request.scene), LOAD_COMMIT::PUSH); break; }
+
+	case REQUEST_TYPE::POP: {
+
+		// ƒXƒ^ƒbƒN”‚ğ’´‚¦‚é’l‚ªw’è‚³‚ê‚Ä‚à”ÍˆÍ“à‚ÉŠÛ‚ß‚é
+		const std::size_t popNum = (std::min)(request.popNum, scenes.size());
+
+		for (std::size_t i = 0; i < popNum; i++) {
+			scenes.back()->Release();
+			scenes.pop_back();
+		}
+
 		break;
-	case SCENE_ID::LOBBY:
-		JumpScene(std::make_shared<LobbyScene>());
+	}
+
+	case REQUEST_TYPE::JUMP: { StartLoad(std::move(request.scene), LOAD_COMMIT::JUMP); break; }
+
+	case REQUEST_TYPE::CHANGE_FADE: {
+
+		// ‚Ü‚¸ƒtƒF[ƒhƒAƒEƒg‚¾‚¯ŠJn‚µAŠ®‘S‚ÉˆÃ‚­‚È‚Á‚Ä‚©‚çƒ[ƒh‚·‚é
+		fadeScene = std::move(request.scene);
+
+		// ƒtƒF[ƒhƒAƒEƒg‚ªI‚í‚Á‚½‚çƒ[ƒh‚·‚é‚½‚ßAƒ[ƒhƒRƒ~ƒbƒg‚ÍƒtƒF[ƒhƒAƒEƒgŒã‚Éİ’è‚·‚é
+		fadeCommit = LOAD_COMMIT::CHANGE_FADE;
+
+		// ƒtƒF[ƒhƒAƒEƒg‚ªI‚í‚é‚Ü‚Åƒ[ƒh‚ğ‘Ò‚Âƒtƒ‰ƒO‚ğ—§‚Ä‚é
+		isWaitFadeOut = true;
+
+		// ƒtƒF[ƒhƒV[ƒ“‚ğ¶¬‚µAƒ[ƒh‚Æ‰Šú‰»‚ğs‚¤BƒtƒF[ƒhƒV[ƒ“‚Í’Êí‚ÌƒV[ƒ“‚Æ‚Í•Ê˜g‚ÅÅ‘O–Ê‚ÉXV‚·‚é
+		fade = CreateFadeScene(request.fadeType, request.fadeTime, request.fadeOutColor, request.fadeInColor);
+
+		// ƒtƒF[ƒhƒV[ƒ“‚ª¶¬‚Å‚«‚½ê‡‚Ì‚İƒ[ƒh‚Æ‰Šú‰»‚ğs‚¤Bnullptr‚Ìê‡‚ÍƒtƒF[ƒh‚È‚µ‚Å‘JˆÚ‚·‚é
+		if (fade != nullptr) { fade->Load(); fade->Init(); }
+
 		break;
-	case SCENE_ID::MULTI_LOBBY:
-		JumpScene(std::make_shared<MultiLobbyScene>());
+	}
+
+	case REQUEST_TYPE::JUMP_FADE: {
+
+		// ‚Ü‚¸ƒtƒF[ƒhƒAƒEƒg‚¾‚¯ŠJn‚µAŠ®‘S‚ÉˆÃ‚­‚È‚Á‚Ä‚©‚çƒ[ƒh‚·‚é
+		fadeScene = std::move(request.scene);
+
+		// ƒtƒF[ƒhƒAƒEƒg‚ªI‚í‚Á‚½‚çƒ[ƒh‚·‚é‚½‚ßAƒ[ƒhƒRƒ~ƒbƒg‚ÍƒtƒF[ƒhƒAƒEƒgŒã‚Éİ’è‚·‚é
+		fadeCommit = LOAD_COMMIT::JUMP_FADE;
+
+		// ƒtƒF[ƒhƒAƒEƒg‚ªI‚í‚é‚Ü‚Åƒ[ƒh‚ğ‘Ò‚Âƒtƒ‰ƒO‚ğ—§‚Ä‚é
+		isWaitFadeOut = true;
+
+		// ƒtƒF[ƒhƒV[ƒ“‚ğ¶¬‚µAƒ[ƒh‚Æ‰Šú‰»‚ğs‚¤BƒtƒF[ƒhƒV[ƒ“‚Í’Êí‚ÌƒV[ƒ“‚Æ‚Í•Ê˜g‚ÅÅ‘O–Ê‚ÉXV‚·‚é
+		fade = CreateFadeScene(request.fadeType, request.fadeTime, request.fadeOutColor, request.fadeInColor);
+
+		// ƒtƒF[ƒhƒV[ƒ“‚ª¶¬‚Å‚«‚½ê‡‚Ì‚İƒ[ƒh‚Æ‰Šú‰»‚ğs‚¤Bnullptr‚Ìê‡‚ÍƒtƒF[ƒh‚È‚µ‚Å‘JˆÚ‚·‚é
+		if (fade != nullptr) { fade->Load(); fade->Init(); }
+
 		break;
-	case SCENE_ID::GAME:
-		JumpScene(std::make_shared<GameScene>());
+	}
+
+	default: { break; }
+	}
+
+	// 1”Ôã‚Éd‚È‚Á‚Ä‚¢‚éƒV[ƒ“‚ÌƒJƒƒ‰‚ğCurrentCamera‚Éİ’è‚·‚é
+	CurrentCamera::Set(scenes.back()->GetCamera());
+}
+
+void SceneManager::StartLoad(std::unique_ptr<SceneBase> scene, LOAD_COMMIT commit)
+{
+	// ˆÀ‘Sˆ—
+	if (scene == nullptr) { return; }
+
+	// V‹KƒV[ƒ“‚ğƒ[ƒh’†‚Æ‚µ‚Äƒ[ƒJƒ‹•Ï”‚Å•Û‚·‚é
+	loadingScene = std::move(scene);
+
+	// ƒ[ƒhŠ®—¹Œã‚Ì”½‰f•û–@‚ğƒ[ƒJƒ‹•Ï”‚Å•Û‚·‚é
+	loadCommit = commit;
+
+	// ƒ|[ƒY“™‚ÌŒy—ÊƒV[ƒ“‚Íƒ[ƒfƒBƒ“ƒO‰æ–Ê‚ğ‹²‚Ü‚¸A‚»‚Ìê‚ÅLoad / Init‚·‚é
+	if (!loadingScene->IsUseLoadingScreen()) {
+
+		loadingScene->Load();
+		loadingScene->Init();
+
+		CommitLoadedScene();
+
+		return;
+	}
+
+	// DxLib‚Ì”ñ“¯Šúƒ[ƒhƒtƒ‰ƒO‚ğ—LŒø‚É‚µ‚Ä‚©‚çƒV[ƒ“‚ÌLoad‚ğŒÄ‚Ô
+	Loading::GetInstance()->StartAsyncLoad();
+	loadingScene->Load();
+	Loading::GetInstance()->EndAsyncLoad();
+}
+
+void SceneManager::UpdateLoading(void)
+{
+	// ƒ[ƒfƒBƒ“ƒO‰æ–Ê‚ÌXV‚ğs‚¤
+	Loading::GetInstance()->Update();
+
+	// DxLib‚Ì”ñ“¯Šúƒ[ƒh‚ÆÅ’á•\¦ŠÔ‚ª—¼•ûI‚í‚é‚Ü‚Å‘Ò‚Â
+	if (Loading::GetInstance()->IsLoading()) { return; }
+
+	// ```«ƒ[ƒhŠ®—¹«```
+
+	// ƒ[ƒh‘ÎÛ‚ğ‰Šú‰»‚·‚é
+	loadingScene->Init();
+
+	// ƒ[ƒhŠ®—¹‚µ‚½ƒV[ƒ“‚ğƒXƒ^ƒbƒN‚É“o˜^‚·‚é
+	CommitLoadedScene();
+}
+
+void SceneManager::CommitLoadedScene(void)
+{
+	// ƒ[ƒhŠ®—¹‚µ‚½ƒV[ƒ“‚ğƒXƒ^ƒbƒN‚É“o˜^‚·‚é
+	CommitScene(std::move(loadingScene), loadCommit);
+
+	// ƒtƒF[ƒh‘JˆÚ‚Ìê‡AƒV[ƒ“‚Ì“ü‚ê‘Ö‚¦‚Æ‰Šú‰»‚ª‚·‚×‚ÄI‚í‚Á‚Ä‚©‚ç–¾‚é‚­‚·‚é
+	if (loadCommit == LOAD_COMMIT::CHANGE_FADE || loadCommit == LOAD_COMMIT::JUMP_FADE) {
+		if (fade != nullptr) { fade->StartFadeIn(); }
+	}
+
+	// “Ç‚İ‚İŠ®—¹Œã‚Ì”½‰f•û–@‚ğ–¢İ’è‚É–ß‚·
+	loadCommit = LOAD_COMMIT::NONE;
+}
+
+void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT commit)
+{
+	if (scene == nullptr) { return; }
+
+	// ƒV[ƒ“Ø‚è‘Ö‚¦‚É‘OƒV[ƒ“‚ÌƒGƒtƒFƒNƒg‚ğc‚³‚È‚¢
+	if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
+
+	switch (commit) {
+
+	case LOAD_COMMIT::CHANGE:
+	case LOAD_COMMIT::CHANGE_FADE: {
+
+		// ––”ö‚¾‚¯‚ğ“ü‚ê‘Ö‚¦‚é
+		if (scenes.empty()) { scenes.emplace_back(std::move(scene)); }
+		else {
+			scenes.back()->Release();
+			scenes.back() = std::move(scene);
+		}
+
 		break;
-	case SCENE_ID::CLEAR:
-		JumpScene(std::make_shared<ClearScene>());
+	}
+
+	case LOAD_COMMIT::PUSH: {
+
+		// Šù‘¶ƒV[ƒ“‚ğc‚µ‚Ä––”ö‚Ö’Ç‰Á‚·‚é
+		scenes.emplace_back(std::move(scene));
+
 		break;
-	case SCENE_ID::GAMEOVER:
-		JumpScene(std::make_shared<GameOver>());
+	}
+
+	case LOAD_COMMIT::JUMP:
+	case LOAD_COMMIT::JUMP_FADE: {
+
+		// ‚·‚×‚Ä‰ğ•ú‚µ‚Ä‘JˆÚæ‚¾‚¯‚É‚·‚é
+		for (std::unique_ptr<SceneBase>& oldScene : scenes) {
+			if (oldScene != nullptr) { oldScene->Release(); }
+		}
+		scenes.clear();
+
+		scenes.emplace_back(std::move(scene));
+
 		break;
-	default:
-		break;
+	}
+
+	case LOAD_COMMIT::NONE:
+	default: { break; }
+
+	}
+
+	// 1”Ôã‚Éd‚È‚Á‚Ä‚¢‚éƒV[ƒ“‚ÌƒJƒƒ‰‚ğCurrentCamera‚Éİ’è‚·‚é
+	CurrentCamera::Set(scenes.back()->GetCamera());
+}
+
+std::size_t SceneManager::GetFirstUpdateIndex(void)const
+{
+	// ˆÀ‘Sˆ—
+	if (scenes.empty()) { return 0; }
+
+	// ––”ö‚©‚ç’Tõ
+	std::size_t index = scenes.size() - 1;
+
+	// ––”ö‚©‚çæ“ª‚ÖŠm”F‚µA‰º‚ÌXV‚ğ‹–‰Â‚·‚éƒV[ƒ“‚ÌŠÔ‚¾‚¯‘k‚é
+	while (index > 0 && scenes[index]->IsLowerSceneUpdate()) { index--; }
+
+	// Œ‹‰Ê‚ğ•Ô‚·
+	return index;
+}
+
+std::size_t SceneManager::GetFirstDrawIndex(void)const
+{
+	// ˆÀ‘Sˆ—
+	if (scenes.empty()) { return 0; }
+
+	// ––”ö‚©‚ç’Tõ
+	std::size_t index = scenes.size() - 1;
+
+	// ––”ö‚©‚çæ“ª‚ÖŠm”F‚µA‰º‚Ì•`‰æ‚ğ‹–‰Â‚·‚éƒV[ƒ“‚ÌŠÔ‚¾‚¯‘k‚é
+	while (index > 0 && scenes[index]->IsLowerSceneDraw()) { index--; }
+
+	// Œ‹‰Ê‚ğ•Ô‚·
+	return index;
+}
+
+std::unique_ptr<SceneBase> SceneManager::CreateScene(SCENE_ID scene)const
+{
+	switch (scene) {
+
+	case SCENE_ID::TITLE: { return std::make_unique<TitleScene>(); }
+
+	case SCENE_ID::LOBBY: { return std::make_unique<LobbyScene>(); }
+
+	case SCENE_ID::MULTI_LOBBY: { return std::make_unique<MultiLobbyScene>(); }
+
+	case SCENE_ID::GAME: { return std::make_unique<GameScene>(); }
+
+	case SCENE_ID::CLEAR: { return std::make_unique<ClearScene>(); }
+
+	case SCENE_ID::GAMEOVER: { return std::make_unique<GameOver>(); }
+
+	default: { return nullptr; }
 	}
 }
 
-void SceneManager::JumpSceneFade(std::shared_ptr<SceneBase> scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
+std::unique_ptr<FadeSceneBase> SceneManager::CreateFadeScene(FADE_TYPE fadeType, unsigned short FADE_TIME, unsigned int FADE_OUT_COLOR,	unsigned int FADE_IN_COLOR)const
 {
-	PushScene(std::make_shared<FadeInScene>(scene, FADE_TIME, FADE_COLOR, FADE_COLOR, false));
-}
+	switch (fadeType)	{
 
-void SceneManager::JumpSceneFade(SCENE_ID scene, unsigned short FADE_TIME, unsigned int FADE_COLOR)
-{
-	switch (scene)
-	{
-	case SCENE_ID::TITLE:
-		JumpSceneFade(std::make_shared<TitleScene>());
-		break;
-	case SCENE_ID::LOBBY:
-		JumpSceneFade(std::make_shared<LobbyScene>());
-		break;
-	case SCENE_ID::MULTI_LOBBY:
-		JumpSceneFade(std::make_shared<MultiLobbyScene>());
-		break;
-	case SCENE_ID::GAME:
-		JumpSceneFade(std::make_shared<GameScene>());
-		break;
-	case SCENE_ID::CLEAR:
-		JumpSceneFade(std::make_shared<ClearScene>());
-		break;
-	case SCENE_ID::GAMEOVER:
-		JumpSceneFade(std::make_shared<GameOver>());
-		break;
-	default:
-		break;
+	case FADE_TYPE::DEFAULT: { return std::make_unique<DefaultFadeScene>(FADE_TIME, FADE_OUT_COLOR, FADE_IN_COLOR); }
+
+	default: { return nullptr; }
 	}
-}
-
-void SceneManager::AnyPopAndChangeScene(char popNum, std::shared_ptr<SceneBase> scene)
-{
-	for (char i = 0; i < popNum; i++) { PopScene(); }
-	ChangeScene(scene);
 }
 
 void SceneManager::Init3D(void)
 {
-#pragma region åŸºæœ¬æç”»è¨­å®š
+#pragma region Šî–{•`‰æİ’è
 
 	SetBackgroundColor(0, 0, 0);
 	SetUseZBuffer3D(true);
@@ -304,7 +574,7 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 
-#pragma region ãƒ•ã‚©ã‚°è¨­å®š
+#pragma region ƒtƒHƒOİ’è
 
 	SetFogEnable(true);
 	SetFogColor(200, 200, 200);
@@ -312,7 +582,7 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 
-#pragma region ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°å…¨ä½“è¨­å®š
+#pragma region ƒ‰ƒCƒeƒBƒ“ƒO‘S‘Ìİ’è
 
 	SetUseLighting(true);
 	SetUseSpecular(false);
@@ -320,7 +590,7 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 
-#pragma region ãƒ¡ã‚¤ãƒ³ãƒ©ã‚¤ãƒˆè¨­å®š
+#pragma region ƒƒCƒ“ƒ‰ƒCƒgİ’è
 
 	VECTOR mainDirection = VNorm(VGet(0.0f, 0.35f, 1.0f));
 	ChangeLightTypeDir(mainDirection);
@@ -332,7 +602,7 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 
-#pragma region è£œåŠ©ãƒ©ã‚¤ãƒˆè¨­å®š
+#pragma region •â•ƒ‰ƒCƒgİ’è
 
 	fillLight = CreateDirLightHandle(VNorm(VGet(0.05f, 0.15f, 1.0f)));
 
@@ -345,7 +615,7 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 
-#pragma region ãƒªãƒ ãƒ©ã‚¤ãƒˆè¨­å®š
+#pragma region ƒŠƒ€ƒ‰ƒCƒgİ’è
 
 	rimLight = CreateDirLightHandle(VNorm(VGet(0.0f, 0.10f, -1.0f)));
 
@@ -358,7 +628,7 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 
-#pragma region ãƒãƒ†ãƒªã‚¢ãƒ«è¨­å®š
+#pragma region ƒ}ƒeƒŠƒAƒ‹İ’è
 
 	MATERIALPARAM material{};
 	material.Diffuse = GetColorF(1.0f, 1.0f, 1.0f, 1.0f);
@@ -370,3 +640,4 @@ void SceneManager::Init3D(void)
 
 #pragma endregion
 }
+

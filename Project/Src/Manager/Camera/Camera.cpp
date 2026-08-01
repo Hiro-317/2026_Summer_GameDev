@@ -8,8 +8,6 @@
 #include "../input/KeyManager.h"
 #include "InstantCamera.h"
 
-Camera* Camera::ins = nullptr;
-
 Camera::Camera(void) :
 
 	mode(MODE::NON),
@@ -66,6 +64,8 @@ void Camera::Update(void)
 {
 	// モード別関数の呼び出し
 	(this->*modeFuncPtr[(int)mode])();
+
+	Apply();
 }
 
 void Camera::Apply(void)
@@ -271,6 +271,9 @@ void Camera::ChangeModeDisplay(const Vector3& fixedLookAtPos, const Vector3& loo
 {
 	// 現在の情報を破棄
 	Release();
+
+	// マウス設定
+	Key::GetIns().SetMouseFixed(false);
 
 	// 状態遷移
 	mode = MODE::DISPLAY;

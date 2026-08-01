@@ -142,6 +142,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CurrentCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
@@ -250,8 +251,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.cpp" />
     <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
-    <ClCompile Include="Src\Scene\Common\Fade\FadeInScene.cpp" />
-    <ClCompile Include="Src\Scene\Common\Fade\FadeOutScene.cpp" />
+    <ClCompile Include="Src\Scene\Common\Fade\Default\DefaultFadeScene.cpp" />
+    <ClCompile Include="Src\Scene\Common\Fade\FadeSceneBase.cpp" />
     <ClCompile Include="Src\Scene\Common\Option\OptionScene.cpp" />
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
@@ -263,7 +264,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.cpp" />
-    <ClCompile Include="Src\Scene\Select\BossSelect.cpp" />
+    <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\Title\End\EndScene.cpp" />
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
@@ -273,6 +274,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Application\Application.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
+    <ClInclude Include="Src\Manager\Camera\CurrentCamera.h" />
     <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
     <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombBig.h" />
@@ -418,8 +420,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
-    <ClInclude Include="Src\Scene\Common\Fade\FadeInScene.h" />
-    <ClInclude Include="Src\Scene\Common\Fade\FadeOutScene.h" />
+    <ClInclude Include="Src\Scene\Common\Fade\Default\DefaultFadeScene.h" />
+    <ClInclude Include="Src\Scene\Common\Fade\FadeDefine.h" />
+    <ClInclude Include="Src\Scene\Common\Fade\FadeSceneBase.h" />
     <ClInclude Include="Src\Scene\Common\Option\OptionScene.h" />
     <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
@@ -432,7 +435,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MultiPopupScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\Password\PasswordScene.h" />
-    <ClInclude Include="Src\Scene\Select\BossSelect.h" />
+    <ClInclude Include="Src\Scene\ObjectUseDefine.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Src\Scene\Title\End\EndScene.h" />

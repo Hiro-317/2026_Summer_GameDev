@@ -2,6 +2,10 @@
 
 #include "../../../../../ActorBase.h"
 
+#include "../../../../../Common/Collider/ColliderBase.h"
+
+struct CharacterStats;
+
 class GrapeStampCollOperator : public ActorBase
 {
 public:
@@ -22,8 +26,8 @@ public:
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æÝ’è
-	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
-	void CollOn(void) { ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
+	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
+	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
 	void Off(void) { SetJudge(false); isDrawArea = false; }
 
 private:

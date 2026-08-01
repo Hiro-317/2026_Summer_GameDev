@@ -1,5 +1,7 @@
 #include "LobbyScene.h"
 
+#include "../../pch.h"
+
 #include "../../Manager/Input/KeyManager.h"
 #include "../../Manager/Camera/Camera.h"
 
@@ -7,6 +9,8 @@
 #include "../../Manager/Sound/SoundManager.h"
 
 #include "../../Scene/SceneManager/SceneManager.h"
+
+#include "../ObjectUseDefine.h"
 
 #include "CharaSelect/CharaSelectScene.h"
 #include "BossSelect/BossSelectScene.h"
@@ -18,31 +22,22 @@
 #include "../../Object/Lobby/LobbyBossPreview/LobbyBossPreview.h"
 
 
-LobbyScene::LobbyScene()
+LobbyScene::LobbyScene() :
+	SceneBase()
 {
 }
 
-void LobbyScene::Load(void)
+void LobbyScene::SubPostLoad(void)
 {
 	if (SceneManager::GetIns().GetSelectBossType() == BOSS_TYPE::None) {
 		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)((int)BOSS_TYPE::None + 1));
 	}
 
-	// 初期化も含めたオブジェクト生成のラムダ関数
-	auto ObjAdd = [&](ActorBase* newClass)->void {
-		// 配列の末尾に追加
-		objects.emplace_back(newClass);
-		// 共通の読み込み処理
-		objects.back()->Load();
-		};
-
-	// オブジェクト生成（生成の順番がそのまま(更新/描画)順）
-	//<例>ObjAdd(new Player());
-
-	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
-	ObjAdd(new LobbyCharaPreviewManager());
-	ObjAdd(new LobbyBossPreview());
+	// オブジェクト生成
+	CreateObject<SkyDome>();
+	CreateObject<LobbyStage>();
+	CreateObject<LobbyCharaPreviewManager>();
+	CreateObject<LobbyBossPreview>();
 
 #pragma region 各画像の読み込み
 
@@ -71,7 +66,7 @@ void LobbyScene::Load(void)
 #pragma endregion
 }
 
-void LobbyScene::Init(void)
+void LobbyScene::SubPostInit(void)
 {
 	SetFogEnable(false);
 
@@ -80,23 +75,17 @@ void LobbyScene::Init(void)
 
 	choice = CHOICE::CharaChange;
 
-	Camera::GetIns().ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
+	camera->ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 
 	Net::GetIns().Disconnection();
 }
 
-void LobbyScene::Update(void)
+void LobbyScene::SubPostUpdate(void)
 {
-	// オブジェクト全ての更新処理
-	for (ActorBase* obj : objects) { obj->Update(); }
-
-#pragma region 操作
-
 	// タイトル画面に戻る
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		Snd::GetIns().Play("SystemButton");
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
-		return;
 	}
 
 	// 左
@@ -132,45 +121,41 @@ void LobbyScene::Update(void)
 			// タイトル画面に戻る
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
 
-			// 以降はthisがnullptrとなっているため終了
-			return;
+			break;
 		}
 
 		case LobbyScene::CHOICE::Multi: {	// マルチ
 
 			// 専用のシーンを追加する
-			SceneManager::GetIns().PushScene(std::make_shared<MultiPopupScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<MultiPopupScene>());
 
-			// 終了
-			return;
+			break;
 		}
 
 		case LobbyScene::CHOICE::BossChange: {	// ボス変更
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_shared<BossSelectScene>(
+				std::make_unique<BossSelectScene>(
 					// ボス変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
+					[&]() { ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
 				)
 			);
 
-			// 終了
-			return;
+			break;
 		}
 
 		case LobbyScene::CHOICE::CharaChange: {	// キャラ変更
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_shared<CharaSelectScene>(
+				std::make_unique<CharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(); }
+					[&]() { ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(); }
 				)
 			);
 
-			// 終了
-			return;
+			break;
 		}
 
 		case LobbyScene::CHOICE::Enter: {	// 出撃
@@ -181,30 +166,19 @@ void LobbyScene::Update(void)
 			// ゲームシーンに遷移
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
 
-			// 以降はthisがnullptrとなっているため終了
-			return;
+			break;
 		}
 		}
 	}
-
-#pragma endregion
-
 }
 
-void LobbyScene::Draw(void)
+void LobbyScene::SubPostDraw(void)
 {
-	// オブジェクト全ての描画処理
-	for (ActorBase* obj : objects) { obj->Draw(); }
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	for (ActorBase* obj : objects) { obj->UiDraw(); }
-
 	// ボードの描画
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, 115, 1, 0, boardImage, true);
 
 	// 選択肢の描画
-	for(int i = 0; i < (int)CHOICE::Max; i++) {
+	for (int i = 0; i < (int)CHOICE::Max; i++) {
 		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)((CHOICE)i == choice)], true);
 	}
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
@@ -212,7 +186,7 @@ void LobbyScene::Draw(void)
 
 }
 
-void LobbyScene::Release(void)
+void LobbyScene::SubPreRelease(void)
 {
 	// 画像の解放
 	DeleteGraph(enterKeyImage[0]);
@@ -223,14 +197,6 @@ void LobbyScene::Release(void)
 		DeleteGraph(handlePair[1]);
 	}
 	DeleteGraph(boardImage);
-
-	// オブジェクト全ての解放処理
-	for (ActorBase*& obj : objects) {
-		if (!obj) { continue; }
-		obj->Release();
-		delete obj;
-		obj = nullptr;
-	}
 
 	SetFogEnable(true);
 }

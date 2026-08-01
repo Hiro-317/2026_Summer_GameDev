@@ -2,7 +2,7 @@
 
 #include "../../../../../../../Manager/Input/KeyManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../../../../Manager/Effect/EffectManager.h"
 
 TomatoPlayerStampState::TomatoPlayerStampState(
@@ -143,7 +143,7 @@ void TomatoPlayerStampState::JumpMove(void)
 		vec.Normalize();
 
 		// ˆÚ“®•ûŒü‚ğƒJƒƒ‰‚Å‰ñ“]‚³‚¹‚é
-		vec.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
+		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 		// ˆÚ“®—Ê‚ğ‰ÁZ
 		accelSum += vec * JUMP_MOVE_SPEED;

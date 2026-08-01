@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <vector>
 
 #include "../Transform.h"
 
@@ -177,3 +178,23 @@ protected:
 };
 
 using SHAPE = ColliderBase::SHAPE;
+
+/// <summary>
+/// 特定のコライダーを探す
+/// </summary>
+/// <typeparam name="T">探したいクラス</typeparam>
+/// <param name="tag">タグ種類</param>
+/// <returns></returns>
+template<typename T = ColliderBase>
+std::vector<T*> ColliderSerch(std::vector<ColliderBase*> collider, COLLIDER_TAG tag = COLLIDER_TAG::NON) {
+	std::vector<T*> out;
+	out.reserve(collider.size());
+
+	for (auto c : collider) {
+		if (!c) continue;
+		if (auto* ptr = dynamic_cast<T*>(c)) {
+			if (c->GetTag() == tag || tag == COLLIDER_TAG::NON) { out.push_back(ptr); }
+		}
+	}
+	return out;
+}

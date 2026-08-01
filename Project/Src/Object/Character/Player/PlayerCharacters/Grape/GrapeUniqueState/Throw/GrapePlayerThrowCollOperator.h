@@ -2,6 +2,8 @@
 #include "../../../../../../ActorBase.h"
 #include "../../../../../../../Manager/Net/NetWorkManager.h"
 
+struct CharacterStats;
+
 class GrapePlayerThrowCollOperator : public ActorBase
 {
 public:

@@ -6,6 +6,7 @@
 #include "../../SceneManager/SceneManager.h"
 
 OptionScene::OptionScene() :
+	SceneBase(),
 
 	nowSelect(SELECT::None),
 
@@ -26,7 +27,7 @@ OptionScene::OptionScene() :
 {
 }
 
-void OptionScene::Load(void)
+void OptionScene::SubPostLoad(void)
 {
 #pragma region 各画像の読み込み
 
@@ -62,13 +63,13 @@ void OptionScene::Load(void)
 
 }
 
-void OptionScene::Init(void)
+void OptionScene::SubPostInit(void)
 {
 	// 現在の選択状態を初期化
 	nowSelect = (SELECT)((int)SELECT::None + 1);
 }
 
-void OptionScene::Update(void)
+void OptionScene::SubPostUpdate(void)
 {
 	isPushMinusButton = false;
 	isPushPlusButton = false;
@@ -160,7 +161,7 @@ void OptionScene::Update(void)
 
 }
 
-void OptionScene::Draw(void)
+void OptionScene::SubPreDraw(void)
 {
 	// 画像描画のラムダ関数
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f)->void {
@@ -226,7 +227,7 @@ void OptionScene::Draw(void)
 
 }
 
-void OptionScene::Release(void)
+void OptionScene::SubPreRelease(void)
 {
 #pragma region 各画像の解放
 

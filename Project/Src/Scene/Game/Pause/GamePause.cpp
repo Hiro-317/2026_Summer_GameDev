@@ -9,6 +9,8 @@
 #include "../../../Manager/Net/NetWorkManager.h"
 
 GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
+	SceneBase(),
+
 	img(),
 	nowSelect(SELECT::YES),
 
@@ -17,24 +19,21 @@ GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
 {
 }
 
-GamePause::~GamePause()
-{
-}
-
-void GamePause::Load(void)
+void GamePause::SubPostLoad(void)
 {
 	img[(int)SELECT::YES] = LoadImg("Data/Image/Title/End/Yes.png");
 	img[(int)SELECT::NO] = LoadImg("Data/Image/Title/End/No.png");
 }
 
-void GamePause::Init(void)
+void GamePause::SubPostInit(void)
 {
 	nowSelect = SELECT::YES;
-	SoundManager::GetIns().AllStop();
+	SoundManager::GetIns().Pause();
+	Snd::GetIns().Play("SystemButton");
 	Key::GetIns().SetMouseFixed(false);
 }
 
-void GamePause::Update(void)
+void GamePause::SubPostUpdate(void)
 {
 	// 自分がポーズ画面を開いたとき
 	if (isOperator) {
@@ -43,9 +42,10 @@ void GamePause::Update(void)
 
 			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
 
-			SoundManager::GetIns().PausePlay();
+			Snd::GetIns().PausePlay();
 			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().PopScene();
+			Key::GetIns().SetMouseFixed(true);
 			return;
 		}
 
@@ -138,7 +138,7 @@ void GamePause::Update(void)
 	}
 }
 
-void GamePause::Draw(void)
+void GamePause::SubPreDraw(void)
 {
 	int xx = Application::SCREEN_SIZE_X;
 	int yy = Application::SCREEN_SIZE_Y;
@@ -152,8 +152,7 @@ void GamePause::Draw(void)
 	DrawRotaGraph(x, y, 1, 0, img[(int)nowSelect], true);
 }
 
-void GamePause::Release(void)
+void GamePause::SubPreRelease(void)
 {
 	for (auto& id : img) { DeleteGraph(id); }
-
 }

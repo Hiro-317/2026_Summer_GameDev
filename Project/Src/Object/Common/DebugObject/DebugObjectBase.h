@@ -3,7 +3,7 @@
 #include "../../ActorBase.h"
 
 #include "../../../Manager/Input/KeyManager.h"
-#include "../../../Manager/Camera/Camera.h"
+#include "../../../Manager/Camera/CurrentCamera.h"
 
 class DebugObjectBase : public ActorBase
 {
@@ -69,7 +69,7 @@ private:
 		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_DOWN).now) { vec.y--; }
 
 		// ƒJƒƒ‰‚ÌŠp“x‚É‡‚í‚¹‚ÄˆÚ“®•ûŒü‚ğ‰ñ“]‚³‚¹‚é
-		vec.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
+		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 		// ˆÚ“®
 		trans.pos += vec * 5.0f;

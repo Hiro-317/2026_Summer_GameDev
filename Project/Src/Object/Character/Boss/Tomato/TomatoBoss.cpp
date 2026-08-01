@@ -149,7 +149,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// XZコライダを消す
-			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
 			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -199,7 +199,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 角度を戻す
 			[&]() { trans.angle.x = 0; },
 			// XZコライダを消す
-			[&]() { for (auto& coll : ColliderSerch(COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
 			[&]() { SetJudge(true); },
 			// 攻撃終了後の状態遷移関数のポインタ

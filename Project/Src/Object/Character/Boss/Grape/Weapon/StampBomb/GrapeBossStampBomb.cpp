@@ -28,9 +28,9 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
 
 	trans.scale = Vector3(ATTACK_SIZE);
 
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetPushFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetPushFlg(false);
 	SetGravityFlg(true);
 	count = 0;
 }
@@ -39,13 +39,14 @@ void GrapeBossStampBomb::Load(const MSG_SENDER_ID operatorSenderId, const Charac
 {
 	CreateAttackSkill(operatorSenderId, 50, &stats);
 
-	collBack.scale = Vector3::XZonly(ATTACK_RANGE / MODEL_RADIUS, ATTACK_RANGE / MODEL_RADIUS);
+	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
+	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
 	collFront.scale = Vector3(0.0f);
 }
 
 void GrapeBossStampBomb::SubUpdate(void)
 {
-	bool i = ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->GetJudge();
+	bool i = ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->GetJudge();
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
@@ -71,11 +72,11 @@ void GrapeBossStampBomb::SubUpdate(void)
 		}
 		// 攻撃判定オン
 		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
 		}
 		//攻撃判定オフ、終わり
 		else {
-			ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
 			end = true;
 			now = false;
 			count = 0;

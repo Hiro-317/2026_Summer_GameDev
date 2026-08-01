@@ -113,7 +113,7 @@ public:
 	void Check(void);
 
 	// ƒ`ƒƒƒ“ƒN•`‰æ
-	void DrawChunkGrid(void) const;
+	void DrawChunkGrid(const Vector3& cameraPos) const;
 
 	// ‰ð•ú
 	void Clear(void) {

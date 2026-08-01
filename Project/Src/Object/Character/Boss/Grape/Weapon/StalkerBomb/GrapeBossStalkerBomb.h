@@ -1,7 +1,6 @@
 #pragma once
 #include "../GrapeBossWeaponBase.h"
 
-
 class GrapeBossStalkerBomb : public GrapeBossWeaponBase
 {
 public:

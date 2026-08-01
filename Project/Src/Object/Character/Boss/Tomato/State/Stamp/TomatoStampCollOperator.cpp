@@ -43,9 +43,9 @@ void TomatoStampCollOperator::Load(void)
 	SetJudge(false);
 
 	// UŒ‚”ÍˆÍ‚Ì“–‚½‚è”»’è
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
 
 	CreateAttackSkill(operatorSenderId, 100, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
@@ -62,8 +62,8 @@ void TomatoStampCollOperator::Load(void)
 void TomatoStampCollOperator::SubUpdate(void)
 {
 	// ‰Ÿ‚µ–ß‚³‚ê‚½êŠ‚É‚·‚×‚ÄˆÚ“®‚³‚¹‚é
-	auto pos = ColliderSerch(COLLIDER_TAG::BOSS_ATTACK_AREA).back()->GetPos();
-	ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPos(pos);
+	auto pos = ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->GetPos();
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPos(pos);
 	collBack.pos = pos;
 	collFront.pos = pos;
 	trans.pos.y = HEIGHT;

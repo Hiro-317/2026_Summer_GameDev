@@ -1,6 +1,6 @@
 #include "TomatoPlayerMoveState.h"
 
-#include "../../../../../../../Manager/Camera/Camera.h"
+#include "../../../../../../../Manager/Camera/CurrentCamera.h"
 
 TomatoPlayerMoveState::TomatoPlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
@@ -65,7 +65,7 @@ void TomatoPlayerMoveState::Update(void)
 		vec.Normalize();
 
 		// ˆÚ“®•ûŒü‚ğƒJƒƒ‰‚Å‰ñ“]‚³‚¹‚é
-		vec.TransMatOwn(MGetRotY(Camera::GetIns().GetAngle().y));
+		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 		// ˆÚ“®—Ê‚ğ‰ÁZ
 		accelSum += vec * MOVE_SPEED(isDash);

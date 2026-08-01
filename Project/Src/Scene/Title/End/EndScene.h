@@ -1,8 +1,12 @@
 #pragma once
 
+#include <string>
+
 #include "../../SceneBase.h"
 
 #include "../../../Application/Application.h"
+
+#include "../../../Common/Vector2.h"
 
 class EndScene : public SceneBase
 {
@@ -10,13 +14,34 @@ public:
 	EndScene();
 	~EndScene()override = default;
 
-	void Load(void)override;
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
-
 private:
+
+#pragma region 主要関数再定義
+
+	// 読み込み
+	void SubPostLoad(void)override;
+
+	// 初期化
+	void SubPostInit(void)override;
+
+	// 更新
+	void SubPostUpdate(void)override;
+
+	// 描画
+	void SubPreDraw(void)override;
+
+	// 終了
+	void SubPreRelease(void);
+
+#pragma endregion
+
+	bool IsUseLoadingScreen(void)const { return false; }
+
+	// カメラは使用しない
+	bool UseCamera(void)const override { return false; }
+
+	// 当たり判定管理は使用しない
+	bool UseCollisionManager(void)const override { return false; }
 
 #pragma region 定数
 
