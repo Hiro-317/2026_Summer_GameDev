@@ -144,7 +144,7 @@ void BossBase::CharacterUpdate(void)
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 				// センダーIDと死んだ奴が同じならスキップ
-				if (id == i || nowDeath.at(id)) { continue; }
+				if (nowDeath.at(id)) { continue; }
 				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
 				if (mostDamaged < damaged.at(id)) {
 					mostDamaged = damaged.at(id);
