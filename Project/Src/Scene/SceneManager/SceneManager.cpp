@@ -136,11 +136,11 @@ void SceneManager::Draw(void)
 		for (std::size_t i = firstIndex; i < scenes.size(); i++) { scenes[i]->Draw(); }
 	}
 
-	// ロード中はシーンの上へLoading画面を描画する
-	if (loadingScene != nullptr) { Loading::GetInstance()->Draw(); }
-
 	// フェードは必ず最前面へ描画する
 	if (fade != nullptr) { fade->Draw(); }
+
+	// ロード中はシーンの上へLoading画面を描画する
+	if (loadingScene != nullptr) { Loading::GetInstance()->Draw(); }
 }
 
 #pragma region 公開シーン遷移関数
