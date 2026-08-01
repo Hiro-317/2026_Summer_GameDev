@@ -82,16 +82,13 @@ void GrapePlayer::PlayerLoad(void)
 
 #pragma region 状態設定
 
-
-
-
 	AddState(
 		(int)STATE::SKILL_1,
 		new GrapePlayerShotState(
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			[&]() { return state == (int)STATE::SKILL_1; },
 			*SubObjSerch<GrapePlayerShotCollOperator>(),
-			SKILL3_COOL_TIME,
+			SKILL1_COOL_TIME,
 			trans.pos, trans.angle,
 			bossPos,
 			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
@@ -139,7 +136,7 @@ void GrapePlayer::PlayerLoad(void)
 			// 設置爆弾の
 			*SubObjSerch<GrapePlayerBombCollOperator>(),
 			// クールタイム
-			SKILL1_COOL_TIME,
+			SKILL3_COOL_TIME,
 			// プレイヤーの座標
 			trans.pos,
 			// アニメーション再生関数のポインタ
@@ -150,9 +147,6 @@ void GrapePlayer::PlayerLoad(void)
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
-
-
-	bossPos;
 
 	// 移動状態を追加する
 	AddState(
@@ -211,8 +205,6 @@ void GrapePlayer::PlayerLoad(void)
 			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
 		)
 	);
-
-	state;
 
 	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
 	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
@@ -352,32 +344,20 @@ void GrapePlayer::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	//while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
-	//	state = dataPtr->state;
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+		state = dataPtr->state;
 
-	//	switch ((STATE)state) {
-	//	case PlayerBase::STATE::SKILL_1: {
-	//		SubObjSerch<GrapePlayerBombCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::SKILL_2: {
-	//		SubObjSerch<GrapePlayerThrowCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::SKILL_3: {
-	//		SubObjSerch<GrapePlayerShotCollOperator>()->ResetIsHit();
-	//		break;
-	//	}
-	//	case PlayerBase::STATE::DEATH: {
-	//		PlayerDeathSetting();
-	//		break;
-	//	}
+		switch ((STATE)state) {
+		case PlayerBase::STATE::DEATH: {
+			PlayerDeathSetting();
+			break;
+		}
 
-	//	default: { break; }
-	//	}
+		default: { break; }
+		}
 
-	//	delete dataPtr;
-	//}
+		delete dataPtr;
+	}
 
 	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(operatorSenderId)) {
 		

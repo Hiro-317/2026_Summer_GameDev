@@ -22,15 +22,15 @@ void BananaScratchCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos(), EndPos(), 30.0f);
+		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos(), EndPos(), 30.0f)
 	);
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
 	SetJudge(false);
 
-	collBack.Load("Range/LineRangeBack");
-	collFront.Load("Range/LineRangeFront");
+	collBack.Load("Range/CircleRangeBack");
+	collFront.Load("Range/CircleRangeFront");
 
 	collBack.pos = Vector3::Yonly(HEIGHT);
 	collFront.pos = Vector3::Yonly(HEIGHT);

@@ -28,7 +28,7 @@ void TomatoBossDeathState::Update(void)
 
 		cnt++;
 		angle.y += ROTATION_POW;
-		scale = scale * SCALE_POW;
+		scale *= SCALE_POW;
 	}
 	else {
 		Net::GetIns().Send(MsgDataBossIsDeath(true));

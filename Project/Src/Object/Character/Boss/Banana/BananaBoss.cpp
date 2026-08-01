@@ -30,10 +30,6 @@
 
 BananaBoss::BananaBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
 	BossBase(
-		"HP",
-		"AttackPower",
-		"DefensePower",
-		"MoveSpeed",
 		"Data/Parameter/Character/Boss/Banana/",
 		"Banana/Banagon",
 
@@ -134,11 +130,12 @@ void BananaBoss::PlayerLoad(void)
 			HP_FRAME_IMAGE_NAME,
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
+			"", "", "",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS,
 			FILE_PATH_TYPE::BOSS_HP,
-			"BananaBoss"
+			""
 		)
 	);
 
