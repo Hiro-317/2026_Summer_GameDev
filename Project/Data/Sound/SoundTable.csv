@@ -19,3 +19,4 @@ Kick,Data/Sound/Se/Game/Boss/Grape/Kick.mp3,GrapeBoss,SE,0.8,False,1
 StampJump,Data/Sound/Se/Game/Boss/Grape/StampJump.mp3,GrapeBoss,SE,0.7,False,1
 StampLand,Data/Sound/Se/Game/Boss/Grape/StampLand.mp3,GrapeBoss,SE,0.5,False,1
 Throw,Data/Sound/Se/Game/Boss/Grape/Throw.mp3,GrapeBoss,SE,0.7,False,1
+Lobby,Data/Sound/BGM/LobbyBgm.mp3,Lobby,BGM,0.5,True,1

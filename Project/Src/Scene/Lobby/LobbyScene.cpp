@@ -68,6 +68,9 @@ void LobbyScene::SubPostLoad(void)
 
 void LobbyScene::SubPostInit(void)
 {
+	Snd::GetIns().ChangeScene("Lobby");
+	Snd::GetIns().Play("Lobby");
+
 	SetFogEnable(false);
 
 	// オブジェクト全ての初期化処理
