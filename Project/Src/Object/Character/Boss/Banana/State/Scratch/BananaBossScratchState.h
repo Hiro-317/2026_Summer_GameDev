@@ -47,6 +47,7 @@ private:
 #pragma region ’è”
 
 	static constexpr float ATTACK_RATE = 0.5f;
+	static constexpr float END_RATE = 0.8f;
 
 #pragma endregion
 

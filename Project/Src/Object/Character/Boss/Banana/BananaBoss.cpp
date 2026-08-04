@@ -53,8 +53,8 @@ void BananaBoss::PlayerLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Shoulder.R")));
-	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Hand.R")));
+	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
+	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
 	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, StartFrame, EndFrame));
 
@@ -99,8 +99,8 @@ void BananaBoss::PlayerLoad(void)
 			SubObjSerch<BananaScratchCollOperator>(),
 			// フレーム座標の更新
 			[&]() {
-				StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Shoulder.R")));
-				EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Hand.R")));
+				StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
+				EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 			},
 			// 攻撃アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH, false); },

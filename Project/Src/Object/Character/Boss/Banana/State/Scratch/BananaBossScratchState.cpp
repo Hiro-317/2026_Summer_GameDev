@@ -50,6 +50,9 @@ void BananaBossScratchState::Update(void)
 		cnt++;
 
 		// UŒ‚Ž‘±ŽžŠÔ‚Ì”»’è
+		if (GetAnimPlayRatio() >= END_RATE) {
+			collOperator->CollSet(false);
+		}
 		if (IsAnimeEnd()) {
 
 			DefaultChangeState();
@@ -59,7 +62,7 @@ void BananaBossScratchState::Update(void)
 	}
 	else {
 		// UŒ‚•`‰æ‚ðXV
-		collOperator->SetScale(GetAnimPlayRatio());
+		collOperator->SetScale(GetAnimPlayRatio() / ATTACK_RATE);
 		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, Vector3(), GetAnimPlayRatio()));
 	}
 }
@@ -67,7 +70,6 @@ void BananaBossScratchState::Update(void)
 void BananaBossScratchState::Exit(void)
 {
 	collOperator->SetDrawArea(false);
-	collOperator->CollSet(false);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 }
 
