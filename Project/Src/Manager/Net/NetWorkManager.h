@@ -20,8 +20,6 @@ private:
 	NetWorkManager();
 	~NetWorkManager() = default;
 
-	static constexpr int PORT_NUMBER = 54321;
-
 public:
 #pragma region シングルトン定義
 	// 生成/初期化
@@ -176,40 +174,62 @@ public:
 #pragma region ホスト操作
 	// ホストとして受付開始
 	bool StartHost(void) {
-		// 接続受付を開始する
-		ENetAddress address = ENetAddress(ENET_HOST_ANY, PORT_NUMBER);
+		// すでにホストが存在している場合は失敗
+		if (host != nullptr) { return false; }
+
+		ENetAddress address{};
+		address.host = ENET_HOST_ANY;
+
+		// 0を指定するとOSが空いているポートを自動割り当て
+		address.port = 0;
+
+		// 生成
 		host = enet_host_create(&address, (size_t)MSG_SENDER_ID::Max, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
 
-		// セッティング失敗として「false」を返し終了
+		// 生成に失敗したら「操作失敗」として処理を中断する
 		if (host == nullptr) { return false; }
 
-		// 成功～～～～～～～～～～～～～～～～～～～～～～～
+		// 実際にOSから割り当てられたポート番号を取得
+		ENetAddress localAddress{};
+		if (enet_socket_get_address(host->socket, &localAddress) != 0) {
+			enet_host_destroy(host);
+			host = nullptr;
 
-		// 状態を「ホストとして待機中」に設定する
-		state = NetState::Hosting;
+			return false;
+		}
 
-		// 送信IDを設定
+		// 実際にOSから割り当てられたポート番号を取得
+		localGamePort = localAddress.port;
+
+		// ホスト
 		senderId = HOST_SENDER_ID;
 
-		// 接続状況を更新
+		// 接続情報初期化
+		connectInfo.clear();
+
+		// 接続状態初期化
 		connectStatus.Reset();
 
-		// ブロードキャスト送信のためのUDPソケットを生成する
-		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword);
+		// 新しいHostAddressProviderを生成
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword, host, localGamePort);
 
-		// ウィンドウテキストを設定
+		// 状態を更新
+		state = NetState::Hosting;
+
+		// ウィンドウテキストをホストとして設定
 		SetWindowText("<ホスト> P1");
 
-		// セッティング成功として「true」を返し終了
 		return true;
 	}
 
 	// 接続受付を終了し、「接続完了・プレイ中」の状態へ遷移する
 	void CloseReceptionToConnected(void) {
 		// ホストアドレス取得クラスの削除
-		hostAddressProvider->End();
-		delete hostAddressProvider;
-		hostAddressProvider = nullptr;
+		if (hostAddressProvider != nullptr) {
+			hostAddressProvider->End();
+			delete hostAddressProvider;
+			hostAddressProvider = nullptr;
+		}
 
 		// クライアントに接続人数確定（接続待ち終了）の通知を送る
 		Send(MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::CloseReceptionToConnected));
@@ -224,20 +244,44 @@ public:
 
 	// クライアントとして接続
 	void ConnectClient(void) {
-		bool socketCreate = false;
-		while (!socketCreate) {
-			hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, addressProviderPassword);
-			socketCreate = hostAddressProvider->SocketCreateResult();
-			if (!socketCreate) {
-				hostAddressProvider->End();
-				delete hostAddressProvider;
-				hostAddressProvider = nullptr;
-			}
+
+		// 重複して呼ばれないように
+		if (host != nullptr) { return; }
+
+		// クライアント用ENetHost生成
+		ENetAddress bindAddress{};
+		// 全NICで受信可能
+		bindAddress.host = ENET_HOST_ANY;
+		// OSに空いているポートを自動で割り当ててもらう
+		bindAddress.port = 0;
+
+		// 生成
+		host = enet_host_create(&bindAddress, 1, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
+
+		// 生成失敗
+		if (host == nullptr) { state = NetState::Error; return; }
+
+		// OSから実際に割り当てられたポート番号を取得
+		ENetAddress localAddress{};
+		if (enet_socket_get_address(host->socket, &localAddress) != 0) {
+
+			enet_host_destroy(host);
+			host = nullptr;
+
+			state = NetState::Error;
+
+			return;
 		}
 
-		host = enet_host_create(nullptr, 1, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
+		localGamePort = localAddress.port;
 
-		// 状態を「クライアントとして接続中」に設定する
+		// HostAddressProvider生成
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, addressProviderPassword, host, localGamePort);
+
+		// SenderIDはホスト接続後に決定
+		senderId = MSG_SENDER_ID::Max;
+
+		// 接続中へ
 		state = NetState::Connecting;
 	}
 
@@ -283,6 +327,8 @@ private:
 	HostAddressProvider* hostAddressProvider;
 	// アドレス取得用あいことば
 	unsigned short addressProviderPassword;
+	// OSから自動割り当てされた、ENetゲーム通信用ポート
+	enet_uint16 localGamePort;
 
 	// 送信ID
 	MSG_SENDER_ID senderId;
@@ -469,6 +515,9 @@ private:
 			enet_host_destroy(host);
 			host = nullptr;
 		}
+
+		// ENetゲームポートを未設定に戻す
+		localGamePort = 0;
 
 		// 送信者IDを未設定に戻す
 		senderId = MSG_SENDER_ID::None;
