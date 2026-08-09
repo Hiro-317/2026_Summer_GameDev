@@ -29,6 +29,7 @@
 
 #include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
 #include "../../Object/Stage/GrapeBoss/GrapeBossStage.h"
+#include "../../Object/Stage/BananaBoss/BananaBossStage.h"
 
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 #include "../../Object/Common/DebugObject/SphereDebugObject.h"
@@ -45,6 +46,17 @@ void GameScene::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("Game");
 
+	// 選択ボスを取得
+	BOSS_TYPE selectBossType = SceneManager::GetIns().GetSelectBossType();
+
+	// ステージを生成
+	switch (selectBossType) {
+	case BOSS_TYPE::Tomato: { CreateObject<TomatoBossStage>(); break; }
+	case BOSS_TYPE::Grape: { CreateObject<GrapeBossStage>(); break; }
+	default: { break; }
+	}
+
+	// プレイヤーを生成
 	CreateObject<PlayerManager>();
 
 	// 接続されているプレイヤー数座標を取得する
@@ -60,18 +72,11 @@ void GameScene::SubPostLoad(void)
 		live.emplace_back(&ObjSerch<PlayerManager>(objects)->GetPlayerIns((MSG_SENDER_ID)id)->GetIsDeath());
 	}
 
-	switch (SceneManager::GetIns().GetSelectBossType())
-	{
-	case BOSS_TYPE::Tomato:
-		CreateObject<TomatoBoss>(pos, live);
-		CreateObject<TomatoBossStage>();
-		break;
-	case BOSS_TYPE::Grape:
-		CreateObject<GrapeBoss>(pos, live);
-		CreateObject<GrapeBossStage>();
-		break;
-	default:
-		break;
+	// ボスを生成
+	switch (selectBossType) {
+	case BOSS_TYPE::Tomato: { CreateObject<TomatoBoss>(pos, live); break; }
+	case BOSS_TYPE::Grape: { CreateObject<GrapeBoss>(pos, live); break; }
+	default: { break; }
 	}
 
 	// プレイヤーにボスの座標をわたす
