@@ -174,10 +174,6 @@ void NetWorkManager::ConnectingUpdate(void)
         if (peer == nullptr) { state = NetState::Error; return; }
 
         connectInfo.emplace_back(peer, HOST_SENDER_ID);
-
-        printfDx("Connect Endpoint : %s:%u\n", endpoint.ip.c_str(), (unsigned int)endpoint.port);
-
-        printfDx("Connection Route : %d\n", (int)route);
     }
 
     // ENetƒCƒxƒ“ƒgˆ—

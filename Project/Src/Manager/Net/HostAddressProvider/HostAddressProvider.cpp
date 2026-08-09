@@ -6,20 +6,7 @@
 #include <sstream>
 #include <iomanip>
 
-//#include <Windows.h>
-//#include <WinSock2.h>
-//#include <WS2tcpip.h>
-
-
-//==============================================================
-// コンストラクタ
-//==============================================================
-HostAddressProvider::HostAddressProvider(
-	MODE mode,
-	unsigned short roomNumber,
-	ENetHost* enetHost,
-	enet_uint16 localPort
-) :
+HostAddressProvider::HostAddressProvider(MODE mode, unsigned short roomNumber, ENetHost* enetHost, enet_uint16 localPort) :
 	mode(mode),
 	state(STATE::Initialize),
 
@@ -45,38 +32,21 @@ HostAddressProvider::HostAddressProvider(
 	punchSendCounter(0),
 	punchCount(0)
 {
-	//----------------------------------------------------------
 	// ENetHostチェック
-	//----------------------------------------------------------
-	if (this->enetHost == nullptr) {
-		state = STATE::Error;
-		return;
-	}
+	if (this->enetHost == nullptr) { state = STATE::Error; return; }
 
-	//----------------------------------------------------------
 	// Machine ID取得
-	//----------------------------------------------------------
 	machineId = GetOrCreateMachineId();
 
-	if (machineId.empty()) {
-		state = STATE::Error;
-		return;
-	}
+	if (machineId.empty()) { state = STATE::Error; return; }
 
-	//----------------------------------------------------------
 	// LAN内IPv4取得
-	//----------------------------------------------------------
 	localEndpoint.ip = GetLocalIPv4();
 
-	if (localEndpoint.ip.empty()) {
-		state = STATE::Error;
-		return;
-	}
+	if (localEndpoint.ip.empty()) { state = STATE::Error; return; }
 
-	//----------------------------------------------------------
 	// NetWorkManager側で取得した
 	// ENet自身のポート番号
-	//----------------------------------------------------------
 	localEndpoint.port = localPort;
 
 	if (localEndpoint.port == 0) {
@@ -84,21 +54,13 @@ HostAddressProvider::HostAddressProvider(
 		return;
 	}
 
-	//----------------------------------------------------------
 	// Oracle制御通信用UDPソケット
-	//
 	// 0 = OSに空きポートを選ばせる
-	//----------------------------------------------------------
 	controlSocket = MakeUDPSocket(0);
 
-	if (controlSocket == -1) {
-		state = STATE::Error;
-		return;
-	}
+	if (controlSocket == -1) { state = STATE::Error; return; }
 
-	//----------------------------------------------------------
 	// 初期化完了
-	//----------------------------------------------------------
 	state = STATE::Register;
 }
 
@@ -110,14 +72,10 @@ void HostAddressProvider::Update(void)
 {
 	if (state == STATE::Complete || state == STATE::Error) { return; }
 
-	//----------------------------------------------------------
 	// Oracleからのメッセージを毎フレーム確認
-	//----------------------------------------------------------
 	ReceiveServerMessage();
 
-	//----------------------------------------------------------
 	// MODE別更新
-	//----------------------------------------------------------
 	switch (mode) {
 
 	case MODE::Host:
