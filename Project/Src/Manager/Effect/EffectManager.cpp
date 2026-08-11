@@ -17,10 +17,10 @@ EffectManager::~EffectManager()
 	delete parameter;
 }
 
-void EffectManager::Update(void) {
+void EffectManager::UpdateEffect(void) {
 
 	for (auto info = effectInfo.begin(); info != effectInfo.end();) {
-		(*info)->Update();
+		(*info)->UpdateEffect();
 		if ((*info)->IsEnd()) { (*info)->Release(); delete (*info); info = effectInfo.erase(info); }
 		else { info++; }
 	}
@@ -60,6 +60,27 @@ void EffectManager::ReceptionUpdate(void) {
 	}
 }
 
+void EffectManager::DrawEffect(void)
+{
+	for (auto& effect : effectInfo) {
+		effect->DrawEffect();
+	}
+}
+
+void EffectManager::PauseEffect(void)
+{
+	for (auto& effect : effectInfo) {
+		effect->PauseEffect();
+	}
+}
+
+void EffectManager::PlayEffect(void)
+{
+	for (auto& effect : effectInfo) {
+		effect->PlayEffect();
+	}
+}
+
 void EffectManager::CreateEffect(EFFECT_NAME name, const Vector3& local, const Transform* follow,
 	bool followRotX, bool followRotY, bool followRotZ) {
 
@@ -78,7 +99,7 @@ void EffectManager::StopEffect(EFFECT_NAME name) {
 
 void EffectManager::StopEffectAll(void)
 {
-	for (auto effect : effectInfo) {
+	for (auto& effect : effectInfo) {
 		effect->StopEffect();
 		delete effect;
 		effect = nullptr;

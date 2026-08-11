@@ -12,6 +12,7 @@
 
 #include "../Manager/Camera/Camera.h"
 #include "../Manager/Collision/CollisionManager.h"
+#include "../Manager/Effect/EffectManager.h"
 #include "../Object/ActorBase.h"
 
 int SceneBase::hitStop = 0;
@@ -150,7 +151,9 @@ void SceneBase::Draw(void)
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	// Effekseer•`‰æ
-	DrawEffekseer3D();
+	DrawEffekseer3D_Begin(); 
+	EffectManager::GetIns()->DrawEffect();
+	DrawEffekseer3D_End();
 
 #pragma endregion
 

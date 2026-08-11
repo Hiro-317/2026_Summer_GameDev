@@ -16,13 +16,21 @@ public:
 	static EffectManager* GetIns(void) { return ins; };
 	static void DeleteIns(void) { if (ins != nullptr) { delete ins; ins = nullptr; } }
 
-	void Update(void);
+	void UpdateEffect(void);
 	void ReceptionUpdate(void);
+
+	void DrawEffect(void);
 
 	void CreateEffect(EFFECT_NAME name, const Vector3& local, const Transform* follow = nullptr,
 		bool followRotX = true, bool followRotY = true, bool followRotZ = true);
 	void StopEffect(EFFECT_NAME name);
 	void StopEffectAll(void);
+
+	// àÍéûí‚é~
+	void PauseEffect(void);
+
+	// çƒê∂(àÍéûí‚é~å„)
+	void PlayEffect(void);
 
 private:
 

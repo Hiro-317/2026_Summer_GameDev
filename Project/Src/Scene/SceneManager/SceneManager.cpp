@@ -452,9 +452,6 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 {
 	if (scene == nullptr) { return; }
 
-	// シーン切り替え時に前シーンのエフェクトを残さない
-	if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
-
 	switch (commit) {
 
 	case LOAD_COMMIT::CHANGE:

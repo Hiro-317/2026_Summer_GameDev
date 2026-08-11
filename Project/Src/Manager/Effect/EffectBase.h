@@ -33,7 +33,7 @@ struct EFFECT_INFO
 	EFFECT_NAME name = EFFECT_NAME::NON;
 	Transform trans = Transform();
 	const Transform* follow = nullptr;
-	int speed = -1;
+	bool flg = true;
 	bool followRotX;
 	bool followRotY;
 	bool followRotZ;
@@ -47,7 +47,7 @@ public:
 	virtual ~EffectBase() = default;
 
 	// çXêV
-	virtual void Update(void)
+	virtual void UpdateEffect(void)
 	{
 		// ï`âÊäJén
 		if (playHandle == -1) {
@@ -103,6 +103,12 @@ public:
 		}
 	}
 
+	virtual void DrawEffect(void) {
+		if (info.flg) {
+			DrawEffekseer3D_Draw(playHandle);
+		}
+	}
+
 	virtual void Release(void) 
 	{
 		// è¡Ç∑
@@ -121,6 +127,15 @@ public:
 
 		SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.y, pos.z);
 		SetRotationPlayingEffekseer3DEffect(playHandle, angle.x, angle.y, angle.z);
+	}
+
+	// àÍéûí‚é~
+	void PauseEffect(void) {
+		info.flg = false;
+	}
+	// çƒê∂(àÍéûí‚é~å„)
+	void PlayEffect(void) {
+		info.flg = true;
 	}
 
 	bool IsEnd(void) { return end; }

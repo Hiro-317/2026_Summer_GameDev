@@ -284,7 +284,7 @@
     <ClInclude Include="Src\Scene\GameOver\GameOver.h" />
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
-    <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
+    <ClInclude Include="Src\Scene\Game\Pause\GamePause.h" />
     <ClInclude Include="Src\Scene\Lobby\BossSelect\BossSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
