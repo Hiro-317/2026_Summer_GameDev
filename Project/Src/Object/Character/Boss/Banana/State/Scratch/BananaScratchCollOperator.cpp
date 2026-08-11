@@ -20,7 +20,7 @@ void BananaScratchCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	ColliderCreate(
-		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos, EndPos, 150.0f)
+		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos, EndPos, RADIUS)
 	);
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);

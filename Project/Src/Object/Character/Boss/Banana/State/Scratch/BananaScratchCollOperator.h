@@ -26,7 +26,6 @@ public:
 	void CollSet(bool flg) { SetJudge(flg); }
 	void Off(void) { isDrawArea = false; SetJudge(false); }
 
-	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 
 	// 攻撃フレームの更新
@@ -42,6 +41,9 @@ private:
 
 	// コライダー描画の高さ
 	const float HEIGHT = 37.0f;
+
+	// コライダーの半径
+	const float RADIUS = 150.0f;
 
 	// コライダー描画の拡大率
 	const Vector3 SCALE = Vector3(4.75f, 1.0f, 3.0f);

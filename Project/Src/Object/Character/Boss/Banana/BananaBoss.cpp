@@ -12,12 +12,8 @@
 #include "State/Idle/BananaBossIdleState.h"
 #include "State/Scratch/BananaBossScratchState.h"
 #include "State/Scratch/BananaScratchCollOperator.h"
-//#include "State/Straight/GrapeBossStraightState.h"
-//#include "State/Stamp/GrapeBossStampState.h"
-//#include "State/Stamp/GrapeStampCollOperator.h"
-//#include "State/Single/GrapeBossSingleState.h"
-//#include "State/Stalker/GrapeBossStalkerState.h"
-//#include "State/Random/GrapeBossRandomState.h"
+#include "State/Fire/BananaBossFireState.h"
+#include "State/Fire/BananaFireCollOperator.h"
 #include "State/Death/BananaBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -57,6 +53,7 @@ void BananaBoss::PlayerLoad(void)
 	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
 	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, INIT_POS, StartFrame, EndFrame));
+	subObjArray.push_back(new BananaFireCollOperator(operatorSenderId, characterStats));
 
 	AddState(
 		static_cast<int>(STATE::IDLE),
@@ -74,9 +71,9 @@ void BananaBoss::PlayerLoad(void)
 			// アイドルアニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
 			// ひっかきへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_A); }//,
-			//// 投擲への状態遷移関数のポインタ
-			//[&]() { ChangeState((int)STATE::ATTACK_B); },
+			[&]() { ChangeState((int)STATE::ATTACK_A); },
+			// 吐く攻撃への状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_B); }//,
 			//// スタンプへの状態遷移関数のポインタ
 			//[&]() { ChangeState((int)STATE::ATTACK_C); },
 			//// ひとつ追従への状態遷移関数のポインタ
@@ -104,6 +101,27 @@ void BananaBoss::PlayerLoad(void)
 			},
 			// 攻撃アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH, false); },
+			// アニメーションの再生割合を取得する関数のポインタ 
+			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = SCRATCH_COOLTIME; }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_B),
+		new BananaBossFireState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_B); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
+			// コライダへのポインタ
+			SubObjSerch<BananaFireCollOperator>(),
+			// 攻撃アニメーションの再生
+			[&]() { AnimePlay((int)ANIME_TYPE::BREATH, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
