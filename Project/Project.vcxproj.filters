@@ -132,6 +132,9 @@
     <ClCompile Include="Src\Scene\Common\Fade\FadeSceneBase.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BananaBoss\BananaBossStage.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Fire\EffectFire.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -306,6 +309,9 @@
     <ClInclude Include="Src\Scene\Common\Fade\FadeSceneBase.h" />
     <ClInclude Include="Src\Scene\ObjectUseDefine.h" />
     <ClInclude Include="Src\Object\Stage\BananaBoss\BananaBossStage.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.h" />
+    <ClInclude Include="Src\Manager\Effect\Fire\EffectFire.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

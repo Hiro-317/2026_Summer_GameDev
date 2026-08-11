@@ -2,6 +2,7 @@
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../../Manager/Effect/EffectManager.h"
 
 BananaBossFireState::BananaBossFireState(
 	const std::function<void(void)>& ownChangeState,
@@ -26,6 +27,7 @@ BananaBossFireState::BananaBossFireState(
 void BananaBossFireState::Enter(void)
 {
 	first = true;
+	effect = false;
 	SetCoolTime();
 	PlayAttackAnim();
 	collOperator->SetDrawArea(true);
@@ -34,7 +36,12 @@ void BananaBossFireState::Enter(void)
 
 void BananaBossFireState::Update(void)
 {
-	// アニメーションが終わっていたらステートを抜ける
+	// アニメーションのある再生割合以上で
+	if (GetAnimPlayRatio() >= EFFECT_RATE && !effect) {
+		// エフェクト生成
+		effect = true;
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::FIRE, EFFECT_POS);
+	}
 	if (GetAnimPlayRatio() >= ATTACK_RATE) {
 		// アニメーションの再生割合で生成
 		if (first) {

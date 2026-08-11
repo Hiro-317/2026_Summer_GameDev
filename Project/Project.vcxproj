@@ -148,6 +148,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
     <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
     <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Fire\EffectFire.cpp" />
     <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
     <ClCompile Include="Src\Manager\Effect\StampLand\EffectStampLand.cpp" />
     <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
@@ -286,6 +287,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
     <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />
     <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
+    <ClInclude Include="Src\Manager\Effect\Fire\EffectFire.h" />
     <ClInclude Include="Src\Manager\Effect\Heal\EffectHeal.h" />
     <ClInclude Include="Src\Manager\Effect\StampLand\EffectStampLand.h" />
     <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />

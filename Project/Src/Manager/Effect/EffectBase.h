@@ -22,6 +22,7 @@ enum class EFFECT_NAME {
 	STAMP_SHOCK_WAVE,
 	BOMB_SMALL,
 	BOMB_BIG,
+	FIRE,
 
 	MAX
 };
@@ -51,6 +52,14 @@ public:
 		// 描画開始
 		if (playHandle == -1) {
 			playHandle = PlayEffekseer3DEffect(info.trans.model);
+			// 追従しないなら
+			if (info.follow == nullptr) {
+				// 初期値を代入
+				SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
+				SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+			}
+			// サイズの更新
+			SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 		}
 		// 描画が終わっているなら消す
 		if (IsEffekseer3DEffectPlaying(playHandle) == -1) {
@@ -92,14 +101,6 @@ public:
 				Net::GetIns().Send(MsgDataEffectFollow((int)info.name, pos, info.trans.angle));
 			}
 		}
-		// 追従しないなら
-		else {
-			// 初期値を代入
-			SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
-			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
-		}
-		// サイズの更新
-		SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 	}
 
 	virtual void Release(void) 
