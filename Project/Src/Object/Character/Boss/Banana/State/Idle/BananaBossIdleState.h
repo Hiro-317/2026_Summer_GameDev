@@ -20,7 +20,7 @@ public:
 	/// <param name="PlayIdleAnim">アイドルアニメーションの再生</param>
 	/// <param name="PlayWalkAnim">歩きアニメーションの再生</param>
 	/// <param name="MoveChangeState">歩くへのステート</param>
-	/// <param name="KickDownChangeState">かかと落としへのステート</param>
+	/// <param name="ScratchChangeState">ひっかきへのステート</param>
 	/// <param name="StraightChangeState">直線投擲へのステート</param>
 	/// <param name="StampChangeState">スタンプ攻撃へのステート</param>
 	/// <param name="SingleChangeState">一発攻撃へのステート</param>
@@ -33,8 +33,8 @@ public:
 		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> CoolTime,
 		const std::function<int(void)> GetTarget,
-		const std::function<void(void)> PlayIdleAnim/*,
-		const std::function<void(void)> KickDownChangeState,
+		const std::function<void(void)> PlayIdleAnim,
+		const std::function<void(void)> ScratchChangeState/*,
 		const std::function<void(void)> StraightChangeState,
 		const std::function<void(void)> StampChangeState,
 		const std::function<void(void)> SingleChangeState,
@@ -73,7 +73,7 @@ private:
 	const std::function<void(void)> PlayIdleAnim;
 
 	// キックへ
-	const std::function<void(void)> KickDownChangeState;
+	const std::function<void(void)> ScratchChangeState;
 	// 投擲へ
 	const std::function<void(void)> StraightChangeState;
 	// スタンプへ
