@@ -11,7 +11,8 @@ LobbyCharaPreviewBase::LobbyCharaPreviewBase(const Vector3& pos, unsigned char o
 	playAnimeType(0),
 
 	OPERATOR_IMAGE_PATH("Data/Image/Lobby/P" + std::to_string(operatorNumber) + ".png"),
-	operatorImage(-1)
+	operatorImage(-1),
+	operatorImagePos(600.0f)
 {
 	trans.pos = pos;
 }
@@ -50,7 +51,9 @@ void LobbyCharaPreviewBase::Update(void)
 
 void LobbyCharaPreviewBase::SubDraw(void)
 {
-	DrawBillboard3D((trans.pos + Vector3::Yonly(600.0f)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+	if (operatorImage != -1) {
+		DrawBillboard3D((trans.pos + Vector3::Yonly(operatorImagePos)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+	}
 }
 
 void LobbyCharaPreviewBase::SubRelease(void)

@@ -16,5 +16,8 @@ private:
 
 		// モデルのスケール
 		trans.scale = 2.5f;
+
+		// 操作者を示すイメージの高さ
+		operatorImagePos = 400.0f;
 	}
 };

@@ -17,12 +17,11 @@ private:
 		// モデルを読み込む
 		trans.Load("Character/Orange/OrangeModel");
 
-		trans.scale = 2.0f;
-		trans.centerDiff = Vector3::Yonly(-265);
-		trans.angle.x = Deg2Rad(15.0f);
+		trans.scale = 1.35f;
+		trans.centerDiff = Vector3::Yonly(-210);
 
 		// アニメーションを登録する
-		AddAnimation("Data/Model/Character/Orange/Anime/Idle.mv1", 1.0f);
+		AddInFbxAnimation(10, 1.0f, 0);
 
 		CHARA_NAME = "リモネン";
 

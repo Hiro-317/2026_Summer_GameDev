@@ -31,7 +31,7 @@ public:
 
 	// 攻撃フレームの更新
 	void SetColliderFrame(void) { 
-		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(COLLIDER_TAG::BOSS_ATTACK).back());
+		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(GetCollider(),COLLIDER_TAG::BOSS_ATTACK).back());
 		coll->SetStartPos(StartPos); coll->SetEndPos(EndPos);
 	}
 

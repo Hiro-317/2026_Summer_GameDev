@@ -46,9 +46,7 @@ void OrangePlayer::PlayerLoad(void)
 	CreateAnimationController();
 
 	// ŠeíƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚·‚é
-	for (int i = 0; i < (int)ANIME_TYPE::MAX; i++) {
-		AddAnimation(i, ANIME_SPEED_TABLE[i], ANIME_PATH_TABLE[i].c_str());
-	}
+	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED_TABLE);
 
 	// ```````````````````````````````````
 
