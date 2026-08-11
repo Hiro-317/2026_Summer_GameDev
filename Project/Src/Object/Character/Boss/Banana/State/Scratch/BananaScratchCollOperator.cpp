@@ -4,11 +4,13 @@
 BananaScratchCollOperator::BananaScratchCollOperator(
 	const MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& stats,
+	const Vector3& pos,
 	const Vector3& StartPos,
 	const Vector3& EndPos
 ) :
 	operatorSenderId(operatorSenderId),
 	stats(stats),
+	pos(pos),
 	StartPos(StartPos), EndPos(EndPos),
 	collBack(),	collFront()
 {
@@ -25,8 +27,8 @@ void BananaScratchCollOperator::Load(void)
 	SetPushFlg(false);
 	SetJudge(false);
 
-	collBack.centerDiff = DIFF;
-	collFront.centerDiff = DIFF;
+	collBack.centerDiff = Vector3::XZonly(pos.x, pos.z) + DIFF;
+	collFront.centerDiff = Vector3::XZonly(pos.x, pos.z) + DIFF;
 
 	collBack.Load("Range/CircleRangeBack");
 	collFront.Load("Range/CircleRangeFront");

@@ -56,7 +56,7 @@ void BananaBoss::PlayerLoad(void)
 	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
 	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
-	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, StartFrame, EndFrame));
+	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, INIT_POS, StartFrame, EndFrame));
 
 	AddState(
 		static_cast<int>(STATE::IDLE),

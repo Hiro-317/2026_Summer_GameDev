@@ -51,7 +51,8 @@ void BananaBossScratchState::Update(void)
 
 		// UŒ‚Ž‘±ŽžŠÔ‚Ì”»’è
 		if (GetAnimPlayRatio() >= END_RATE) {
-			collOperator->CollSet(false);
+			collOperator->Off();
+			Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 		}
 		if (IsAnimeEnd()) {
 
@@ -69,8 +70,6 @@ void BananaBossScratchState::Update(void)
 
 void BananaBossScratchState::Exit(void)
 {
-	collOperator->SetDrawArea(false);
-	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 }
 
 void BananaBossScratchState::AlwaysUpdate(void)

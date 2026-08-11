@@ -53,6 +53,7 @@ void GameScene::SubPostLoad(void)
 	switch (selectBossType) {
 	case BOSS_TYPE::Tomato: { CreateObject<TomatoBossStage>(); break; }
 	case BOSS_TYPE::Grape: { CreateObject<GrapeBossStage>(); break; }
+	case BOSS_TYPE::Banana: { CreateObject<BananaBossStage>(); break; }
 	default: { break; }
 	}
 
@@ -76,6 +77,7 @@ void GameScene::SubPostLoad(void)
 	switch (selectBossType) {
 	case BOSS_TYPE::Tomato: { CreateObject<TomatoBoss>(pos, live); break; }
 	case BOSS_TYPE::Grape: { CreateObject<GrapeBoss>(pos, live); break; }
+	case BOSS_TYPE::Banana: { CreateObject<BananaBoss>(pos, live); break; }
 	default: { break; }
 	}
 
