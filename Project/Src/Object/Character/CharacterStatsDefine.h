@@ -258,7 +258,7 @@ public:
 	}
 
 	// バフ/デバフ の補正倍率(バフ/デバフ)の構造体を生成して返す
-	const ModifierData& ModifierPower(void)const {
+	ModifierData ModifierPower(void)const {
 		return ModifierData(modifierType, SKILL_POWER, SKILL_TIME);
 	}
 
