@@ -169,7 +169,7 @@ void PasswordScene::SelectZeroKeyOperator(void)
 		nowNumberKey = NUMBER_KEY::Nine;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down && !nowTypingPass.empty()) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectOneKeyOperator(void)

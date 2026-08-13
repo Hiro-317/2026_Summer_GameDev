@@ -251,6 +251,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
     <ClCompile Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.cpp" />
     <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
+    <ClCompile Include="Src\Scene\BossSelect\BossSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\Default\DefaultFadeScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\FadeSceneBase.cpp" />
@@ -258,8 +259,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
-    <ClCompile Include="Src\Scene\Lobby\BossSelect\BossSelectScene.cpp" />
-    <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.cpp" />
@@ -421,6 +422,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\UI\UIDefine.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\pch.h" />
+    <ClInclude Include="Src\Scene\BossSelect\BossSelectScene.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\Default\DefaultFadeScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\FadeDefine.h" />
@@ -430,8 +432,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
-    <ClInclude Include="Src\Scene\Lobby\BossSelect\BossSelectScene.h" />
-    <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
+    <ClInclude Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.h" />
+    <ClInclude Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />

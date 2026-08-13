@@ -1,10 +1,10 @@
-#include "BossSelectScene.h"
+#include "LobbyBossSelectScene.h"
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
 #include "../../SceneManager/SceneManager.h"
 
-BossSelectScene::BossSelectScene(
+LobbyBossSelectScene::LobbyBossSelectScene(
 	const std::function<void(void)>& LobbyPreviewBossChange,
 	const std::function<void(void)>& LobbyReceptionUpdate
 ):
@@ -23,7 +23,7 @@ BossSelectScene::BossSelectScene(
 {
 }
 
-void BossSelectScene::SubPostLoad(void)
+void LobbyBossSelectScene::SubPostLoad(void)
 {
 #pragma region 画像の読み込み
 	// ボス選択画像
@@ -42,7 +42,7 @@ void BossSelectScene::SubPostLoad(void)
 #pragma endregion
 }
 
-void BossSelectScene::SubPostInit(void)
+void LobbyBossSelectScene::SubPostInit(void)
 {
 	selectBossType = SceneManager::GetIns().GetSelectBossType();
 	if (selectBossType <= BOSS_TYPE::None || BOSS_TYPE::Max <= selectBossType) { selectBossType = (BOSS_TYPE)((int)BOSS_TYPE::None + 1); }
@@ -50,7 +50,7 @@ void BossSelectScene::SubPostInit(void)
 	easingCounter = easingRate = 0.0f;
 }
 
-void BossSelectScene::SubPostUpdate(void)
+void LobbyBossSelectScene::SubPostUpdate(void)
 {
 	// 戻る
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -104,7 +104,7 @@ void BossSelectScene::SubPostUpdate(void)
 	if (LobbyReceptionUpdate != nullptr) { LobbyReceptionUpdate(); }
 }
 
-void BossSelectScene::SubPostDraw(void)
+void LobbyBossSelectScene::SubPostDraw(void)
 {
 	// 画面全体を半透明の黒で塗りつぶす
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
@@ -129,7 +129,7 @@ void BossSelectScene::SubPostDraw(void)
 	DrawImageToVector2I(EXIT_IMAGE_POS, exitImage[(int)Key::GetIns().LastInputKinds()], 1.0f + easingRate);
 }
 
-void BossSelectScene::SubPreRelease(void)
+void LobbyBossSelectScene::SubPreRelease(void)
 {
 #pragma region 画像の解放
 	// ボス選択画像

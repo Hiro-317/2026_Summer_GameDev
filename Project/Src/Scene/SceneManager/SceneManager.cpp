@@ -386,7 +386,7 @@ void SceneManager::ApplyRequest(SceneRequest request)
 	}
 
 	// 1番上に重なっているシーンのカメラをCurrentCameraに設定する
-	CurrentCamera::Set(scenes.back()->GetCamera());
+	SetCurrentCamera();
 }
 
 void SceneManager::StartLoad(std::unique_ptr<SceneBase> scene, LOAD_COMMIT commit)
@@ -500,7 +500,7 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 	}
 
 	// 1番上に重なっているシーンのカメラをCurrentCameraに設定する
-	CurrentCamera::Set(scenes.back()->GetCamera());
+	SetCurrentCamera();
 }
 
 std::size_t SceneManager::GetFirstUpdateIndex(void)const
@@ -560,6 +560,28 @@ std::unique_ptr<FadeSceneBase> SceneManager::CreateFadeScene(FADE_TYPE fadeType,
 	case FADE_TYPE::DEFAULT: { return std::make_unique<DefaultFadeScene>(FADE_TIME, FADE_OUT_COLOR, FADE_IN_COLOR); }
 
 	default: { return nullptr; }
+	}
+}
+
+void SceneManager::SetCurrentCamera(void) const
+{
+	// 安全処理
+	if (scenes.empty()) { CurrentCamera::Set(nullptr); return; }
+
+	// 末尾から先頭へ確認し、カメラを使用しているシーンを探す
+	for (int index = scenes.size() - 1; index >= 0; index--) {
+
+		// カメラのインスタンスのポインターを取得
+		Camera* cameraIns = scenes.at(index)->GetCamera();
+
+		// 取得したインスタンスが有効かどうか
+		if (cameraIns == nullptr) { continue; }
+
+		// 有効ならそれをカレントカメラに設定
+		CurrentCamera::Set(cameraIns);
+
+		// 終了
+		break;
 	}
 }
 

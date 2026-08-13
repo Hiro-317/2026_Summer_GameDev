@@ -183,11 +183,14 @@ void MultiPopupScene::SubPostDraw(void)
 
 	DrawRotaGraph(1100, 130, 1, 0, passwordFrameImage, true);
 	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Key::GetIns().LastInputKinds()], true);
-	DrawFormatStringToHandle(
-		1060, 119,
-		0x000000, Font::GetIns().GetFont(FontKinds::DELASUKO_GOTHIC_45),
-		std::to_string(Net::GetIns().GetAddressProviderPassword()).c_str()
-	);
+	unsigned short providerPassword = Net::GetIns().GetAddressProviderPassword();
+	if (providerPassword != 0) {
+		DrawFormatStringToHandle(
+			1060, 119,
+			0x000000, Font::GetIns().GetFont(FontKinds::DELASUKO_GOTHIC_45),
+			std::to_string(providerPassword).c_str()
+		);
+	}
 
 	// ‘I‘ðŽˆ
 	for (int i = 0; i < (int)SELECT::Max; i++) {

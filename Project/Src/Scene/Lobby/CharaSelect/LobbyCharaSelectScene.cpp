@@ -1,4 +1,4 @@
-#include "CharaSelectScene.h"
+#include "LobbyCharaSelectScene.h"
 
 #include "../../../Application/Application.h"
 
@@ -10,7 +10,7 @@
 
 #include "../../../Object/Lobby/CharaSelectScene/CharaSelectPreviewManager.h"
 
-CharaSelectScene::CharaSelectScene(
+LobbyCharaSelectScene::LobbyCharaSelectScene(
 	const std::function<void(void)>& LobbyPreviewCharaChange,
 	const std::function<void(void)>& LobbyReceptionUpdate
 ) :
@@ -21,7 +21,7 @@ CharaSelectScene::CharaSelectScene(
 {
 }
 
-void CharaSelectScene::SubPostLoad(void)
+void LobbyCharaSelectScene::SubPostLoad(void)
 {
 	// ëIëÉLÉÉÉâÇÃèâä˙âª
 	MSG_SENDER_ID sederId = Net::GetIns().GetSenderId();
@@ -31,7 +31,7 @@ void CharaSelectScene::SubPostLoad(void)
 	CreateObject<CharaSelectPreviewManager>(selectCharaType);
 }
 
-void CharaSelectScene::SubPostUpdate(void)
+void LobbyCharaSelectScene::SubPostUpdate(void)
 {
 	// ñﬂÇÈ
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -91,7 +91,7 @@ void CharaSelectScene::SubPostUpdate(void)
 	if (LobbyReceptionUpdate != nullptr) { LobbyReceptionUpdate(); }
 }
 
-void CharaSelectScene::SubPreDraw(void)
+void LobbyCharaSelectScene::SubPreDraw(void)
 {
 	// âÊñ ëSëÃÇîºìßñæÇÃçïÇ≈ìhÇËÇ¬Ç‘Ç∑
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);

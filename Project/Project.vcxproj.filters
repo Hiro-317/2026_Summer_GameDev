@@ -111,8 +111,8 @@
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
-    <ClCompile Include="Src\Scene\Lobby\BossSelect\BossSelectScene.cpp" />
-    <ClCompile Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.cpp" />
+    <ClCompile Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.cpp" />
@@ -132,6 +132,7 @@
     <ClCompile Include="Src\Scene\Common\Fade\FadeSceneBase.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BananaBoss\BananaBossStage.cpp" />
+    <ClCompile Include="Src\Scene\BossSelect\BossSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -282,8 +283,8 @@
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
-    <ClInclude Include="Src\Scene\Lobby\BossSelect\BossSelectScene.h" />
-    <ClInclude Include="Src\Scene\Lobby\CharaSelect\CharaSelectScene.h" />
+    <ClInclude Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.h" />
+    <ClInclude Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiPopup\MatchingLoadingScene.h" />
@@ -306,6 +307,7 @@
     <ClInclude Include="Src\Scene\Common\Fade\FadeSceneBase.h" />
     <ClInclude Include="Src\Scene\ObjectUseDefine.h" />
     <ClInclude Include="Src\Object\Stage\BananaBoss\BananaBossStage.h" />
+    <ClInclude Include="Src\Scene\BossSelect\BossSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

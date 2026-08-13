@@ -226,6 +226,9 @@ private:
 	// 描画する一番下のシーン番号を調べる
 	std::size_t GetFirstDrawIndex(void)const;
 
+	// カレントカメラの更新
+	void SetCurrentCamera(void)const;
+
 	// シーンスタック
 	std::vector<std::unique_ptr<SceneBase>> scenes;
 

@@ -6,14 +6,14 @@
 
 #include "../../../Object/CharaTypeDefine.h"
 
-class CharaSelectScene : public SceneBase
+class LobbyCharaSelectScene : public SceneBase
 {
 public:
-	CharaSelectScene(
+	LobbyCharaSelectScene(
 		const std::function<void(void)>& LobbyPreviewCharaChange,
 		const std::function<void(void)>& LobbyReceptionUpdate = nullptr
 	);
-	~CharaSelectScene()override = default;
+	~LobbyCharaSelectScene()override = default;
 
 private:
 

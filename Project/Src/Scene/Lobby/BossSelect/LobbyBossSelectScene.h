@@ -11,14 +11,14 @@
 
 #include "../../../Common/Vector2.h"
 
-class BossSelectScene : public SceneBase
+class LobbyBossSelectScene : public SceneBase
 {
 public:
-	BossSelectScene(
+	LobbyBossSelectScene(
 		const std::function<void(void)>& LobbyPreviewBossChange,
 		const std::function<void(void)>& LobbyReceptionUpdate = nullptr
 	);
-	~BossSelectScene()override = default;
+	~LobbyBossSelectScene()override = default;
 
 private:
 

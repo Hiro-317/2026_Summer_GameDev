@@ -12,8 +12,8 @@
 
 #include "../ObjectUseDefine.h"
 
-#include "BossSelect/BossSelectScene.h"
-#include "CharaSelect/CharaSelectScene.h"
+#include "BossSelect/LobbyBossSelectScene.h"
+#include "CharaSelect/LobbyCharaSelectScene.h"
 
 #include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
@@ -174,7 +174,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_unique<BossSelectScene>(
+				std::make_unique<LobbyBossSelectScene>(
 					// ボス変更シーンから戻ってきたときに、プレビューを更新
 					[&]() { ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); },
 					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
@@ -192,7 +192,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_unique<CharaSelectScene>(
+				std::make_unique<LobbyCharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
 					[&]() { ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(Net::GetIns().GetSenderId()); },
 					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
