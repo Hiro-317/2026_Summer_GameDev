@@ -54,21 +54,13 @@ class HostAddressProvider
 {
 public:
 
-	enum class MODE
-	{
-		Host,
-		Client,
-
-		Max
-	};
+	// ƒ‚[ƒhiƒzƒXƒg or ƒNƒ‰ƒCƒAƒ“ƒgj
+	enum class MODE { Host, Client, Max };
 
 private:
 
-	//==========================================================
-	// “à•”ó‘Ô
-	//==========================================================
-	enum class STATE
-	{
+	// XVó‘Ô
+	enum class STATE {
 		// ‰Šú‰»’¼Œã
 		Initialize,
 
@@ -90,138 +82,95 @@ private:
 
 public:
 
-	//==========================================================
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	//
-	// mode
-	//     Host / Client
-	//
-	// roomNumber
-	//     ‚ ‚¢‚±‚Æ‚Î
-	//
-	// enetHost
-	//     NetWorkManager‚ª¶¬‚µ‚½ENetHost
-	//
-	// localPort
-	//     OS‚©‚ç©“®Š„‚è“–‚Ä‚³‚ê‚½ENet‚Ìƒ|[ƒg
-	//==========================================================
-	HostAddressProvider(
-		MODE mode,
-		unsigned short roomNumber,
-		ENetHost* enetHost,
-		enet_uint16 localPort
-	);
-
+	/// <summary>
+	/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	/// </summary>
+	/// <param name="mode">ƒzƒXƒg or ƒNƒ‰ƒCƒAƒ“ƒg</param>
+	/// <param name="roomNumber">‚ ‚¢‚±‚Æ‚Î</param>
+	/// <param name="enetHost">NetWorkManager‚ª¶¬‚µ‚½ENetHost</param>
+	/// <param name="localPort">OS‚©‚ç©“®Š„‚è“–‚Ä‚³‚ê‚½ENet‚Ìƒ|[ƒg</param>
+	HostAddressProvider(MODE mode, unsigned short roomNumber, ENetHost* enetHost, enet_uint16 localPort);
 	~HostAddressProvider() = default;
 
-	//==========================================================
 	// XV
-	//==========================================================
 	void Update(void);
-
-	//==========================================================
 	// I—¹
-	//==========================================================
 	void End(void);
 
-	//==========================================================
-	// ƒNƒ‰ƒCƒAƒ“ƒg—p
-	//
-	// ÅI“I‚ÉŒˆ’è‚µ‚½Ú‘±æ‚ğæ“¾‚·‚éB
-	//
-	// ‚Ü‚¾ŒŸõ’†‚È‚ç falseB
-	// Œˆ’èÏ‚İ‚È‚ç trueB
-	//==========================================================
-	bool GetConnectEndpoint(
-		NetEndpoint& endpoint,
-		CONNECTION_ROUTE& route
-	) const;
+	/// <summary>
+	/// iƒNƒ‰ƒCƒAƒ“ƒg—pjÅI“I‚ÉŒˆ’è‚µ‚½Ú‘±æ‚ğæ“¾
+	/// </summary>
+	/// <param name="endpoint"></param>
+	/// <param name="route"></param>
+	/// <returns>true = Œˆ’èÏ‚İAfalse = ‚Ü‚¾ŒŸõ’†</returns>
+	bool GetConnectEndpoint(NetEndpoint& endpoint, CONNECTION_ROUTE& route) const;
 
-	//==========================================================
-	// ó‘ÔŠm”F
-	//==========================================================
-	bool IsComplete(void) const
-	{
-		return state == STATE::Complete;
-	}
 
-	bool IsError(void) const
-	{
-		return state == STATE::Error;
-	}
+	// ó‘ÔŠm”FiŠ®—¹j
+	bool IsComplete(void) const { return state == STATE::Complete; }
 
-	//==========================================================
+	// ó‘ÔŠm”FiƒGƒ‰[j
+	bool IsError(void) const { return state == STATE::Error; }
+
 	// ENetƒQ[ƒ€ƒ|[ƒg
-	//==========================================================
-	enet_uint16 GetLocalPort(void) const
-	{
-		return localEndpoint.port;
-	}
+	enet_uint16 GetLocalPort(void) const { return localEndpoint.port; }
 
 private:
 
-	//==========================================================
-	// ƒ}ƒbƒ`ƒ“ƒOƒT[ƒo[
-	//==========================================================
+#pragma region ƒ}ƒbƒ`ƒ“ƒOƒT[ƒo[
 
 	// Oracle Cloud
-	static constexpr const char* MATCH_SERVER_IP =
-		"161.33.190.216";
+	static constexpr const char* MATCH_SERVER_IP = "161.33.190.216";
 
 	// Oracle‘¤‚Ì§Œä—pUDPƒ|[ƒg
-	static constexpr int MATCH_SERVER_PORT =
-		50000;
+	static constexpr int MATCH_SERVER_PORT = 50000;
 
-	//==========================================================
-	// ƒ^ƒCƒ€ƒAƒEƒg“™
-	//==========================================================
+#pragma endregion
+
+
+#pragma region ƒ^ƒCƒ€ƒAƒEƒg“™
 
 	// ƒT[ƒo[‚Ö‚ÌÄ‘—ŠÔŠu
-	static constexpr int SERVER_SEND_COOLTIME =
-		60;
+	static constexpr int SERVER_SEND_COOLTIME = 60;
 
 	// Hole Punch‘—MŠÔŠu
-	static constexpr int PUNCH_SEND_COOLTIME =
-		10;
+	static constexpr int PUNCH_SEND_COOLTIME = 10;
 
 	// Hole PunchÅ‘å‘—M‰ñ”
-	static constexpr int PUNCH_MAX_COUNT =
-		60;
+	static constexpr int PUNCH_MAX_COUNT = 60;
+
+#pragma endregion
+
 
 private:
 
-	//==========================================================
-	// Šî–{î•ñ
-	//==========================================================
+#pragma region Šî–{î•ñ
 
+	// ƒ‚[ƒhiƒzƒXƒg or ƒNƒ‰ƒCƒAƒ“ƒgj
 	MODE mode;
 
+	// XVó‘Ô
 	STATE state;
 
+	// ‚ ‚¢‚±‚Æ‚Î
 	unsigned short roomNumber;
 
 	// ‚±‚ÌPC‚ğ¯•Ê‚·‚éID
 	std::string machineId;
 
-	//==========================================================
-	// ENet
-	//==========================================================
+#pragma endregion
 
+	// ENet
 	// NetWorkManager‚ªŠ—LB
 	// HostAddressProvider‘¤‚Å‚Ídelete‚µ‚È‚¢B
 	ENetHost* enetHost;
 
-	//==========================================================
 	// Oracle§Œä—pƒ\ƒPƒbƒg
-	//
 	// ENet‚Æ‚Í•ÊB
 	// ƒ}ƒbƒ`ƒ“ƒOî•ñ‚Ì‚â‚èæ‚èê—pB
-	//==========================================================
 	int controlSocket;
 
-	//==========================================================
-	// ©•ª©g‚ÌÚ‘±î•ñ
-	//==========================================================
+	// ©•ª©g‚ÌÚ‘±î•ñ``````````````````
 
 	// LAN“à
 	NetEndpoint localEndpoint;
@@ -229,9 +178,10 @@ private:
 	// Oracle‚©‚çŠÏ‘ª‚³‚ê‚½ENet‘¤Public Endpoint
 	NetEndpoint publicEndpoint;
 
-	//==========================================================
-	// ƒzƒXƒgî•ñ
-	//==========================================================
+	// ``````````````````©•ª©g‚ÌÚ‘±î•ñ
+
+
+	// ƒzƒXƒgî•ñ````````````````````````
 
 	std::string hostMachineId;
 
@@ -239,17 +189,19 @@ private:
 
 	NetEndpoint hostPublicEndpoint;
 
-	//==========================================================
-	// ÅI“I‚ÉNetWorkManager‚Ö“n‚·Ú‘±æ
-	//==========================================================
+	// ````````````````````````ƒzƒXƒgî•ñ
+
+
+	// ÅI“I‚ÉNetWorkManager‚Ö“n‚·Ú‘±æ````````````
 
 	NetEndpoint connectEndpoint;
 
 	CONNECTION_ROUTE connectionRoute;
 
-	//==========================================================
-	// ƒJƒEƒ“ƒ^
-	//==========================================================
+	// ````````````ÅI“I‚ÉNetWorkManager‚Ö“n‚·Ú‘±æ
+
+
+	// ƒJƒEƒ“ƒ^`````````````````````````
 
 	int serverSendCounter;
 
@@ -257,19 +209,18 @@ private:
 
 	int punchCount;
 
+	// `````````````````````````ƒJƒEƒ“ƒ^
+
 private:
 
-	//==========================================================
-	// ƒ‚[ƒh•ÊXV
-	//==========================================================
-
+	// ƒzƒXƒg—pXV
 	void HostUpdate(void);
 
+	// ƒNƒ‰ƒCƒAƒ“ƒg—pXV
 	void ClientUpdate(void);
 
-	//==========================================================
-	// OracleŠÖ˜A
-	//==========================================================
+
+	// OracleŠÖ˜A````````````````````````
 
 	// ©•ª©g‚ğOracle‚Ö“o˜^
 	void RegisterToServer(void);
@@ -281,25 +232,16 @@ private:
 	// NATŒã‚ÌPublic IP / Port‚ğOracle‚ÉŠÏ‘ª‚³‚¹‚é
 	void SendEndpointProbe(void);
 
-	//==========================================================
-	// NAT Hole Punch
-	//==========================================================
+	// ````````````````````````OracleŠÖ˜A
 
-	// ‘Šè‚ÌPublic Endpoint‚ÖA
-	// ENet©g‚Ìƒ\ƒPƒbƒg‚©‚çUDP‚ğ‘—M
-	void SendPunchPacket(
-		const NetEndpoint& endpoint
-	);
 
-	//==========================================================
+	// ‘Šè‚ÌPublic Endpoint‚ÖAENet©g‚Ìƒ\ƒPƒbƒg‚©‚çUDP‚ğ‘—M
+	void SendPunchPacket(const NetEndpoint& endpoint);
+
 	// Ú‘±æŒˆ’è
-	//==========================================================
-
 	void DecideConnectionRoute(void);
 
-	//==========================================================
-	// PC / LANî•ñ
-	//==========================================================
+	// PC / LANî•ñ```````````````````````
 
 	// PCŒÅ—LID‚Ìæ“¾E¶¬
 	std::string GetOrCreateMachineId(void);
@@ -307,16 +249,14 @@ private:
 	// LAN“àIPv4æ“¾
 	std::string GetLocalIPv4(void);
 
-	//==========================================================
-	// ƒ†[ƒeƒBƒŠƒeƒB
-	//==========================================================
+	// ```````````````````````PC / LANî•ñ
 
-	bool SendControlMessage(
-		const std::string& message
-	);
 
-	bool SendRawFromENet(
-		const NetEndpoint& endpoint,
-		const std::string& message
-	);
+	// ƒ†[ƒeƒBƒŠƒeƒB``````````````````````
+
+	bool SendControlMessage(const std::string& message);
+
+	bool SendRawFromENet(const NetEndpoint& endpoint, const std::string& message);
+
+	// ``````````````````````ƒ†[ƒeƒBƒŠƒeƒB
 };

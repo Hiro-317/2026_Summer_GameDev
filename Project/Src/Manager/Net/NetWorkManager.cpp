@@ -208,8 +208,6 @@ void NetWorkManager::ConnectingUpdate(void)
         ENetPeer* peer = enet_host_connect(host, &address, (size_t)MSG_DATA_CHANNEL::Max, 0);
 
         if (peer == nullptr) { state = NetState::Error; return; }
-
-        connectInfo.emplace_back(peer, HOST_SENDER_ID);
     }
 
     // ENetイベント処理
@@ -219,13 +217,16 @@ void NetWorkManager::ConnectingUpdate(void)
 
         // 接続成功
         if (event.type == ENET_EVENT_TYPE_CONNECT) {
+
+            // 状態を更新
             state = NetState::Connected;
 
-            // 新規接続情報
+            // 接続先を保存
+            connectInfo.emplace_back(event.peer, HOST_SENDER_ID);
+
+            // 新規接続確立を情報として保存
             MsgDataConnectInform* connectInform = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect);
-
             connectInform->header.senderId = HOST_SENDER_ID;
-
             msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(connectInform);
 
             continue;
