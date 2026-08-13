@@ -370,7 +370,9 @@ void MultiLobbyScene::ReceptionUpdate(void)
 			}
 
 			// キャラプレビューを更新する
-			ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(dataPtr->header.senderId);
+			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max; id++) {
+				ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara((MSG_SENDER_ID)id);
+			}
 
 			// 最新状態の選択キャラを送りなおす
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {

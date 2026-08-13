@@ -73,7 +73,7 @@ void SceneBase::Init(void)
 	SubPreInit();
 
 	// カメラ初期化
-	if (camera != nullptr) { camera->ChangeModeFree(Deg2Rad(5.0f), 10.0f); }
+	if (camera != nullptr) { camera->ChangeModeFixedPoint(Vector3(), Vector3()); }
 
 	// シーンが所有するActorをすべて初期化する
 	for (ActorBase* obj : objects) { obj->Init(); }

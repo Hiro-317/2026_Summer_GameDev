@@ -45,6 +45,40 @@ void NetWorkManager::Update()
 // 解放
 void NetWorkManager::Release()
 {
+    if (state != NetState::None) {
+
+        // 接続中の強制終了の場合、ここで切断要求を送る
+        Disconnection();
+
+        // 接続相手が切断要求を受け取らないままpeerを消去する恐れがあるため、
+        // 切断完了の通知を受け取るまでここで待つ（無限ループ防止のため 1000回 のループを制限とする（60FPS基準でおよそ15秒程度））
+        for (unsigned short i = 0; i < 1000; i++) {
+
+            // イベント受信用の一時変数
+            ENetEvent event;
+
+            // 切断完了の通知を受け取ったらそのpeerを消去する
+            while (enet_host_service(host, &event, 0) > 0) {
+                switch (event.type) {
+
+                case ENET_EVENT_TYPE_CONNECT: { break; }
+                case ENET_EVENT_TYPE_RECEIVE: { enet_packet_destroy(event.packet); break; }
+
+                case ENET_EVENT_TYPE_DISCONNECT: {
+                    for (auto it = connectInfo.begin(); it != connectInfo.end(); it++) {
+                        // 接続情報を消去
+                        if (it->peer == event.peer) { connectInfo.erase(it); break; }
+                    }
+                    break;
+                }
+                }
+            }
+
+            // 接続情報が全てなくなったらループ終了
+            if (connectInfo.empty()) { break; }
+        }
+    }
+
     // リセット
     DisconnectionComplete();
 
@@ -104,15 +138,17 @@ void NetWorkManager::HostingUpdate(void)
                     disConnectInfo->header.senderId = it->senderId;
                     msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)it->senderId].emplace_back(disConnectInfo);
 
-                    // 接続状況を更新（末尾を消す）
-                    connectStatus.RemoveMember();
-                    // 新しい接続状況を送る
-                    Send(MsgDataConnectStatus(connectStatus));
-
-					// 接続情報を消去
+                    // 接続情報を消去
                     connectInfo.erase(it);
+
 					// 新しい接続情報をもとにクライアントの送信IDを割り当てなおす
                     ReassignSenderId();
+
+                    // 接続状況を更新（末尾を消す）
+                    connectStatus.RemoveMember();
+
+                    // 新しい接続状況を送る
+                    Send(MsgDataConnectStatus(connectStatus));
 
                     break;
                 }

@@ -428,10 +428,12 @@ void SceneManager::UpdateLoading(void)
 	// ```«ƒ[ƒhŠ®—¹«```
 
 	// ƒ[ƒh‘ÎÛ‚ð‰Šú‰»‚·‚é
-	loadingScene->Init();
+	//loadingScene->Init();
 
 	// ƒ[ƒhŠ®—¹‚µ‚½ƒV[ƒ“‚ðƒXƒ^ƒbƒN‚É“o˜^‚·‚é
 	CommitLoadedScene();
+
+	scenes.back()->Init();
 }
 
 void SceneManager::CommitLoadedScene(void)
