@@ -114,7 +114,7 @@ MultifuncCamera::MultifuncCamera(bool mode, const Vector3* targetPos, const Vect
 MultifuncCamera::MultifuncCamera(const Vector3* targetPos, const Vector3* focusPos, float TARGET_DISTANCE_MIN, float TARGET_DISTANCE_MAX, float fov) :
 	CameraBase(Vector3(), Vector3(), fov),
 
-	mode(MODE::FixedPoint),
+	mode(MODE::FollowAuto),
 
 	modeFunc(), modeApply(),
 
@@ -697,7 +697,7 @@ void MultifuncCamera::FollowYawModeFunc(void)
 	}
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
 	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x, angle.y) }));
 }
 
