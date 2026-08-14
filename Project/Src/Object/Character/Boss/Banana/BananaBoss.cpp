@@ -14,6 +14,8 @@
 #include "State/Scratch/BananaScratchCollOperator.h"
 #include "State/Fire/BananaBossFireState.h"
 #include "State/Fire/BananaFireCollOperator.h"
+#include "State/Boomerang/BananaBossBoomerangState.h"
+#include "State/Boomerang/BananaBossBanamerang.h"
 #include "State/Death/BananaBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -54,6 +56,7 @@ void BananaBoss::PlayerLoad(void)
 
 	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, INIT_POS, StartFrame, EndFrame));
 	subObjArray.push_back(new BananaFireCollOperator(operatorSenderId, characterStats));
+	subObjArray.push_back(new BananaBossBanamerang(operatorSenderId, characterStats));
 
 	AddState(
 		static_cast<int>(STATE::IDLE),
@@ -73,9 +76,9 @@ void BananaBoss::PlayerLoad(void)
 			// ひっかきへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_A); },
 			// 吐く攻撃への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_B); }//,
-			//// スタンプへの状態遷移関数のポインタ
-			//[&]() { ChangeState((int)STATE::ATTACK_C); },
+			[&]() { ChangeState((int)STATE::ATTACK_B); },
+			// バナメランへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_C); }//,
 			//// ひとつ追従への状態遷移関数のポインタ
 			//[&]() { ChangeState((int)STATE::ATTACK_D); },
 			//// たくさん追従への状態遷移関数のポインタ
@@ -124,6 +127,32 @@ void BananaBoss::PlayerLoad(void)
 			[&]() { AnimePlay((int)ANIME_TYPE::BREATH, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
+			// アニメーションの終了フラグを取得する関数のポインタ
+			[&]() { return IsAnimeEnd(); },
+			// 攻撃終了後の状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::IDLE); },
+			// クールタイムの設定
+			[&]() { coolTime = SCRATCH_COOLTIME; }
+		)
+	);
+	AddState(
+		static_cast<int>(STATE::ATTACK_C),
+		new BananaBossBoomerangState(
+			// 自分の状態に遷移する関数
+			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
+			// 自分の状態かどうかを返す関数
+			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
+			// コライダへのポインタ
+			SubObjSerch<BananaBossBanamerang>(),
+			// 手の座標
+			[&]() { return Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R"))); },
+			// 溜めアニメーションの再生
+			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH_START, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH_LOOP, true); },
+			// 攻撃アニメーションの再生
+			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH_END, false); },
+			// 攻撃後のアニメーションの再生
+			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ

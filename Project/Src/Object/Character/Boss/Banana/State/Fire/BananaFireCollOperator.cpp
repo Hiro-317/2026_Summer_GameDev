@@ -12,7 +12,7 @@ BananaFireCollOperator::BananaFireCollOperator(
 
 void BananaFireCollOperator::Load(void)
 {
-	// プレイヤー当たり判定を生成する（XZコライダー）
+	// プレイヤー当たり判定を生成する（球体コライダー）
 	ColliderCreate(
 		new SphereCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS)
 	);
