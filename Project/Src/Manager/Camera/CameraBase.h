@@ -57,6 +57,8 @@ public:
 	const Vector3& GetPos(void)const { return pos; }
 	// Šp“x
 	const Vector3& GetAngle(void)const { return angle; }
+	// Ž‹–ìŠp
+	float GetFov(void)const { return fov; }
 #pragma endregion
 
 #pragma region ƒZƒbƒgŠÖ”
@@ -64,6 +66,8 @@ public:
 	void SetPos(const Vector3& pos) { this->pos = pos; }
 	// Šp“x
 	void SetAngle(const Vector3& angle) { this->angle = angle; }
+	// Ž‹–ìŠp
+	void SetFov(float fov) { this->fov = fov; }
 #pragma endregion
 
 protected:

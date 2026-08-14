@@ -2,11 +2,10 @@
 
 #include "../CameraBase.h"
 
-class DisplayCamera : public CameraBase
+class DisplayRemoteCamera : public CameraBase
 {
 public:
 
-	/// <summary>
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -15,16 +14,16 @@ public:
 	/// <param name="ROT_POWER">回転量</param>
 	/// <param name="angle">初期角度</param>
 	/// <param name="fov">視野角</param>
-	DisplayCamera(
+	DisplayRemoteCamera(
 		const Vector3& fixedLookAtPos,
 		const Vector3& lookAtDiff = Vector3::Zonly(-400),
-		float ROT_POWER = 0.5f * (DX_PI_F / 180.0f),
+		float ROT_POWER = 3.0f * (DX_PI_F / 180.0f),
 		const Vector3& angle = Vector3(),
 		float fov = 60.0f * (DX_PI_F / 180.0f)
 	);
 
 	// デストラクタ
-	~DisplayCamera()override = default;
+	~DisplayRemoteCamera()override = default;
 
 #pragma region 主要関数
 

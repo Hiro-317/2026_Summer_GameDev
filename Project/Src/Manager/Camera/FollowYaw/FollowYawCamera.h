@@ -49,10 +49,10 @@ private:
 	const Vector3* targetPos;
 
 	// カメラ座標を割り出す追従対象からの相対座標
-	const Vector3& cameraOffset;
+	const Vector3 cameraOffset;
 
 	// 注視点を割り出す追従対象からの相対座標
-	const Vector3& lookAtOffset;
+	const Vector3 lookAtOffset;
 	// 注視点
 	Vector3 lookAtPos;
 

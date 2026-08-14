@@ -55,7 +55,7 @@ void FollowYawCamera::Update(void)
 	}
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
 	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x, angle.y) }));
 }
 

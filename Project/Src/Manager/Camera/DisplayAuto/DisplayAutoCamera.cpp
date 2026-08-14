@@ -1,10 +1,10 @@
-#include "DisplayCamera.h"
+#include "DisplayAutoCamera.h"
 
 #include "../../../Application/Application.h"
 
 #include "../../Input/KeyManager.h"
 
-DisplayCamera::DisplayCamera(const Vector3& fixedLookAtPos, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov) :
+DisplayAutoCamera::DisplayAutoCamera(const Vector3& fixedLookAtPos, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov) :
 	CameraBase(Vector3(), angle, fov),
 
 	fixedLookAtPos(fixedLookAtPos),
@@ -14,7 +14,7 @@ DisplayCamera::DisplayCamera(const Vector3& fixedLookAtPos, const Vector3& lookA
 {
 }
 
-void DisplayCamera::Update(void)
+void DisplayAutoCamera::Update(void)
 {
 	// âÒì]èàóùÅiê›íËÇ≥ÇÍÇΩílâ°å¸Ç´Ç…âÒÇµë±ÇØÇÈÅj
 	angle += Vector3::Yonly(1.0f).Normalized() * ROT_POWER;
@@ -26,12 +26,12 @@ void DisplayCamera::Update(void)
 	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
 }
 
-void DisplayCamera::DrawDebug(void) const
+void DisplayAutoCamera::DrawDebug(void) const
 {
 
 }
 
-void DisplayCamera::ApplyCameraInfo(void)const
+void DisplayAutoCamera::ApplyCameraInfo(void)const
 {
 	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), fixedLookAtPos.ToVECTOR());
 }

@@ -1,10 +1,10 @@
-#include "FixedPointLookAtFreeCamera.h"
+#include "DisplayRemoteCamera.h"
 
 #include "../../../Application/Application.h"
 
 #include "../../Input/KeyManager.h"
 
-FixedPointLookAtFreeCamera::FixedPointLookAtFreeCamera(const Vector3& fixedLookAtPos, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov) :
+DisplayRemoteCamera::DisplayRemoteCamera(const Vector3& fixedLookAtPos, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov) :
 	CameraBase(Vector3(), angle, fov),
 
 	fixedLookAtPos(fixedLookAtPos),
@@ -14,7 +14,7 @@ FixedPointLookAtFreeCamera::FixedPointLookAtFreeCamera(const Vector3& fixedLookA
 {
 }
 
-void FixedPointLookAtFreeCamera::Update(void)
+void DisplayRemoteCamera::Update(void)
 {
 #pragma region 角度 (コントローラースティック -> マウス -> ボタン の順に確認して入力があったもので回転させる)
 
@@ -51,12 +51,12 @@ void FixedPointLookAtFreeCamera::Update(void)
 	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
 }
 
-void FixedPointLookAtFreeCamera::DrawDebug(void) const
+void DisplayRemoteCamera::DrawDebug(void) const
 {
 
 }
 
-void FixedPointLookAtFreeCamera::ApplyCameraInfo(void)const
+void DisplayRemoteCamera::ApplyCameraInfo(void)const
 {
 	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), fixedLookAtPos.ToVECTOR());
 }

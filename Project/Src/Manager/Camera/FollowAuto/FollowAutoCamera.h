@@ -40,6 +40,12 @@ public:
 		this->targetPos = targetPos;
 	}
 
+	// ‰æŠp‚Éû‚ß‚½‚¢‘ÎÛ‚ğ“r’†‚Å•ÏX‚·‚é
+	void FollowAutoToLookTargetChange(const Vector3* focusPos) {
+		if (focusPos == nullptr) { return; }
+		this->focusPos = focusPos;
+	}
+
 private:
 
 	// ƒJƒƒ‰Å’á’nã‚
