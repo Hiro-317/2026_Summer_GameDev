@@ -14,7 +14,11 @@ DisplayRemoteCamera::DisplayRemoteCamera(const Vector3& fixedLookAtPos, const Ve
 
 	controlAngle(angle)
 {
-	NormalUpdate();
+	// Œ»Ý‚Ì’Ç]‘ÎÛ‚ÌÀ•W‚ÆŠp“xî•ñ‚©‚çŽ©g(ƒJƒƒ‰)‚ÌÀ•W‚ðŽZo‚·‚é
+	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
+
+	// Šp“x
+	this->angle = CalcCameraAngle(pos, fixedLookAtPos);
 }
 
 void DisplayRemoteCamera::NormalUpdate(void)

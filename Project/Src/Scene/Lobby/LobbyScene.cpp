@@ -4,6 +4,8 @@
 
 #include "../../Manager/Input/KeyManager.h"
 #include "../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
+#include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
+#include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
@@ -23,7 +25,17 @@
 
 
 LobbyScene::LobbyScene() :
-	SceneBase()
+	SceneBase(),
+
+	choice(),
+
+	boardImage(-1),
+
+	choiceButtonImage(),
+
+	arrowImage(-1),
+
+	enterKeyImage()
 {
 }
 
@@ -206,5 +218,9 @@ void LobbyScene::SubPreRelease(void)
 
 void LobbyScene::CreateCamera(void)
 {
-	camera = new DisplayAutoCamera(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
+	// 定点カメラを生成する
+	camera = new FixedPointCamera(FixedPointCamera::LookAt, Vector3::YZonly(500.0f, -2000.0f), Vector3::Yonly(150.0f));
+
+	// イベントカメラを生成
+	camera->StartEvent(new StartCameraEvent(*camera, Vector3(0.0f, 1500.0f, -5000.0f), Vector3::Yonly(Deg2Rad(-30.0f)), 0.0f, 200.0f));
 }

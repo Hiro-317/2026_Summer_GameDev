@@ -88,6 +88,11 @@ MultifuncCamera::MultifuncCamera(bool mode, const Vector3& fixedLookAtPos, const
 	TARGET_DISTANCE_MIN(),
 	TARGET_DISTANCE_MAX()
 {
+	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
+	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
+
+	// 角度
+	this->angle = CalcCameraAngle(pos, fixedLookAtPos);
 }
 
 // 追従（手動操作）または 追従（Y軸回転のみの手動操作）モードとして生成
@@ -116,6 +121,14 @@ MultifuncCamera::MultifuncCamera(bool mode, const Vector3* targetPos, const Vect
 	TARGET_DISTANCE_MIN(),
 	TARGET_DISTANCE_MAX()
 {
+	// 座標を設定
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
+
+	// 注視点を設定
+	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x, controlAngle.y) }));
+
+	// 操作角度
+	this->angle = CalcCameraAngle(pos, lookAtPos);
 }
 
 // 追従（自動操作）モードとして生成
@@ -144,6 +157,7 @@ MultifuncCamera::MultifuncCamera(const Vector3* targetPos, const Vector3* focusP
 	TARGET_DISTANCE_MIN(TARGET_DISTANCE_MIN),
 	TARGET_DISTANCE_MAX(TARGET_DISTANCE_MAX)
 {
+	FollowAutoModeFunc();
 }
 
 #pragma endregion
@@ -187,7 +201,7 @@ void MultifuncCamera::NormalUpdate(void)
 }
 
 // 解放
-void MultifuncCamera::Release(void)
+void MultifuncCamera::SubRelease(void)
 {
 	switch (mode) {
 	case MultifuncCamera::MODE::FollowRemote:
@@ -285,9 +299,9 @@ void MultifuncCamera::ChangeModeDisplayRemote(const Vector3& fixedLookAtPos, con
 	this->fov = fov;
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
 
-	// 操作角度
+	// 角度
 	this->angle = CalcCameraAngle(pos, fixedLookAtPos);
 }
 
@@ -316,9 +330,9 @@ void MultifuncCamera::ChangeModeDisplayAuto(const Vector3& fixedLookAtPos, const
 	this->fov = fov;
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
 
-	// 操作角度
+	// 角度
 	this->angle = CalcCameraAngle(pos, fixedLookAtPos);
 }
 
@@ -355,10 +369,10 @@ void MultifuncCamera::ChangeModeFollowRemote(const Vector3* targetPos, const Vec
 	this->fov = fov;
 
 	// 座標を設定
-	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
 
 	// 注視点を設定
-	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x, angle.y) }));
+	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x, controlAngle.y) }));
 
 	// 操作角度
 	this->angle = CalcCameraAngle(pos, lookAtPos);
@@ -397,10 +411,10 @@ void MultifuncCamera::ChangeModeFollowYaw(const Vector3* targetPos, const Vector
 	this->fov = fov;
 
 	// 座標を設定
-	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
 
 	// 注視点を設定
-	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x, angle.y) }));
+	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x, controlAngle.y) }));
 
 	// 操作角度
 	this->angle = CalcCameraAngle(pos, lookAtPos);
@@ -432,32 +446,7 @@ void MultifuncCamera::ChangeModeFollowAuto(const Vector3* targetPos, const Vecto
 	// 視野角を設定
 	this->fov = fov;
 
-	// 2点間ベクトル
-	Vector3 atToTarget = *targetPos - *focusPos;
-
-	// fovから必要距離を計算（縦fov基準）
-	float needDist = std::clamp((atToTarget.Length() * 0.5f) / tanf(fov * 0.5f), TARGET_DISTANCE_MIN, TARGET_DISTANCE_MAX);
-
-	// lookTargetからみてlookAtのそのさらに先にカメラをおきたいのでその方向を取得する
-	Vector3 backDir = atToTarget.Normalized();
-
-	// 目標カメラ位置
-	Vector3 desiredPos = *targetPos + backDir * needDist;
-
-	// 高さ補正
-	desiredPos.y += std::clamp(((*targetPos - *focusPos) * 0.5f).Length(), 250.0f, 400.0f);
-
-	// 補間（ガタつき防止）
-	const float smooth = 0.1f;
-	pos += (desiredPos - pos) * smooth;
-	if (pos.y <= CAMERA_DOWN) { pos.y = CAMERA_DOWN; }
-
-	// 注視点を算出
-	lookAtPos = (*targetPos + *focusPos) * 0.5f;
-	if (lookAtPos.y <= FOCUS_DOWN) { lookAtPos.y = FOCUS_DOWN; }
-
-	// 操作角度
-	this->angle = CalcCameraAngle(pos, lookAtPos);
+	FollowAutoModeFunc();
 }
 
 #pragma endregion

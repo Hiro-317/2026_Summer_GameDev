@@ -14,13 +14,12 @@ void CameraBase::Update(void)
 {
 	// カメライベントがあればそれを更新する
 	if (cameraEvent) {
+
+		// イベント更新
 		cameraEvent->Update(*this);
 
-		if (cameraEvent->IsEnd()) {
-			cameraEvent->End(*this);
-
-			//OnCameraEventEnd();
-		}
+		// イベント終了チェック
+		if (cameraEvent->IsEnd()) { EndEvent(); }
 
 		// カメライベント中は通常の更新はしない
 		return;
@@ -60,15 +59,35 @@ void CameraBase::DrawDebug(void) const
 	}
 }
 
+void CameraBase::Release(void)
+{
+	EndEvent();
+}
+
 
 #pragma region イベント関数
 
 void CameraBase::StartEvent(CameraEventBase* event)
 {
+	// 安全処理
 	if (event == nullptr) { return; }
+
+	// すでにイベント中なら現在のものを終了
+	EndEvent();
 
 	cameraEvent = event;
 	cameraEvent->Start(*this);
+}
+
+void CameraBase::EndEvent(void)
+{
+	// 現在イベントがなければ、処理なし
+	if (cameraEvent == nullptr) { return; }
+
+	// 終了
+	cameraEvent->End(*this);
+	delete cameraEvent;
+	cameraEvent = nullptr;
 }
 
 #pragma endregion

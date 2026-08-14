@@ -139,6 +139,8 @@
     <ClCompile Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraBase.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -322,6 +324,9 @@
     <ClInclude Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.h" />
     <ClInclude Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\CameraEventBase.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\WaitCameraEvent\WaitCameraEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

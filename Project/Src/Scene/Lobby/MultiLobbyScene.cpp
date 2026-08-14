@@ -22,7 +22,17 @@
 
 MultiLobbyScene::MultiLobbyScene() : 
 	SceneBase(),
-	IS_HOST(Net::GetIns().IsHost())
+	IS_HOST(Net::GetIns().IsHost()),
+
+	choice(),
+
+	boardImage(-1),
+
+	choiceButtonImage(),
+
+	arrowImage(-1),
+
+	enterKeyImage()
 {
 }
 

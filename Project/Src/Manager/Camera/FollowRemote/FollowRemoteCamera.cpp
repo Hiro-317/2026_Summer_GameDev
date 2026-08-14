@@ -25,6 +25,12 @@ FollowRemoteCamera::FollowRemoteCamera(
 
 	controlAngle(angle)
 {
+	// Œ»Ý‚Ì’Ç]‘ÎÛ‚ÌÀ•W‚ÆŠp“xî•ñ‚©‚çŽ©g(ƒJƒƒ‰)‚ÌÀ•W‚ðŽZo‚·‚é
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
+	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x, controlAngle.y) }));
+
+	// Šp“x
+	this->angle = CalcCameraAngle(pos, lookAtPos);
 }
 
 void FollowRemoteCamera::NormalUpdate(void)

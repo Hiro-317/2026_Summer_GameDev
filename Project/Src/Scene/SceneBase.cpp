@@ -144,7 +144,7 @@ void SceneBase::Draw(void)
 	SubAlphaDraw();
 
 	// デバッグ用チャンク描画
-	if (collision != nullptr) { collision->DrawChunkGrid(camera->GetPos()); }
+	if (collision != nullptr && camera != nullptr) { collision->DrawChunkGrid(camera->GetPos()); }
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 

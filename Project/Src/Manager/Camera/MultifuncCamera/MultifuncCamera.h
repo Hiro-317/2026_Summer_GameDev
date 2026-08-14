@@ -114,10 +114,7 @@ public:
 #pragma region å—vŠÖ”
 
 	// ‰Šú‰»
-	void Init(void);
-
-	// ‰ğ•ú
-	void Release(void);
+	void Init(void)override;
 
 #pragma endregion
 
@@ -404,4 +401,7 @@ private:
 
 	// XV
 	void NormalUpdate(void)override;
+
+	// ‰ğ•ú
+	void SubRelease(void)override;
 };

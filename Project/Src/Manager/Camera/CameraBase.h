@@ -42,7 +42,7 @@ public:
 	virtual void DrawDebug(void) const;
 
 	// 終了
-	virtual void Release(void) {}
+	void Release(void);
 
 #pragma endregion
 
@@ -66,10 +66,16 @@ public:
 
 #pragma region イベント関数
 
+	// イベント開始
 	void StartEvent(CameraEventBase* event);
 
-#pragma endregion
+	// イベント終了（更新以外で呼び出された場合強制終了となる）
+	void EndEvent(void);
 
+	// イベント中か
+	bool IsEvent(void) const { return cameraEvent != nullptr; }
+
+#pragma endregion
 
 protected:
 
@@ -85,8 +91,8 @@ protected:
 	// 通常の更新（派生先で再定義前提）
 	virtual void NormalUpdate(void) {}
 
-	// イベントカメラ
-	CameraEventBase* cameraEvent;
+	// 追加の終了処理
+	virtual void SubRelease(void) {}
 
 	// 座標と注視点から角度を割り出す
 	static Vector3 CalcCameraAngle(const Vector3& pos, const Vector3& lookAtPos) {
@@ -103,4 +109,9 @@ protected:
 		// 角度を返す
 		return Vector3(-asinf(std::clamp(vec.y, -1.0f, 1.0f)), atan2f(vec.x, vec.z), 0.0f);
 	}
+
+private:
+
+	// イベントカメラ
+	CameraEventBase* cameraEvent;
 };

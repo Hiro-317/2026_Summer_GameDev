@@ -143,6 +143,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraBase.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.cpp" />
     <ClCompile Include="Src\Manager\Camera\CurrentCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.cpp" />
@@ -283,6 +285,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
     <ClInclude Include="Src\Manager\Camera\CameraBase.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\WaitCameraEvent\WaitCameraEvent.h" />
     <ClInclude Include="Src\Manager\Camera\CurrentCamera.h" />
     <ClInclude Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\CameraEventBase.h" />

@@ -17,9 +17,12 @@ FollowAutoCamera::FollowAutoCamera(
 	targetPos(targetPos),
 	focusPos(focusPos),
 
+	lookAtPos(),
+
 	TARGET_DISTANCE_MIN(TARGET_DISTANCE_MIN),
 	TARGET_DISTANCE_MAX(TARGET_DISTANCE_MAX)
 {
+	NormalUpdate();
 }
 
 void FollowAutoCamera::NormalUpdate(void)
