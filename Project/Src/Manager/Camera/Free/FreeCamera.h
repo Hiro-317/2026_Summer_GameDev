@@ -19,16 +19,6 @@ public:
 	// デストラクタ
 	~FreeCamera()override = default;
 
-#pragma region 主要関数
-
-	// 更新
-	void Update(void)override;
-
-	// デバッグ用描画
-	void DrawDebug(void)const override;
-
-#pragma endregion
-
 private:
 
 	// 移動量
@@ -37,4 +27,6 @@ private:
 	// 回転量
 	const float ROT_POWER;
 
+	// 更新
+	void NormalUpdate(void)override;
 };

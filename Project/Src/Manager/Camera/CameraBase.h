@@ -2,6 +2,10 @@
 
 #include"../../Object/Common/Transform.h"
 
+#include <algorithm>
+
+class CameraEventBase;
+
 class CameraBase
 {
 public:
@@ -19,7 +23,7 @@ public:
 	/// <param name="pos">座標</param>
 	/// <param name="angle">角度</param>
 	/// <param name="fov">視野角</param>
-	CameraBase(const Vector3& pos = Vector3(), const Vector3& angle = Vector3(), float fov = 60.0f * (DX_PI_F / 180.0f)) : pos(pos), angle(angle), fov(fov) {}
+	CameraBase(const Vector3& pos = Vector3(), const Vector3& angle = Vector3(), float fov = 60.0f * (DX_PI_F / 180.0f));
 	// デストラクタ
 	virtual ~CameraBase() = default;
 
@@ -29,23 +33,13 @@ public:
 	virtual void Init(void) {}
 
 	// 更新
-	virtual void Update(void) {}
+	void Update(void);
 
 	// 適用
-	void Apply(void) {
-
-		// クリップ距離を設定する(ClearDrawScreenでリセットされる)
-		SetCameraNearFar(VIEW_NEAR, VIEW_FAR);
-
-		// 視野角を設定する(ClearDrawScreenでリセットされる)
-		SetupCamera_Perspective(fov);
-
-		// カメラ情報の適用
-		ApplyCameraInfo();
-	}
+	void Apply(void);
 
 	// デバッグ用描画
-	virtual void DrawDebug(void) const {}
+	virtual void DrawDebug(void) const;
 
 	// 終了
 	virtual void Release(void) {}
@@ -70,6 +64,13 @@ public:
 	void SetFov(float fov) { this->fov = fov; }
 #pragma endregion
 
+#pragma region イベント関数
+
+	void StartEvent(CameraEventBase* event);
+
+#pragma endregion
+
+
 protected:
 
 	// 座標
@@ -81,6 +82,25 @@ protected:
 	// 視野角
 	float fov;
 
-	// カメラ情報の適用（派生先で再定義前提）
-	virtual void ApplyCameraInfo(void)const { SetCameraPositionAndAngle(pos.ToVECTOR(), angle.x, angle.y, angle.z); }
+	// 通常の更新（派生先で再定義前提）
+	virtual void NormalUpdate(void) {}
+
+	// イベントカメラ
+	CameraEventBase* cameraEvent;
+
+	// 座標と注視点から角度を割り出す
+	static Vector3 CalcCameraAngle(const Vector3& pos, const Vector3& lookAtPos) {
+
+		// カメラから注視点へ向かうベクトル
+		Vector3 vec = lookAtPos - pos;
+
+		// 安全処理
+		if (vec.LengthSq() <= 0.000001f) { return Vector3(); }
+
+		// 正規化
+		vec.Normalize();
+
+		// 角度を返す
+		return Vector3(-asinf(std::clamp(vec.y, -1.0f, 1.0f)), atan2f(vec.x, vec.z), 0.0f);
+	}
 };

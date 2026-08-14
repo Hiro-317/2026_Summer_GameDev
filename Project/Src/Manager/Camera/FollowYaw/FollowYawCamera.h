@@ -27,16 +27,6 @@ public:
 	// デストラクタ
 	~FollowYawCamera()override = default;
 
-#pragma region 主要関数
-
-	// 更新
-	void Update(void);
-
-	// デバッグ用描画
-	void DrawDebug(void) const;
-
-#pragma endregion
-
 	// 追従対象を途中で変更する
 	void TargetChange(const Vector3* targetPos) {
 		if (targetPos == nullptr) { return; }
@@ -57,8 +47,11 @@ private:
 	Vector3 lookAtPos;
 
 	// 回転量
-	float ROT_POWER;
+	const float ROT_POWER;
 
-	// カメラ情報の適用
-	void ApplyCameraInfo(void)const;
+	// 操作角度
+	Vector3 controlAngle;
+
+	// 更新
+	void NormalUpdate(void)override;
 };

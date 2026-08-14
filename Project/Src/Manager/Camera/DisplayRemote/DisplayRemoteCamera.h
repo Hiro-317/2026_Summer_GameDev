@@ -25,16 +25,6 @@ public:
 	// デストラクタ
 	~DisplayRemoteCamera()override = default;
 
-#pragma region 主要関数
-
-	// 更新
-	void Update(void);
-
-	// デバッグ用描画
-	void DrawDebug(void) const;
-
-#pragma endregion
-
 private:
 
 	// 注視点（固定）
@@ -44,9 +34,11 @@ private:
 	const Vector3 lookAtDiff;
 
 	// 回転量
-	float ROT_POWER;
+	const float ROT_POWER;
 
+	// 操作角度
+	Vector3 controlAngle;
 
-	// カメラ情報の適用
-	void ApplyCameraInfo(void)const;
+	// 更新
+	void NormalUpdate(void)override;
 };

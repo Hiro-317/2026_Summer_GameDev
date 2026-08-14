@@ -12,7 +12,7 @@ FollowYawCamera::FollowYawCamera(
 	const Vector3& angle,
 	float fov
 ) :
-	CameraBase(Vector3(), angle, fov),
+	CameraBase(Vector3(), Vector3(), fov),
 
 	targetPos(targetPos),
 
@@ -21,11 +21,13 @@ FollowYawCamera::FollowYawCamera(
 	lookAtOffset(lookAtOffset),
 	lookAtPos(),
 
-	ROT_POWER(ROT_POWER)
+	ROT_POWER(ROT_POWER),
+
+	controlAngle(angle)
 {
 }
 
-void FollowYawCamera::Update(void)
+void FollowYawCamera::NormalUpdate(void)
 {
 	// 追従対象が設定されていなかったら処理をしない(安全)
 	if (targetPos == nullptr) { return; }
@@ -47,23 +49,17 @@ void FollowYawCamera::Update(void)
 
 	// 最終的に入力が1つでもあれば回転させる
 	if (rot != 0.0f) {
-		angle += rot * ROT_POWER;
+		controlAngle += rot * ROT_POWER;
 
 		// 回転の数値制御
-		if (angle.y <= Deg2Rad(0.0f)) { angle.y += Deg2Rad(360.0f); }
-		if (angle.y >= Deg2Rad(360.0f)) { angle.y -= Deg2Rad(360.0f); }
+		if (controlAngle.y <= Deg2Rad(0.0f)) { controlAngle.y += Deg2Rad(360.0f); }
+		if (controlAngle.y >= Deg2Rad(360.0f)) { controlAngle.y -= Deg2Rad(360.0f); }
 	}
 
 	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x,angle.y) }));
-	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(angle.x, angle.y) }));
-}
+	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
+	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x, controlAngle.y) }));
 
-void FollowYawCamera::DrawDebug(void) const
-{
-}
-
-void FollowYawCamera::ApplyCameraInfo(void)const
-{
-	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), lookAtPos.ToVECTOR());
+	// 角度
+	angle = CalcCameraAngle(pos, lookAtPos);
 }

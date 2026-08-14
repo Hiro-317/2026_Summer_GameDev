@@ -138,6 +138,7 @@
     <ClCompile Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -320,6 +321,7 @@
     <ClInclude Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.h" />
     <ClInclude Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.h" />
     <ClInclude Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\CameraEventBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

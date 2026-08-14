@@ -12,7 +12,7 @@ FreeCamera::FreeCamera(float MOVE_POWER, float ROT_POWER, const Vector3& pos, co
 {
 }
 
-void FreeCamera::Update(void)
+void FreeCamera::NormalUpdate(void)
 {
 #pragma region 角度 (コントローラースティック -> マウス -> ボタン の順に確認して入力があったもので回転させる)
 
@@ -65,22 +65,4 @@ void FreeCamera::Update(void)
 	// 入力があれば、方向×スピードで移動量を作って、座標に足して移動
 	if (dir != 0.0f) { pos += dir.TransMat(MGetRotY(angle.y)) * MOVE_POWER; }
 #pragma endregion
-}
-
-void FreeCamera::DrawDebug(void)const
-{
-	if (App::GetIns().IsDrawDebug()) {
-		DrawFormatString(
-			0, 70, 0xffffff,
-			"カメラ座標　 ：(% .1f, % .1f, % .1f)",
-			pos.x, pos.y, pos.z
-		);
-		DrawFormatString(
-			0, 90, 0xffffff,
-			"カメラ角度　 ：(% .1f, % .1f, % .1f)",
-			Rad2Deg(angle.x),
-			Rad2Deg(angle.y),
-			Rad2Deg(angle.z)
-		);
-	}
 }

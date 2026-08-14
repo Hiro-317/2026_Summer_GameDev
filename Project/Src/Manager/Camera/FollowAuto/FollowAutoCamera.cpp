@@ -22,7 +22,7 @@ FollowAutoCamera::FollowAutoCamera(
 {
 }
 
-void FollowAutoCamera::Update(void)
+void FollowAutoCamera::NormalUpdate(void)
 {
 	// ’Ç]‘ÎÛ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚©‚Á‚½‚çˆ—‚ğ‚µ‚È‚¢(ˆÀ‘S)
 	if (targetPos == nullptr || focusPos == nullptr) { return; }
@@ -51,15 +51,6 @@ void FollowAutoCamera::Update(void)
 	lookAtPos = (*targetPos + *focusPos) * 0.5f;
 	if (lookAtPos.y <= FOCUS_DOWN) { lookAtPos.y = FOCUS_DOWN; }
 
-	angle = (lookAtPos - pos);
-	angle = Vector3::Yonly(atan2f(angle.x, angle.z));
-}
-
-void FollowAutoCamera::DrawDebug(void) const
-{
-}
-
-void FollowAutoCamera::ApplyCameraInfo(void)const
-{
-	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), lookAtPos.ToVECTOR());
+	// Šp“x
+	angle = CalcCameraAngle(pos, lookAtPos);
 }

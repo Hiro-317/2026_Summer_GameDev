@@ -24,16 +24,6 @@ public:
 	// デストラクタ
 	~FollowAutoCamera()override = default;
 
-#pragma region 主要関数
-
-	// 更新
-	void Update(void);
-
-	// デバッグ用描画
-	void DrawDebug(void) const;
-
-#pragma endregion
-
 	// 追従対象を途中で変更する
 	void TargetChange(const Vector3* targetPos) {
 		if (targetPos == nullptr) { return; }
@@ -70,6 +60,6 @@ private:
 	// 最大距離
 	float TARGET_DISTANCE_MAX;
 
-	// カメラ情報の適用
-	void ApplyCameraInfo(void)const;
+	// 更新
+	void NormalUpdate(void)override;
 };

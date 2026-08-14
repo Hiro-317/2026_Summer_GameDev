@@ -142,6 +142,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Manager\Camera\CurrentCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.cpp" />
@@ -284,6 +285,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Manager\Camera\CameraBase.h" />
     <ClInclude Include="Src\Manager\Camera\CurrentCamera.h" />
     <ClInclude Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\CameraEventBase.h" />
     <ClInclude Include="Src\Manager\Camera\FixedPoint\FixedPointCamera.h" />
     <ClInclude Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.h" />
     <ClInclude Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.h" />

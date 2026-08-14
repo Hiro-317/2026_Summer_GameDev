@@ -116,12 +116,6 @@ public:
 	// 初期化
 	void Init(void);
 
-	// 更新
-	void Update(void);
-
-	// デバッグ用描画
-	void DrawDebug(void) const;
-
 	// 解放
 	void Release(void);
 
@@ -273,16 +267,9 @@ private:
 	void (MultifuncCamera::* modeFunc[(int)MODE::Max])(void);
 #define SET_MODE_FUNC(mode, func) { modeFunc[(int)(mode)] = static_cast<void (MultifuncCamera::*)(void)>(func); }
 
-	// モード別適用処理を格納する配列
-	void (MultifuncCamera::* modeApply[(int)MODE::Max])(void)const;
-#define SET_APPLY(mode, func) { modeApply[(int)(mode)] = static_cast<void (MultifuncCamera::*)(void)const>(func); }
-
 #pragma region 定点カメラ（FixedPoint）
 	// 更新処理
 	void FixedPointModeFunc(void);
-
-	// 適用
-	void FixedPointModeApply(void)const;
 #pragma endregion
 
 #pragma region フリー（Free）
@@ -294,9 +281,6 @@ private:
 
 	// 回転量
 	float ROT_POWER;
-
-	// 適用
-	void FreeModeApply(void)const;
 #pragma endregion
 
 #pragma region ディスプレイ（手動回転）（DsiplayRemote）
@@ -313,8 +297,8 @@ private:
 	//float ROT_POWER;
 	// ↑Freeのものを流用
 
-	// 適用
-	void DisplayRemoteModeAplly(void)const;
+	// 操作角度
+	Vector3 controlAngle;
 #pragma endregion
 
 #pragma region ディスプレイ（自動回転）（DisplayAuto）
@@ -323,18 +307,19 @@ private:
 
 	// 注視点（固定）
 	//const Vector3 fixedLookAtPos;
-	// ↑LOOK_AT_FREEのものを流用
+	// ↑LookAtFreeのものを流用
 
 	// 注視点からの相対座標
 	//const Vector3 lookAtDiff;
-	// ↑LOOK_AT_FREEのものを流用
+	// ↑LookAtFreeのものを流用
 
 	// 回転量
 	//float ROT_POWER;
 	// ↑Freeのものを流用
 
-	// 適用
-	void DisplayAutoModeAplly(void)const;
+	// 操作角度
+	//Vector3 controlAngle;
+	// ↑DsiplayRemoteのものを流用
 #pragma endregion
 
 #pragma region 追従（手動操作）（FollowRemote）
@@ -356,8 +341,9 @@ private:
 	//float ROT_POWER;
 	// ↑Freeのものを流用
 
-	// 適用
-	void FollowRemoteModeApply(void)const;
+	// 操作角度
+	//Vector3 controlAngle;
+	// ↑DsiplayRemoteのものを流用
 #pragma endregion
 
 #pragma region 追従（Y軸回転のみの手動操作）（FollowYaw）
@@ -383,8 +369,9 @@ private:
 	//float ROT_POWER;
 	// ↑Freeのものを流用
 
-	// 適用
-	void FollowYawModeApply(void)const;
+	// 操作角度
+	//Vector3 controlAngle;
+	// ↑DsiplayRemoteのものを流用
 #pragma endregion
 
 #pragma region 追従（自動操作）（FollowAuto）
@@ -413,12 +400,8 @@ private:
 
 	// 最大距離
 	float TARGET_DISTANCE_MAX;
-
-	// 適用
-	void FollowAutoModeApply(void)const;
 #pragma endregion
 
-
-	// カメラ情報の適用
-	void ApplyCameraInfo(void)const;
+	// 更新
+	void NormalUpdate(void)override;
 };
