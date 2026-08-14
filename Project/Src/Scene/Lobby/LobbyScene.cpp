@@ -3,7 +3,7 @@
 #include "../../pch.h"
 
 #include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/Camera.h"
+#include "../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
@@ -29,6 +29,8 @@ LobbyScene::LobbyScene() :
 
 void LobbyScene::SubPostLoad(void)
 {
+	Snd::GetIns().ChangeScene("Lobby");
+
 	if (SceneManager::GetIns().GetSelectBossType() == BOSS_TYPE::None) {
 		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)((int)BOSS_TYPE::None + 1));
 	}
@@ -68,7 +70,6 @@ void LobbyScene::SubPostLoad(void)
 
 void LobbyScene::SubPostInit(void)
 {
-	Snd::GetIns().ChangeScene("Lobby");
 	Snd::GetIns().Play("Lobby");
 
 	SetFogEnable(false);
@@ -77,8 +78,6 @@ void LobbyScene::SubPostInit(void)
 	for (ActorBase* obj : objects) { obj->Init(); }
 
 	choice = CHOICE::CharaChange;
-
-	camera->ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 
 	Net::GetIns().Disconnection();
 }
@@ -202,4 +201,10 @@ void LobbyScene::SubPreRelease(void)
 	DeleteGraph(boardImage);
 
 	SetFogEnable(true);
+}
+
+
+void LobbyScene::CreateCamera(void)
+{
+	camera = new DisplayAutoCamera(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 }

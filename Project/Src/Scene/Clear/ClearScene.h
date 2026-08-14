@@ -26,9 +26,6 @@ private:
 
 #pragma endregion
 
-	// カメラは使用しない
-	bool UseCamera(void)const override { return false; }
-
 	// 当たり判定管理は使用しない
 	bool UseCollisionManager(void)const override { return false; }
 

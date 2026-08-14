@@ -7,7 +7,7 @@
 #include <vector>
 
 class CollisionManager;
-class Camera;
+class CameraBase;
 class ActorBase;
 struct Vector2I;
 
@@ -52,7 +52,7 @@ public:
 	bool IsInitialized(void)const { return state == STATE::INITIALIZED; }
 
 	// カメラを取得する。カメラを使用しない場合はnullptrを返す。
-	Camera* GetCamera(void)const { return camera; }
+	CameraBase* GetCamera(void)const { return camera; }
 
 #pragma region シーンスタック設定
 
@@ -162,9 +162,6 @@ protected:
 
 #pragma endregion
 
-	// カメラを使用するかどうか
-	virtual bool UseCamera(void)const { return true; }
-
 	// 当たり判定管理クラスを使用するかどうか
 	virtual bool UseCollisionManager(void)const { return true; }
 
@@ -200,7 +197,10 @@ private:
 protected:
 
 	// カメラ
-	Camera* camera;
+	CameraBase* camera;
+
+	// カメラ生成
+	virtual void CreateCamera(void) { camera = nullptr; }
 
 	// Actor格納用配列
 	std::vector<ActorBase*> objects;

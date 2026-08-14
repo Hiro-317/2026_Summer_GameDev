@@ -17,6 +17,8 @@ private:
 	// 更新（Actor更新・当たり判定の後、Camera更新の前）
 	void SubPostUpdate(void)override;
 
+	void CreateCamera(void)override;
+
 	// カメラ状態変更フラグ
 	bool focusFlg;
 };

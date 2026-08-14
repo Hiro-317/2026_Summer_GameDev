@@ -1,6 +1,7 @@
 #include "OtherPlayerWatchState.h"
 
 #include "../../../../../Manager/Camera/CurrentCamera.h"
+#include "../../../../../Manager/Camera/MultifuncCamera/MultifuncCamera.h"
 
 #include "../../../../../Manager/Input/KeyManager.h"
 
@@ -19,7 +20,7 @@ OtherPlayerWatchState::OtherPlayerWatchState(
 
 void OtherPlayerWatchState::Enter(void)
 {
-	CurrentCamera::Get().ChangeModeFollowAuto(*playerTrans.front(), bossPos);
+	dynamic_cast<MultifuncCamera*>(&CurrentCamera::Get())->ChangeModeFollowAuto(&playerTrans.front()->pos, bossPos);
 }
 
 void OtherPlayerWatchState::Update(void)

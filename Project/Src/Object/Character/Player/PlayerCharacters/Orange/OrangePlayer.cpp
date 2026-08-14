@@ -4,7 +4,6 @@
 
 #include "../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../Manager/Font/FontManager.h"
-#include "../../../../../Manager/Camera/Camera.h"
 
 #include "../../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"

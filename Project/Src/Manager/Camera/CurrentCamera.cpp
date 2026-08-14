@@ -1,3 +1,3 @@
 #include "CurrentCamera.h"
 
-Camera* CurrentCamera::camera = nullptr;
+CameraBase* CurrentCamera::camera = nullptr;

@@ -1,23 +1,23 @@
 #pragma once
 
-#include "Camera.h"
+#include "CameraBase.h"
 
 class CurrentCamera
 {
 public:
 
 	// æ“¾
-	static Camera& Get(void) {
+	static CameraBase& Get(void) {
 		if (camera == nullptr) { throw std::runtime_error("ƒJƒƒ‰‚ª‘¶İ‚µ‚È‚¢ó‘Ô‚ÅCurrentCamera‚Ö‚ÌQÆ‚ª‚ ‚è‚Ü‚µ‚½"); }
 		return *camera;
 	}
 	// İ’è
-	static void Set(Camera* currentCamera) { camera = currentCamera; }
+	static void Set(CameraBase* currentCamera) { camera = currentCamera; }
 
 private:
 
 	// Œ»İ‚ÌƒJƒƒ‰
-	static Camera* camera;
+	static CameraBase* camera;
 
 	CurrentCamera() = default;
 	~CurrentCamera() = default;

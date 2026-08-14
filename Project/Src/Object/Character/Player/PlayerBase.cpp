@@ -1,6 +1,5 @@
 #include "PlayerBase.h"
 
-#include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
 #include "../../../Manager/Effect/EffectManager.h"
 

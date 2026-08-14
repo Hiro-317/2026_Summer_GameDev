@@ -148,7 +148,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowYaw\FollowYawCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\Free\FreeCamera.cpp" />
-    <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.cpp" />
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
@@ -236,7 +235,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
-    <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
     <ClCompile Include="Src\Manager\FPS\FPS.cpp" />
     <ClCompile Include="Src\Manager\Input\KeyManager.cpp" />
@@ -291,7 +289,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.h" />
     <ClInclude Include="Src\Manager\Camera\FollowYaw\FollowYawCamera.h" />
     <ClInclude Include="Src\Manager\Camera\Free\FreeCamera.h" />
-    <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.h" />
     <ClInclude Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
@@ -399,7 +396,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
-    <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />
     <ClInclude Include="Src\Manager\FPS\FPS.h" />
     <ClInclude Include="Src\Manager\Input\KeyManager.h" />

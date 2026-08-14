@@ -7,8 +7,6 @@
 
 #include "../../Application/Application.h"
 
-#include "../Camera/Camera.h"
-
 #include"../../Object/Common/Collider/LineCollider.h"
 #include"../../Object/Common/Collider/SphereCollider.h"
 #include"../../Object/Common/Collider/CapsuleCollider.h"

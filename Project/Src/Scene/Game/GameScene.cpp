@@ -7,7 +7,7 @@
 #include "../../Application/Application.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
-#include "../../Manager/Camera/Camera.h"
+#include "../../Manager/Camera/MultifuncCamera/MultifuncCamera.h"
 #include "../../Manager/Input/KeyManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
@@ -88,12 +88,6 @@ void GameScene::SubPostInit(void)
 	// マウスカーソル
 	Key::GetIns().SetMouseFixed(true);
 
-	// カメラ設定
-	camera->ChangeModeFollowRemote(
-		&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
-		ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
-		Vector3::YZonly(250, -550), Deg2Rad(4.0f)
-	);
 	focusFlg = false;
 
 	SoundManager::GetIns().Play("Battle");
@@ -107,15 +101,16 @@ void GameScene::SubPostUpdate(void)
 	if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_FOCUS).down) {
 		focusFlg = !focusFlg;
 		if (focusFlg) {
-			camera->ChangeModeFollowAuto(
-				ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans(),
+			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowAuto(
+				&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
 				&ObjSerch<BossBase>(objects)->GetTrans().pos);
 		}
 		else {
-			camera->ChangeModeFollowRemote(
+			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowYaw(
 				&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+				Vector3::YZonly(250, -550),
 				ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
-				Vector3::YZonly(250, -550), Deg2Rad(4.0f)
+				Deg2Rad(4.0f)
 			);
 		}
 	}
@@ -170,4 +165,15 @@ void GameScene::SubPostUpdate(void)
 	UpdateEffekseer3D();
 
 #pragma endregion
+}
+
+void GameScene::CreateCamera(void)
+{
+	camera = new MultifuncCamera(
+		false,
+		&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+		Vector3::YZonly(250, -550),
+		ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
+		Deg2Rad(4.0f)
+	);
 }

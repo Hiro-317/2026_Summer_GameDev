@@ -5,7 +5,6 @@
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\Manager\Camera\InstantCamera.cpp" />
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
     <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
@@ -85,7 +84,6 @@
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
-    <ClCompile Include="Src\Manager\Camera\Camera.cpp" />
     <ClCompile Include="Src\Manager\Collision\CollisionManager.cpp" />
     <ClCompile Include="Src\Manager\FPS\FPS.cpp" />
     <ClCompile Include="Src\Manager\Input\KeyManager.cpp" />
@@ -134,18 +132,18 @@
     <ClCompile Include="Src\Object\Stage\BananaBoss\BananaBossStage.cpp" />
     <ClCompile Include="Src\Scene\BossSelect\BossSelectScene.cpp" />
     <ClCompile Include="Src\Manager\Camera\Free\FreeCamera.cpp" />
-    <ClCompile Include="Src\Manager\Camera\FixedPointLookAtFree\FixedPointLookAtFreeCamera.cpp" />
-    <ClCompile Include="Src\Manager\Camera\Display\DisplayCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowYaw\FollowYawCamera.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
     <ClInclude Include="Src\Application\Application.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
-    <ClInclude Include="Src\Manager\Camera\InstantCamera.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
     <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombBig.h" />
     <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombSmall.h" />
@@ -245,7 +243,6 @@
     <ClInclude Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\Unknow\UnknowCharaSelectPreview.h" />
     <ClInclude Include="Src\Object\CharaTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\AnimationController\AnimationController.h" />
-    <ClInclude Include="Src\Manager\Camera\Camera.h" />
     <ClInclude Include="Src\Manager\Collision\CollisionManager.h" />
     <ClInclude Include="Src\Manager\FPS\FPS.h" />
     <ClInclude Include="Src\Manager\Input\KeyManager.h" />
@@ -317,11 +314,12 @@
     <ClInclude Include="Src\Manager\Camera\CameraBase.h" />
     <ClInclude Include="Src\Manager\Camera\FixedPoint\FixedPointCamera.h" />
     <ClInclude Include="Src\Manager\Camera\Free\FreeCamera.h" />
-    <ClInclude Include="Src\Manager\Camera\FixedPointLookAtFree\FixedPointLookAtFreeCamera.h" />
-    <ClInclude Include="Src\Manager\Camera\Display\DisplayCamera.h" />
     <ClInclude Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.h" />
     <ClInclude Include="Src\Manager\Camera\FollowYaw\FollowYawCamera.h" />
     <ClInclude Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\DisplayAuto\DisplayAutoCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\DisplayRemote\DisplayRemoteCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\MultifuncCamera\MultifuncCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

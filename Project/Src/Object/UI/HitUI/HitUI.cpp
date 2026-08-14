@@ -1,8 +1,6 @@
 #include "HitUI.h"
 #include "../../../pch.h"
 
-#include "../../../Manager/Camera/Camera.h"
-
 HitUI::HitUI(Vector3& targetPos) :
     UI_Base(),
     targetPos(targetPos)

@@ -3,7 +3,7 @@
 #include "../../pch.h"
 
 #include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/Camera.h"
+#include "../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
@@ -77,9 +77,6 @@ void MultiLobbyScene::SubPostInit(void)
 	choice = CHOICE::CharaChange;
 	// ボタンごとの選択状態を初期化
 	ButtonSelectionStateReload();
-
-	// カメラの設定
-	camera->ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 
 	// 自信のキャラクタータイプを初期化する
 	SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
@@ -282,6 +279,11 @@ void MultiLobbyScene::SubPreRelease(void)
 #pragma endregion
 
 	SetFogEnable(true);
+}
+
+void MultiLobbyScene::CreateCamera(void)
+{
+	camera = new DisplayAutoCamera(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
 }
 
 void MultiLobbyScene::ButtonSelectionStateReload(void)

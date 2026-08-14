@@ -408,6 +408,9 @@ void SceneManager::StartLoad(std::unique_ptr<SceneBase> scene, LOAD_COMMIT commi
 
 		CommitLoadedScene();
 
+		// 1番上に重なっているシーンのカメラをCurrentCameraに設定する
+		SetCurrentCamera();
+
 		return;
 	}
 
@@ -427,13 +430,14 @@ void SceneManager::UpdateLoading(void)
 
 	// ～～～↓ロード完了↓～～～
 
-	// ロード対象を初期化する
-	//loadingScene->Init();
-
 	// ロード完了したシーンをスタックに登録する
 	CommitLoadedScene();
 
+	// ロード対象を初期化する
 	scenes.back()->Init();
+
+	// 1番上に重なっているシーンのカメラをCurrentCameraに設定する
+	SetCurrentCamera();
 }
 
 void SceneManager::CommitLoadedScene(void)
@@ -498,9 +502,6 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 	default: { break; }
 
 	}
-
-	// 1番上に重なっているシーンのカメラをCurrentCameraに設定する
-	SetCurrentCamera();
 }
 
 std::size_t SceneManager::GetFirstUpdateIndex(void)const
@@ -565,14 +566,17 @@ std::unique_ptr<FadeSceneBase> SceneManager::CreateFadeScene(FADE_TYPE fadeType,
 
 void SceneManager::SetCurrentCamera(void) const
 {
+	// 初期化
+	CurrentCamera::Set(nullptr);
+
 	// 安全処理
-	if (scenes.empty()) { CurrentCamera::Set(nullptr); return; }
+	if (scenes.empty()) { return; }
 
 	// 末尾から先頭へ確認し、カメラを使用しているシーンを探す
 	for (int index = scenes.size() - 1; index >= 0; index--) {
 
 		// カメラのインスタンスのポインターを取得
-		Camera* cameraIns = scenes.at(index)->GetCamera();
+		CameraBase* cameraIns = scenes.at(index)->GetCamera();
 
 		// 取得したインスタンスが有効かどうか
 		if (cameraIns == nullptr) { continue; }

@@ -10,7 +10,7 @@
 
 #include "../Common/Vector2.h"
 
-#include "../Manager/Camera/Camera.h"
+#include "../Manager/Camera/CameraBase.h"
 #include "../Manager/Collision/CollisionManager.h"
 #include "../Object/ActorBase.h"
 
@@ -49,9 +49,6 @@ void SceneBase::Load(void)
 	mainScreen = MakeScreen(App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, true);
 	if (mainScreen < 0) { throw std::runtime_error("SceneBaseのメインスクリーン生成に失敗しました"); }
 
-	// シーンごとに独立したカメラを生成する
-	if (UseCamera()) { camera = new Camera(); camera->Init(); }
-
 	// シーンごとに独立した当たり判定管理クラスを生成する
 	if (UseCollisionManager()) { collision = new CollisionManager(); }
 
@@ -72,8 +69,10 @@ void SceneBase::Init(void)
 	// 派生先の初期化（前）
 	SubPreInit();
 
+	// シーンごとに独立したカメラを生成する
+	CreateCamera();
 	// カメラ初期化
-	if (camera != nullptr) { camera->ChangeModeFixedPoint(Vector3(), Vector3()); }
+	if (camera != nullptr) { camera->Init(); }
 
 	// シーンが所有するActorをすべて初期化する
 	for (ActorBase* obj : objects) { obj->Init(); }

@@ -40,6 +40,9 @@ private:
 	// 当たり判定管理は使用しない
 	bool UseCollisionManager(void)const override { return false; }
 
+	// カメラ生成
+	void CreateCamera(void)override;
+
 	// ホストかどうか
 	const bool IS_HOST;
 

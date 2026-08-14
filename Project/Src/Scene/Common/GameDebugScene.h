@@ -8,14 +8,15 @@
 
 #include"../SceneManager/SceneManager.h"
 
-#include"../../Manager/Camera/Camera.h"
+#include "../../Manager/Camera/MultifuncCamera/MultifuncCamera.h"
+
 #include"../../Manager/Input/KeyManager.h"
 #include"../../Manager/Sound/SoundManager.h"
 
 class GameDebugScene : public SceneBase
 {
 public:
-	GameDebugScene(Camera& camera, std::function<void(void)>CameraReset, std::function<void(void)>TopUpdate) : SceneBase(),
+	GameDebugScene(MultifuncCamera& camera, std::function<void(void)>CameraReset, std::function<void(void)>TopUpdate) : SceneBase(),
 		camera(camera),
 		TopUpdate(std::move(TopUpdate)),
 		CameraReset(std::move(CameraReset))
@@ -55,13 +56,10 @@ private:
 
 	bool IsUseLoadingScreen(void)const { return false; }
 
-	// カメラは使用しない
-	bool UseCamera(void)const override { return false; }
-
 	// 当たり判定管理は使用しない
 	bool UseCollisionManager(void)const override { return false; }
 
-	Camera& camera;
+	MultifuncCamera& camera;
 
 	std::function<void(void)>TopUpdate;
 	std::function<void(void)>CameraReset;

@@ -6,7 +6,6 @@
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/Camera.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 

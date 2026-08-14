@@ -3,7 +3,7 @@
 #include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../Manager/Font/FontManager.h"
 
-#include "../../../../Manager/Camera/InstantCamera.h"
+#include "../../../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
 
 #include "../../../Common/AnimationController/AnimationController.h""
 
@@ -56,9 +56,9 @@ void CharaSelectPreviewBase::Load(void)
 {
 	modelPreviewScreen = MakeScreen(440, 540, true);
 
-	camera = new InstantCamera();
-
 	SubLoad();
+
+	camera = new DisplayAutoCamera(trans.pos, Vector3(0, 100, -400), 0.0f);
 }
 
 void CharaSelectPreviewBase::AnimationControllerCreate(void)
@@ -75,10 +75,7 @@ void CharaSelectPreviewBase::SubInit(void)
 	// 衝突時の押し出しを無効にする
 	SetPushFlg(false);
 #pragma endregion
-	if (camera) {
-		camera->Init();
-		camera->ChangeModeFollow(&trans.pos, Vector3(0, 100, -400), Vector3());
-	}
+	if (camera) { camera->Init(); }
 	// アニメーション再生
 	if (anime) { anime->Play(playAnimeType); }
 }

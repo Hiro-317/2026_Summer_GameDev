@@ -5,7 +5,7 @@
 #include "../../../ActorBase.h"
 
 class AnimationController;
-class InstantCamera;
+class CameraBase;
 
 class CharaSelectPreviewBase : public ActorBase
 {
@@ -38,7 +38,7 @@ private:
 
 	int modelPreviewScreen;
 
-	InstantCamera* camera;
+	CameraBase* camera;
 
 protected:
 

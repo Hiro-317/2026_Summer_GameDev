@@ -1,6 +1,5 @@
 #include "BossBase.h"
 
-#include "../../../Manager/Camera/Camera.h"
 #include "../../../Manager/Font/FontManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Scene/Game/GameScene.h"
