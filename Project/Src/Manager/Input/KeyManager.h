@@ -143,8 +143,8 @@ public:
 
 	bool GetControllerConnect(void) const;
 
-	Vector2 GetRightStickVec(void) const;
-	Vector2 GetLeftStickVec(void) const;
+	Vector2 GetRightStickVec(bool normalize = true) const;
+	Vector2 GetLeftStickVec(bool normalize = true) const;
 
 	struct MOUSE_INFO
 	{

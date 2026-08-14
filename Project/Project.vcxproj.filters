@@ -133,6 +133,12 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Object\Stage\BananaBoss\BananaBossStage.cpp" />
     <ClCompile Include="Src\Scene\BossSelect\BossSelectScene.cpp" />
+    <ClCompile Include="Src\Manager\Camera\Free\FreeCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\FixedPointLookAtFree\FixedPointLookAtFreeCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\Display\DisplayCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\FollowYaw\FollowYawCamera.cpp" />
+    <ClCompile Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -308,6 +314,14 @@
     <ClInclude Include="Src\Scene\ObjectUseDefine.h" />
     <ClInclude Include="Src\Object\Stage\BananaBoss\BananaBossStage.h" />
     <ClInclude Include="Src\Scene\BossSelect\BossSelectScene.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraBase.h" />
+    <ClInclude Include="Src\Manager\Camera\FixedPoint\FixedPointCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\Free\FreeCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\FixedPointLookAtFree\FixedPointLookAtFreeCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\Display\DisplayCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\FollowRemote\FollowRemoteCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\FollowYaw\FollowYawCamera.h" />
+    <ClInclude Include="Src\Manager\Camera\FollowAuto\FollowAutoCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

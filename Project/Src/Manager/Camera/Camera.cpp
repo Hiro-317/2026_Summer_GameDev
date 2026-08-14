@@ -516,7 +516,7 @@ void Camera::FollowAutoModeFunc(void)
 
 	// 角度を算出する
 	Vector3 center = (*folowAt + *lookTarget) * 0.5f;
-	center.y = FOCUS_DOWN;
+	if (center.y < FOCUS_DOWN) { center.y = FOCUS_DOWN; }
 	angle = (center - pos);
 	angle = Vector3::Yonly(atan2f(angle.x, angle.z));
 }
@@ -528,7 +528,7 @@ void Camera::FollowAutoApply(void)
 
 	// 適用
 	Vector3 center = (*folowAt + *lookTarget) * 0.5f;
-	center.y = FOCUS_DOWN;
+	if (center.y < FOCUS_DOWN) { center.y = FOCUS_DOWN; }
 	SetCameraPositionAndTarget_UpVecY(pos.ToVECTOR(), center.ToVECTOR());
 }
 #pragma endregion

@@ -109,6 +109,8 @@ struct Vector2
 
 	// Vector2ê∂ê¨
 	Vector2(int value) :x((float)value), y((float)value) {}
+
+	Vector2(const Vector2I& value) :x((float)value.x), y((float)value.y) {}
 #pragma endregion
 
 

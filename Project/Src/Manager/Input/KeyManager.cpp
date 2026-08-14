@@ -350,7 +350,7 @@ bool KeyManager::GetControllerConnect(void) const
 	return (GetJoypadNum() > 0);
 }
 
-Vector2 KeyManager::GetRightStickVec(void) const
+Vector2 KeyManager::GetRightStickVec(bool normalize) const
 {
 	XINPUT_STATE state = {};
 	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { return { 0.0f,0.0f }; }
@@ -360,11 +360,14 @@ Vector2 KeyManager::GetRightStickVec(void) const
 
 	if (vec == 0.0f) { return{ 0.0f,0.0f }; }
 
-	return vec / sqrtf(vec.x * vec.x + vec.y * vec.y);
+	if (normalize) { vec.Normalize(); }
+	else { vec /= 32768; }
+
+	return vec;
 }
 
 
-Vector2 KeyManager::GetLeftStickVec(void) const
+Vector2 KeyManager::GetLeftStickVec(bool normalize) const
 {
 	XINPUT_STATE state = {};
 	if (GetJoypadXInputState(DX_INPUT_PAD1, &state) != 0) { return { 0.0f,0.0f }; }
@@ -374,7 +377,10 @@ Vector2 KeyManager::GetLeftStickVec(void) const
 
 	if (vec == 0.0f) { return{ 0.0f,0.0f }; }
 
-	return vec / sqrtf(vec.x * vec.x + vec.y * vec.y);
+	if (normalize) { vec.Normalize(); }
+	else { vec /= 32768; }
+
+	return vec;
 }
 
 void KeyManager::SetMouseFixed(bool fixed)
