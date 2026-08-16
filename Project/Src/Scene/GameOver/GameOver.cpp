@@ -16,8 +16,6 @@ void GameOver::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("GameOver");
 
-	Key::GetIns().SetMouseFixed(false);
-
 	image = LoadGraph("Data/Image/GameOver/GameOverImage.png");
 }
 
@@ -25,7 +23,7 @@ void GameOver::SubPostUpdate(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down ||
 		Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Title);
 		Snd::GetIns().Play("SystemButton");
 		return;
 	}

@@ -4,6 +4,28 @@
 
 #include "../../Manager/Net/NetWorkManager.h"
 
+CharacterBase::CharacterBase() :
+	ActorBase(),
+
+	characterStats(0, 0, 0, 0),
+
+	state(0),
+	stateMap(),
+
+	DEFAULT_COLOR(),
+
+	anime(nullptr),
+
+	inviCounter(0),
+	isInviEffect(false),
+
+	operatorSenderId(MSG_SENDER_ID::None),
+	isOwnOperator(false),
+
+	isDeath(false)
+{
+}
+
 CharacterBase::CharacterBase(
 	short HP_MAX,
 	short ATTACK_POWER,
@@ -25,7 +47,9 @@ CharacterBase::CharacterBase(
 	isInviEffect(false),
 
 	operatorSenderId(MSG_SENDER_ID::None),
-	isOwnOperator(false)
+	isOwnOperator(false),
+
+	isDeath(false)
 {
 }
 
@@ -45,7 +69,9 @@ CharacterBase::CharacterBase(const std::string& parameterPath):
 	isInviEffect(false),
 
 	operatorSenderId(MSG_SENDER_ID::None),
-	isOwnOperator(false)
+	isOwnOperator(false),
+
+	isDeath(false)
 {
 }
 

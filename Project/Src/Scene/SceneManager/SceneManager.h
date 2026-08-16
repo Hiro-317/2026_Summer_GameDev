@@ -50,13 +50,13 @@ public:
 	// メインシーンの列挙型
 	enum class SCENE_ID
 	{
-		TITLE,
-		LOBBY,
-		MULTI_LOBBY,
-		BOSS_SELECT,
-		GAME,
-		CLEAR,
-		GAMEOVER,
+		Title,
+		Lobby,
+		MultiLobby,
+		BossSelect,
+		Game,
+		Clear,
+		GameOver,
 	};
 
 	// 更新
@@ -129,22 +129,22 @@ private:
 	enum class REQUEST_TYPE
 	{
 		// 現在のシーンを破棄して新しいシーンに入れ替える
-		CHANGE,
+		Change,
 
 		// 現在のシーンを破棄せずに新しいシーンを積む
-		PUSH,
+		Push,
 
 		// 現在のシーンを破棄
-		POP,
+		Pop,
 
 		// 現在のシーンを全て破棄して新しいシーン1つにする
-		JUMP,
+		Jump,
 
 		// 現在のシーンを破棄して新しいシーンに入れ替える（フェード付き）
-		CHANGE_FADE,
+		ChangeFade,
 
 		// 現在のシーンを全て破棄して新しいシーン1つにする（フェード付き）
-		JUMP_FADE,
+		JumpFade,
 
 	};
 
@@ -152,28 +152,28 @@ private:
 	enum class LOAD_COMMIT
 	{
 		// 未設定
-		NONE,
+		None,
 
 		// 現在のシーンを破棄して新しいシーンに入れ替える
-		CHANGE,
+		Change,
 
 		// 現在のシーンを破棄せずに新しいシーンを積む
-		PUSH,
+		Push,
 
 		// 現在のシーンを全て破棄して新しいシーン1つにする
-		JUMP,
+		Jump,
 
 		// 現在のシーンを破棄して新しいシーンに入れ替える（フェード付き）
-		CHANGE_FADE,
+		ChangeFade,
 
 		// 現在のシーンを全て破棄して新しいシーン1つにする（フェード付き）
-		JUMP_FADE,
+		JumpFade,
 	};
 
 	// 1件分のシーン操作要求
 	struct SceneRequest
 	{
-		REQUEST_TYPE type = REQUEST_TYPE::CHANGE;
+		REQUEST_TYPE type = REQUEST_TYPE::Change;
 		std::unique_ptr<SceneBase> scene = nullptr;
 		std::size_t popNum = 1;
 

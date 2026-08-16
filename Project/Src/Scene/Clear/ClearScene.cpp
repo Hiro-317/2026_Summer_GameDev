@@ -16,8 +16,6 @@ void ClearScene::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("Clear");
 
-	Key::GetIns().SetMouseFixed(false);
-
 	image = LoadGraph("Data/Image/Clear/GameClearImage.png");
 }
 
@@ -25,7 +23,7 @@ void ClearScene::SubPostUpdate(void)
 {
 	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down ||
 		Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Title);
 		Snd::GetIns().Play("SystemButton");
 		return;
 	}

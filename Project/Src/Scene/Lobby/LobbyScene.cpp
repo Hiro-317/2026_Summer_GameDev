@@ -3,7 +3,6 @@
 #include "../../pch.h"
 
 #include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
 #include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
 #include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
 
@@ -48,10 +47,10 @@ void LobbyScene::SubPostLoad(void)
 	}
 
 	// オブジェクト生成
-	CreateObject<SkyDome>();
-	CreateObject<LobbyStage>();
-	CreateObject<LobbyCharaPreviewManager>();
-	CreateObject<LobbyBossPreview>();
+	ObjAdd(new SkyDome());
+	ObjAdd(new LobbyStage());
+	ObjAdd(new LobbyCharaPreviewManager());
+	ObjAdd(new LobbyBossPreview());
 
 #pragma region 各画像の読み込み
 
@@ -99,7 +98,7 @@ void LobbyScene::SubPostUpdate(void)
 	// タイトル画面に戻る
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 		Snd::GetIns().Play("SystemButton");
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Title);
 	}
 
 	// 左
@@ -133,7 +132,7 @@ void LobbyScene::SubPostUpdate(void)
 			Net::GetIns().Disconnection();
 
 			// タイトル画面に戻る
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::TITLE);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Title);
 
 			break;
 		}
@@ -174,11 +173,8 @@ void LobbyScene::SubPostUpdate(void)
 
 		case LobbyScene::CHOICE::Enter: {	// 出撃
 
-			Net::GetIns().StartHost();
-			Net::GetIns().CloseReceptionToConnected();
-
 			// ゲームシーンに遷移
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
 
 			break;
 		}

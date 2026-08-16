@@ -142,10 +142,10 @@ public:
 	NetState GetState(void)const { return state; }
 
 	// ホストかどうか
-	bool IsHost(void)const { return senderId == HOST_SENDER_ID; }
+	bool IsHost(void)const { return state == NetState::None || senderId == HOST_SENDER_ID; }
 
 	// 自身の送信ID
-	MSG_SENDER_ID GetSenderId(void)const { return senderId; }
+	MSG_SENDER_ID GetSenderId(void)const { return (state != NetState::None) ? senderId : HOST_SENDER_ID; }
 
 	// 接続状況を取得
 	const ConnectStatus& GetConnectStatus(void)const { return connectStatus; }

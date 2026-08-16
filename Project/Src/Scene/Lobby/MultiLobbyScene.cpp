@@ -3,7 +3,8 @@
 #include "../../pch.h"
 
 #include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
+#include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
+#include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
@@ -39,10 +40,10 @@ MultiLobbyScene::MultiLobbyScene() :
 void MultiLobbyScene::SubPostLoad(void)
 {
 	// オブジェクト生成
-	CreateObject<SkyDome>();
-	CreateObject<LobbyStage>();
-	CreateObject<LobbyCharaPreviewManager>();
-	CreateObject<LobbyBossPreview>();
+	ObjAdd(new SkyDome());
+	ObjAdd(new LobbyStage());
+	ObjAdd(new LobbyCharaPreviewManager());
+	ObjAdd(new LobbyBossPreview());
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
 	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
@@ -110,7 +111,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 		Net::GetIns().Disconnection();
 
 		// ロビー画面に戻る
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 		return;
 	}
 
@@ -168,7 +169,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 			Net::GetIns().Disconnection();
 
 			// 通常のロビー画面に戻る
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 
 			// 以降はthisがnullptrとなっているため終了
 			return;
@@ -225,7 +226,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame));
 
 				// ゲームシーン遷移
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
 
 				// 以降はthisがnullptrとなっているため終了
 				return;
@@ -293,7 +294,11 @@ void MultiLobbyScene::SubPreRelease(void)
 
 void MultiLobbyScene::CreateCamera(void)
 {
-	camera = new DisplayAutoCamera(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
+	// 定点カメラを生成する
+	camera = new FixedPointCamera(FixedPointCamera::LookAt, Vector3::YZonly(500.0f, -2000.0f), Vector3::Yonly(150.0f));
+
+	// イベントカメラを生成
+	camera->StartEvent(new StartCameraEvent(*camera, Vector3(0.0f, 1500.0f, -5000.0f), Vector3::Yonly(Deg2Rad(-30.0f)), 0.0f, 200.0f));
 }
 
 void MultiLobbyScene::ButtonSelectionStateReload(void)
@@ -368,7 +373,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
 			if (!Net::GetIns().IsHost()) {
 				Net::GetIns().Disconnection();
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 				delete dataPtr;
 				return;
 			}
@@ -448,7 +453,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 		// シーン遷移の受信
 		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
 			// ゲームシーン遷移
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
 
 			delete dataPtr;
 			return;

@@ -14,6 +14,7 @@
 #include "../Title/TitleScene.h"
 #include "../Lobby/LobbyScene.h"
 #include "../Lobby/MultiLobbyScene.h"
+#include "../BossSelect/BossSelectScene.h"
 #include "../Game/GameScene.h"
 #include "../Clear/ClearScene.h"
 #include"../GameOver/GameOver.h"
@@ -29,14 +30,14 @@ SceneManager::SceneManager(void) :
 	requests(),
 
 	loadingScene(nullptr),
-	loadCommit(LOAD_COMMIT::NONE),
+	loadCommit(LOAD_COMMIT::None),
 
 	fade(nullptr),
 	fadeScene(nullptr),
 
 	isWaitFadeOut(false),
 
-	fadeCommit(LOAD_COMMIT::NONE),
+	fadeCommit(LOAD_COMMIT::None),
 
 	fillLight(-1),
 	rimLight(-1),
@@ -59,7 +60,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 最初のタイトルシーンは予約を経由せず、この初期化処理内で読み込みを開始する
-	StartLoad(CreateScene(SCENE_ID::TITLE), LOAD_COMMIT::JUMP);
+	StartLoad(CreateScene(SCENE_ID::Title), LOAD_COMMIT::Jump);
 }
 
 void SceneManager::Release(void)
@@ -151,7 +152,7 @@ void SceneManager::ChangeScene(std::unique_ptr<SceneBase> scene)
 	SceneRequest request;
 
 	// シーン切り替え要求を登録する。既に遷移要求がある、ロード中、フェード中の場合は新しい要求を受け付けない
-	request.type = REQUEST_TYPE::CHANGE;
+	request.type = REQUEST_TYPE::Change;
 
 	// 遷移先のシーンをムーブして登録する。std::moveを使うことで所有権を移動させ、不要なコピーを避ける
 	request.scene = std::move(scene);
@@ -172,7 +173,7 @@ void SceneManager::ChangeSceneFade(std::unique_ptr<SceneBase> scene, FADE_TYPE f
 	SceneRequest request;
 
 	// シーンの切り替え要求種類
-	request.type = REQUEST_TYPE::CHANGE_FADE;
+	request.type = REQUEST_TYPE::ChangeFade;
 
 	// 遷移先のシーン
 	request.scene = std::move(scene);
@@ -206,7 +207,7 @@ void SceneManager::PushScene(std::unique_ptr<SceneBase> scene)
 	SceneRequest request;
 
 	// シーンの切り替え要求種類
-	request.type = REQUEST_TYPE::PUSH;
+	request.type = REQUEST_TYPE::Push;
 
 	// 遷移先のシーン
 	request.scene = std::move(scene);
@@ -224,7 +225,7 @@ void SceneManager::PopScene(std::size_t popNum)
 	SceneRequest request;
 
 	// シーンの切り替え要求種類
-	request.type = REQUEST_TYPE::POP;
+	request.type = REQUEST_TYPE::Pop;
 
 	// ポップするシーンの数を設定する。スタック数を超える値が指定されても範囲内に丸める
 	request.popNum = popNum;
@@ -242,7 +243,7 @@ void SceneManager::JumpScene(std::unique_ptr<SceneBase> scene)
 	SceneRequest request;
 
 	// シーンの切り替え要求種類
-	request.type = REQUEST_TYPE::JUMP;
+	request.type = REQUEST_TYPE::Jump;
 
 	// 遷移先のシーン
 	request.scene = std::move(scene);
@@ -265,7 +266,7 @@ void SceneManager::JumpSceneFade(std::unique_ptr<SceneBase> scene, FADE_TYPE fad
 	SceneRequest request;
 
 	// シーンの切り替え要求種類
-	request.type = REQUEST_TYPE::JUMP_FADE;
+	request.type = REQUEST_TYPE::JumpFade;
 
 	// 遷移先のシーン
 	request.scene = std::move(scene);
@@ -297,7 +298,7 @@ void SceneManager::JumpSceneFade(SCENE_ID scene, FADE_TYPE fadeType, unsigned sh
 void SceneManager::AddRequest(SceneRequest request)
 {
 	// nullptrの遷移先は登録しない（Popだけはsceneを持たないため例外）
-	if (request.type != REQUEST_TYPE::POP && request.scene == nullptr) { return; }
+	if (request.type != REQUEST_TYPE::Pop && request.scene == nullptr) { return; }
 
 	// 既に遷移要求がある、ロード中、フェード中の場合は新しい要求を受け付けない
 	// 同一フレームにClearとGameOverが同時発生しても、最初の要求だけを採用する
@@ -323,11 +324,11 @@ void SceneManager::ApplyRequest(SceneRequest request)
 {
 	switch (request.type) {
 
-	case REQUEST_TYPE::CHANGE: { StartLoad(std::move(request.scene), LOAD_COMMIT::CHANGE); break; }
+	case REQUEST_TYPE::Change: { StartLoad(std::move(request.scene), LOAD_COMMIT::Change); break; }
 
-	case REQUEST_TYPE::PUSH: { StartLoad(std::move(request.scene), LOAD_COMMIT::PUSH); break; }
+	case REQUEST_TYPE::Push: { StartLoad(std::move(request.scene), LOAD_COMMIT::Push); break; }
 
-	case REQUEST_TYPE::POP: {
+	case REQUEST_TYPE::Pop: {
 
 		// スタック数を超える値が指定されても範囲内に丸める
 		const std::size_t popNum = (std::min)(request.popNum, scenes.size());
@@ -340,15 +341,15 @@ void SceneManager::ApplyRequest(SceneRequest request)
 		break;
 	}
 
-	case REQUEST_TYPE::JUMP: { StartLoad(std::move(request.scene), LOAD_COMMIT::JUMP); break; }
+	case REQUEST_TYPE::Jump: { StartLoad(std::move(request.scene), LOAD_COMMIT::Jump); break; }
 
-	case REQUEST_TYPE::CHANGE_FADE: {
+	case REQUEST_TYPE::ChangeFade: {
 
 		// まずフェードアウトだけ開始し、完全に暗くなってからロードする
 		fadeScene = std::move(request.scene);
 
 		// フェードアウトが終わったらロードするため、ロードコミットはフェードアウト後に設定する
-		fadeCommit = LOAD_COMMIT::CHANGE_FADE;
+		fadeCommit = LOAD_COMMIT::ChangeFade;
 
 		// フェードアウトが終わるまでロードを待つフラグを立てる
 		isWaitFadeOut = true;
@@ -362,13 +363,13 @@ void SceneManager::ApplyRequest(SceneRequest request)
 		break;
 	}
 
-	case REQUEST_TYPE::JUMP_FADE: {
+	case REQUEST_TYPE::JumpFade: {
 
 		// まずフェードアウトだけ開始し、完全に暗くなってからロードする
 		fadeScene = std::move(request.scene);
 
 		// フェードアウトが終わったらロードするため、ロードコミットはフェードアウト後に設定する
-		fadeCommit = LOAD_COMMIT::JUMP_FADE;
+		fadeCommit = LOAD_COMMIT::JumpFade;
 
 		// フェードアウトが終わるまでロードを待つフラグを立てる
 		isWaitFadeOut = true;
@@ -446,12 +447,12 @@ void SceneManager::CommitLoadedScene(void)
 	CommitScene(std::move(loadingScene), loadCommit);
 
 	// フェード遷移の場合、シーンの入れ替えと初期化がすべて終わってから明るくする
-	if (loadCommit == LOAD_COMMIT::CHANGE_FADE || loadCommit == LOAD_COMMIT::JUMP_FADE) {
+	if (loadCommit == LOAD_COMMIT::ChangeFade || loadCommit == LOAD_COMMIT::JumpFade) {
 		if (fade != nullptr) { fade->StartFadeIn(); }
 	}
 
 	// 読み込み完了後の反映方法を未設定に戻す
-	loadCommit = LOAD_COMMIT::NONE;
+	loadCommit = LOAD_COMMIT::None;
 }
 
 void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT commit)
@@ -463,8 +464,8 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 
 	switch (commit) {
 
-	case LOAD_COMMIT::CHANGE:
-	case LOAD_COMMIT::CHANGE_FADE: {
+	case LOAD_COMMIT::Change:
+	case LOAD_COMMIT::ChangeFade: {
 
 		// 末尾だけを入れ替える
 		if (scenes.empty()) { scenes.emplace_back(std::move(scene)); }
@@ -476,7 +477,7 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 		break;
 	}
 
-	case LOAD_COMMIT::PUSH: {
+	case LOAD_COMMIT::Push: {
 
 		// 既存シーンを残して末尾へ追加する
 		scenes.emplace_back(std::move(scene));
@@ -484,8 +485,8 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 		break;
 	}
 
-	case LOAD_COMMIT::JUMP:
-	case LOAD_COMMIT::JUMP_FADE: {
+	case LOAD_COMMIT::Jump:
+	case LOAD_COMMIT::JumpFade: {
 
 		// すべて解放して遷移先だけにする
 		for (std::unique_ptr<SceneBase>& oldScene : scenes) {
@@ -498,7 +499,7 @@ void SceneManager::CommitScene(std::unique_ptr<SceneBase> scene, LOAD_COMMIT com
 		break;
 	}
 
-	case LOAD_COMMIT::NONE:
+	case LOAD_COMMIT::None:
 	default: { break; }
 
 	}
@@ -538,17 +539,19 @@ std::unique_ptr<SceneBase> SceneManager::CreateScene(SCENE_ID scene)const
 {
 	switch (scene) {
 
-	case SCENE_ID::TITLE: { return std::make_unique<TitleScene>(); }
+	case SCENE_ID::Title: { return std::make_unique<TitleScene>(); }
 
-	case SCENE_ID::LOBBY: { return std::make_unique<LobbyScene>(); }
+	case SCENE_ID::Lobby: { return std::make_unique<LobbyScene>(); }
 
-	case SCENE_ID::MULTI_LOBBY: { return std::make_unique<MultiLobbyScene>(); }
+	case SCENE_ID::MultiLobby: { return std::make_unique<MultiLobbyScene>(); }
 
-	case SCENE_ID::GAME: { return std::make_unique<GameScene>(); }
+	case SCENE_ID::BossSelect: { return std::make_unique<BossSelectScene>(); }
 
-	case SCENE_ID::CLEAR: { return std::make_unique<ClearScene>(); }
+	case SCENE_ID::Game: { return std::make_unique<GameScene>(); }
 
-	case SCENE_ID::GAMEOVER: { return std::make_unique<GameOver>(); }
+	case SCENE_ID::Clear: { return std::make_unique<ClearScene>(); }
+
+	case SCENE_ID::GameOver: { return std::make_unique<GameOver>(); }
 
 	default: { return nullptr; }
 	}
@@ -560,7 +563,7 @@ std::unique_ptr<FadeSceneBase> SceneManager::CreateFadeScene(FADE_TYPE fadeType,
 
 	case FADE_TYPE::DEFAULT: { return std::make_unique<DefaultFadeScene>(FADE_TIME, FADE_OUT_COLOR, FADE_IN_COLOR); }
 
-	default: { return nullptr; }
+	default: { return std::make_unique<DefaultFadeScene>(FADE_TIME, FADE_OUT_COLOR, FADE_IN_COLOR); }
 	}
 }
 

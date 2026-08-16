@@ -36,7 +36,7 @@ void MatchingLoadingScene::SubPostUpdate(void)
 	if (Net::GetIns().GetState() == Net::NetState::Connected) {
 
 		// 接続完了したため、マルチ用のロビーに移動する
-		SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
+		SceneManager::GetIns().JumpSceneFade(SCENE_ID::MultiLobby);
 
 		return;
 	}

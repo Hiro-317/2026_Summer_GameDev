@@ -31,6 +31,9 @@ FollowYawCamera::FollowYawCamera(
 
 	// 角度
 	this->angle = CalcCameraAngle(pos, lookAtPos);
+
+	// カメラ回転が有効だったらマウスを固定しておく
+	if (ROT_POWER != 0.0f) { Key::GetIns().SetMouseFixed(true); }
 }
 
 void FollowYawCamera::NormalUpdate(void)
@@ -68,4 +71,10 @@ void FollowYawCamera::NormalUpdate(void)
 
 	// 角度
 	angle = CalcCameraAngle(pos, lookAtPos);
+}
+
+void FollowYawCamera::SubRelease(void)
+{
+	// 生成時固定したマウスを戻す
+	Key::GetIns().SetMouseFixed(false);
 }

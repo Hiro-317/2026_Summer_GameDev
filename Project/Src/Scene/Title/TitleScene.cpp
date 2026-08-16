@@ -58,8 +58,6 @@ void TitleScene::SubPostLoad(void)
 	// 音声のシーン切り替え
 	Snd::GetIns().ChangeScene("Title");
 
-	Key::GetIns().SetMouseFixed(false);
-
 #pragma region 画像の読み込み
 
 	// 画像読み込みのラムダ関数
@@ -162,7 +160,7 @@ void TitleScene::SubPostUpdate(void)
 			Snd::GetIns().Play("SystemSelect");
 
 			// ロビー画面へ
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 
 			break;
 		}

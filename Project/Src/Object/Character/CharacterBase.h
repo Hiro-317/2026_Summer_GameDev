@@ -13,7 +13,9 @@ class UI_Base;
 class CharacterBase : public ActorBase
 {
 public:
-	// デフォルトコンストラクタ
+
+	CharacterBase();
+
 	CharacterBase(
 		short HP_MAX,
 		short ATTACK_POWER,
@@ -21,9 +23,7 @@ public:
 		short SPEED_POWER
 	);
 
-	CharacterBase(
-		const std::string& parameterPath
-	);
+	CharacterBase(const std::string& parameterPath);
 
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
 	CharacterBase(
@@ -103,24 +103,24 @@ protected:
 	// 指定のステートへ遷移
 	virtual void  ChangeState(int nextState) {
 		// 遷移前のステートの終了処理を呼び出す
-		stateMap.at(state)->Exit();
+		if (stateMap.contains(state)) { stateMap.at(state)->Exit(); }
 
 		// 遷移
 		state = nextState;
 
 		// 遷移後のステートの初期化処理を呼び出す
-		stateMap.at(state)->Enter();
+		if (stateMap.contains(state)) { stateMap.at(state)->Enter(); }
 	}
 
 	// キャラクター固有の処理をここに追加
-	virtual void CharacterLoad(void) = 0;
-	virtual void CharacterInit(void) = 0;
-	virtual void CharacterUpdate(void) = 0;
+	virtual void CharacterLoad(void) {}
+	virtual void CharacterInit(void) {}
+	virtual void CharacterUpdate(void) {}
 	virtual void CharacterRemoteUpdate() {}
-	virtual void CharacterDraw(void) = 0;
-	virtual void CharacterAlphaDraw(void) = 0;
-	virtual void CharacterUiDraw(void) = 0;
-	virtual void CharacterRelease(void) = 0;
+	virtual void CharacterDraw(void) {}
+	virtual void CharacterAlphaDraw(void) {}
+	virtual void CharacterUiDraw(void) {}
+	virtual void CharacterRelease(void) {}
 
 
 #pragma region アニメーションコントローラー

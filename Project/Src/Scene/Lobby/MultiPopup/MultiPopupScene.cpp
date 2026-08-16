@@ -133,7 +133,7 @@ void MultiPopupScene::SubPostUpdate(void)
 			clsDx();
 
 			// シーンをマルチ用のロビーに移動させる
-			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MultiLobby);
 
 			// 以降はthisがnullptrとなっているため終了
 			return;

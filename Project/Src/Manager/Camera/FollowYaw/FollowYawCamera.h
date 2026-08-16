@@ -54,4 +54,7 @@ private:
 
 	// XV
 	void NormalUpdate(void)override;
+
+	// I—¹
+	void SubRelease(void)override;
 };

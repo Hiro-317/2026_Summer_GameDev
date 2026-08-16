@@ -65,7 +65,7 @@ void GamePause::SubPostUpdate(void)
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby);
 
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::LOBBY);
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
 				return;
 			}
 
@@ -108,7 +108,7 @@ void GamePause::SubPostUpdate(void)
 
 			case MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby: {
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::LOBBY);
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
 				isReturn = true;
 				break;
 			}

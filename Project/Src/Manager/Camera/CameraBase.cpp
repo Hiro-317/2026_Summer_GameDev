@@ -2,6 +2,8 @@
 
 #include "../../Application/Application.h"
 
+#include "../Input/KeyManager.h"
+
 #include "CameraEvent/CameraEventBase.h"
 
 CameraBase::CameraBase(const Vector3& pos, const Vector3& angle, float fov) :
@@ -61,6 +63,10 @@ void CameraBase::DrawDebug(void) const
 
 void CameraBase::Release(void)
 {
+	// 派生での追加終了処理
+	SubRelease();
+
+	// 現在イベントがあれば強制終了する
 	EndEvent();
 }
 

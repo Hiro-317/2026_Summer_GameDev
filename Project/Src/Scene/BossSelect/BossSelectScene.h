@@ -20,4 +20,6 @@ private:
 
 #pragma endregion
 
+	void CreateCamera(void)override;
+
 };

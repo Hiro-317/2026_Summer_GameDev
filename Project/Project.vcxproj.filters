@@ -141,6 +141,10 @@
     <ClCompile Include="Src\Manager\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.cpp" />
+    <ClCompile Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.cpp" />
+    <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.cpp" />
+    <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.cpp" />
+    <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -327,6 +331,14 @@
     <ClInclude Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\WaitCameraEvent\WaitCameraEvent.h" />
+    <ClInclude Include="Src\Object\BossSelect\BossSelectStage.h" />
+    <ClInclude Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.h" />
+    <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.h" />
+    <ClInclude Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.h" />
+    <ClInclude Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.h" />
+    <ClInclude Include="Src\Object\BossSelect\Spot\Tomato\BossSelectTomatoSpot.h" />
+    <ClInclude Include="Src\Object\BossSelect\Spot\Grape\BossSelectGrapeSpot.h" />
+    <ClInclude Include="Src\Object\BossSelect\Spot\Banana\BossSelectBananaSpot.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

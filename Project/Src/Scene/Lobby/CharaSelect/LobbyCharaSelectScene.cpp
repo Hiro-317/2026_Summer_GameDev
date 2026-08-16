@@ -28,7 +28,7 @@ void LobbyCharaSelectScene::SubPostLoad(void)
 	selectCharaType = SceneManager::GetIns().GetSelectCharaType(sederId == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : sederId);
 	if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
 
-	CreateObject<CharaSelectPreviewManager>(selectCharaType);
+	ObjAdd(new CharaSelectPreviewManager(selectCharaType));
 }
 
 void LobbyCharaSelectScene::SubPostUpdate(void)

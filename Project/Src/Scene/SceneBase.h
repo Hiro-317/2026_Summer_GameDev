@@ -111,21 +111,6 @@ public:
 
 protected:
 
-	/// <summary>
-	/// Actorを生成してシーンの管理対象へ追加する。
-	/// new / deleteを派生シーン側で直接扱わないための関数。
-	/// </summary>
-	template<class T, class... Args>
-	T& CreateObject(Args&&... args) {
-		static_assert(std::is_base_of_v<ActorBase, T>, "TはActorBaseを継承している必要があります");
-
-		T* newObj = new T(std::forward<Args>(args)...);
-		T& ret = *newObj;
-
-		ObjAdd(newObj);
-		return ret;
-	}
-
 	// 既に生成済みのActorを追加する場合に使用する。所有権はSceneBaseへ移る
 	void ObjAdd(ActorBase* newObj);
 
