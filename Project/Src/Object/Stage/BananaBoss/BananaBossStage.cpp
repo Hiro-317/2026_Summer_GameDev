@@ -36,9 +36,6 @@ void BananaBossStage::Load(void)
 	// 角度
 	trans.angle = GetParameterToVector3("Model", "Angle");
 
-	// モデル制御情報をモデルに適用（静的オブジェクトに設定している場合自動で適用されないため、手動で設定する）
-	trans.Attach();
-
 #pragma endregion
 
 #pragma region コライダー

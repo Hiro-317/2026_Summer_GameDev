@@ -263,6 +263,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
     <ClCompile Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.cpp" />
     <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
+    <ClCompile Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.cpp" />
     <ClCompile Include="Src\Scene\BossSelect\BossSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Fade\Default\DefaultFadeScene.cpp" />
@@ -453,6 +454,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\UI\UIDefine.h" />
     <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\pch.h" />
+    <ClInclude Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.h" />
     <ClInclude Include="Src\Scene\BossSelect\BossSelectScene.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Fade\Default\DefaultFadeScene.h" />

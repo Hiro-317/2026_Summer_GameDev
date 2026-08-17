@@ -71,7 +71,7 @@ struct Transform
 	/// モデルをロード
 	/// </summary>
 	/// <param name="path">モデルのパス（Data/Model/～～.mv1）</param>
-	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); Attach(); }
+	void Load(std::string path) { model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str()); }
 
 	/// <summary>
 	/// モデルを複製

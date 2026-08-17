@@ -8,7 +8,7 @@
 
 // 定点モードとして生成
 MultifuncCamera::MultifuncCamera(const Vector3& pos, const Vector3& angle, float fov) :
-	CameraBase(pos, angle, fov),
+	CameraBase(),
 
 	mode(MODE::FixedPoint),
 
@@ -32,17 +32,18 @@ MultifuncCamera::MultifuncCamera(const Vector3& pos, const Vector3& angle, float
 	TARGET_DISTANCE_MIN(),
 	TARGET_DISTANCE_MAX()
 {
+	ChangeModeFixedPoint(pos, angle, fov);
 }
 
 // フリーモードとして生成
 MultifuncCamera::MultifuncCamera(float MOVE_POWER, float ROT_POWER, const Vector3& pos, const Vector3& angle, float fov) :
-	CameraBase(pos, angle, fov),
+	CameraBase(),
 
 	mode(MODE::Free),
 
 	modeFunc(),
 
-	MOVE_POWER(MOVE_POWER), ROT_POWER(ROT_POWER),
+	MOVE_POWER(), ROT_POWER(),
 
 	fixedLookAtPos(), lookAtDiff(),
 
@@ -60,21 +61,22 @@ MultifuncCamera::MultifuncCamera(float MOVE_POWER, float ROT_POWER, const Vector
 	TARGET_DISTANCE_MIN(),
 	TARGET_DISTANCE_MAX()
 {
+	ChangeModeFree(MOVE_POWER, ROT_POWER, pos, angle, fov);
 }
 
 // ディスプレイ（手動回転）または ディスプレイ（自動回転）モードとして生成
 MultifuncCamera::MultifuncCamera(bool mode, const Vector3& fixedLookAtPos, const Vector3& lookAtDiff, float ROT_POWER, const Vector3& angle, float fov) :
-	CameraBase(Vector3(), Vector3(), fov),
+	CameraBase(),
 
 	mode(mode ? MODE::DisplayRemote : MODE::DisplayAuto),
 
 	modeFunc(),
 
-	MOVE_POWER(), ROT_POWER(ROT_POWER),
+	MOVE_POWER(), ROT_POWER(),
 
-	fixedLookAtPos(fixedLookAtPos), lookAtDiff(lookAtDiff),
+	fixedLookAtPos(), lookAtDiff(),
 
-	controlAngle(angle),
+	controlAngle(),
 
 	targetPos(nullptr),
 
@@ -88,32 +90,29 @@ MultifuncCamera::MultifuncCamera(bool mode, const Vector3& fixedLookAtPos, const
 	TARGET_DISTANCE_MIN(),
 	TARGET_DISTANCE_MAX()
 {
-	// 現在の追従対象の座標と角度情報から自身(カメラ)の座標を算出する
-	pos = fixedLookAtPos + lookAtDiff.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
-
-	// 角度
-	this->angle = CalcCameraAngle(pos, fixedLookAtPos);
+	if (mode) { ChangeModeDisplayRemote(fixedLookAtPos, lookAtDiff, ROT_POWER, angle, fov); }
+	else { ChangeModeDisplayAuto(fixedLookAtPos, lookAtDiff, ROT_POWER, angle, fov); }
 }
 
 // 追従（手動操作）または 追従（Y軸回転のみの手動操作）モードとして生成
 MultifuncCamera::MultifuncCamera(bool mode, const Vector3* targetPos, const Vector3& cameraOffset, const Vector3& lookAtOffset, float ROT_POWER, const Vector3& angle, float fov) :
-	CameraBase(Vector3(), Vector3(), fov),
+	CameraBase(),
 
 	mode(mode ? MODE::FollowRemote : MODE::FollowYaw),
 
 	modeFunc(),
 
-	MOVE_POWER(), ROT_POWER(ROT_POWER),
+	MOVE_POWER(), ROT_POWER(),
 
 	fixedLookAtPos(), lookAtDiff(),
 
-	controlAngle(angle),
+	controlAngle(),
 
-	targetPos(targetPos),
+	targetPos(nullptr),
 
-	cameraOffset(cameraOffset),
+	cameraOffset(),
 
-	lookAtOffset(lookAtOffset),
+	lookAtOffset(),
 	lookAtPos(),
 
 	focusPos(nullptr),
@@ -121,14 +120,8 @@ MultifuncCamera::MultifuncCamera(bool mode, const Vector3* targetPos, const Vect
 	TARGET_DISTANCE_MIN(),
 	TARGET_DISTANCE_MAX()
 {
-	// 座標を設定
-	pos = *targetPos + cameraOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x,controlAngle.y) }));
-
-	// 注視点を設定
-	lookAtPos = *targetPos + lookAtOffset.TransMat(MatrixAllMultXY({ Vector3::XYonly(controlAngle.x, controlAngle.y) }));
-
-	// 操作角度
-	this->angle = CalcCameraAngle(pos, lookAtPos);
+	if (mode) { ChangeModeFollowRemote(targetPos, cameraOffset, lookAtOffset, ROT_POWER, angle, fov); }
+	else { ChangeModeFollowYaw(targetPos, cameraOffset, lookAtOffset, ROT_POWER, angle, fov); }
 }
 
 // 追従（自動操作）モードとして生成
@@ -145,19 +138,19 @@ MultifuncCamera::MultifuncCamera(const Vector3* targetPos, const Vector3* focusP
 
 	controlAngle(),
 
-	targetPos(targetPos),
+	targetPos(nullptr),
 
 	cameraOffset(),
 
 	lookAtOffset(),
 	lookAtPos(),
 
-	focusPos(focusPos),
+	focusPos(nullptr),
 
-	TARGET_DISTANCE_MIN(TARGET_DISTANCE_MIN),
-	TARGET_DISTANCE_MAX(TARGET_DISTANCE_MAX)
+	TARGET_DISTANCE_MIN(),
+	TARGET_DISTANCE_MAX()
 {
-	FollowAutoModeFunc();
+	ChangeModeFollowAuto(targetPos, focusPos, TARGET_DISTANCE_MIN, TARGET_DISTANCE_MAX, fov);
 }
 
 #pragma endregion

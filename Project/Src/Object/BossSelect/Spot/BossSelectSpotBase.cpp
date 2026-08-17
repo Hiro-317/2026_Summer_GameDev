@@ -1,5 +1,7 @@
 #include "BossSelectSpotBase.h"
 
+#include "../../../Scene/SceneManager/SceneManager.h"
+
 #include "../../Common/Collider/XZCircleCollider.h"
 
 BossSelectSpotBase::BossSelectSpotBase(
@@ -100,5 +102,9 @@ void BossSelectSpotBase::SelectedDraw(const int& selectedImage)
 
 void BossSelectSpotBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
 {
-	if (other.GetTag() == SKY_SHIP_COLL_TAG) { selected = true; }
+	if (other.GetTag() == SKY_SHIP_COLL_TAG) { 
+		selected = true;
+
+		SceneManager::GetIns().SetSelectBossType(bossType);
+	}
 }

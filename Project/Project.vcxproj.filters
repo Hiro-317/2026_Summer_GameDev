@@ -145,6 +145,7 @@
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.cpp" />
+    <ClCompile Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -339,6 +340,7 @@
     <ClInclude Include="Src\Object\BossSelect\Spot\Tomato\BossSelectTomatoSpot.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\Grape\BossSelectGrapeSpot.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\Banana\BossSelectBananaSpot.h" />
+    <ClInclude Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

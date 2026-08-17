@@ -24,4 +24,20 @@ public:
 
 	// “Ç‚İ‚İ
 	void Load(void)override;
+
+	// óMˆ—
+	void ReceptionUpdate(void)override;
+
+	// ‘—Mˆ—
+	void SendUpdate(void)override;
+
+
+	// “–‚½‚è”»’è‚Ì’Ê’m
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+
+private:
+
+	void CharacterUpdate(void)override { pushScene = false; }
+
+	bool pushScene;
 };

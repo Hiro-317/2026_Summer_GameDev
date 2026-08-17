@@ -16,8 +16,8 @@ BossSelectSpotManager::BossSelectSpotManager() :
 
 void BossSelectSpotManager::Load(void)
 {
-	selectedImage[(int)true] = LoadGraph("Data/Image/Lobby/BossSelect/BossSelectEnterController.png");
-	selectedImage[(int)false] = LoadGraph("Data/Image/Lobby/BossSelect/BossSelectEnterKeyboard.png");
+	selectedImage[(int)true] = LoadGraph("Data/Image/BossSelect/BossSelectEnterController.png");
+	selectedImage[(int)false] = LoadGraph("Data/Image/BossSelect/BossSelectEnterKeyboard.png");
 
 	// スポット生成ラムダ関数
 	auto CreatSpot = [&](BossSelectSpotBase* newSpot)->void {
