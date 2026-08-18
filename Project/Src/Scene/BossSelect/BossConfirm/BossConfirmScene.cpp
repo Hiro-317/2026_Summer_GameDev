@@ -13,6 +13,7 @@
 BossConfirmScene::BossConfirmScene() :
 	SceneBase(),
 	IS_HOST(Net::GetIns().IsHost()),
+	ENTRY_COUNT(Net::GetIns().GetConnectStatus().EntryCount()),
 
 	choice(),
 
@@ -20,7 +21,13 @@ BossConfirmScene::BossConfirmScene() :
 
 	readyList(),
 
+	frameImage(-1),
+
 	bossSelectImage(-1),
+
+	playerIconBackImage(),
+	playerIconFrameImage(),
+	playerIconImage(),
 
 	choiceButtonImage(),
 
@@ -43,8 +50,42 @@ void BossConfirmScene::SubPostLoad(void)
 	// ‰æ‘œ“Ç‚İ‚İ‚Ìƒ‰ƒ€ƒ_ŠÖ”
 	auto loadBossConfirmImage = [&](std::string name)->int { return LoadGraph((IMAGE_DATA_FILE_DIR + name + ".png").c_str()); };
 
+	// ˜g‚Ì‰æ‘œ
+	frameImage = loadBossConfirmImage(FRAME_IMAGE_NAME);
+
 	// ƒ{ƒX‚ÌÚ×ƒCƒ[ƒW
 	bossSelectImage = loadBossConfirmImage(BOSS_SELECT_IMAGE_NAME[(int)SceneManager::GetIns().GetSelectBossType()]);
+
+	// ƒvƒŒƒCƒ„[ƒLƒƒƒ‰ƒAƒCƒRƒ“‚Ì“¯‚¶‰æ‘œ‚Ìd•¡‚Ìƒ[ƒh”ğ‚¯‚é‚½‚ß‚Ìƒtƒ‰ƒO”z—ñ
+	signed char playerIconDupli[(int)CHARA_TYPE::Max];
+	for (signed char& dupli : playerIconDupli) { dupli = -1; }
+
+	// ƒvƒŒƒCƒ„[ƒAƒCƒRƒ“
+	for (char id = 0; id < ENTRY_COUNT; id++) {
+
+		// ”wŒi
+		playerIconBackImage[id] = loadBossConfirmImage(PLAYER_ICON_BACK_IMAGE_NAME[id]);
+		// ƒtƒŒ[ƒ€
+		playerIconFrameImage[id] = loadBossConfirmImage(PLAYER_ICON_FRAME_IMAGE_NAME[id]);
+
+
+		// ƒLƒƒƒ‰```````````````````````````````````````
+
+		// ‘I‘ğƒLƒƒƒ‰æ“¾
+		CHARA_TYPE charaType = SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id);
+
+		// d•¡ƒ[ƒhŠm”F
+		if (playerIconDupli[(int)charaType] == -1) {
+			// ‰‰ñƒ[ƒh
+			playerIconImage[id] = loadBossConfirmImage(PLAYER_ICON_IMAGE_NAME[(int)charaType]);
+			// ƒ[ƒh‚µ‚½‚±‚Æ‚ğ•Û‘¶‚·‚é
+			playerIconDupli[(int)charaType] = id;
+		}
+		// 2‰ñ–ÚˆÈ~iƒnƒ“ƒhƒ‹‚ğƒRƒs[j
+		else { playerIconImage[id] = playerIconImage[playerIconDupli[(int)charaType]]; }
+
+		// ```````````````````````````````````````ƒLƒƒƒ‰
+	}
 
 	// ‘I‘ğˆƒ{ƒ^ƒ“‚Ì‰æ‘œ
 	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
@@ -57,11 +98,11 @@ void BossConfirmScene::SubPostLoad(void)
 	}
 
 	// ‘I‘ğ’†‚Ì–îˆó
-	arrowImage = loadBossConfirmImage("BossConfirm/NowSelectArrow");
+	arrowImage = loadBossConfirmImage(ARROW_IMAGE_NAME);
 
 	// ‘I‘ğ’†‚ÌŒˆ’èƒL[
-	enterKeyImage[(int)false] = loadBossConfirmImage("BossConfirm/NowSelectKeyboard");
-	enterKeyImage[(int)true] = loadBossConfirmImage("BossConfirm/NowSelectController");
+	enterKeyImage[(int)false] = loadBossConfirmImage(ENTER_KEYBOARD_IMAGE_NAME);
+	enterKeyImage[(int)true] = loadBossConfirmImage(ENTER_CONTROLLER_IMAGE_NAME);
 
 #pragma endregion
 }
@@ -192,11 +233,28 @@ void BossConfirmScene::SubPostDraw(void)
 	DrawBox(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
+	//static Vector2I tempPos = Vector2I();
+
+	//if (CheckHitKey(KEY_INPUT_UP) == 1) { tempPos.y -= 5; }
+	//if (CheckHitKey(KEY_INPUT_DOWN) == 1) { tempPos.y += 5; }
+	//if (CheckHitKey(KEY_INPUT_LEFT) == 1) { tempPos.x -= 5; }
+	//if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x += 5; }
+
 	// ‰æ‘œ•`‰æ‚Ìƒ‰ƒ€ƒ_ŠÖ”
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f)->void { DrawRotaGraph(pos.x, pos.y, rate, angle, handle, true); };
 
+	// ˜g‚Ì•`‰æ
+	drawImage(frameImage, FRAME_POS);
+
 	// ƒ{ƒXÚ×ƒCƒ[ƒW
 	drawImage(bossSelectImage, BOSS_SELECT_IMAGE_POS);
+
+	// ƒvƒŒƒCƒ„[ƒAƒCƒRƒ“
+	for (char id = 0; id < ENTRY_COUNT; id++) {
+		drawImage(playerIconBackImage[id], PLAYER_ICON_POS[id]);
+		drawImage(playerIconImage[id], PLAYER_ICON_POS[id]);
+		drawImage(playerIconFrameImage[id], PLAYER_ICON_POS[id]);
+	}
 
 	// ‘I‘ğˆ‚Ì•`‰æ
 	for (int i = 0; i < (int)CHOICE::Max; i++) {
@@ -224,8 +282,17 @@ void BossConfirmScene::SubPreRelease(void)
 		}
 	}
 
+	for (char id = 0; id < ENTRY_COUNT; id++) {
+		DeleteGraph(playerIconImage[id]);
+		DeleteGraph(playerIconFrameImage[id]);
+		DeleteGraph(playerIconBackImage[id]);
+	}
+
 	// ƒ{ƒXÚ×ƒCƒ[ƒW
 	DeleteGraph(bossSelectImage);
+
+	// ˜g‚Ì‰æ‘œ
+	DeleteGraph(frameImage);
 
 #pragma endregion
 }

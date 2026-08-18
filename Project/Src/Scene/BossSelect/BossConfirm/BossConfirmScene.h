@@ -50,6 +50,9 @@ private:
 	// ホストかどうか
 	const bool IS_HOST;
 
+	// プレイヤー接続数
+	const char ENTRY_COUNT;
+
 	// 選択択
 	enum class CHOICE {
 		None = -1,
@@ -73,19 +76,46 @@ private:
 	};
 
 	// 画像データのディレクトリ
-	const std::string IMAGE_DATA_FILE_DIR = "Data/Image/BossSelect/";
+	const std::string IMAGE_DATA_FILE_DIR = "Data/Image/BossSelect/BossConfirm/";
+
+	// 枠の画像の名前
+	const std::string FRAME_IMAGE_NAME = "Frame";
 
 	// 各ボスの詳細イメージの名前
 	const std::string BOSS_SELECT_IMAGE_NAME[(int)BOSS_TYPE::Max] = {
-		"BossConfirm/TomatoBossSelectImage",
-		"BossConfirm/GrapeBossSelectImage",
-		"BossConfirm/BananaBossSelectImage",
+		"TomatoBossSelectImage",
+		"GrapeBossSelectImage",
+		"BananaBossSelectImage",
+	};
+
+	// パーティー編成に使用するプレイヤーアイコン（背景）の画像の名前
+	const std::string PLAYER_ICON_BACK_IMAGE_NAME[(int)MSG_SENDER_ID::Max] = {
+		"P1Back",
+		"P2Back",
+		"P3Back",
+		"P4Back",
+	};
+
+	// パーティー編成に使用するプレイヤーアイコン（フレーム）の画像の名前
+	const std::string PLAYER_ICON_FRAME_IMAGE_NAME[(int)MSG_SENDER_ID::Max] = {
+		"P1Frame",
+		"P2Frame",
+		"P3Frame",
+		"P4Frame",
+	};
+
+	// パーティー編成に使用するプレイヤーアイコンの画像の名前
+	const std::string PLAYER_ICON_IMAGE_NAME[(int)CHARA_TYPE::Max] = {
+		"OrangeIcon",
+		"TomatoIcon",
+		"PeachIcon",
+		"GrapeIcon",
 	};
 
 	// 各ボタン画像の名前
 	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
-		"BossConfirm/Exit",										// キャンセル
-		(IS_HOST) ? "BossConfirm/Enter" : "BossConfirm/Ready",	// <ホスト>出撃 / <クライアント>準備完了
+		"Exit",							// キャンセル
+		(IS_HOST) ? "Enter" : "Ready",	// <ホスト>出撃 / <クライアント>準備完了
 	};
 
 	// ボタン画像の 選択時/非選択時/選択できないとき の修飾される名前
@@ -95,8 +125,27 @@ private:
 		"ToDisable",	// 選択できないとき
 	};
 
+	// 選択中矢印の画像
+	const std::string ARROW_IMAGE_NAME = "NowSelectArrow";
+
+	// 選択中決定ボタンの画像（キーボード）
+	const std::string ENTER_KEYBOARD_IMAGE_NAME = "NowSelectKeyboard";
+	// 選択中決定ボタンの画像（コントローラー）
+	const std::string ENTER_CONTROLLER_IMAGE_NAME = "NowSelectController";
+
+	// 枠の画像の位置
+	const Vector2I FRAME_POS = Vector2I(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF);
+
 	// ボス詳細イメージの位置
-	const Vector2I BOSS_SELECT_IMAGE_POS = Vector2I(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF);
+	const Vector2I BOSS_SELECT_IMAGE_POS = FRAME_POS + Vector2I(-205, -100);
+
+	// プレイヤーアイコンの位置
+	const Vector2I PLAYER_ICON_POS[(int)MSG_SENDER_ID::Max] = {
+		FRAME_POS + Vector2I(-390, 220),
+		FRAME_POS + Vector2I(-270, 220),
+		FRAME_POS + Vector2I(-150, 220),
+		FRAME_POS + Vector2I(-30, 220),
+	};
 
 	// ボタンの画像の位置
 	const Vector2I CHOICE_BUTTON_POS[(int)CHOICE::Max] = {
@@ -118,8 +167,18 @@ private:
 	// ボタンごとの選択状態を choiceとreadyList を参照して更新する
 	void ButtonSelectionStateReload(void);
 
+	// 枠の画像
+	int frameImage;
+
 	// ボス詳細イメージ
 	int bossSelectImage;
+
+	// プレイヤーアイコン（背景）の画像
+	int playerIconBackImage[(int)MSG_SENDER_ID::Max];
+	// プレイヤーアイコン（フレーム）の画像
+	int playerIconFrameImage[(int)MSG_SENDER_ID::Max];
+	// プレイヤーアイコンの画像
+	int playerIconImage[(int)MSG_SENDER_ID::Max];
 	
 	// 各選択択の画像
 	int choiceButtonImage[(int)CHOICE::Max][(int)SELECTION_STATE::Max];

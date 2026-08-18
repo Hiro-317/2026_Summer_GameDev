@@ -168,6 +168,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
+    <ClCompile Include="Src\Manager\Ranking\Ranking.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.cpp" />
@@ -328,6 +329,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
+    <ClInclude Include="Src\Manager\Ranking\Ranking.h" />
     <ClInclude Include="Src\Object\BossSelect\BossSelectStage.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.h" />
