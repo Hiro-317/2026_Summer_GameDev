@@ -38,7 +38,7 @@ void BananaBossBoomerangState::Enter(void)
 	SetCoolTime();
 	PlayStartAnim();
 	collOperator->SetDrawArea(true);
-	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB));
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC));
 }
 
 void BananaBossBoomerangState::Update(void)
@@ -54,9 +54,9 @@ void BananaBossBoomerangState::Update(void)
 		}
 		// UŒ‚•`‰æ‚ðXV
 		collOperator->SetScale(cnt / START_TIME);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB, Vector3(), cnt / START_TIME));
 		// ƒoƒiƒƒ‰ƒ“‚ð’Ç]
 		collOperator->SetBanameranPos(HandPos());
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, HandPos(), cnt / START_TIME));
 		// ‚½‚ßŽžŠÔ‚ð’´‚¦‚Ä‚½‚ç
 		if (cnt >= START_TIME) {
 			// UŒ‚‚Ì”­¶‚ÆƒJƒEƒ“ƒg‚Ì‰Šú‰»
@@ -71,6 +71,7 @@ void BananaBossBoomerangState::Update(void)
 		// ‰ñ“]‚³‚¹‚é
 		collOperator->SetBanameranRot(Vector3::Yonly(Deg2Rad(cnt * 10.0f)));
 		collOperator->SetBanameranPos(Vector3(POS.x * cosf(Deg2Rad(cnt)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(cnt))));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, Vector3(POS.x * cosf(Deg2Rad(cnt)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(cnt))), 1.0f, Deg2Rad(cnt * 10.0f)));
 		// ŽžŠÔ‚ª‰z‚¦‚Ä‚½‚çI‚í‚é
 		if (cnt >= END_TIME) {
 			DefaultChangeState();
@@ -85,9 +86,9 @@ void BananaBossBoomerangState::Update(void)
 void BananaBossBoomerangState::Exit(void)
 {
 	collOperator->Off();
-	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB, false));
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 	collOperator->SetScale(0.0f);
-	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB, Vector3()));
+	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, Vector3()));
 }
 
 void BananaBossBoomerangState::AlwaysUpdate(void)

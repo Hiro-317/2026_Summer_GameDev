@@ -90,11 +90,11 @@ private:
 #pragma region 定数定義
 
 	// 確率の全体
-	static constexpr int RANDOM = 12000;
+	static constexpr int RANDOM = 10000;
 
 	// それぞれの確率
-	static constexpr int KICKDOWN_LUCK = 3000;
-	static constexpr int STRAIGHT_LUCK = 4000;
+	static constexpr int KICKDOWN_LUCK = 4000;
+	static constexpr int STRAIGHT_LUCK = 6000;
 	static constexpr int STAMP_LUCK = 6000;
 	static constexpr int SINGLE_LUCK = 9000;
 	static constexpr int STALKER_LUCK = 11000;

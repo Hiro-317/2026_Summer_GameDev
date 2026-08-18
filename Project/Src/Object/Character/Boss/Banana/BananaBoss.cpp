@@ -211,6 +211,76 @@ void BananaBoss::ReceptionUpdate(void)
 {
 	BossBase::ReceptionUpdate();
 
+	// エリアの同期
+	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(operatorSenderId)) {
+
+		// 受け取ったステートの描画
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
+		{
+			SubObjSerch<BananaScratchCollOperator>()->SetScale(dataPtr->scale);
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
+		{
+			SubObjSerch<BananaFireCollOperator>()->SetScale(dataPtr->scale);
+			break;
+		}
+		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
+		{
+			SubObjSerch<BananaBossBanamerang>()->SetScale(dataPtr->scale);
+			SubObjSerch<BananaBossBanamerang>()->SetBanameranPos(dataPtr->pos);
+			SubObjSerch<BananaBossBanamerang>()->SetBanameranRot(Vector3::Yonly(dataPtr->angle));
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
+	}
+	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(operatorSenderId)) {
+
+		// 受け取ったステートの描画
+		switch (dataPtr->inform)
+		{
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
+		{
+			if (dataPtr->flg) {
+				SubObjSerch<BananaScratchCollOperator>()->SetDrawArea(dataPtr->flg);
+			}
+			else {
+				SubObjSerch<BananaScratchCollOperator>()->Off();
+			}
+			break;
+		}
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
+		{
+			if (dataPtr->flg) {
+				SubObjSerch<BananaFireCollOperator>()->SetDrawArea(dataPtr->flg);
+			}
+			else {
+				SubObjSerch<BananaFireCollOperator>()->Off();
+			}
+			break;
+		}
+		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
+		{
+			if (dataPtr->flg) {
+				SubObjSerch<BananaBossBanamerang>()->SetDrawArea(dataPtr->flg);
+			}
+			else {
+				SubObjSerch<BananaBossBanamerang>()->Off();
+			}			
+			break;
+		}
+		default:
+			break;
+		}
+
+		delete dataPtr;
+	}
 }
 
 void BananaBoss::CharacterInit(void)
@@ -226,4 +296,9 @@ void BananaBoss::CharacterInit(void)
 	ChangeState(static_cast<int>(STATE::IDLE));
 
 	for (ActorBase*& c : subObjArray) { c->Init(); }
+}
+
+void BananaBoss::PlayDamage(void)
+{
+	AnimePlay((int)ANIME_TYPE::DAMAGE, false);
 }

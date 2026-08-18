@@ -14,7 +14,7 @@ BananaBossBanamerang::BananaBossBanamerang(
 
 void BananaBossBanamerang::Load(void)
 {
-	// プレイヤー当たり判定を生成する（球体コライダー）
+	// プレイヤー当たり判定を生成する（XZコライダー）
 	ColliderCreate(
 		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS, 120.0f)
 	);

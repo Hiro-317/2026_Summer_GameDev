@@ -146,6 +146,11 @@
     <ClCompile Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Fire\EffectFire.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -341,6 +346,11 @@
     <ClInclude Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.h" />
+    <ClInclude Include="Src\Manager\Effect\Fire\EffectFire.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

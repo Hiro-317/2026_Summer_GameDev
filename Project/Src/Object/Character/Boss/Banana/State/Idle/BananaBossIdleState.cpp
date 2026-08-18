@@ -53,7 +53,15 @@ void BananaBossIdleState::Update(void)
 	float distance = (*playerPos.at(target) - pos).Length();
 	int luck = GetRand(RANDOM);
 
-	BanamerangChangeState();
+	if (luck <= KICKDOWN_LUCK) {
+		ScratchChangeState();
+	}
+	else if (luck <= STRAIGHT_LUCK){
+		FireChangeState();
+	}
+	else {
+		BanamerangChangeState();
+	}
 
 	//// Šm—¦‚Å•Ï‚¦‚é
 	//if (luck <= KICKDOWN_LUCK) {

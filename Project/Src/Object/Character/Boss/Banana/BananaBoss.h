@@ -24,6 +24,11 @@ public:
 
 	virtual void ReceptionUpdate(void)override;
 
+protected:
+
+	// ダメージアニメーション再生
+	void PlayDamage(void) override;
+
 private:
 
 	void CharacterInit(void)override;
