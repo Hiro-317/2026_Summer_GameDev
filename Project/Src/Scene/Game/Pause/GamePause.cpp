@@ -112,7 +112,6 @@ void GamePause::SubPostUpdate(void)
 			case MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect: {
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
-				isReturn = true;
 				EffectManager::GetIns()->StopEffectAll();
 				break;
 			}
@@ -121,7 +120,6 @@ void GamePause::SubPostUpdate(void)
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
 				Key::GetIns().SetMouseFixed(true);
-				isReturn = true;
 				EffectManager::GetIns()->PlayEffect();
 				break;
 			}
