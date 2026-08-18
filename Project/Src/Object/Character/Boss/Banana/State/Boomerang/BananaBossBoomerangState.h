@@ -2,10 +2,10 @@
 
 #include "../../../../CharacterStateBase.h"
 
-#include "BananaScratchCollOperator.h"
+#include "BananaBossBanamerang.h"
 #include "../../../../../../Common/Vector3.h"
 
-class BananaBossScratchState : public CharacterStateBase
+class BananaBossBoomerangState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -19,18 +19,20 @@ public:
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
-	BananaBossScratchState(
+	BananaBossBoomerangState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		BananaScratchCollOperator* collOperator,
-		const std::function<void(void)> UpdateFrame,
+		BananaBossBanamerang* collOperator,
+		const std::function<Vector3(void)> HandPos,
+		const std::function<void(void)> PlayStartAnim,
+		const std::function<void(void)> PlayLoopAnim,
 		const std::function<void(void)> PlayAttackAnim,
-		const std::function<float(void)> GetAnimPlayRatio,
+		const std::function<void(void)> PlayIdleAnim,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> SetCoolTime
 	);
-	~BananaBossScratchState()override = default;
+	~BananaBossBoomerangState()override = default;
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -46,24 +48,39 @@ private:
 
 #pragma region 定数
 
-	static constexpr float ATTACK_RATE = 0.5f;
-	static constexpr float END_RATE = 0.8f;
+	// 再生割合
+	static constexpr float ATTACK_RATE = 0.35f;
+	static constexpr float EFFECT_RATE = 0.32f;
+
+	// バナメランの開始座標
+	const Vector3 POS = Vector3(-575.0f, 100.0f, 1325.0f);
+	const float DIFF = POS.z / 2.0f;
+
+	// 攻撃の溜め時間
+	const float START_TIME = 60.0f;
+
+	// 攻撃をやめる時間
+	const float END_TIME = 180.0f;
 
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
 
 	// コリジョンオペレーターのポインタ
-	BananaScratchCollOperator* collOperator;
+	BananaBossBanamerang* collOperator;
 
-	// 攻撃フレームの更新
-	const std::function<void(void)> UpdateFrame;
+	// 手の位置
+	const std::function<Vector3(void)> HandPos;
 
-	// アタックアニメーションの再生
+	// 溜めアニメーションの再生
+	const std::function<void(void)> PlayStartAnim;
+	const std::function<void(void)> PlayLoopAnim;
+
+	// 攻撃アニメーションの再生
 	const std::function<void(void)> PlayAttackAnim;
 
-	// アニメーションの再生割合取得
-	const std::function<float(void)> GetAnimPlayRatio;
+	// 攻撃後アニメーションの再生
+	const std::function<void(void)> PlayIdleAnim;
 
 	// アニメーションが終わっているかどうか
 	const std::function<bool(void)> IsAnimeEnd;
@@ -78,4 +95,9 @@ private:
 
 	// 一度だけ通すように
 	bool first;
+	bool startAnim;
+
+	// 攻撃のカウント
+	float cnt;
+
 };

@@ -2,10 +2,10 @@
 
 #include "../../../../CharacterStateBase.h"
 
-#include "BananaScratchCollOperator.h"
+#include "BananaFireCollOperator.h"
 #include "../../../../../../Common/Vector3.h"
 
-class BananaBossScratchState : public CharacterStateBase
+class BananaBossFireState : public CharacterStateBase
 {
 public:
 	/// <summary>
@@ -19,18 +19,17 @@ public:
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
-	BananaBossScratchState(
+	BananaBossFireState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		BananaScratchCollOperator* collOperator,
-		const std::function<void(void)> UpdateFrame,
+		BananaFireCollOperator* collOperator,
 		const std::function<void(void)> PlayAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> SetCoolTime
 	);
-	~BananaBossScratchState()override = default;
+	~BananaBossFireState()override = default;
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
@@ -46,18 +45,19 @@ private:
 
 #pragma region 定数
 
-	static constexpr float ATTACK_RATE = 0.5f;
-	static constexpr float END_RATE = 0.8f;
+	// 再生割合
+	static constexpr float ATTACK_RATE = 0.35f;
+	static constexpr float EFFECT_RATE = 0.32f;
+
+	// エフェクトの再生位置
+	const Vector3 EFFECT_POS = Vector3(0.0f, 280.0f, 1325.0f);
 
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
 
 	// コリジョンオペレーターのポインタ
-	BananaScratchCollOperator* collOperator;
-
-	// 攻撃フレームの更新
-	const std::function<void(void)> UpdateFrame;
+	BananaFireCollOperator* collOperator;
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> PlayAttackAnim;
@@ -78,4 +78,9 @@ private:
 
 	// 一度だけ通すように
 	bool first;
+	bool effect;
+
+	// 攻撃持続のカウント
+	int cnt;
+
 };

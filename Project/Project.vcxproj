@@ -158,6 +158,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
     <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
     <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Effect\Fire\EffectFire.cpp" />
     <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
     <ClCompile Include="Src\Manager\Effect\StampLand\EffectStampLand.cpp" />
     <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
@@ -173,7 +174,11 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\BananaBoss.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Death\BananaBossDeathState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Idle\BananaBossIdleState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Scratch\BananaBossScratchState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Scratch\BananaScratchCollOperator.cpp" />
@@ -311,6 +316,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
     <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />
     <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
+    <ClInclude Include="Src\Manager\Effect\Fire\EffectFire.h" />
     <ClInclude Include="Src\Manager\Effect\Heal\EffectHeal.h" />
     <ClInclude Include="Src\Manager\Effect\StampLand\EffectStampLand.h" />
     <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
@@ -332,7 +338,11 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\BossSelect\Spot\Grape\BossSelectGrapeSpot.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\Tomato\BossSelectTomatoSpot.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\BananaBoss.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Death\BananaBossDeathState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Idle\BananaBossIdleState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Scratch\BananaBossScratchState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Scratch\BananaScratchCollOperator.h" />

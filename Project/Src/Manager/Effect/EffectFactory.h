@@ -9,6 +9,8 @@
 #include "StampShockWave/EffectStampShockWave.h"
 #include "Bomb/EffectBombSmall.h"
 #include "Bomb/EffectBombBig.h"
+#include "Fire/EffectFire.h"
+
 class EffectFactory {
 
 public:
@@ -19,6 +21,7 @@ public:
 		EffectBase* res{};
 
 		switch (name){
+
 		case EFFECT_NAME::TACKLE_MOVE: { res = new EffectTackleMove(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		case EFFECT_NAME::STAMP_LAND: { res = new EffectStampLand(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		case EFFECT_NAME::HEAL: { res = new EffectHeal(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
@@ -27,6 +30,8 @@ public:
 		case EFFECT_NAME::STAMP_SHOCK_WAVE: { res = new EffectStampShockWave(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		case EFFECT_NAME::BOMB_SMALL: { res = new EffectBombSmall(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
 		case EFFECT_NAME::BOMB_BIG: { res = new EffectBombBig(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
+		case EFFECT_NAME::FIRE: { res = new EffectFire(parameter, name, local, trans, followRotX, followRotY, followRotZ); break; }
+
 		default: { break; }
 		}
 		return res;

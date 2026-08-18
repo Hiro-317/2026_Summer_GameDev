@@ -2,24 +2,21 @@
 
 #include "../../../../../ActorBase.h"
 
-#include "../../../../../Common/Collider/CapsuleCollider.h"
+#include "../../../../../Common/Collider/XZCircleCollider.h"
 
 
-class BananaScratchCollOperator : public ActorBase
+class BananaBossBanamerang : public ActorBase
 {
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="stats">ステータス</param>
-	BananaScratchCollOperator(
+	BananaBossBanamerang(
 		const MSG_SENDER_ID operatorSenderId,
-		const CharacterStats& stats,
-		const Vector3& pos,
-		const Vector3& StartPos,
-		const Vector3& EndPos
+		const CharacterStats& stats
 	);
-	~BananaScratchCollOperator()override = default;
+	~BananaBossBanamerang()override = default;
 
 	void Load(void)override;
 
@@ -28,28 +25,25 @@ public:
 
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 
-	// 攻撃フレームの更新
-	void SetColliderFrame(void) { 
-		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back());
-		coll->SetStartPos(StartPos); coll->SetEndPos(EndPos);
-	}
+	void SetBanameranPos(const Vector3& pos) { banamerang.pos = pos; }
+	void SetBanameranRot(const Vector3& rot) { banamerang.angle = rot; }
 
 	// 攻撃範囲の描画設定
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
 
 private:
 
-	// コライダー描画の高さ
-	const float HEIGHT = 37.0f;
+	// バナメランのサイズ
+	const float SIZE = 8.75f;
 
 	// コライダーの半径
-	const float RADIUS = 150.0f;
+	const float RADIUS = 575.0f;
 
 	// コライダー描画の拡大率
-	const Vector3 SCALE = Vector3(4.75f, 1.0f, 3.0f);
+	const Vector3 SCALE = Vector3(11.5f, 1.0f, 12.2f);
 
-	// コライダーの誤差
-	const Vector3 DIFF = Vector3(-160.0f, 0.0f, -875.0f);
+	// コライダー描画の座標
+	const Vector3 POS = Vector3(0.0f, 37.0f, 1325.0f);
 
 #pragma region 受け取る参照変数
 
@@ -57,18 +51,14 @@ private:
 
 	const CharacterStats& stats;
 
-	const Vector3& StartPos;
-
-	const Vector3& EndPos;
-
-	const Vector3& pos;
-
 #pragma endregion
 
 	void SubAlphaDraw(void) override;
 
 	Transform collBack;
 	Transform collFront;
+
+	Transform banamerang;
 
 	// 攻撃範囲描画フラグ
 	bool isDrawArea;

@@ -17,7 +17,7 @@
 
 #include "../ObjectUseDefine.h"
 
-#include "Pause/GamePauseh.h"
+#include "Pause/GamePause.h"
 
 #include "../Common/GameDebugScene.h"
 
@@ -51,8 +51,9 @@ void GameScene::SubPostLoad(void)
 
 	// ステージを生成
 	switch (selectBossType) {
-	case BOSS_TYPE::Tomato: { ObjAdd(new TomatoBossStage()); break; }
-	case BOSS_TYPE::Grape: { ObjAdd(new GrapeBossStage()); break; }
+	case BOSS_TYPE::Tomato: { CreateObject<TomatoBossStage>(); break; }
+	case BOSS_TYPE::Grape: { CreateObject<GrapeBossStage>(); break; }
+	case BOSS_TYPE::Banana: { CreateObject<BananaBossStage>(); break; }
 	default: { break; }
 	}
 
@@ -74,8 +75,9 @@ void GameScene::SubPostLoad(void)
 
 	// ボスを生成
 	switch (selectBossType) {
-	case BOSS_TYPE::Tomato: { ObjAdd(new TomatoBoss(pos, live)); break; }
-	case BOSS_TYPE::Grape: { ObjAdd(new GrapeBoss(pos, live)); break; }
+	case BOSS_TYPE::Tomato: { CreateObject<TomatoBoss>(pos, live); break; }
+	case BOSS_TYPE::Grape: { CreateObject<GrapeBoss>(pos, live); break; }
+	case BOSS_TYPE::Banana: { CreateObject<BananaBoss>(pos, live); break; }
 	default: { break; }
 	}
 
@@ -116,8 +118,8 @@ void GameScene::SubPostUpdate(void)
 	// ポーズ判定
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 
-		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PushGamePause);
-
+		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePause);
+		EffectManager::GetIns()->PauseEffect();
 		SceneManager::GetIns().PushScene(std::make_unique<GamePause>(Net::GetIns().GetSenderId()));
 		return;
 	}
@@ -140,12 +142,20 @@ void GameScene::SubPostUpdate(void)
 		default:
 			break;
 		}
+
+		// シーン切り替え時に前シーンのエフェクトを残さない
+		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
+
 		return;
 	}
 
 	// ゲームオーバー判定
 	if (ObjSerch<PlayerManager>(objects)->IsPlayerAllDeath()) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAMEOVER, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
+
+		// シーン切り替え時に前シーンのエフェクトを残さない
+		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
+
 		return;
 	}
 
@@ -163,12 +173,16 @@ void GameScene::SubPostUpdate(void)
 #if _DEBUG
 	// シーンを再読み込み
 	if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_RELOAD).down) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+
+		// シーン切り替え時に前シーンのエフェクトを残さない
+		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
+
 		return;
 	}
 #endif // _DEBUG
 
-	EffectManager::GetIns()->Update();
+	EffectManager::GetIns()->UpdateEffect();
 	EffectManager::GetIns()->ReceptionUpdate();
 	UpdateEffekseer3D();
 

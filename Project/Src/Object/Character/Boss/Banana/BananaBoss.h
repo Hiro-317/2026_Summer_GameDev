@@ -106,15 +106,16 @@ private:
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 
 		GetParameter("Anime", "ScratchAnimeSpeed"),	// SCRATCH
-		
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+		GetParameter("Anime", "ScratchAnimeSpeed"),	// SCRATCH
+		GetParameter("Anime", "ScratchAnimeSpeed"),	// SCRATCH
+		GetParameter("Anime", "ScratchAnimeSpeed"),	// SCRATCH
+
+		GetParameter("Anime", "FireAnimeSpeed"),	// FIRE
+		GetParameter("Anime", "FireAnimeSpeed"),	// FIRE
+		GetParameter("Anime", "FireAnimeSpeed"),	// FIRE
+		GetParameter("Anime", "FireAnimeSpeed"),	// FIRE
+		GetParameter("Anime", "FireAnimeSpeed"),	// FIRE
+
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE

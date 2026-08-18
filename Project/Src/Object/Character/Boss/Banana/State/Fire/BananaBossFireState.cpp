@@ -1,13 +1,13 @@
-#include "BananaBossScratchState.h"
+#include "BananaBossFireState.h"
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../../Manager/Effect/EffectManager.h"
 
-BananaBossScratchState::BananaBossScratchState(
+BananaBossFireState::BananaBossFireState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	BananaScratchCollOperator* collOperator,
-	const std::function<void(void)> UpdateFrame,
+	BananaFireCollOperator* collOperator,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
@@ -16,7 +16,6 @@ BananaBossScratchState::BananaBossScratchState(
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	collOperator(collOperator),
-	UpdateFrame(UpdateFrame),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
@@ -25,18 +24,24 @@ BananaBossScratchState::BananaBossScratchState(
 {
 }
 
-void BananaBossScratchState::Enter(void)
+void BananaBossFireState::Enter(void)
 {
 	first = true;
+	effect = false;
 	SetCoolTime();
 	PlayAttackAnim();
 	collOperator->SetDrawArea(true);
-	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB));
 }
 
-void BananaBossScratchState::Update(void)
+void BananaBossFireState::Update(void)
 {
-	// アニメーションが終わっていたらステートを抜ける
+	// アニメーションのある再生割合以上で
+	if (GetAnimPlayRatio() >= EFFECT_RATE && !effect) {
+		// エフェクト生成
+		effect = true;
+		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::FIRE, EFFECT_POS);
+	}
 	if (GetAnimPlayRatio() >= ATTACK_RATE) {
 		// アニメーションの再生割合で生成
 		if (first) {
@@ -46,31 +51,25 @@ void BananaBossScratchState::Update(void)
 		}
 		// 二度目は通さないようにフラグを折る
 		first = false;
-
-		// 攻撃持続時間の判定
-		if (GetAnimPlayRatio() >= END_RATE) {
-			collOperator->Off();
-			Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
-		}
 		// アニメーションが終わったら終わり
 		if (IsAnimeEnd()) {
 
 			DefaultChangeState();
 		}
-		UpdateFrame();
-		collOperator->SetColliderFrame();
 	}
 	else {
 		// 攻撃描画を更新
 		collOperator->SetScale(GetAnimPlayRatio() / ATTACK_RATE);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, Vector3(), GetAnimPlayRatio() / ATTACK_RATE));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB, Vector3(), GetAnimPlayRatio() / ATTACK_RATE));
 	}
 }
 
-void BananaBossScratchState::Exit(void)
+void BananaBossFireState::Exit(void)
 {
+	collOperator->Off();
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB, false));
 }
 
-void BananaBossScratchState::AlwaysUpdate(void)
+void BananaBossFireState::AlwaysUpdate(void)
 {
 }

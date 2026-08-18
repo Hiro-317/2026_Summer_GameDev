@@ -22,6 +22,7 @@ enum class EFFECT_NAME {
 	STAMP_SHOCK_WAVE,
 	BOMB_SMALL,
 	BOMB_BIG,
+	FIRE,
 
 	MAX
 };
@@ -32,7 +33,7 @@ struct EFFECT_INFO
 	EFFECT_NAME name = EFFECT_NAME::NON;
 	Transform trans = Transform();
 	const Transform* follow = nullptr;
-	int speed = -1;
+	bool flg = true;
 	bool followRotX;
 	bool followRotY;
 	bool followRotZ;
@@ -46,11 +47,19 @@ public:
 	virtual ~EffectBase() = default;
 
 	// 更新
-	virtual void Update(void)
+	virtual void UpdateEffect(void)
 	{
 		// 描画開始
 		if (playHandle == -1) {
 			playHandle = PlayEffekseer3DEffect(info.trans.model);
+			// 追従しないなら
+			if (info.follow == nullptr) {
+				// 初期値を代入
+				SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
+				SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+			}
+			// サイズの更新
+			SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 		}
 		// 描画が終わっているなら消す
 		if (IsEffekseer3DEffectPlaying(playHandle) == -1) {
@@ -92,14 +101,12 @@ public:
 				Net::GetIns().Send(MsgDataEffectFollow((int)info.name, pos, info.trans.angle));
 			}
 		}
-		// 追従しないなら
-		else {
-			// 初期値を代入
-			SetPosPlayingEffekseer3DEffect(playHandle, info.trans.pos.x, info.trans.pos.y, info.trans.pos.z);
-			SetRotationPlayingEffekseer3DEffect(playHandle, info.trans.angle.x, info.trans.angle.y, info.trans.angle.z);
+	}
+
+	virtual void DrawEffect(void) {
+		if (info.flg) {
+			DrawEffekseer3D_Draw(playHandle);
 		}
-		// サイズの更新
-		SetScalePlayingEffekseer3DEffect(playHandle, info.trans.scale.x, info.trans.scale.y, info.trans.scale.z);
 	}
 
 	virtual void Release(void) 
@@ -120,6 +127,15 @@ public:
 
 		SetPosPlayingEffekseer3DEffect(playHandle, pos.x, pos.y, pos.z);
 		SetRotationPlayingEffekseer3DEffect(playHandle, angle.x, angle.y, angle.z);
+	}
+
+	// 一時停止
+	void PauseEffect(void) {
+		info.flg = false;
+	}
+	// 再生(一時停止後)
+	void PlayEffect(void) {
+		info.flg = true;
 	}
 
 	bool IsEnd(void) { return end; }
