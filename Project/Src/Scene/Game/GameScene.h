@@ -22,6 +22,8 @@ private:
 	// 更新（後）
 	void SubPostUpdate(void)override;
 
+	void SubUiDraw(void)override;
+
 	void CreateCamera(void)override;
 
 	const BossBase* bossInsRef;

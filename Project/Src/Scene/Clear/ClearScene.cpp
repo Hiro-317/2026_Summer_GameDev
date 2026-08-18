@@ -25,7 +25,7 @@ ClearScene::ClearScene() :
 	SceneBase(),
 	clearTextImage(-1),
 	clearTimeFrameImage(-1),
-	clearTime(0.0f)
+	clearTime(SceneManager::GetIns().GetClearTime())
 {
 }
 
@@ -50,6 +50,8 @@ void ClearScene::SubPostInit(void)
 	if (Net::GetIns().GetState() != Net::NetState::None && Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataGameTime(clearTime));
 	}
+
+	clearTime = SceneManager::GetIns().GetClearTime();
 }
 
 void ClearScene::SubPreUpdate(void)
@@ -60,6 +62,17 @@ void ClearScene::SubPreUpdate(void)
 		clearTime = dataPtr->time;
 
 		SceneManager::GetIns().SetClearTime(clearTime);
+
+		delete dataPtr;
+	}
+
+	// Ø’f ‚ÌóM
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+		}
 
 		delete dataPtr;
 	}

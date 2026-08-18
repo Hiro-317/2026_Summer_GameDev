@@ -164,6 +164,7 @@ void GameScene::SubPostUpdate(void)
 
 		// 同期
 		if (Net::GetIns().GetState() != Net::NetState::None && Net::GetIns().IsHost()) { Net::GetIns().Send(MsgDataGameTime(time)); }
+		SceneManager::GetIns().SetClearTime(time);
 
 		switch (SceneManager::GetIns().GetSelectBossType())
 		{
@@ -176,8 +177,6 @@ void GameScene::SubPostUpdate(void)
 		default:
 			break;
 		}
-
-		SceneManager::GetIns().SetClearTime(time);
 
 		// シーン切り替え時に前シーンのエフェクトを残さない
 		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
@@ -224,6 +223,12 @@ void GameScene::SubPostUpdate(void)
 	}
 #pragma endregion
 }
+
+void GameScene::SubUiDraw(void)
+{
+	DrawString(0, 0, std::to_string(time).c_str(), 0xffffff);
+}
+
 
 void GameScene::CreateCamera(void)
 {
