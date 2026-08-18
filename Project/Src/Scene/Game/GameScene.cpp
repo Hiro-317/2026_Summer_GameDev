@@ -148,6 +148,17 @@ void GameScene::SubPostUpdate(void)
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
 		return;
 	}
+
+	// Ø’f ‚ÌóM
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
 	
 #if _DEBUG
 	// ƒV[ƒ“‚ğÄ“Ç‚İ‚İ
