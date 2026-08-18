@@ -3,6 +3,7 @@
 #include "../../SceneBase.h"
 
 #include <string>
+#include <functional>
 
 #include "../../../Application/Application.h"
 

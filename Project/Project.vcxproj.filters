@@ -92,7 +92,6 @@
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
-    <ClCompile Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\SkyDome\SkyDome.cpp" />
@@ -109,7 +108,6 @@
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
-    <ClCompile Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
@@ -146,6 +144,8 @@
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.cpp" />
     <ClCompile Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.cpp" />
+    <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -269,7 +269,6 @@
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
-    <ClInclude Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Grape\LobbyCharaPreviewGrape.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
@@ -294,7 +293,6 @@
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
-    <ClInclude Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
@@ -341,6 +339,8 @@
     <ClInclude Include="Src\Object\BossSelect\Spot\Grape\BossSelectGrapeSpot.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\Banana\BossSelectBananaSpot.h" />
     <ClInclude Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.h" />
+    <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

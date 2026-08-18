@@ -116,7 +116,7 @@ void GameScene::SubPostUpdate(void)
 	// É|Å[ÉYîªíË
 	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 
-		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePause);
+		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PushGamePause);
 
 		SceneManager::GetIns().PushScene(std::make_unique<GamePause>(Net::GetIns().GetSenderId()));
 		return;

@@ -24,7 +24,9 @@ void LobbyCharaPreviewBase::AnimationControllerCreate(void)
 
 void LobbyCharaPreviewBase::Load(void)
 {
-	operatorImage = LoadGraph(OPERATOR_IMAGE_PATH.c_str());
+	if (Net::GetIns().GetState() != Net::NetState::None) {
+		operatorImage = LoadGraph(OPERATOR_IMAGE_PATH.c_str());
+	}
 
 	CharacterLoad();
 }
@@ -50,7 +52,9 @@ void LobbyCharaPreviewBase::Update(void)
 
 void LobbyCharaPreviewBase::SubDraw(void)
 {
-	DrawBillboard3D((trans.pos + Vector3::Yonly(600.0f)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+	if (Net::GetIns().GetState() != Net::NetState::None) {
+		DrawBillboard3D((trans.pos + Vector3::Yonly(600.0f)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+	}
 }
 
 void LobbyCharaPreviewBase::SubRelease(void)
@@ -61,8 +65,9 @@ void LobbyCharaPreviewBase::SubRelease(void)
 		delete anime;
 		anime = nullptr;
 	}
-
-	DeleteGraph(operatorImage);
+	if (Net::GetIns().GetState() != Net::NetState::None) {
+		DeleteGraph(operatorImage);
+	}
 }
 
 void LobbyCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType)

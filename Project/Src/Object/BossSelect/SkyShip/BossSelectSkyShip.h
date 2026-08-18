@@ -31,13 +31,10 @@ public:
 	// ‘—Mˆ—
 	void SendUpdate(void)override;
 
-
 	// “–‚½‚è”»’è‚Ì’Ê’m
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 private:
 
-	void CharacterUpdate(void)override { pushScene = false; }
-
-	bool pushScene;
+	void CharacterInit(void)override;
 };

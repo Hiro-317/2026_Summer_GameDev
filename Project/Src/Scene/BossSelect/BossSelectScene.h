@@ -15,10 +15,19 @@ private:
 	// “Ç‚İ‚İ
 	void SubPostLoad(void)override;
 
-	// ‰Šú‰»
-	void SubPostInit(void)override;
+	// XV
+	void SubPostUpdate(void)override;
 
+	// •`‰æ
+	void SubUiDraw(void)override;
+
+	// ‰ğ•ú
+	void SubPostRelease(void)override;
 #pragma endregion
 
 	void CreateCamera(void)override;
+
+	int boardImage;
+
+	int operatorGuideImage[2];
 };

@@ -51,7 +51,6 @@ private:
 		None = -1,
 
 		Disconnected,	// 切断
-		BossChange,		// ボスセレクト
 		CharaChange,	// キャラチェンジ
 		Enter,			// <ホスト>出撃 / <クライアント>準備完了
 
@@ -75,7 +74,6 @@ private:
 	// 各ボタン画像の名前
 	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
 		"LobbyExit",								// 切断
-		"LobbyBossChange",							// ボスセレクト
 		"LobbyCharaChange",							// キャラチェンジ
 		(IS_HOST) ? "LobbyEnter" : "LobbyReady",	// <ホスト>出撃 / <クライアント>準備完了
 	};
@@ -90,7 +88,6 @@ private:
 	// ボタンの画像の位置
 	const Vector2I CHOICE_BUTTON_POS[(int)CHOICE::Max] = {
 		{ 100, App::GetIns().SCREEN_SIZE_Y - 100 },									// 切断
-		{ App::GetIns().SCREEN_SIZE_X - 500, App::GetIns().SCREEN_SIZE_Y - 100 },	// ボスセレクト
 		{ App::GetIns().SCREEN_SIZE_X - 300, App::GetIns().SCREEN_SIZE_Y - 100 },	// キャラチェンジ
 		{ App::GetIns().SCREEN_SIZE_X - 100, App::GetIns().SCREEN_SIZE_Y - 100 },	// <ホスト>出撃 / <クライアント>準備完了
 	};

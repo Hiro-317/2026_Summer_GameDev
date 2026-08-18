@@ -138,11 +138,11 @@ public:
 		return data;
 	}
 
+	// ホストかどうか
+	bool IsHost(void)const { return GetSenderId() == HOST_SENDER_ID; }
+
 	// 状態取得
 	NetState GetState(void)const { return state; }
-
-	// ホストかどうか
-	bool IsHost(void)const { return state == NetState::None || senderId == HOST_SENDER_ID; }
 
 	// 自身の送信ID
 	MSG_SENDER_ID GetSenderId(void)const { return (state != NetState::None) ? senderId : HOST_SENDER_ID; }
@@ -236,6 +236,22 @@ public:
 
 		// 状態を「接続完了・プレイ中」に設定
 		state = NetState::Connected;
+	}
+
+	// 現状の接続を維持したまま、接続受付を再開する
+	void ResumptionReceptionToHosting(void) {
+
+		if (state != NetState::Connected) { return; }
+		if (!IsHost()) { return; }
+
+		// 保存情報でHostAddressProviderを生成
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword, host, localGamePort);
+
+		// クライアントに接続人数確定（接続待ち終了）の通知を送る
+		Send(MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::ResumptionReceptionToConnected));
+
+		// 状態を更新
+		state = NetState::Hosting;
 	}
 #pragma endregion ホスト操作
 
@@ -357,6 +373,7 @@ private:
 		case MSG_DATA_TYPE::SenderId: { MsgDataSenderIdRecv(event); break; }
 		case MSG_DATA_TYPE::ConnectStatus: { MsgDataConnectStatusRecv(event); break; }
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::CameraEvent: { MsgDataRecv<MsgDataCameraEvent>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossSelect: { MsgDataRecv<MsgDataBossSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::CharaSelect: { MsgDataRecv<MsgDataCharaSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::ClientReady: { MsgDataRecv<MsgDataClientReady>(event, headerData->senderId); break; }
@@ -447,7 +464,7 @@ private:
 	// 接続完全リセット
 	void DisconnectionComplete(void) {
 		// ホストアドレス取得クラスの削除
-		if (hostAddressProvider) {
+		if (hostAddressProvider != nullptr) {
 			hostAddressProvider->End();
 			delete hostAddressProvider;
 			hostAddressProvider = nullptr;
@@ -464,6 +481,7 @@ private:
 					case MSG_DATA_TYPE::SenderId: { delete static_cast<MsgDataSenderId*>(ptr); break; }
 					case MSG_DATA_TYPE::ConnectStatus: { delete static_cast<MsgDataConnectStatus*>(ptr); break; }
 					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
+					case MSG_DATA_TYPE::CameraEvent: { delete static_cast<MsgDataCameraEvent*>(ptr); break; }
 					case MSG_DATA_TYPE::BossSelect: { delete static_cast<MsgDataBossSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::CharaSelect: { delete static_cast<MsgDataCharaSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::ClientReady: { delete static_cast<MsgDataClientReady*>(ptr); break; }

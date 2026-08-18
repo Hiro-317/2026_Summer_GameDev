@@ -132,6 +132,7 @@ void BossConfirmScene::SubPostUpdate(void)
 			if (!IS_HOST && readyList.at((int)Net::GetIns().GetSenderId()) == (unsigned char)true) { break; }
 
 			// キャンセル送信
+			Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::PopSceneBossConfirm));
 
 			// 自身のシーン破棄
 			SceneManager::GetIns().PopScene();
@@ -148,10 +149,10 @@ void BossConfirmScene::SubPostUpdate(void)
 				if (buttonSelectionState[(int)choice] == SELECTION_STATE::Disable) { break; }
 
 				// ゲームシーン遷移を通知
-				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame));
+				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::JumpSceneGame));
 
 				// ゲームシーン遷移
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::Game);
 
 			}
 			// クライアント
@@ -243,6 +244,8 @@ void BossConfirmScene::ButtonSelectionStateReload(void)
 		buttonSelectionState[choiceIndex] = ((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
 	}
 
+	if (!IS_HOST) { return; }
+
 	// ホストの場合
 
 	// 全クライアントの準備完了フラグを確認する
@@ -259,5 +262,49 @@ void BossConfirmScene::ButtonSelectionStateReload(void)
 
 void BossConfirmScene::ReceptionUpdate(void)
 {
+	// 切断 の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
 
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
+
+	// 準備完了の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>(MSG_SENDER_ID::None, true)) {
+
+		// 受け取った準備完了フラグを保存する
+		readyList.at((int)dataPtr->header.senderId) = (unsigned char)dataPtr->ready;
+
+		// ボタンごとの選択状態を更新
+		ButtonSelectionStateReload();
+
+		delete dataPtr;
+	}
+
+	// 選択ボスの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
+
+		// 受け取ったボスタイプを保存する
+		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+
+		delete dataPtr;
+	}
+
+	// システム通知の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
+
+		// シーン遷移の受信
+
+		// 自身のシーン破棄
+		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::PopSceneBossConfirm) { SceneManager::GetIns().PopScene(); }
+
+		// ゲームシーン遷移
+		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::JumpSceneGame) { SceneManager::GetIns().JumpSceneFade(SCENE_ID::Game); }
+
+		delete dataPtr;
+	}
 }

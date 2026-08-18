@@ -13,19 +13,19 @@
 
 #include "../ObjectUseDefine.h"
 
-#include "BossSelect/LobbyBossSelectScene.h"
 #include "CharaSelect/LobbyCharaSelectScene.h"
 
 #include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
-#include "../../Object/Lobby/LobbyBossPreview/LobbyBossPreview.h"
 
 MultiLobbyScene::MultiLobbyScene() : 
 	SceneBase(),
 	IS_HOST(Net::GetIns().IsHost()),
 
 	choice(),
+
+	buttonSelectionState(),
 
 	boardImage(-1),
 
@@ -43,7 +43,6 @@ void MultiLobbyScene::SubPostLoad(void)
 	ObjAdd(new SkyDome());
 	ObjAdd(new LobbyStage());
 	ObjAdd(new LobbyCharaPreviewManager());
-	ObjAdd(new LobbyBossPreview());
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
 	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
@@ -90,7 +89,9 @@ void MultiLobbyScene::SubPostInit(void)
 	ButtonSelectionStateReload();
 
 	// 自信のキャラクタータイプを初期化する
-	SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
+	if (SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId()) == CHARA_TYPE::None) {
+		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
+	}
 
 	// キャラ変更情報を送信
 	Net::GetIns().Send(MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId())));
@@ -175,24 +176,6 @@ void MultiLobbyScene::SubPostUpdate(void)
 			return;
 		}
 
-		case MultiLobbyScene::CHOICE::BossChange: {	// ボス変更
-
-			// ホスト以外は処理しない
-			if (!IS_HOST) { break; }
-
-			// 専用のシーンを追加する
-			SceneManager::GetIns().PushScene(
-				std::make_unique<LobbyBossSelectScene>(
-					// ボス変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); },
-					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
-				)
-			);
-
-			// このシーンの処理は終了
-			return;
-		}
-
 		case MultiLobbyScene::CHOICE::CharaChange: {	// キャラ変更
 
 			// クライアントかつ、準備完了状態だったら、処理をしない
@@ -223,10 +206,10 @@ void MultiLobbyScene::SubPostUpdate(void)
 				Net::GetIns().CloseReceptionToConnected();
 
 				// ゲームシーン遷移を通知
-				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame));
+				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneBossSelect));
 
 				// ゲームシーン遷移
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BossSelect);
 
 				// 以降はthisがnullptrとなっているため終了
 				return;
@@ -315,11 +298,7 @@ void MultiLobbyScene::ButtonSelectionStateReload(void)
 		buttonSelectionState[choiceIndex] = ((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
 	}
 
-	if (!IS_HOST) {
-		// クライアントの場合、ボス変更ボタンは選択不可状態にする
-		buttonSelectionState[(int)CHOICE::BossChange] = SELECTION_STATE::Disable;
-		return;
-	}
+	if (!IS_HOST) { return; }
 	// ホストの場合
 
 	// 全クライアントの準備完了フラグを確認する
@@ -411,18 +390,6 @@ void MultiLobbyScene::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	// 選択ボスの受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
-
-		// 受け取ったボスタイプを保存する
-		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
-
-		// ボスプレビューを更新する
-		ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
-
-		delete dataPtr;
-	}
-
 	// 選択キャラの受信
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true)) {
 
@@ -451,9 +418,9 @@ void MultiLobbyScene::ReceptionUpdate(void)
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
 
 		// シーン遷移の受信
-		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
+		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneBossSelect) {
 			// ゲームシーン遷移
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BossSelect);
 
 			delete dataPtr;
 			return;

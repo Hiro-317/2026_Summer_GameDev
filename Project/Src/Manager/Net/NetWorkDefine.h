@@ -28,6 +28,9 @@ enum class MSG_DATA_TYPE
     // <ホスト>システムイベント（シーン遷移など）
     SystemInform,
 
+    // <ホスト/クライアント>カメライベント操作
+    CameraEvent,
+
     // <ホスト>ボスセレクト
     BossSelect,
     // <ホスト/クライアント>キャラセレクト
@@ -243,11 +246,13 @@ struct MsgDataConnectInform
     {
         None = -1,
 
-        Connect,                        // 接続
+        Connect,                            // 接続
 
-        Disconnect,                     // 切断
+        Disconnect,                         // 切断
 
-        CloseReceptionToConnected,      // <ホスト>接続待ち終了（接続人数確定）
+        CloseReceptionToConnected,          // <ホスト>接続待ち終了（接続人数確定）
+
+        ResumptionReceptionToConnected,      // <ホスト>接続待ち再開
     };
 
 	// 接続イベントの内容
@@ -339,12 +344,20 @@ struct MsgDataSystemInform
         ChangeSceneTitle,
 		// ロビーシーンへ遷移
 		ChangeSceneLobby,
+        // ボスセレクトシーンへ遷移
+        ChangeSceneBossSelect,
+        JumpSceneBossSelect,
+        // ボスセレクト詳細ポップアップシーンを追加
+        PushSceneBossConfirm,
+        // ボスセレクト詳細ポップアップシーンを破棄
+        PopSceneBossConfirm,
         // ゲームシーンへ遷移
         ChangeSceneGame,
+        JumpSceneGame,
         // ゲームポーズ
-        GamePause,
+        PushGamePause,
         // ゲームポーズからゲームへ戻す
-        GamePauseEnd,
+        PopGamePause,
         // ゲームポーズ中の操作、選択肢の切り替え
         GamePauseChoicesSwitch,
         // クリアシーンへ遷移
@@ -362,6 +375,40 @@ struct MsgDataSystemInform
     MsgDataSystemInform(void) :
         header(DATA_TYPE),
         inform(INFORM_TYPE::None)
+    {
+    }
+};
+
+// <ホスト>システムイベント送信構造体
+struct MsgDataCameraEvent
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::CameraEvent;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    // システムイベント列挙型定義
+    enum class TYPE
+    {
+        None = -1,
+
+        EndEvent,
+    };
+
+    TYPE inform;
+
+    MsgDataCameraEvent(TYPE inform) :
+        header(DATA_TYPE),
+        inform(inform)
+    {
+    }
+    MsgDataCameraEvent(void) :
+        header(DATA_TYPE),
+        inform(TYPE::None)
     {
     }
 };

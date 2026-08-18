@@ -10,12 +10,11 @@
 
 #include "../../Common/Collider/SphereCollider.h"
 
+#include "SkyShipState/BossSelectSkyShipStartState.h"
 #include "SkyShipState/BossSelectSkyShipMoveState.h"
 
 BossSelectSkyShip::BossSelectSkyShip() :
-	CharacterBase(),
-
-	pushScene(false)
+	CharacterBase()
 {
 	operatorSenderId = Net::HOST_SENDER_ID;
 	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
@@ -39,6 +38,18 @@ void BossSelectSkyShip::Load(void)
 	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER, 50.0f * trans.scale.MinElementF()));
 
 	AddState(
+		(int)STATE::Start,
+		new BossSelectSkyShipStartState(
+			[&]() { ChangeState((int)STATE::Start); },
+			[&]() { return state == (int)STATE::Start; },
+			Vector3(-5000, 1500, 3000),
+			300,150,
+			trans.pos, trans.angle,
+			[&]() { ChangeState((int)STATE::Move); }
+		)
+	);
+
+	AddState(
 		(int)STATE::Move,
 		new BossSelectSkyShipMoveState(
 			[&]() { ChangeState((int)STATE::Move); },
@@ -46,41 +57,20 @@ void BossSelectSkyShip::Load(void)
 			30.0f, accelSum, trans.angle
 		)
 	);
+}
 
-	ChangeState((int)STATE::Move);
+void BossSelectSkyShip::CharacterInit(void)
+{
+	ChangeState((int)STATE::Start);
 }
 
 void BossSelectSkyShip::ReceptionUpdate(void)
 {
 	// 座標・角度の同期
 	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
-		// 自分のキャラ（操作対象）の場合
-		if (isOwnOperator) {
-			// ホストから送られた座標と今の自分の座標の距離を測る
-			float diff = (trans.pos - dataPtr->pos).Length();
 
-			// 誤差が小さいなら無視
-			if (diff > 0.5f) {
-				// 誤差が大きい場合、少しずつホストから送られた座標に寄せる（補間）
-				trans.pos = trans.pos * 0.9f + dataPtr->pos * 0.1f;
-			}
-
-			// ホストから送られた角度と今の自分の角度のずれを測る
-			diff = (trans.angle - dataPtr->angle).Length();
-
-			// 誤差が小さいなら無視
-			if (diff > 0.5f) {
-				// 誤差が大きい場合、少しずつホストから送られた角度を寄せる（補間）
-				trans.angle = trans.angle * 0.9f + dataPtr->angle * 0.1f;
-			}
-
-		}
-		// 他人のキャラなら、そのまま同期
-		else {
-			trans.pos = dataPtr->pos;
-			trans.angle = dataPtr->angle;
-		}
-
+		trans.pos = dataPtr->pos;
+		trans.angle = dataPtr->angle;
 
 		delete dataPtr;
 	}
@@ -97,8 +87,11 @@ void BossSelectSkyShip::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& oth
 
 	if (other.GetTag() == COLLIDER_TAG::BOSS) {
 		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
-			SceneManager::GetIns().PushScene(std::make_unique< BossConfirmScene>());
-			pushScene = true;
+
+			Net::GetIns().Send(MsgDataBossSelect((int)SceneManager::GetIns().GetSelectBossType()), Net::GetIns().GetSenderId());
+			Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::PushSceneBossConfirm));
+
+			SceneManager::GetIns().PushScene(std::make_unique<BossConfirmScene>());
 		}
 	}
 }

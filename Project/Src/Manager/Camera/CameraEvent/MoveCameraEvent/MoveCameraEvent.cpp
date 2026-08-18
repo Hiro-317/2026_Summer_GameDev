@@ -16,6 +16,18 @@ MoveCameraEvent::MoveCameraEvent(const Vector3& endPos, const Vector3& endAngle,
 {
 }
 
+MoveCameraEvent::MoveCameraEvent(const CameraBase& camera, const Vector3& endLocalPos, const Vector3& endLocalAngle, float endLocalFov, int frame) :
+    CameraEventBase(),
+
+    startPos(), startAngle(), startFov(0.0f),
+
+    endPos(camera.GetPos() + endLocalPos), endAngle(camera.GetAngle() + endLocalAngle), endFov(camera.GetFov() + endLocalFov),
+
+    maxFrame((std::max)(frame, 1)),
+    currentFrame(0)
+{
+}
+
 void MoveCameraEvent::Start(CameraBase& camera)
 {
 	startPos = camera.GetPos();

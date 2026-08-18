@@ -40,7 +40,7 @@ void GamePause::SubPostUpdate(void)
 
 		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
 
-			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
+			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PopGamePause);
 
 			Snd::GetIns().PausePlay();
 			Snd::GetIns().Play("SystemButton");
@@ -62,10 +62,11 @@ void GamePause::SubPostUpdate(void)
 
 			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 
-				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby);
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect);
 
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				return;
 			}
 
@@ -83,7 +84,7 @@ void GamePause::SubPostUpdate(void)
 
 			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
 
-				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PopGamePause);
 
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
@@ -101,23 +102,19 @@ void GamePause::SubPostUpdate(void)
 
 		while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
 
-			bool isReturn = false;
-
 			switch (dataPtr->inform) {
 			case MsgDataSystemInform::INFORM_TYPE::None: { break; }
 
-			case MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby: {
+			case MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect: {
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
-				isReturn = true;
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				break;
 			}
-			case MsgDataSystemInform::INFORM_TYPE::GamePauseEnd: {
+			case MsgDataSystemInform::INFORM_TYPE::PopGamePause: {
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
 				Key::GetIns().SetMouseFixed(true);
-				isReturn = true;
 				break;
 			}
 			case MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch: {
@@ -131,8 +128,6 @@ void GamePause::SubPostUpdate(void)
 			}
 
 			delete dataPtr;
-
-			if (isReturn) { return; }
 		}
 
 	}

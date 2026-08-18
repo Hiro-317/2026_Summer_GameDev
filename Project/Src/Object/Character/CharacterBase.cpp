@@ -9,7 +9,7 @@ CharacterBase::CharacterBase() :
 
 	characterStats(0, 0, 0, 0),
 
-	state(0),
+	state(-1),
 	stateMap(),
 
 	DEFAULT_COLOR(),

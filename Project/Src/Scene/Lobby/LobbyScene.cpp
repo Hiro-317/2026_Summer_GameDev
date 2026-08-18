@@ -14,13 +14,11 @@
 #include "../ObjectUseDefine.h"
 
 #include "CharaSelect/LobbyCharaSelectScene.h"
-#include "BossSelect/LobbyBossSelectScene.h"
 #include "MultiPopup/MultiPopupScene.h"
 
 #include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
-#include "../../Object/Lobby/LobbyBossPreview/LobbyBossPreview.h"
 
 
 LobbyScene::LobbyScene() :
@@ -50,7 +48,6 @@ void LobbyScene::SubPostLoad(void)
 	ObjAdd(new SkyDome());
 	ObjAdd(new LobbyStage());
 	ObjAdd(new LobbyCharaPreviewManager());
-	ObjAdd(new LobbyBossPreview());
 
 #pragma region 各画像の読み込み
 
@@ -145,19 +142,6 @@ void LobbyScene::SubPostUpdate(void)
 			break;
 		}
 
-		case LobbyScene::CHOICE::BossChange: {	// ボス変更
-
-			// 専用のシーンを追加する
-			SceneManager::GetIns().PushScene(
-				std::make_unique<LobbyBossSelectScene>(
-					// ボス変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyBossPreview>(objects)->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
-				)
-			);
-
-			break;
-		}
-
 		case LobbyScene::CHOICE::CharaChange: {	// キャラ変更
 
 			// 専用のシーンを追加する
@@ -174,7 +158,7 @@ void LobbyScene::SubPostUpdate(void)
 		case LobbyScene::CHOICE::Enter: {	// 出撃
 
 			// ゲームシーンに遷移
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BossSelect);
 
 			break;
 		}

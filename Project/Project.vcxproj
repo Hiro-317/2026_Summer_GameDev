@@ -143,6 +143,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraBase.cpp" />
+    <ClCompile Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.cpp" />
     <ClCompile Include="Src\Manager\Camera\CurrentCamera.cpp" />
@@ -168,6 +169,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.cpp" />
+    <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\BananaBoss.cpp" />
@@ -250,7 +252,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Object\Character\CharacterBase.cpp" />
     <ClCompile Include="Src\Object\Common\DataLoad\ParameterLoad.cpp" />
-    <ClCompile Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\SkyDome\SkyDome.cpp" />
@@ -272,7 +273,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
     <ClCompile Include="Src\Scene\Game\GameScene.cpp" />
     <ClCompile Include="Src\Scene\Game\Pause\GamePause.cpp" />
-    <ClCompile Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\LobbyScene.cpp" />
     <ClCompile Include="Src\Scene\Lobby\MultiLobbyScene.cpp" />
@@ -290,6 +290,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
     <ClInclude Include="Src\Manager\Camera\CameraBase.h" />
+    <ClInclude Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\StartCameraEvent\StartCameraEvent.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\MoveCameraEvent\MoveCameraEvent.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\WaitCameraEvent\WaitCameraEvent.h" />
@@ -324,6 +325,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\BossSelect\BossSelectStage.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.h" />
+    <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\Banana\BossSelectBananaSpot.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.h" />
@@ -434,7 +436,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Common\DataLoad\ParameterLoad.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\BoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
-    <ClInclude Include="Src\Object\Lobby\LobbyBossPreview\LobbyBossPreview.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\Grape\LobbyCharaPreviewGrape.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.h" />
@@ -465,7 +466,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Scene\Game\GameScene.h" />
     <ClInclude Include="Src\Scene\Common\GameDebugScene.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePauseh.h" />
-    <ClInclude Include="Src\Scene\Lobby\BossSelect\LobbyBossSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\CharaSelect\LobbyCharaSelectScene.h" />
     <ClInclude Include="Src\Scene\Lobby\LobbyScene.h" />
     <ClInclude Include="Src\Scene\Lobby\MultiLobbyScene.h" />
