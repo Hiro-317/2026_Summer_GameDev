@@ -8,12 +8,16 @@
 
 #include "../../../Manager/Sound/SoundManager.h"
 
+#include "../../../Manager/Font/FontManager.h"
+
 #include "../../SceneManager/SceneManager.h"
 
 BossConfirmScene::BossConfirmScene() :
 	SceneBase(),
 	IS_HOST(Net::GetIns().IsHost()),
 	ENTRY_COUNT(Net::GetIns().GetConnectStatus().EntryCount()),
+
+	RANKING_DATA(Ranking::GetIns().GetRanking(SceneManager::GetIns().GetSelectBossType())),
 
 	choice(),
 
@@ -233,13 +237,6 @@ void BossConfirmScene::SubPostDraw(void)
 	DrawBox(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	//static Vector2I tempPos = Vector2I();
-
-	//if (CheckHitKey(KEY_INPUT_UP) == 1) { tempPos.y -= 5; }
-	//if (CheckHitKey(KEY_INPUT_DOWN) == 1) { tempPos.y += 5; }
-	//if (CheckHitKey(KEY_INPUT_LEFT) == 1) { tempPos.x -= 5; }
-	//if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x += 5; }
-
 	// ‰æ‘œ•`‰æ‚Ìƒ‰ƒ€ƒ_ŠÖ”
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f)->void { DrawRotaGraph(pos.x, pos.y, rate, angle, handle, true); };
 
@@ -254,6 +251,17 @@ void BossConfirmScene::SubPostDraw(void)
 		drawImage(playerIconBackImage[id], PLAYER_ICON_POS[id]);
 		drawImage(playerIconImage[id], PLAYER_ICON_POS[id]);
 		drawImage(playerIconFrameImage[id], PLAYER_ICON_POS[id]);
+	}
+
+	Vector2I rankingPos = Vector2I(917, 220);
+	for (int rank = 0; rank < RANKING_DATA.size(); rank++) {
+		std::string st = "---";
+		if (RANKING_DATA.at(rank).score != -1.0f) {
+			st = std::to_string(rank + 1) + "ˆÊ:" + "%.2f•b";
+		}
+		DrawFormatStringToHandle(rankingPos.x, rankingPos.y, 0x000000, Font::GetIns().GetFont(FontKinds::MARUMINYA_40), st.c_str(), RANKING_DATA.at(rank).score);
+
+		rankingPos.y += 85;
 	}
 
 	// ‘I‘ðŽˆ‚Ì•`‰æ

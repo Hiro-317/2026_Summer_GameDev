@@ -10,7 +10,8 @@
 #include "Grape/LobbyCharaPreviewGrape.h"
 
 LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
-	charaPreview{ nullptr, nullptr, nullptr, nullptr }
+	charaPreview{ nullptr, nullptr, nullptr, nullptr },
+	ownOperatorImage(-1)
 {
 }
 
@@ -20,7 +21,10 @@ void LobbyCharaPreviewManager::Load(void)
 		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
 	}
 	if (Net::GetIns().GetState() == Net::NetState::None) { ReloadChara(); }
-	else { ReloadChara(MSG_SENDER_ID::P1); }
+	else {
+		ReloadChara(MSG_SENDER_ID::P1);
+		ownOperatorImage = LoadGraph(OWN_OPERATOR_IMAGE[(int)Net::GetIns().GetSenderId()].c_str());
+	}
 }
 
 void LobbyCharaPreviewManager::Update(void)
@@ -39,10 +43,15 @@ void LobbyCharaPreviewManager::Draw(void)
 		if (preview == nullptr) { continue; }
 		preview->Draw();
 	}
+	if (ownOperatorImage != -1) {
+		charaPreview[(int)Net::GetIns().GetSenderId()]->OwnOperatorDraw(ownOperatorImage);
+	}
 }
 
 void LobbyCharaPreviewManager::Release(void)
 {
+	if (ownOperatorImage != -1) { DeleteGraph(ownOperatorImage); }
+
 	// キャラプレビューの解放
 	for (LobbyCharaPreviewBase*& preview : charaPreview) {
 		if (preview == nullptr) { continue; }

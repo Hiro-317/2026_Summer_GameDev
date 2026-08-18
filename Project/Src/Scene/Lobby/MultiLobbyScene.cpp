@@ -278,7 +278,7 @@ void MultiLobbyScene::SubPreRelease(void)
 void MultiLobbyScene::CreateCamera(void)
 {
 	// 定点カメラを生成する
-	camera = new FixedPointCamera(FixedPointCamera::LookAt, Vector3::YZonly(500.0f, -2000.0f), Vector3::Yonly(150.0f));
+	camera = new FixedPointCamera(FixedPointCamera::LookAt, Vector3::YZonly(750.0f, -2000.0f), Vector3::Yonly(150.0f));
 
 	// イベントカメラを生成
 	camera->StartEvent(new StartCameraEvent(*camera, Vector3(0.0f, 1500.0f, -5000.0f), Vector3::Yonly(Deg2Rad(-30.0f)), 0.0f, 200.0f));

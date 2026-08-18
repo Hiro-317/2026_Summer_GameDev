@@ -38,7 +38,10 @@
 
 GameScene::GameScene() :
 	SceneBase(),
-	focusFlg(false)
+	bossInsRef(nullptr),
+	playerInsRef(nullptr),
+	focusFlg(false),
+	time(0.0f)
 {
 }
 
@@ -59,6 +62,7 @@ void GameScene::SubPostLoad(void)
 
 	// プレイヤーを生成
 	ObjAdd(new PlayerManager());
+	playerInsRef = ObjSerch<PlayerManager>(objects);
 
 	// 接続されているプレイヤー数座標を取得する
 	std::vector<const Vector3*> pos;
@@ -80,6 +84,7 @@ void GameScene::SubPostLoad(void)
 	case BOSS_TYPE::Banana: { ObjAdd(new BananaBoss(pos, live)); break; }
 	default: { break; }
 	}
+	bossInsRef = ObjSerch<BossBase>(objects);
 
 	// プレイヤーにボスの座標をわたす
 	ObjSerch<PlayerManager>(objects)->SetBossPos(&ObjSerch<BossBase>(objects)->GetTrans().pos);
@@ -90,6 +95,36 @@ void GameScene::SubPostInit(void)
 	focusFlg = false;
 
 	SoundManager::GetIns().Play("Battle");
+
+	time = 0.0f;
+}
+
+void GameScene::SubPreUpdate(void)
+{
+	if (Net::GetIns().GetState() == Net::NetState::None) { return; }
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataGameTime>()) {
+		time = dataPtr->time;
+
+		SceneManager::GetIns().SetClearTime(time);
+
+		delete dataPtr;
+	}
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
+		SceneManager::GetIns().PushScene(std::make_unique<GamePause>(dataPtr->header.senderId));
+		delete dataPtr;
+	}
+	// 切断 の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
 }
 
 void GameScene::SubPostUpdate(void)
@@ -101,14 +136,14 @@ void GameScene::SubPostUpdate(void)
 		focusFlg = !focusFlg;
 		if (focusFlg) {
 			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowAuto(
-				&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
-				&ObjSerch<BossBase>(objects)->GetTrans().pos);
+				&playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+				&bossInsRef->GetTrans().pos);
 		}
 		else {
 			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowYaw(
-				&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+				&playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
 				Vector3::YZonly(250, -550),
-				ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
+				playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
 				Deg2Rad(4.0f)
 			);
 		}
@@ -123,13 +158,12 @@ void GameScene::SubPostUpdate(void)
 		SceneManager::GetIns().PushScene(std::make_unique<GamePause>(Net::GetIns().GetSenderId()));
 		return;
 	}
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
-		SceneManager::GetIns().PushScene(std::make_unique<GamePause>(dataPtr->header.senderId));
-		delete dataPtr;
-	}
-	
+
 	// ゲームクリア判定
-	if (ObjSerch<BossBase>(objects)->GetIsDeath()) {
+	if (bossInsRef->GetIsDeath()) {
+
+		// 同期
+		if (Net::GetIns().GetState() != Net::NetState::None && Net::GetIns().IsHost()) { Net::GetIns().Send(MsgDataGameTime(time)); }
 
 		switch (SceneManager::GetIns().GetSelectBossType())
 		{
@@ -143,6 +177,8 @@ void GameScene::SubPostUpdate(void)
 			break;
 		}
 
+		SceneManager::GetIns().SetClearTime(time);
+
 		// シーン切り替え時に前シーンのエフェクトを残さない
 		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
 
@@ -150,7 +186,7 @@ void GameScene::SubPostUpdate(void)
 	}
 
 	// ゲームオーバー判定
-	if (ObjSerch<PlayerManager>(objects)->IsPlayerAllDeath()) {
+	if (playerInsRef->IsPlayerAllDeath()) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
 
 		// シーン切り替え時に前シーンのエフェクトを残さない
@@ -159,17 +195,6 @@ void GameScene::SubPostUpdate(void)
 		return;
 	}
 
-	// 切断 の受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
-
-		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
-			Net::GetIns().Disconnection();
-			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
-		}
-
-		delete dataPtr;
-	}
-	
 #if _DEBUG
 	// シーンを再読み込み
 	if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_RELOAD).down) {
@@ -186,6 +211,17 @@ void GameScene::SubPostUpdate(void)
 	EffectManager::GetIns()->ReceptionUpdate();
 	UpdateEffekseer3D();
 
+#pragma endregion
+
+#pragma region 時間計測
+
+	// 時間更新
+	time += FRAME_TIME;
+
+	// 同期
+	if (Net::GetIns().GetState() != Net::NetState::None&&Net::GetIns().IsHost()) {
+		if ((char)time % MULTI_TIME_SEND_COUNT == 0) { Net::GetIns().Send(MsgDataGameTime(time)); }
+	}
 #pragma endregion
 }
 

@@ -247,6 +247,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.cpp" />
+    <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
@@ -418,6 +420,12 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Grape\ClearCharaPreviewGrape.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Orange\ClearCharaPreviewOrange.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Peach\ClearCharaPreviewPeach.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Tomato\ClearCharaPreviewTomato.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\CapsuleDebugObject.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\DebugObjectBase.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />

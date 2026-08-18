@@ -108,7 +108,7 @@ void Ranking::Release(void)
 	for (int bossType = 0; bossType < (int)BOSS_TYPE::Max; bossType++) { rankingList[bossType].clear(); }
 }
 
-void Ranking::AddScore(BOSS_TYPE bossType, int score)
+void Ranking::AddScore(BOSS_TYPE bossType, float score)
 {
 	// 最終追加スコアランクインデックスをリセット
 	lastAddScoreRankIndex = -1;
@@ -130,8 +130,7 @@ void Ranking::AddScore(BOSS_TYPE bossType, int score)
 			break;
 		}
 
-		// 新規スコアが現在のスコアより大きい場合
-		if (score > ranking[i].score) {
+		if (score < ranking[i].score) {
 			// 現在スコアを一時変数に保持しておく
 			RankingData work;
 			work = ranking[i];

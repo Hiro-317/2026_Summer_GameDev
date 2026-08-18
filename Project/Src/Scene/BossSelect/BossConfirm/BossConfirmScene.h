@@ -11,6 +11,8 @@
 
 #include "../../../Manager/Net/NetWorkDefine.h"
 
+#include "../../../Manager/Ranking/Ranking.h"
+
 class BossConfirmScene : public SceneBase
 {
 public:
@@ -80,6 +82,8 @@ private:
 
 	// 枠の画像の名前
 	const std::string FRAME_IMAGE_NAME = "Frame";
+
+	const std::vector<Ranking::RankingData>& RANKING_DATA;
 
 	// 各ボスの詳細イメージの名前
 	const std::string BOSS_SELECT_IMAGE_NAME[(int)BOSS_TYPE::Max] = {

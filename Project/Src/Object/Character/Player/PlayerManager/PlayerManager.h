@@ -25,8 +25,8 @@ public:
 	void UiDraw(void)override;
 	void Release(void)override;
 
-	const PlayerBase* GetPlayerIns(const MSG_SENDER_ID id) { return playerInfo[(int)id].instance; }
-	const bool IsPlayerAllDeath(void) {
+	const PlayerBase* GetPlayerIns(const MSG_SENDER_ID id)const { return playerInfo[(int)id].instance; }
+	const bool IsPlayerAllDeath(void)const {
 		for (const PlayerInfo& info : playerInfo) {
 			if (!info.instance->GetIsDeath()) { return false; }
 		}

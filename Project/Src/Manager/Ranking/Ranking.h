@@ -48,10 +48,10 @@ public:
 
 #pragma region メイン処理
 	// ランキングを取得
-	const std::vector<RankingData>& GetScoreList(BOSS_TYPE bossType)const { return rankingList[(int)bossType]; }
+	const std::vector<RankingData>& GetRanking(BOSS_TYPE bossType)const { return rankingList[(int)bossType]; }
 
 	// ランキングにスコアを追加（ランキング外のスコアだった場合はそのまま終了）
-	void AddScore(BOSS_TYPE bossType, int score);
+	void AddScore(BOSS_TYPE bossType, float score);
 
 	// 最終追加スコアの順位を取得（数字は配列の添字(インデックス)で取得）（ランク外は-1）
 	int GetLastAddScoreRankIndex(void)const { return lastAddScoreRankIndex; }

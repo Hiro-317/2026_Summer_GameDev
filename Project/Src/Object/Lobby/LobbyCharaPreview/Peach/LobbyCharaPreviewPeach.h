@@ -25,5 +25,6 @@ private:
 
 		// ‘€ìÒ‚ğ¦‚·ƒCƒ[ƒW‚Ì‚‚³
 		operatorImagePos = 550.0f;
+		for (Vector3& pos : ownOperatorImagePos) { pos.y = 550.0f; }
 	}
 };
