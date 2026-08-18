@@ -131,6 +131,10 @@ void GameScene::SubPostUpdate(void)
 	// ゲームクリア判定
 	if (ObjSerch<BossBase>(objects)->GetIsDeath()) {
 
+
+		// シーン切り替え時に前シーンのエフェクトを残さない
+		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
+
 		switch (SceneManager::GetIns().GetSelectBossType())
 		{
 		case BOSS_TYPE::Tomato:
@@ -142,20 +146,16 @@ void GameScene::SubPostUpdate(void)
 		default:
 			break;
 		}
-
-		// シーン切り替え時に前シーンのエフェクトを残さない
-		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
-
 		return;
 	}
 
 	// ゲームオーバー判定
 	if (ObjSerch<PlayerManager>(objects)->IsPlayerAllDeath()) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
 
 		// シーン切り替え時に前シーンのエフェクトを残さない
 		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
 
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
 		return;
 	}
 

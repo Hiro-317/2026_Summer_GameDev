@@ -68,8 +68,8 @@ void GamePause::SubPostUpdate(void)
 
 				Snd::GetIns().Play("SystemButton");
 
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				EffectManager::GetIns()->StopEffectAll();
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				return;
 			}
 
@@ -111,8 +111,8 @@ void GamePause::SubPostUpdate(void)
 
 			case MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect: {
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				EffectManager::GetIns()->StopEffectAll();
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				break;
 			}
 			case MsgDataSystemInform::INFORM_TYPE::PopGamePause: {
