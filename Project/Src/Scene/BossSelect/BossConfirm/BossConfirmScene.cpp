@@ -267,7 +267,7 @@ void BossConfirmScene::ReceptionUpdate(void)
 
 		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
 			Net::GetIns().Disconnection();
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
 		}
 
 		delete dataPtr;

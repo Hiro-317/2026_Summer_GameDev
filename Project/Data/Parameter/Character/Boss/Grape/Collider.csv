@@ -1,6 +1,4 @@
-ModelToColliderRate,1.05
 CollisionPushWeight,255
-CollisionSphereRad,200
 ToPlayerDistanceHeight,750
 ToPlayerDistanceRadius,200
 LineColliderStartPos,0,0,0

@@ -98,7 +98,7 @@ void PlayerTripleAttackState::Update(void)
 		// 最終的な移動ベクトルで移動する
 		pos += moveVec.Normalized() * ATTACK_MOVE_SPEED;
 	}
-	else if (animePlayRate <= COLL_END_TIME[(int)attackStage]) {
+	else if (animePlayRate < COLL_END_TIME[(int)attackStage]) {
 		// 攻撃判定中
 		collOperator.CollOn(attackStage);
 

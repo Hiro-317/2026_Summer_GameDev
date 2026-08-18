@@ -70,6 +70,14 @@ public:
 			)
 		);
 	}
+
+#pragma endregion
+
+#pragma region ローカルセット関数
+
+	void SetStartPos(const Vector3& pos) { startPos = pos; }
+	void SetEndPos(const Vector3& pos) { endPos = pos; }
+
 #pragma endregion
 
 	void DrawDebug(unsigned int color = 0xffffff)override {

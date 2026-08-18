@@ -21,16 +21,20 @@ public:
 	void AlphaDraw(void)override {}
 	void Release(void)override;
 
-	// SceneManagerの持つ情報をもとに指定のIDのキャラプレビューを更新する
+	// SceneManagerの持つ情報をもとにキャラプレビューを更新する（ソロ用）
 	void ReloadChara(void);
-	// SceneManagerの持つ情報をもとに指定のIDのキャラプレビューを更新する
+	// SceneManagerの持つ情報をもとに指定のIDのキャラプレビューを更新する（マルチ用）
 	void ReloadChara(MSG_SENDER_ID senderId);
 
 private:
 	// 現在選択中のキャラプレビュー
 	LobbyCharaPreviewBase* charaPreview[(int)MSG_SENDER_ID::Max];
 
-	const Vector3 CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::Max] = {
+	// ソロでの座標情報
+	const Vector3 CHARA_PREVIEW_POS = Vector3::XZonly(0.0f, -300.0f);
+
+	// マルチでの座標情報
+	const Vector3 MULTI_CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::Max] = {
 		Vector3::XZonly(-350.0f, -300.0f),
 		Vector3::XZonly(350.0f, -300.0f),
 		Vector3::XZonly(-700.0f, -600.0f),

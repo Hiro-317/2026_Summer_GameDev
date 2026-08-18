@@ -38,6 +38,9 @@ private:
 protected:
 	virtual void CharacterLoad(void) = 0;
 
+	// 操作者を示すイメージの高さ
+	float operatorImagePos;
+
 	// モデルにくっついてるFBXアニメーションを登録する
 	void AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType);
 	// 別ファイルに保存されているFBXアニメーションを登録する

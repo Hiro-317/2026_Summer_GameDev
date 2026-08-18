@@ -131,6 +131,17 @@ void GamePause::SubPostUpdate(void)
 		}
 
 	}
+
+	// Ø’f ‚ÌóM
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
 }
 
 void GamePause::SubPreDraw(void)

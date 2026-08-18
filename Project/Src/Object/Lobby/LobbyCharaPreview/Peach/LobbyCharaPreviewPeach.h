@@ -22,5 +22,8 @@ private:
 		trans.scale = 2.5f;
 
 		AddInFbxAnimation(7, 1.0f, 0);
+
+		// ‘€ìÒ‚ğ¦‚·ƒCƒ[ƒW‚Ì‚‚³
+		operatorImagePos = 550.0f;
 	}
 };

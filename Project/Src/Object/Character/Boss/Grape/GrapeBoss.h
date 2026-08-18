@@ -33,32 +33,6 @@ private:
 
 #pragma region ’è”’è‹`
 
-	// “–‚½‚è”»’èî•ñ`````````````````````````````````````````
-
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ì”¼Œa
-	const float CAPSULE_COLLIDER_RADIUS = (MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate");
-
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹YŽn“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
-	const Vector3 CAPSULE_COLLIDER_START_POS =
-		Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìƒ[ƒJƒ‹XI“_À•Wiƒ‚ƒfƒ‹‚Ì’†S“_‚©‚ç‚ÌƒIƒtƒZƒbƒgj
-	const Vector3 CAPSULE_COLLIDER_END_POS =
-		-Vector3::Yonly(
-			(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
-			- CAPSULE_COLLIDER_RADIUS
-		);
-
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìâ‘Î‚É“–‚½‚ç‚È‚¢‚¨‚¨‚æ‚»‚Ì‹——£
-	const float CAPSULE_COLLIDER_ENOUGH_DISTANCE =
-		(CAPSULE_COLLIDER_START_POS - CAPSULE_COLLIDER_END_POS).Length()
-		+ CAPSULE_COLLIDER_RADIUS;
-
-	// ````````````````````````````````````````````````
-
-
 	// UŒ‚``````````````````````````````````````````````
 
 	// ‚©‚©‚Æ—Ž‚Æ‚µ‚ÌƒN[ƒ‹ƒ^ƒCƒ€

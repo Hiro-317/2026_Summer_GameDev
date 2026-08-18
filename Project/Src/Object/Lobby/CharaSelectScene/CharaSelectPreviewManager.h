@@ -48,6 +48,6 @@ private:
 	// 拡大演出の最終的な倍率
 	float easingRate;
 
-	// 選択中キャラのプレビューオブジェクト配列
+	// 選択中キャラのプレビュー
 	CharaSelectPreviewBase* charaPreview;
 };

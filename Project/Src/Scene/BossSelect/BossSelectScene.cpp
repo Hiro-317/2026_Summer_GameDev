@@ -42,6 +42,20 @@ void BossSelectScene::SubPostLoad(void)
 	}
 }
 
+void BossSelectScene::SubPostInit(void)
+{
+	if (Net::GetIns().GetState() == Net::NetState::None) { return; }
+
+	// 選択キャラの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None,true)) {
+
+		// 受け取ったキャラタイプを保存する
+		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
+
+		delete dataPtr;
+	}
+}
+
 void BossSelectScene::SubPostUpdate(void)
 {
 	if (Net::GetIns().IsHost() && Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
@@ -69,7 +83,7 @@ void BossSelectScene::SubPostUpdate(void)
 
 		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
 			Net::GetIns().Disconnection();
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
 		}
 
 		delete dataPtr;
@@ -85,6 +99,15 @@ void BossSelectScene::SubPostUpdate(void)
 		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby) {
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::MultiLobby);
 		}
+
+		delete dataPtr;
+	}
+
+	// 選択キャラの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCharaSelect>(MSG_SENDER_ID::None, true)) {
+
+		// 受け取ったキャラタイプを保存する
+		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
 
 		delete dataPtr;
 	}
