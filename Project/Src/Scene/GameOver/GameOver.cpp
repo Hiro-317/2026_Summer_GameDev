@@ -48,6 +48,17 @@ void GameOver::SubPostUpdate(void)
 			delete dataPtr;
 		}
 	}
+
+	// Ø’f ‚ÌóM
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
 }
 
 void GameOver::SubPostDraw(void)

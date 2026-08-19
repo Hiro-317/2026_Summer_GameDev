@@ -69,7 +69,7 @@ void BananaBossBoomerangState::Update(void)
 	// UŒ‚’†‚È‚ç
 	else {
 		// ‰ñ“]‚³‚¹‚é
-		collOperator->SetBanameranRot(Vector3::Yonly(Deg2Rad(cnt * 10.0f)));
+		collOperator->SetBanameranRot(Vector3::Yonly(Deg2Rad(cnt * 20.0f)));
 		collOperator->SetBanameranPos(Vector3(POS.x * cosf(Deg2Rad(cnt)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(cnt))));
 		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, Vector3(POS.x * cosf(Deg2Rad(cnt)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(cnt))), 1.0f, Deg2Rad(cnt * 10.0f)));
 		// ŠÔ‚ª‰z‚¦‚Ä‚½‚çI‚í‚é

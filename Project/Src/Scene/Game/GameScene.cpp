@@ -178,6 +178,9 @@ void GameScene::SubPostUpdate(void)
 		case BOSS_TYPE::Grape:
 			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::DEFAULT, 90, 0x9338e8, 0x000000);
 			break;
+		case BOSS_TYPE::Banana:
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::DEFAULT, 90, 0xfcf80a, 0x000000);
+			break;
 		default:
 			break;
 		}

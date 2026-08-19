@@ -18,7 +18,7 @@ public:
 	BananaBossDeathState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& scale, const Vector3& defaultScale,
+		const std::function<void(void)>& PlayDeath,
 		const std::function<void(void)> IsDeath
 	);
 	~BananaBossDeathState()override = default;
@@ -39,13 +39,8 @@ public:
 private:
 #pragma region 参照関数
 
-	// ボスのサイズ
-	Vector3& scale;
-
-	// ボスの初期サイズ
-	const Vector3& defaultScale;
-
 	// 死亡判定移行
+	const std::function<void(void)> PlayDeath;
 	const std::function<void(void)> IsDeath;
 
 #pragma endregion 参照関数
@@ -53,8 +48,6 @@ private:
 #pragma region 定数定義
 
 	static constexpr int CHANGE_COUNT = 120;
-	static constexpr float SCALE_REVERSE = 22.0f;
-	static constexpr float BOMB_RATE = 0.0020661157f;
 
 #pragma endregion 定数定義
 

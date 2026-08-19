@@ -136,7 +136,7 @@ void Ranking::AddScore(BOSS_TYPE bossType, float score)
 			work = ranking[i];
 
 			// 現在スコアを新規スコアで上書きする
-			ranking = {};
+			ranking[i] = {};
 			ranking[i].score = score;
 
 			// スコア追加位置を記録する

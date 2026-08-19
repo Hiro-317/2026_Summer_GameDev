@@ -38,6 +38,8 @@ BossBase::BossBase(
 
 	// 攻撃対象探し用の総ダメ保存
 	targetNum = 0;
+	Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
+
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 		damaged.emplace_back(0);
@@ -143,11 +145,13 @@ void BossBase::CharacterUpdate(void)
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 				// センダーIDと死んだ奴が同じならスキップ
-				if (nowDeath.at(id)) { continue; }
-				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
-				if (mostDamaged < damaged.at(id)) {
-					mostDamaged = damaged.at(id);
-					targetNum = id;
+				if (!nowDeath.at(id)) {
+					// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
+					if (mostDamaged < damaged.at(id)) {
+						mostDamaged = damaged.at(id);
+						targetNum = id;
+						Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
+					}
 				}
 			}
 		}
@@ -239,9 +243,9 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 				if (mostDamaged < damaged.at(id)) {
 					mostDamaged = damaged.at(id);
 					targetNum = id;
+					Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
 				}
 			}
-			Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
 
 			// ホスト時の演出
 			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
@@ -310,7 +314,7 @@ void BossBase::ReceptionUpdate(void)
 
 	// アニメーション
 	while (MsgDataBossAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAnimeType>(operatorSenderId)) {
-		AnimePlay(dataPtr->animeType);
+		AnimePlay(dataPtr->animeType, dataPtr->loop);
 		delete dataPtr;
 	}
 

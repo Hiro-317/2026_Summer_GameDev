@@ -139,7 +139,7 @@ void PlayerBase::CharacterLoad(void)
 void PlayerBase::CharacterInit(void)
 {
 	// ˆÊ’u‚ğ‰ŠúˆÊ’u‚É‚·‚é
-	trans.pos = INIT_POS;
+	trans.pos = INIT_POS + Vector3::Xonly(150.0f) * (float)operatorSenderId;
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
 	state = (int)STATE::MOVE;

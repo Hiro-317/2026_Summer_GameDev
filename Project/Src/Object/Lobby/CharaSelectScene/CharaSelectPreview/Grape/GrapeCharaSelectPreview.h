@@ -25,10 +25,10 @@ private:
 
 		CHARA_NAME = "ƒu‚µƒhƒE";
 
-		HP = 0;
-		ATTACK = 0;
-		DEFENCE = 0;
-		SPEED = 0;
+		HP = GetParameterToInt("GrapeParameter", "PlayerHP");
+		ATTACK = GetParameterToInt("GrapeParameter", "PlayerAttackPower");
+		DEFENCE = GetParameterToInt("GrapeParameter", "PlayerDefensePower");
+		SPEED = GetParameterToInt("GrapeParameter", "PlayerMoveSpeed");
 
 		skill_1_image = LoadGraph("Data/Image/Lobby/CharaSelect/Grape/Skill1.png");
 		skill_2_image = LoadGraph("Data/Image/Lobby/CharaSelect/Grape/Skill2.png");

@@ -37,7 +37,7 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
 
 void GrapeBossStampBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
-	CreateAttackSkill(operatorSenderId, 50, &stats);
+	CreateAttackSkill(operatorSenderId, 75, &stats);
 
 	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
 	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
@@ -50,7 +50,7 @@ void GrapeBossStampBomb::SubUpdate(void)
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
-		trans.pos.y -= 3.0f;
+		trans.pos.y -= 8.0f;
 	}
 	// ついてるなら爆発カウントを進める
 	else {
@@ -61,7 +61,7 @@ void GrapeBossStampBomb::SubUpdate(void)
 			// 今開始されたらフラグを立てる
 			now = true;
 			// ほんとはついてないので落下
-			trans.pos.y -= 3.0f;
+			trans.pos.y -= 8.0f;
 			return;
 		}
 		count++;

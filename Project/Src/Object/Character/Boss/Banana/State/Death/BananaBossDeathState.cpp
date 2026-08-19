@@ -1,16 +1,17 @@
 #include "BananaBossDeathState.h"
 
 #include "../../../../../../Scene/Game/GameScene.h"
+#include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
 BananaBossDeathState::BananaBossDeathState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	Vector3& scale, const Vector3& defaultScale,
+	const std::function<void(void)>& PlayDeath,
 	const std::function<void(void)> IsDeath
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	scale(scale), defaultScale(defaultScale),
+	PlayDeath(PlayDeath),
 	IsDeath(IsDeath)
 {
 }
@@ -18,19 +19,18 @@ BananaBossDeathState::BananaBossDeathState(
 void BananaBossDeathState::Enter(void)
 {
 	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, CHANGE_COUNT);
+	PlayDeath();
 }
 
 void BananaBossDeathState::Update(void)
 {
-	if (cnt <= CHANGE_COUNT) {
-
-		float rate = ((float)cnt - SCALE_REVERSE) * ((float)cnt - SCALE_REVERSE);
-		scale = defaultScale * (rate * BOMB_RATE);
-		cnt++;
-	}
-	else {
+	// アニメーションが終わっていたらシーン移行
+	if (cnt >= CHANGE_COUNT) {
+		Net::GetIns().Send(MsgDataBossIsDeath(true));
 		IsDeath();
 	}
+	// チェンジ用のカウント
+	cnt++;
 }
 
 void BananaBossDeathState::Exit(void)

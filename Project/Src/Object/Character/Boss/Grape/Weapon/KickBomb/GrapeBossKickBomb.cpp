@@ -37,7 +37,7 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model, int front, int back)
 
 void GrapeBossKickBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
-	CreateAttackSkill(operatorSenderId, 50, &stats);
+	CreateAttackSkill(operatorSenderId, 75, &stats);
 
 	collBack.scale = Vector3::XZonly(ATTACK_RANGE / MODEL_RADIUS, ATTACK_RANGE / MODEL_RADIUS);
 	collFront.scale = Vector3(0.0f);
@@ -48,7 +48,7 @@ void GrapeBossKickBomb::SubUpdate(void)
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
-		trans.pos.y -= 3.0f;
+		trans.pos.y -= 8.0f;
 	}
 	// ついてるなら爆発カウントを進める
 	else {
@@ -59,7 +59,7 @@ void GrapeBossKickBomb::SubUpdate(void)
 			// 今開始されたらフラグを立てる
 			now = true;
 			// ほんとはついてないので落下
-			trans.pos.y -= 3.0f;
+			trans.pos.y -= 8.0f;
 			return;
 		}
 		count++;

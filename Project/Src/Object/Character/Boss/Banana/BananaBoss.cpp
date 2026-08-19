@@ -169,9 +169,8 @@ void BananaBoss::PlayerLoad(void)
 			[&]() { state = static_cast<int>(STATE::DEATH); },
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::DEATH); },
-			// ボスのサイズ
-			trans.scale, MODEL_SCALE,
-			// 死んだフラグを立てる
+			[&]() { AnimePlay((int)ANIME_TYPE::DEATH_FALL, false); },
+			// 死んだフラグ3を立てる
 			[&]() {	SetIsDeath(true); }
 		)
 	);

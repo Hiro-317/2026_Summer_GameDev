@@ -124,9 +124,11 @@ private:
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
 		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
-		GetParameter("Anime", "IdleAnimeSpeed"),	// IDLE
+		GetParameter("Anime", "FireAnimeSpeed"),	// FIRE
+
 
 		//GetParameter("Anime", "ScratchStartAnimeSpeed"),	// SCRATCH_START
 		//GetParameter("Anime", "ScratchLoopAnimeSpeed"),	// SCRATCH_LOOP

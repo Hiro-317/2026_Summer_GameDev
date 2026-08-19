@@ -112,6 +112,15 @@ void BossSelectScene::SubPostUpdate(void)
 		delete dataPtr;
 	}
 
+	// 選択ボスの受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
+
+		// 受け取ったボスタイプを保存する
+		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
+
+		delete dataPtr;
+	}
+
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataCameraEvent>()) {
 		camera->EndEvent();
 		delete dataPtr;
