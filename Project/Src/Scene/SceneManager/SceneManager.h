@@ -120,6 +120,11 @@ public:
 	// 保存した選択ボスを取得
 	BOSS_TYPE GetSelectBossType(void) { return selectBossType; }
 
+	// クリアタイムを保存
+	void SetClearTime(float clearTime) { this->clearTime = clearTime; }
+	// 保存したクリアタイムを取得
+	float GetClearTime(void) { return clearTime; }
+
 #pragma endregion
 
 
@@ -265,6 +270,9 @@ private:
 
 	// 選択ボスの保存
 	BOSS_TYPE selectBossType;
+
+	// 最新のクリアタイム
+	float clearTime;
 
 #pragma endregion
 

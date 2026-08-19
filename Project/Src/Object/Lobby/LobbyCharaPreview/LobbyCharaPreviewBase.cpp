@@ -58,6 +58,11 @@ void LobbyCharaPreviewBase::SubDraw(void)
 	}
 }
 
+void LobbyCharaPreviewBase::OwnOperatorDraw(int image)
+{
+	DrawBillboard3D((trans.pos + ownOperatorImagePos[(int)Net::GetIns().GetSenderId()]).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, image, true);
+}
+
 void LobbyCharaPreviewBase::SubRelease(void)
 {
 	// アニメーションコントローラーを削除

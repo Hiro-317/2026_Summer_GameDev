@@ -168,6 +168,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Manager\Input\InputTextManager.cpp" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
+    <ClCompile Include="Src\Manager\Ranking\Ranking.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.cpp" />
@@ -246,6 +247,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.cpp" />
     <ClCompile Include="Src\Object\Character\Player\PlayerManager\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.cpp" />
+    <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreview\CharaSelectPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Common\AnimationController\AnimationController.cpp" />
@@ -328,6 +331,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkManager.h" />
     <ClInclude Include="Src\Manager\Net\SenderID_Define.h" />
+    <ClInclude Include="Src\Manager\Ranking\Ranking.h" />
     <ClInclude Include="Src\Object\BossSelect\BossSelectStage.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\BossSelectSkyShip.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipMoveState.h" />
@@ -416,6 +420,12 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Character\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Character\Player\PlayerManager\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Grape\ClearCharaPreviewGrape.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Orange\ClearCharaPreviewOrange.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Peach\ClearCharaPreviewPeach.h" />
+    <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Tomato\ClearCharaPreviewTomato.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\CapsuleDebugObject.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\DebugObjectBase.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\SphereDebugObject.h" />

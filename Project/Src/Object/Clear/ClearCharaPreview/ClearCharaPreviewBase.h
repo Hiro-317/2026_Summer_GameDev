@@ -4,19 +4,16 @@
 
 class AnimationController;
 
-class LobbyCharaPreviewBase : public ActorBase
+class ClearCharaPreviewBase : public ActorBase
 {
 public:
-	LobbyCharaPreviewBase(const Vector3& pos, unsigned char operatorNumber);
-	virtual ~LobbyCharaPreviewBase()override = default;
+	ClearCharaPreviewBase(const Vector3& pos, unsigned char operatorNumber);
+	virtual ~ClearCharaPreviewBase()override = default;
 
 	// “Ç‚İ‚İˆ—Ä’è‹`
 	void Load(void)override;
 	// XVˆ—Ä’è‹`
 	void Update(void)override;
-
-	// 
-	void OwnOperatorDraw(int image);
 
 private:
 
@@ -26,30 +23,15 @@ private:
 
 	// å—vŠÖ”Ä’è‹``````````
 	void SubInit(void)override;
-	void SubDraw(void)override;
 	void SubRelease(void)override;
 	// ````````````````
 
 	// Ä¶‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ^ƒCƒv
 	int playAnimeType;
 
-	const std::string OPERATOR_IMAGE_PATH;
-
-	// ‘€ìÒ‚ğ¦‚·ƒCƒ[ƒW
-	int operatorImage;
-
 protected:
 	virtual void CharacterLoad(void) = 0;
-
-	// ‘€ìÒ‚ğ¦‚·ƒCƒ[ƒW‚Ì‚‚³
-	float operatorImagePos;
-	// ©•ª‚ÌƒLƒƒƒ‰‚ğ¦‚·ƒCƒ[ƒW‚Ì‘Š‘ÎÀ•W
-	Vector3 ownOperatorImagePos[(int)MSG_SENDER_ID::Max] = {
-		Vector3(200, 600, 0),
-		Vector3(-200, 600, 0),
-		Vector3(-200, 600, 0),
-		Vector3(200, 600, 0)
-	};
+	virtual void CharacterInit(void) {}
 
 	// ƒ‚ƒfƒ‹‚É‚­‚Á‚Â‚¢‚Ä‚éFBXƒAƒjƒ[ƒVƒ‡ƒ“‚ğ“o˜^‚·‚é
 	void AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType);

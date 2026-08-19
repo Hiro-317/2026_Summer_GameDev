@@ -28,6 +28,9 @@ enum class MSG_DATA_TYPE
     // <ホスト>システムイベント（シーン遷移など）
     SystemInform,
 
+    // <ホスト>ゲームシーン中の計測時間
+    GameTime,
+
     // <ホスト/クライアント>カメライベント操作
     CameraEvent,
 
@@ -375,6 +378,31 @@ struct MsgDataSystemInform
     MsgDataSystemInform(void) :
         header(DATA_TYPE),
         inform(INFORM_TYPE::None)
+    {
+    }
+};
+
+struct MsgDataGameTime
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GameTime;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    float time;
+
+    MsgDataGameTime(float time) :
+        header(DATA_TYPE),
+        time(time)
+    {
+    }
+    MsgDataGameTime(void) :
+        header(DATA_TYPE),
+        time()
     {
     }
 };

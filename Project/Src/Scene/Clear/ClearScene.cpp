@@ -9,15 +9,73 @@
 #include "../../Manager/Font/FontManager.h"
 #include "../../Manager/Net/NetWorkManager.h"
 
+#include "../../Manager/Ranking/Ranking.h"
+
+#include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
+
 #include "../SceneManager/SceneManager.h"
 
-ClearScene::ClearScene() : SceneBase() {}
+#include "../ObjectUseDefine.h"
+
+#include "../../Object/SkyDome/SkyDome.h"
+#include "../../Object/Lobby/LobbyStage/LobbyStage.h"
+#include "../../Object/Clear/ClearCharaPreview/ClearCharaPreviewManager.h"
+
+ClearScene::ClearScene() :
+	SceneBase(),
+	clearTextImage(-1),
+	clearTimeFrameImage(-1),
+	clearTime(SceneManager::GetIns().GetClearTime())
+{
+}
 
 void ClearScene::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("Clear");
 
-	image = LoadGraph("Data/Image/Clear/GameClearImage.png");
+	clearTextImage = LoadGraph("Data/Image/Clear/ClearTextImage.png");
+	clearTimeFrameImage = LoadGraph("Data/Image/Clear/ClearTimeFrame.png");
+
+	// オブジェクト生成
+	ObjAdd(new SkyDome());
+	ObjAdd(new LobbyStage());
+	ObjAdd(new ClearCharaPreviewManager());
+}
+
+void ClearScene::SubPostInit(void)
+{
+	SetFogEnable(false);
+
+	// 同期
+	if (Net::GetIns().GetState() != Net::NetState::None && Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataGameTime(clearTime));
+	}
+
+	clearTime = SceneManager::GetIns().GetClearTime();
+}
+
+void ClearScene::SubPreUpdate(void)
+{
+	if (Net::GetIns().GetState() == Net::NetState::None) { return; }
+
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataGameTime>()) {
+		clearTime = dataPtr->time;
+
+		SceneManager::GetIns().SetClearTime(clearTime);
+
+		delete dataPtr;
+	}
+
+	// 切断 の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
 }
 
 void ClearScene::SubPostUpdate(void)
@@ -50,12 +108,28 @@ void ClearScene::SubPostUpdate(void)
 	}
 }
 
-void ClearScene::SubPostDraw(void)
+void ClearScene::SubUiDraw(void)
 {
-	DrawExtendGraph(0, 0, App::SCREEN_SIZE_X, App::SCREEN_SIZE_Y, image, true);
+	DrawRotaGraph3(App::SCREEN_SIZE_X_HALF, 0, 350, 0, 1, 1, 0, clearTextImage, true);
+
+	DrawRotaGraph(250, App::SCREEN_SIZE_Y_HALF, 1, 0, clearTimeFrameImage, true);
+
+	DrawFormatStringToHandle(165, 385, 0x000000, Font::GetIns().GetFont(FontKinds::MARUMINYA_50), "%.2f秒", clearTime);
 }
 
 void ClearScene::SubPreRelease(void)
 {
-	DeleteGraph(image);
+	DeleteGraph(clearTimeFrameImage);
+	DeleteGraph(clearTextImage);
+
+	Ranking::GetIns().AddScore(SceneManager::GetIns().GetSelectBossType(), clearTime);
+	Ranking::GetIns().Save();
+
+	SetFogEnable(true);
+}
+
+void ClearScene::CreateCamera(void)
+{
+	// 定点カメラを生成する
+	camera = new FixedPointCamera(FixedPointCamera::LookAt, Vector3::YZonly(4000.0f, -7000.0f), Vector3::Yonly(2500.0f));
 }

@@ -8,11 +8,16 @@
 
 #include "../../../Manager/Sound/SoundManager.h"
 
+#include "../../../Manager/Font/FontManager.h"
+
 #include "../../SceneManager/SceneManager.h"
 
 BossConfirmScene::BossConfirmScene() :
 	SceneBase(),
 	IS_HOST(Net::GetIns().IsHost()),
+	ENTRY_COUNT(Net::GetIns().GetConnectStatus().EntryCount()),
+
+	RANKING_DATA(Ranking::GetIns().GetRanking(SceneManager::GetIns().GetSelectBossType())),
 
 	choice(),
 
@@ -20,7 +25,13 @@ BossConfirmScene::BossConfirmScene() :
 
 	readyList(),
 
+	frameImage(-1),
+
 	bossSelectImage(-1),
+
+	playerIconBackImage(),
+	playerIconFrameImage(),
+	playerIconImage(),
 
 	choiceButtonImage(),
 
@@ -43,8 +54,42 @@ void BossConfirmScene::SubPostLoad(void)
 	// ‰æ‘œ“Ç‚İ‚İ‚Ìƒ‰ƒ€ƒ_ŠÖ”
 	auto loadBossConfirmImage = [&](std::string name)->int { return LoadGraph((IMAGE_DATA_FILE_DIR + name + ".png").c_str()); };
 
+	// ˜g‚Ì‰æ‘œ
+	frameImage = loadBossConfirmImage(FRAME_IMAGE_NAME);
+
 	// ƒ{ƒX‚ÌÚ×ƒCƒ[ƒW
 	bossSelectImage = loadBossConfirmImage(BOSS_SELECT_IMAGE_NAME[(int)SceneManager::GetIns().GetSelectBossType()]);
+
+	// ƒvƒŒƒCƒ„[ƒLƒƒƒ‰ƒAƒCƒRƒ“‚Ì“¯‚¶‰æ‘œ‚Ìd•¡‚Ìƒ[ƒh”ğ‚¯‚é‚½‚ß‚Ìƒtƒ‰ƒO”z—ñ
+	signed char playerIconDupli[(int)CHARA_TYPE::Max];
+	for (signed char& dupli : playerIconDupli) { dupli = -1; }
+
+	// ƒvƒŒƒCƒ„[ƒAƒCƒRƒ“
+	for (char id = 0; id < ENTRY_COUNT; id++) {
+
+		// ”wŒi
+		playerIconBackImage[id] = loadBossConfirmImage(PLAYER_ICON_BACK_IMAGE_NAME[id]);
+		// ƒtƒŒ[ƒ€
+		playerIconFrameImage[id] = loadBossConfirmImage(PLAYER_ICON_FRAME_IMAGE_NAME[id]);
+
+
+		// ƒLƒƒƒ‰```````````````````````````````````````
+
+		// ‘I‘ğƒLƒƒƒ‰æ“¾
+		CHARA_TYPE charaType = SceneManager::GetIns().GetSelectCharaType((MSG_SENDER_ID)id);
+
+		// d•¡ƒ[ƒhŠm”F
+		if (playerIconDupli[(int)charaType] == -1) {
+			// ‰‰ñƒ[ƒh
+			playerIconImage[id] = loadBossConfirmImage(PLAYER_ICON_IMAGE_NAME[(int)charaType]);
+			// ƒ[ƒh‚µ‚½‚±‚Æ‚ğ•Û‘¶‚·‚é
+			playerIconDupli[(int)charaType] = id;
+		}
+		// 2‰ñ–ÚˆÈ~iƒnƒ“ƒhƒ‹‚ğƒRƒs[j
+		else { playerIconImage[id] = playerIconImage[playerIconDupli[(int)charaType]]; }
+
+		// ```````````````````````````````````````ƒLƒƒƒ‰
+	}
 
 	// ‘I‘ğˆƒ{ƒ^ƒ“‚Ì‰æ‘œ
 	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
@@ -57,11 +102,11 @@ void BossConfirmScene::SubPostLoad(void)
 	}
 
 	// ‘I‘ğ’†‚Ì–îˆó
-	arrowImage = loadBossConfirmImage("BossConfirm/NowSelectArrow");
+	arrowImage = loadBossConfirmImage(ARROW_IMAGE_NAME);
 
 	// ‘I‘ğ’†‚ÌŒˆ’èƒL[
-	enterKeyImage[(int)false] = loadBossConfirmImage("BossConfirm/NowSelectKeyboard");
-	enterKeyImage[(int)true] = loadBossConfirmImage("BossConfirm/NowSelectController");
+	enterKeyImage[(int)false] = loadBossConfirmImage(ENTER_KEYBOARD_IMAGE_NAME);
+	enterKeyImage[(int)true] = loadBossConfirmImage(ENTER_CONTROLLER_IMAGE_NAME);
 
 #pragma endregion
 }
@@ -195,8 +240,29 @@ void BossConfirmScene::SubPostDraw(void)
 	// ‰æ‘œ•`‰æ‚Ìƒ‰ƒ€ƒ_ŠÖ”
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f)->void { DrawRotaGraph(pos.x, pos.y, rate, angle, handle, true); };
 
+	// ˜g‚Ì•`‰æ
+	drawImage(frameImage, FRAME_POS);
+
 	// ƒ{ƒXÚ×ƒCƒ[ƒW
 	drawImage(bossSelectImage, BOSS_SELECT_IMAGE_POS);
+
+	// ƒvƒŒƒCƒ„[ƒAƒCƒRƒ“
+	for (char id = 0; id < ENTRY_COUNT; id++) {
+		drawImage(playerIconBackImage[id], PLAYER_ICON_POS[id]);
+		drawImage(playerIconImage[id], PLAYER_ICON_POS[id]);
+		drawImage(playerIconFrameImage[id], PLAYER_ICON_POS[id]);
+	}
+
+	Vector2I rankingPos = Vector2I(917, 220);
+	for (int rank = 0; rank < RANKING_DATA.size(); rank++) {
+		std::string st = "---";
+		if (RANKING_DATA.at(rank).score != -1.0f) {
+			st = std::to_string(rank + 1) + "ˆÊ:" + "%.2f•b";
+		}
+		DrawFormatStringToHandle(rankingPos.x, rankingPos.y, 0x000000, Font::GetIns().GetFont(FontKinds::MARUMINYA_40), st.c_str(), RANKING_DATA.at(rank).score);
+
+		rankingPos.y += 85;
+	}
 
 	// ‘I‘ğˆ‚Ì•`‰æ
 	for (int i = 0; i < (int)CHOICE::Max; i++) {
@@ -224,8 +290,17 @@ void BossConfirmScene::SubPreRelease(void)
 		}
 	}
 
+	for (char id = 0; id < ENTRY_COUNT; id++) {
+		DeleteGraph(playerIconImage[id]);
+		DeleteGraph(playerIconFrameImage[id]);
+		DeleteGraph(playerIconBackImage[id]);
+	}
+
 	// ƒ{ƒXÚ×ƒCƒ[ƒW
 	DeleteGraph(bossSelectImage);
+
+	// ˜g‚Ì‰æ‘œ
+	DeleteGraph(frameImage);
 
 #pragma endregion
 }

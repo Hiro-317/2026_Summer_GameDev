@@ -376,7 +376,7 @@ private:
 	void FollowAutoModeFunc(void);
 
 	// カメラ最低地上高
-	static constexpr float CAMERA_DOWN = 85.0f;
+	static constexpr float CAMERA_DOWN = 200.0f;
 
 	// 注視点最低地上高
 	static constexpr float FOCUS_DOWN = 70.0f;

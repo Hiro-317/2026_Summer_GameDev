@@ -40,4 +40,14 @@ private:
 		Vector3::XZonly(-700.0f, -600.0f),
 		Vector3::XZonly(700.0f, -600.0f),
 	};
+
+	const std::string OWN_OPERATOR_IMAGE[(int)MSG_SENDER_ID::Max] = {
+		"Data/Image/Lobby/RightSideOwnOperator.png",
+		"Data/Image/Lobby/LeftSideOwnOperator.png",
+		"Data/Image/Lobby/LeftSideOwnOperator.png",
+		"Data/Image/Lobby/RightSideOwnOperator.png",
+	};
+
+	// 自分のキャラを示すイメージ
+	int ownOperatorImage;
 };

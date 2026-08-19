@@ -42,3 +42,5 @@
 *.zip
 *.vs/
 *x64/
+
+Project/Data/Ranking/Ranking.csv
