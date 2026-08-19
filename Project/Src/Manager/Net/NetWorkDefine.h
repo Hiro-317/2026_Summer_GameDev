@@ -1142,7 +1142,7 @@ struct MsgDataBossHit
     short damage;
     bool clitical;
 
-    MsgDataBossHit(const Vector3& collisionPoint, const short& damage, const bool& clitical) :
+    MsgDataBossHit(const Vector3& collisionPoint, short damage, bool clitical) :
         header(DATA_TYPE),
         collisionPoint(collisionPoint),
         damage(damage),
@@ -1172,7 +1172,7 @@ struct MsgDataBossIsDeath
 
     bool flg;
 
-    MsgDataBossIsDeath(const bool& flg) :
+    MsgDataBossIsDeath(bool flg) :
         header(DATA_TYPE),
         flg(flg)
     {
