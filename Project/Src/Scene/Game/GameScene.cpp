@@ -232,6 +232,11 @@ void GameScene::SubUiDraw(void)
 	DrawString(0, 0, std::to_string(time).c_str(), 0xffffff);
 }
 
+void GameScene::SubPostRelease(void)
+{
+	Net::GetIns().ReceptionDataReset();
+}
+
 
 void GameScene::CreateCamera(void)
 {

@@ -1,7 +1,7 @@
-HP_1,7000
-HP_2,14000
-HP_3,21000
-HP_4,28000
+HP_1,5500
+HP_2,10000
+HP_3,14500
+HP_4,19000
 MoveSpeed,0
-AttackPower,450
-DefensePower,600
+AttackPower,400
+DefensePower,350

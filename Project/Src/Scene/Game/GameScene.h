@@ -24,6 +24,8 @@ private:
 
 	void SubUiDraw(void)override;
 
+	void SubPostRelease(void)override;
+
 	void CreateCamera(void)override;
 
 	const BossBase* bossInsRef;

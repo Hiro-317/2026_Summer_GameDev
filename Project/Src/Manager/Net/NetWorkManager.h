@@ -168,6 +168,57 @@ public:
 		state = NetState::Disconnection;
 	}
 
+	// 格納保持されたままのデータを解放する
+	void ReceptionDataReset(void) {
+		// 格納保持されたままのたまった受信データを全て 解放/削除 する
+		for (int dataType = 0; dataType < (int)MSG_DATA_TYPE::Max; dataType++) {
+			for (int senderId = 0; senderId < (int)MSG_SENDER_ID::Max; senderId++) {
+				for (void* ptr : msgData[dataType][senderId]) {
+					if (!ptr) { continue; }
+					switch ((MSG_DATA_TYPE)dataType) {
+					case MSG_DATA_TYPE::None: { delete ptr; break; }
+					case MSG_DATA_TYPE::ConnectInform: { delete static_cast<MsgDataConnectInform*>(ptr); break; }
+					case MSG_DATA_TYPE::SenderId: { delete static_cast<MsgDataSenderId*>(ptr); break; }
+					case MSG_DATA_TYPE::ConnectStatus: { delete static_cast<MsgDataConnectStatus*>(ptr); break; }
+					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
+					case MSG_DATA_TYPE::GameTime: { delete static_cast<MsgDataGameTime*>(ptr); break; }
+					case MSG_DATA_TYPE::CameraEvent: { delete static_cast<MsgDataCameraEvent*>(ptr); break; }
+					case MSG_DATA_TYPE::BossSelect: { delete static_cast<MsgDataBossSelect*>(ptr); break; }
+					case MSG_DATA_TYPE::CharaSelect: { delete static_cast<MsgDataCharaSelect*>(ptr); break; }
+					case MSG_DATA_TYPE::ClientReady: { delete static_cast<MsgDataClientReady*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerTrans: { delete static_cast<MsgDataPlayerTrans*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerHp: { delete static_cast<MsgDataPlayerHp*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerHeal: { delete static_cast<MsgDataPlayerHeal*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerModifier: { delete static_cast<MsgDataPlayerModifier*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerShotStart: { delete static_cast<MsgDataPlayerShotStart*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerShotEnd: { delete static_cast<MsgDataPlayerShotEnd*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerToPlayerTarget: { delete static_cast<MsgDataPlayerToPlayerTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombStart: { delete static_cast<MsgDataGrapePlayerBombStart*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombEnd: { delete static_cast<MsgDataGrapePlayerBombEnd*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombThrowStart: { delete static_cast<MsgDataGrapePlayerBombThrowStart*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombThrowEnd: { delete static_cast<MsgDataGrapePlayerBombThrowEnd*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
+					case MSG_DATA_TYPE::BossTrans: { delete static_cast<MsgDataBossTrans*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAttackDraw: { delete static_cast<MsgDataBossAttackDraw*>(ptr); break; }
+					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
+					case MSG_DATA_TYPE::BossIsDeath: { delete static_cast<MsgDataBossIsDeath*>(ptr); break; }
+					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
+					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
+					case MSG_DATA_TYPE::EffectCreate: { delete static_cast<MsgDataEffectCreate*>(ptr); break; }
+					case MSG_DATA_TYPE::EffectFollow: { delete static_cast<MsgDataEffectFollow*>(ptr); break; }
+					}
+				}
+				msgData[dataType][senderId].clear();
+			}
+		}
+	}
 #pragma endregion 共通操作
 
 
