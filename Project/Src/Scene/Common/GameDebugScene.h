@@ -6,7 +6,7 @@
 
 #include"../SceneBase.h"
 
-#include"../SceneManager/SceneManager.h"
+#include"../SceneManager.h"
 
 #include "../../Manager/Camera/MultifuncCamera/MultifuncCamera.h"
 

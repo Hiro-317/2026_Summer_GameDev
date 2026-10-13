@@ -16,6 +16,7 @@ public:
 		float speed = 0.0f;
 		float totalTime = 0.0f;
 		float step = 0.0f;
+		bool loop = false;
 	};
 
 	// コンストラクタ
@@ -25,28 +26,33 @@ public:
 	~AnimationController(void);
 
 	//外部FBXからアニメーションを追加
-	void Add(int type, float speed, const std::string path);
+	void Add(int type, float speed, bool loop, const std::string path);
 
 	// 同じFBX内のアニメーションを準備
-	void AddInFbx(int type, float speed, int animIndex);
+	void AddInFbx(int type, float speed, bool loop, int animIndex);
+	
+	/// <summary>
+	/// / アニメーション再生
+	/// </summary>
+	/// <param name="type">再生タイプ</param>
+	/// <param name="loop">ループ再生フラグ。指定なし(-1)で登録された情報で再生</param>
+	void Play(int type, signed char loop = -1);
 
-	// アニメーション再生
-	void Play(int type, bool loop = true);
 	void Stop(void);
 	void Update(void);
 	void Release(void);
 
 	bool IsEnd(void)const;
-	int GetPlayType(void)const { return playType; }
-	bool GetAnimEnd(void)const { return playAnim.step >= playAnim.totalTime; }
+	int GetAnimePlayType(void)const { return playType; }
+	bool IsAnimEnd(void)const { return playAnim.step >= playAnim.totalTime; }
 
 	float GetAnimeRatio(void)const { return (playAnim.step / playAnim.totalTime); }
 	float GetAnimeTotalTime(void)const { return playAnim.totalTime / playAnim.speed; }
 
 	// 再生ステップを取得
-	float GetStep(void)const { return playAnim.step; }
+	float GetAnimeStep(void)const { return playAnim.step; }
 	// 再生ステップを設定
-	void SetStep(float step);
+	void SetAnimeStep(float step);
 
 private:
 	// アニメーションするモデルのハンドルID
@@ -67,5 +73,5 @@ private:
 	//デタッチできているか
 	int isDetach;
 
-	void Add(int type, float speed, Animation animation);
+	void Add(int type, float speed, bool loop, Animation animation);
 };

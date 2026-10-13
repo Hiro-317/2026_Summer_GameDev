@@ -7,18 +7,18 @@ class FadeSceneBase : public SceneBase
 public:
 	enum class STATE
 	{
-		FADE_OUT,
-		WAIT,
-		FADE_IN,
-		END,
+		FadeOut,
+		Wait,
+		FadeIn,
+		End,
 	};
 
 	FadeSceneBase(unsigned short FADE_TIME = 30);
 	virtual ~FadeSceneBase(void)override = default;
 
-	bool IsFadeOutEnd(void)const { return state == STATE::WAIT; }
+	bool IsFadeOutEnd(void)const { return state == STATE::Wait; }
 	void StartFadeIn(void);
-	bool IsEnd(void)const { return state == STATE::END; }
+	bool IsEnd(void)const { return state == STATE::End; }
 	STATE GetFadeState(void)const { return state; }
 	float GetFadeRatio(void)const;
 

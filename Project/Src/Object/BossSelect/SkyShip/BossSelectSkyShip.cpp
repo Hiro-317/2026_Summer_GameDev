@@ -1,10 +1,12 @@
 #include "BossSelectSkyShip.h"
 
+#include "../../../Utility/Utility.h"
+
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 
-#include "../../../Scene/SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 #include "../../../Scene/BossSelect/BossConfirm/BossConfirmScene.h"
 
@@ -16,8 +18,7 @@
 BossSelectSkyShip::BossSelectSkyShip() :
 	CharacterBase()
 {
-	operatorSenderId = Net::HOST_SENDER_ID;
-	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
+	controlSenderId = Net::HOST_SENDER_ID;
 }
 
 void BossSelectSkyShip::Load(void)
@@ -27,18 +28,18 @@ void BossSelectSkyShip::Load(void)
 	SetPushFlg(true);
 	SetPushWeight(0);
 
-	trans.Load("SkyShip/SkyShip");
+	trans.LoadModel("SkyShip/SkyShip");
 
 	trans.scale = 1.0f;
 
-	trans.localAngle = Vector3::Yonly(Deg2Rad(90.0f));
+	trans.localRotation = Quaternion::FromRotationY(Deg2Rad(90.0f));
 
 	trans.pos = Vector3(0, 300, -7000);
 
-	ColliderCreate(new SphereCollider(COLLIDER_TAG::PLAYER, 50.0f * trans.scale.MinElementF()));
-
+	AddCollider(new SphereCollider(COLLIDER_TAG::PLAYER, 50.0f * trans.scale.MinElementF()));
+	
 	AddState(
-		(int)STATE::Start,
+		STATE::Start,
 		new BossSelectSkyShipStartState(
 			[&]() { ChangeState((int)STATE::Start); },
 			[&]() { return state == (int)STATE::Start; },
@@ -59,9 +60,9 @@ void BossSelectSkyShip::Load(void)
 	);
 }
 
-void BossSelectSkyShip::CharacterInit(void)
+void BossSelectSkyShip::SubInit(void)
 {
-	ChangeState((int)STATE::Start);
+	ChangeState(STATE::Start);
 }
 
 void BossSelectSkyShip::ReceptionUpdate(void)

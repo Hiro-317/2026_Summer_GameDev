@@ -3,7 +3,7 @@
 #include "../../../Utility/Utility.h"
 
 #include "../../../Application/Application.h"
-#include "../../SceneManager/SceneManager.h"
+#include "../../SceneManager.h"
 #include "../../../Manager/Input/KeyManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"

@@ -1,94 +1,7 @@
 #pragma once
 
-#include<cmath>
-
-#include"Vector3.h"
-
-struct Vector2;
-
-struct Vector2I
-{
-	int x, y;
-
-#pragma region ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	// Vector2I¶¬
-	Vector2I(void) :x(0), y(0) {}
-
-	// Vector2I¶¬
-	Vector2I(int x, int y) :x(x), y(y) {}
-
-	// Vector2I¶¬
-	Vector2I(int value) :x(value), y(value) {}
-
-	// Vector2I¶¬
-	Vector2I(float x, float y) :x((int)x), y((int)y) {}
-
-	// Vector2I¶¬
-	Vector2I(float value) :x((int)value), y((int)value) {}
-#pragma endregion
-
-
-#pragma region Vector2I¶¬(“Áê)
-	// X‚Ì‚İ
-	static Vector2I Xonly(int value) { return Vector2I(value, 0); }
-
-	// Y‚Ì‚İ
-	static Vector2I Yonly(int value) { return Vector2I(0, value); }
-#pragma endregion
-
-	// ‘ã“ü
-	void operator=(const int value) { x = value; y = value; }
-	void operator=(const Vector2& value);
-
-#pragma region ‰‰Z
-	// ‰ÁZ---------------------------------------
-	Vector2I operator+(const Vector2I value)const { return Vector2I(x + value.x, y + value.y); }
-	void operator+=(const Vector2I value) { x = x + value.x; y = y + value.y; }
-
-	Vector2I operator+(const int value)const { return Vector2I(x + value, y + value); }
-	void operator+=(const int value) { x += value; y += value; }
-	//--------------------------------------------
-	
-	// Œ¸Z---------------------------------------
-	Vector2I operator-(const Vector2I value)const { return Vector2I(x - value.x, y - value.y); }
-	void operator-=(const Vector2I value) { x = x - value.x; y = y - value.y; }
-
-	Vector2I operator-(const int value)const { return Vector2I(x - value, y - value); }
-	void operator-=(const int value) { x -= value; y -= value; }
-	//--------------------------------------------
-
-	// æZ---------------------------------------
-	Vector2I operator*(const Vector2I value)const { return Vector2I(x * value.x, y * value.y); }
-	void operator*=(const Vector2I value) { x *= value.x; y *= value.y; }
-
-	Vector2I operator*(const int value)const { return Vector2I(x * value, y * value); }
-	void operator*=(const int value) { x = x * value; y = y * value; }
-	//--------------------------------------------
-
-	// œZ---------------------------------------
-	Vector2I operator/(const Vector2I value)const { return Vector2I(x / value.x, y / value.y); }
-	void operator/=(const Vector2I value) { x /= value.x; y /= value.y; }
-
-	Vector2I operator/(const int value)const { return Vector2I(x / value, y / value); }
-
-	Vector2 operator/(const float value)const;
-	void operator/=(const int value) { x = x / value; y = y / value; }
-	//--------------------------------------------
-
-#pragma endregion
-
-	bool operator==(const Vector2I value)const { return (x == value.x && y == value.y); }
-	bool operator==(const int value)const { return (x == value && y == value); }
-	bool operator!=(const Vector2I value)const { return (x != value.x || y != value.y); }
-	bool operator!=(const int value)const { return (x != value || y != value); }
-
-	Vector2 ToVector2(void)const;
-
-	float LengthSq(void)const { return (float)(x * x + y * y); }
-	float Length(void)const { return sqrtf((float)(x * x + y * y)); }
-
-	Vector2 Normalized(void)const;
-};
+struct Vector2I;
+struct Vector3;
 
 struct Vector2
 {
@@ -96,125 +9,181 @@ struct Vector2
 
 #pragma region ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 	// Vector2¶¬
-	Vector2(void) :x(0.0f), y(0.0f) {}
+	Vector2(void);
 
 	// Vector2¶¬
-	Vector2(float x, float y) :x(x), y(y) {}
+	Vector2(float x, float y);
 
 	// Vector2¶¬
-	Vector2(float value) :x(value), y(value) {}
+	Vector2(float value);
 
 	// Vector2¶¬
-	Vector2(int x, int y) :x((float)x), y((float)y) {}
+	Vector2(int x, int y);
 
 	// Vector2¶¬
-	Vector2(int value) :x((float)value), y((float)value) {}
+	Vector2(int value);
 
-	Vector2(const Vector2I& value) :x((float)value.x), y((float)value.y) {}
+	Vector2(const Vector2I& value);
 #pragma endregion
 
 
 #pragma region Vector2¶¬(“Áê)
 	// X‚Ì‚İ
-	static Vector2 Xonly(float value) { return Vector2(value, 0.0f); }
+	static Vector2 Xonly(float value);
 
 	// Y‚Ì‚İ
-	static Vector2 Yonly(float value) { return Vector2(0.0f, value); }
+	static Vector2 Yonly(float value);
 #pragma endregion
 
-	// ‘ã“ü
-	void operator=(const float value) { x = value; y = value; }
 
 #pragma region ‰‰Z
-	// ‰ÁZ---------------------------------------
-	Vector2 operator+(const Vector2 value)const { return Vector2(x + value.x, y + value.y); }
-	void operator+=(const Vector2 value) { x = x + value.x; y = y + value.y; }
 
-	Vector2 operator+(float value)const { return Vector2(x + value, y + value); }
-	void operator+=(float value) { x += value; y += value; }
+	// ‘ã“ü
+	void operator=(float value);
+	void operator=(const Vector2I value);
 
-	Vector2 operator+(int value)const { return Vector2(x + (float)value, y + (float)value); }
-	void operator+=(int value) { x += (float)value; y += (float)value; }
-	//--------------------------------------------
+	// ‰ÁZ`````````````````````````
 
-	// Œ¸Z---------------------------------------
-	Vector2 operator-(const Vector2 value)const { return Vector2(x - value.x, y - value.y); }
-	void operator-=(const Vector2 value) { x = x - value.x; y = y - value.y; }
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚Ì‰ÁZ
+	Vector2 operator+(const Vector2 value)const;
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚Ì‰ÁZi’¼Ú‘ã“üj
+	void operator+=(const Vector2 value);
 
-	Vector2 operator-(float value)const { return Vector2(x - value, y - value); }
-	void operator-=(float value) { x -= value; y -= value; }
+	// •‚“®¬”(float)Œ^‚Æ‚Ì‰ÁZi‘S—v‘f‚Ö‰ÁZj
+	Vector2 operator+(float value)const;
+	// •‚“®¬”(float)Œ^‚Æ‚Ì‰ÁZi‘S—v‘f‚Ö‰ÁZji’¼Ú‘ã“üj
+	void operator+=(float value);
 
-	Vector2 operator-(int value)const { return Vector2(x - (float)value, y - (float)value); }
-	void operator-=(int value) { x -= (float)value; y -= (float)value; }
-	//--------------------------------------------
+	// ®”(int)Œ^‚Æ‚Ì‰ÁZi‘S—v‘f‚Ö‰ÁZj
+	Vector2 operator+(int value)const;
+	// ®”(int)Œ^‚Æ‚Ì‰ÁZi‘S—v‘f‚Ö‰ÁZji’¼Ú‘ã“üj
+	void operator+=(int value);
 
-	// æZ---------------------------------------
-	Vector2 operator*(const Vector2 value)const { return Vector2(x * value.x, y * value.y); }
-	void operator*=(const Vector2 value) { x *= value.x; y *= value.y; }
+	// `````````````````````````‰ÁZ
 
-	Vector2 operator*(float value)const { return Vector2(x * value, y * value); }
-	void operator*=(float value) { x = x * value; y = y * value; }
 
-	Vector2 operator*(int value)const { return Vector2(x * (float)value, y * (float)value); }
-	void operator*=(int value) { x *= (float)value; y *= (float)value; }
-	//--------------------------------------------
+	// Œ¸Z`````````````````````````
 
-	// œZ---------------------------------------
-	Vector2 operator/(const Vector2 value)const { return Vector2(x / value.x, y / value.y); }
-	void operator/=(const Vector2 value) { x /= value.x; y /= value.y; }
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚ÌŒ¸Z
+	Vector2 operator-(const Vector2 value)const;
 
-	Vector2 operator/(const int value)const { return Vector2(x / value, y / value); }
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚ÌŒ¸Zi’¼Ú‘ã“üj
+	void operator-=(const Vector2 value);
 
-	Vector2 operator/(const float value)const { return Vector2(x / value, y / value); }
-	void operator/=(const int value) { x = x / value; y = y / value; }
-	//--------------------------------------------
+
+	// •‚“®¬”(float)Œ^‚Æ‚ÌŒ¸Zi‘S—v‘f‚ÖŒ¸Zj
+	Vector2 operator-(float value)const;
+
+	// •‚“®¬”(float)Œ^‚Æ‚ÌŒ¸Zi‘S—v‘f‚ÖŒ¸Zji’¼Ú‘ã“üj
+	void operator-=(float value);
+
+
+	// ®”(int)Œ^‚Æ‚ÌŒ¸Zi‘S—v‘f‚ÖŒ¸Zj
+	Vector2 operator-(int value)const;
+
+	// ®”(int)Œ^‚Æ‚ÌŒ¸Zi‘S—v‘f‚ÖŒ¸Zji’¼Ú‘ã“üj
+	void operator-=(int value);
+
+	// `````````````````````````Œ¸Z
+
+
+	// æZ`````````````````````````
+
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚ÌæZ
+	Vector2 operator*(const Vector2 value)const;
+
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚ÌæZi’¼Ú‘ã“üj
+	void operator*=(const Vector2 value);
+
+
+	// •‚“®¬”(float)Œ^‚Æ‚ÌæZi‘S—v‘f‚ÖæZj
+	Vector2 operator*(float value)const;
+
+	// •‚“®¬”(float)Œ^‚Æ‚ÌæZi‘S—v‘f‚ÖæZji’¼Ú‘ã“üj
+	void operator*=(float value);
+
+
+	// ®”(int)Œ^‚Æ‚ÌæZi‘S—v‘f‚ÖæZj
+	Vector2 operator*(int value)const;
+
+	// ®”(int)Œ^‚Æ‚ÌæZi‘S—v‘f‚ÖæZji’¼Ú‘ã“üj
+	void operator*=(int value);
+
+	// `````````````````````````æZ
+
+
+	// œZ`````````````````````````
+
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚ÌœZ
+	Vector2 operator/(const Vector2 value)const;
+
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚ÌœZi’¼Ú‘ã“üj
+	void operator/=(const Vector2 value);
+
+
+	// •‚“®¬”(float)Œ^‚Æ‚ÌœZi‘S—v‘f‚ÖœZj
+	Vector2 operator/(float value)const;
+
+	// •‚“®¬”(float)Œ^‚Æ‚ÌœZi‘S—v‘f‚ÖœZji’¼Ú‘ã“üj
+	void operator/=(float value);
+
+
+	// ®”(int)Œ^‚Æ‚ÌœZi‘S—v‘f‚ÖœZj
+	Vector2 operator/(int value)const;
+
+	// ®”(int)Œ^‚Æ‚ÌœZi‘S—v‘f‚ÖœZji’¼Ú‘ã“üj
+	void operator/=(int value);
+
+	// `````````````````````````œZ
+
+
+	// ”»’è``````````````````````````````````````````````````
+
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚Ì”»’èiŠe—v‘f“¯m‚ªŠ®‘Sˆê’v =utruevA‚»‚êˆÈŠO =ufalsevj
+	bool operator==(const Vector2 value)const;
+
+	// “¯ˆê\‘¢‘Ì(Vector2)Œ^‚Æ‚Ì‹t”»’èiŠe—v‘f“¯m‚ªŠ®‘Sˆê’v =ufalsevA‚»‚êˆÈŠO =utruevj
+	bool operator!=(const Vector2 value)const;
+
+
+	// •‚“®¬”(float)Œ^‚Æ‚Ì”»’èiw’è”’l(value)‚ÆŠe—v‘f‚·‚×‚Ä‚ªŠ®‘Sˆê’v =utruevA‚»‚êˆÈŠO =ufalsevj
+	bool operator==(const float value)const;
+
+	// •‚“®¬”(float)Œ^‚Æ‚Ì‹t”»’èiw’è”’l(value)‚ÆŠe—v‘f‚·‚×‚Ä‚ªŠ®‘Sˆê’v =ufalsevA‚»‚êˆÈŠO =utruevj
+	bool operator!=(const float value)const;
+
+	// ``````````````````````````````````````````````````”»’è
+
 #pragma endregion
 
-	bool operator==(const Vector2 value)const { return (x == value.x && y == value.y); }
-	bool operator==(const float value)const { return (x == value && y == value); }
-	bool operator!=(const Vector2 value)const { return (x != value.x	 || y != value.y); }
-	bool operator!=(const float value)const { return  (x != value || y != value); }
+#pragma region Œ^•ÏŠ·
 
-	Vector2I ToVector2I(void)const { return Vector2I(x, y); }
+	// Vector2IŒ^iVector2‚Ì®”Œ^”Åj‚Ö‚Ì•ÏŠ·iŠe—v‘f‚ğlÌŒÜ“ü‚µ‚½‚Ì‚¿ƒLƒƒƒXƒg‚µ‚Ä•ÏŠ·j
+	Vector2I ToVector2I(void)const;
 
-	// XZ•½–Ê‚É‚¨‚¯‚éˆÚ“®ƒxƒNƒgƒ‹‚È‚Ç‚Ég‚¤•ÏŠ·
-	Vector3 ToVector3XZ(void)const { return Vector3::XZonly(x, -y); }
+	// Vector3Œ^‚Ö‚Ì•ÏŠ·iuxv->uxvAuyv->uzv‚Ì’Ê‚è‚Å‘ã“ü‚µ•ÏŠ·j
+	Vector3 ToVector3XZ(void)const;
 
-	// YX‚ÌƒJƒƒ‰‰ñ“]‚È‚Ç‚Ég‚¤•ÏŠ·
-	Vector3 ToVector3YX(void)const { return Vector3::XYonly(y, x); }
+	// Vector3Œ^‚Ö‚Ì•ÏŠ·iuxv->uxvAu-yv->uzv‚Ì’Ê‚è‚Å‘ã“ü‚µ•ÏŠ·j
+	Vector3 ToVector3XZInvertY(void)const;
 
-	float LengthSq(void)const { return (x * x + y * y); }
-	float Length(void)const { return sqrtf(x * x + y * y); }
+	// Vector3Œ^‚Ö‚Ì•ÏŠ·iuxv->uyvAuyv->uxv‚Ì’Ê‚è‚Å‘ã“ü‚µ•ÏŠ·j
+	Vector3 ToVector3YX(void)const;
 
-	Vector2 Normalized(void)const { return Vector2(x, y) / Length(); }
-	void Normalize(void) { float len = Length(); x /= len; y /= len; }
+#pragma endregion
 
-	// s—ñ‚Å•ÏŠ·
-	Vector2 TransMat(float rot) const
-	{
-		if (*this == 0.0f) { return Vector2(); }
+	// ƒxƒNƒgƒ‹’·‚Ì2æ
+	float LengthSq(void)const;
+	// ƒxƒNƒgƒ‹’·
+	float Length(void)const;
 
-		float c = cosf(rot);
-		float s = sinf(rot);
+	// ³‹K‰»i–ß‚è’lj
+	Vector2 Normalized(void)const;
+	// ³‹K‰»i©g‚ğj
+	void Normalize(void);
 
-		return Vector2(
-			x * c - y * s,
-			x * s + y * c
-		);
-	}
-
-	// s—ñ‚Å•ÏŠ·(©g‚ğ•ÏŠ·)
-	void TransMatOwn(float rot)
-	{
-		if (*this == 0.0f) { return; }
-
-		float c = cosf(rot);
-		float s = sinf(rot);
-
-		float nx = x * c - y * s;
-		float ny = x * s + y * c;
-
-		x = nx;
-		y = ny;
-	}
+	// w’è‚ÌŠp“x‚Å‰ñ“]iw’èŠp“x‚Íƒ‰ƒWƒAƒ“ji–ß‚è’lj
+	Vector2 TransMat(float rot) const;
+	// w’è‚ÌŠp“x‚Å‰ñ“]iw’èŠp“x‚Íƒ‰ƒWƒAƒ“ji©g‚ğj
+	void TransMatOwn(float rot);
 };

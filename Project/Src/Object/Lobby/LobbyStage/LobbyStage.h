@@ -10,7 +10,7 @@ public:
 
 	void Load(void)override {
 		// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
-		trans.Load("SkyShip/SkyShip");
+		trans.LoadModel("SkyShip/SkyShip");
 		trans.scale = 50.0f;
 		trans.centerDiff = Vector3(0, 30, 0) * trans.scale;
 		trans.pos = Vector3(300.0f, 0.0f, 200.0f);

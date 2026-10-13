@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 #include "CameraBase.h"
 
 class CurrentCamera

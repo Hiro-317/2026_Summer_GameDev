@@ -12,7 +12,7 @@ private:
 
 	void CharacterLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Character/Tomato/Tomato");
+		trans.LoadModel("Character/Tomato/Tomato");
 
 		// モデルのスケール
 		trans.scale = 2.5f;

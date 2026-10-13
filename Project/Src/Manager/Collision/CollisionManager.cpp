@@ -7,12 +7,347 @@
 
 #include "../../Application/Application.h"
 
+#include "../../Common/Vector2.h"
+#include "../../Common/Vector2I.h"
+
 #include"../../Object/Common/Collider/LineCollider.h"
 #include"../../Object/Common/Collider/SphereCollider.h"
 #include"../../Object/Common/Collider/CapsuleCollider.h"
 #include"../../Object/Common/Collider/BoxCollider.h"
-#include"../../Object/Common/Collider/ModelCollider.h"
+#include"../../Object/Common/Collider/MeshCollider.h"
 #include"../../Object/Common/Collider/XZCircleCollider.h"
+
+// Õ“Ë”»’è‚Ì‚½‚ß‚Ì•â•ŠÖ”ŒQ‚ğ‚Ü‚Æ‚ß‚½–¼‘O‹óŠÔ
+namespace
+{
+	// Õ“Ë”»’è‚ÌŒvZŒë·‚ğ‹zû‚·‚é‚½‚ß‚Ì”÷¬’l
+	constexpr float COLLISION_EPSILON = 0.000001f;
+
+	// OŠpŒ`ã‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+	Vector3 ClosestPointOnTriangle(const Vector3& point, const Vector3& a, const Vector3& b, const Vector3& c) {
+		const Vector3 ab = b - a;
+		const Vector3 ac = c - a;
+		const Vector3 ap = point - a;
+
+		const float d1 = ab.Dot(ap);
+		const float d2 = ac.Dot(ap);
+
+		if (d1 <= 0.0f && d2 <= 0.0f) { return a; }
+
+		const Vector3 bp = point - b;
+		const float d3 = ab.Dot(bp);
+		const float d4 = ac.Dot(bp);
+
+		if (d3 >= 0.0f && d4 <= d3) { return b; }
+
+		const float vc = d1 * d4 - d3 * d2;
+
+		if (vc <= 0.0f && d1 >= 0.0f && d3 <= 0.0f) {
+			const float v = d1 / (d1 - d3);
+			return a + ab * v;
+		}
+
+		const Vector3 cp = point - c;
+		const float d5 = ab.Dot(cp);
+		const float d6 = ac.Dot(cp);
+
+		if (d6 >= 0.0f && d5 <= d6) { return c; }
+
+		const float vb = d5 * d2 - d1 * d6;
+
+		if (vb <= 0.0f && d2 >= 0.0f && d6 <= 0.0f) {
+			const float w = d2 / (d2 - d6);
+			return a + ac * w;
+		}
+
+		const float va = d3 * d6 - d5 * d4;
+
+		if (va <= 0.0f && (d4 - d3) >= 0.0f && (d5 - d6) >= 0.0f) {
+			const Vector3 bc = c - b;
+
+			const float w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+
+			return b + bc * w;
+		}
+
+		const float denominator = 1.0f / (va + vb + vc);
+
+		const float v = vb * denominator;
+		const float w = vc * denominator;
+
+		return a + ab * v + ac * w;
+	}
+
+	// 2‚Â‚Ìü•ª‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+	void ClosestPointsBetweenSegments(
+		const Vector3& p0, const Vector3& p1,
+		const Vector3& q0, const Vector3& q1,
+		Vector3& resultP,
+		Vector3& resultQ
+	)
+	{
+		const Vector3 d0 = p1 - p0;
+		const Vector3 d1 = q1 - q0;
+		const Vector3 r = p0 - q0;
+
+		const float a = d0.Dot(d0);
+		const float e = d1.Dot(d1);
+		const float f = d1.Dot(r);
+
+		float s = 0.0f;
+		float t = 0.0f;
+
+		if (a <= COLLISION_EPSILON && e <= COLLISION_EPSILON) {
+			resultP = p0;
+			resultQ = q0;
+			return;
+		}
+
+		if (a <= COLLISION_EPSILON) {
+			t = std::clamp(f / e, 0.0f, 1.0f);
+		}
+		else {
+			const float c = d0.Dot(r);
+
+			if (e <= COLLISION_EPSILON) {
+				s = std::clamp(-c / a, 0.0f, 1.0f);
+			}
+			else {
+				const float b = d0.Dot(d1);
+				const float denominator = a * e - b * b;
+
+				if (std::abs(denominator) > COLLISION_EPSILON) {
+					s = std::clamp((b * f - c * e) / denominator, 0.0f, 1.0f);
+				}
+
+				t = (b * s + f) / e;
+
+				if (t < 0.0f) {
+					t = 0.0f;
+					s = std::clamp(-c / a, 0.0f, 1.0f);
+				}
+				else if (t > 1.0f) {
+					t = 1.0f;
+					s = std::clamp((b - c) / a, 0.0f, 1.0f);
+				}
+			}
+		}
+
+		resultP = p0 + d0 * s;
+		resultQ = q0 + d1 * t;
+	}
+
+	// ü•ª‚ÆOŠpŒ`‚ÌŒğ·”»’è‚ğs‚¤
+	bool SegmentToTriangle(
+		const Vector3& start, const Vector3& end,
+		const Vector3& p0, const Vector3& p1, const Vector3& p2,
+		float& hitRate,
+		Vector3& hitPoint,
+		Vector3& triangleNormal
+	)
+	{
+		const Vector3 direction = end - start;
+		const Vector3 edge0 = p1 - p0;
+		const Vector3 edge1 = p2 - p0;
+
+		const Vector3 p = direction.Cross(edge1);
+		const float determinant = edge0.Dot(p);
+
+		if (std::abs(determinant) <= COLLISION_EPSILON) { return false; }
+
+		const float inverseDeterminant = 1.0f / determinant;
+
+		const Vector3 t = start - p0;
+
+		const float u = t.Dot(p) * inverseDeterminant;
+
+		if (u < 0.0f || u > 1.0f) { return false; }
+
+		const Vector3 q = t.Cross(edge0);
+
+		const float v = direction.Dot(q) * inverseDeterminant;
+
+		if (v < 0.0f || u + v > 1.0f) { return false; }
+
+		const float rate = edge1.Dot(q) * inverseDeterminant;
+
+		if (rate < 0.0f || rate > 1.0f) { return false; }
+
+		hitRate = rate;
+		hitPoint = start + direction * rate;
+
+		triangleNormal = edge0.Cross(edge1);
+
+		if (triangleNormal.LengthSq() > COLLISION_EPSILON) { triangleNormal.Normalize(); }
+
+		return true;
+	}
+
+	// ü•ª‚ÆOŠpŒ`‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+	float SegmentToTriangleDistanceSq(
+		const Vector3& segmentStart, const Vector3& segmentEnd,
+		const Vector3& p0, const Vector3& p1, const Vector3& p2,
+		Vector3& segmentPoint,
+		Vector3& trianglePoint
+	)
+	{
+		float hitRate = 0.0f;
+		Vector3 hitPoint;
+		Vector3 hitNormal;
+
+		if (SegmentToTriangle(segmentStart, segmentEnd, p0, p1, p2, hitRate, hitPoint, hitNormal)) {
+			segmentPoint = hitPoint;
+			trianglePoint = hitPoint;
+			return 0.0f;
+		}
+
+		float minimumDistanceSq = FLT_MAX;
+
+		auto Update = [&](const Vector3& a, const Vector3& b) {
+			const float distanceSq = (a - b).LengthSq();
+
+			if (distanceSq < minimumDistanceSq) {
+				minimumDistanceSq = distanceSq;
+
+				segmentPoint = a;
+				trianglePoint = b;
+			}
+			};
+
+		Update(segmentStart, ClosestPointOnTriangle(segmentStart, p0, p1, p2));
+
+		Update(segmentEnd, ClosestPointOnTriangle(segmentEnd, p0, p1, p2));
+
+		const Vector3 edgeStarts[3] = { p0, p1, p2 };
+
+		const Vector3 edgeEnds[3] = { p1, p2, p0 };
+
+		for (int i = 0; i < 3; ++i) {
+			Vector3 pointOnSegment;
+			Vector3 pointOnEdge;
+
+			ClosestPointsBetweenSegments(segmentStart, segmentEnd, edgeStarts[i], edgeEnds[i], pointOnSegment, pointOnEdge);
+
+			Update(pointOnSegment, pointOnEdge);
+		}
+
+		return minimumDistanceSq;
+	}
+
+	// OŠpŒ`‚ÆOBB‚ÌŒğ·”»’è‚ğs‚¤
+	bool TriangleToOBB(
+		const Vector3& worldP0, const Vector3& worldP1, const Vector3& worldP2,
+		const BoxCollider& box,
+		Vector3& normal,
+		float& penetration
+	)
+	{
+		const Vector3 boxCenter = box.GetPos();
+		const std::array<Vector3, 3> boxAxes = box.GetAxes();
+
+		const Vector3 halfSize = box.GetHalfSize();
+
+		auto ToBoxLocal = [&](const Vector3& point) {
+			const Vector3 diff = point - boxCenter;
+
+			return Vector3(diff.Dot(boxAxes[0]), diff.Dot(boxAxes[1]), diff.Dot(boxAxes[2]));
+			};
+
+		const Vector3 p0 = ToBoxLocal(worldP0);
+		const Vector3 p1 = ToBoxLocal(worldP1);
+		const Vector3 p2 = ToBoxLocal(worldP2);
+
+		const Vector3 edges[3] = { p1 - p0, p2 - p1, p0 - p2 };
+
+		std::vector<Vector3> axes;
+		axes.reserve(13);
+
+		axes.emplace_back(Vector3::Xonly(1.0f));
+
+		axes.emplace_back(Vector3::Yonly(1.0f));
+
+		axes.emplace_back(Vector3::Zonly(1.0f));
+
+		axes.emplace_back(edges[0].Cross(edges[1]));
+
+		const Vector3 boxLocalAxes[3] = { Vector3::Xonly(1.0f), Vector3::Yonly(1.0f), Vector3::Zonly(1.0f) };
+
+		for (const Vector3& edge : edges) {
+			for (const Vector3& boxAxis : boxLocalAxes) {
+				axes.emplace_back(edge.Cross(boxAxis));
+			}
+		}
+
+		float minimumOverlap = FLT_MAX;
+		Vector3 minimumAxis = Vector3::Yonly(1.0f);
+
+		for (Vector3 axis : axes) {
+			if (axis.LengthSq() <= COLLISION_EPSILON) { continue; }
+
+			axis.Normalize();
+
+			const float p0Projection = p0.Dot(axis);
+
+			const float p1Projection = p1.Dot(axis);
+
+			const float p2Projection = p2.Dot(axis);
+
+			const float triangleMin = (std::min)({ p0Projection, p1Projection, p2Projection });
+
+			const float triangleMax = (std::max)({ p0Projection, p1Projection, p2Projection });
+
+			const float boxRadius = std::abs(axis.x) * halfSize.x + std::abs(axis.y) * halfSize.y + std::abs(axis.z) * halfSize.z;
+
+			// Box‚Íƒ[ƒJƒ‹Œ´“_’†S‚È‚Ì‚ÅA“Š‰e‹æŠÔ‚Í[-boxRadius, boxRadius]
+			const float boxMin = -boxRadius;
+			const float boxMax = boxRadius;
+
+			// •ª—£²‚ª‘¶İ‚·‚éê‡‚Í–¢Õ“Ë
+			if (triangleMax < boxMin || triangleMin > boxMax) { return false; }
+
+			// ’Pƒ‚ÈŒğ·‹æŠÔ’·‚ğg‚¤‚ÆAŒú‚İ0‚ÌOŠpŒ`–@ü²‚Å‚Í
+			// Õ“Ë’†‚Å‚à0‚É‚È‚Á‚Ä‚µ‚Ü‚¤B
+			// ‚»‚Ì‚½‚ßBox‚ğ³•‰‚Ç‚¿‚ç‚Ö“®‚©‚¹‚Î•ª—£‚Å‚«‚é‚©‚ğ‹‚ßA
+			// ’Z‚¢•û‚ğ‚±‚Ì²‚Ì‰Ÿ‚µo‚µ—Ê‚Æ‚µ‚ÄÌ—p‚·‚éB
+			const float movePositive = triangleMax - boxMin;
+			const float moveNegative = boxMax - triangleMin;
+
+			float axisPenetration = 0.0f;
+			Vector3 pushAxis;
+
+			if (movePositive < moveNegative) {
+				axisPenetration = movePositive;
+				pushAxis = axis;
+			}
+			else {
+				axisPenetration = moveNegative;
+				pushAxis = -axis;
+			}
+
+			if (axisPenetration < minimumOverlap) {
+				minimumOverlap = axisPenetration;
+				minimumAxis = pushAxis;
+			}
+		}
+
+		normal = boxAxes[0] * minimumAxis.x + boxAxes[1] * minimumAxis.y + boxAxes[2] * minimumAxis.z;
+
+		if (normal.LengthSq() > COLLISION_EPSILON) { normal.Normalize(); }
+
+		// ”’lŒë·‚Å“¯‚¶–Ê‚ÖÄ“x‚ß‚è‚İ‚â‚·‚¢‚½‚ßA‚²‚­¬‚³‚¢—]—T‚ğ‰Á‚¦‚é
+		penetration = minimumOverlap + COLLISION_EPSILON;
+
+		return true;
+	}
+
+	// OŠpŒ`‚ÌAABB‚ğì¬‚·‚é
+	ColliderBase::AABB MakeTriangleAABB(const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+		return ColliderBase::AABB(
+			Vector3((std::min)({ p0.x,p1.x,p2.x }), (std::min)({ p0.y,p1.y,p2.y }), (std::min)({ p0.z,p1.z,p2.z })),
+			Vector3((std::max)({ p0.x,p1.x,p2.x }), (std::max)({ p0.y,p1.y,p2.y }), (std::max)({ p0.z,p1.z,p2.z }))
+		);
+	}
+}
 
 #pragma region ‰Šú‰»Œn
 
@@ -218,143 +553,265 @@ void CollisionManager::CheckPairOnce(ColliderBase* a, ColliderBase* b)
 	// 2‚ÂƒZƒbƒg‚Ì\‘¢‘Ì‚ğ¶¬
 	ColliderPairKey key(a, b);
 
-	// ‚±‚ÌƒZƒbƒg‚ªd•¡”»’èƒ`ƒFƒbƒN”z—ñ‚É‘¶İ‚·‚é(‚±‚Ìƒ‹[ƒv’†Šù‚É‚±‚Ì‘g‚İ‡‚í‚¹‚Å‚Ì”»’è‚ğs‚Á‚½)‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN‚·‚é
+	// ‚±‚ÌƒtƒŒ[ƒ€’†‚ÉŠù‚É”»’èÏ‚İ‚È‚çI—¹
 	if (checkedPairs.find(key) != checkedPairs.end()) { return; }
 
-	// ‚±‚ÌƒZƒbƒg‚ª‚Ü‚¾‚±‚Ìƒ‹[ƒv’†”»’è‚ğs‚Á‚Ä‚¢‚È‚©‚Á‚½ê‡Ad•¡”»’èƒ`ƒFƒbƒN”z—ñ‚É“o˜^‚·‚é
 	checkedPairs.insert(key);
 
-	// Õ“Ë“_‚ÌÀ•W‚ğŠi”[‚·‚é•Ï”
-	Vector3 collisionPoint = Vector3();
+	// Õ“Ëî•ñ
+	CollisionResult result;
 
 	// ”»’è‚ğÀs‚·‚é
-	if (IsHit(a, b, collisionPoint)) {
-		// “–‚½‚Á‚Ä‚¢‚ê‚Î‚¨Œİ‚¢‚ÌƒR[ƒ‹ƒoƒbƒNŠÖ”‚ğŒÄ‚Ô
-		a->CallOnCollision(a->GetTag(), *b, collisionPoint);
-		b->CallOnCollision(b->GetTag(), *a, collisionPoint);
+	if (IsHit(a, b, result)) {
+
+		// –@ü‚ª‹‚Ü‚ç‚È‚©‚Á‚½‘g‚İ‡‚í‚¹—p‚ÌˆÀ‘Sˆ—
+		if (result.normal.LengthSq() <= 0.000001f) {
+			result.normal = a->GetPos() - b->GetPos();
+
+			if (result.normal.LengthSq() > 0.000001f) { result.normal.Normalize(); }
+			else { result.normal = Vector3::Yonly(1.0f); }
+		}
+
+		result.penetration = (std::max)(result.penetration, 0.0f);
+
+		// ”»’èŠÖ”‘¤‚Å‚ß‚è‚İ—Ê‚ğ–¾¦‚Å‚«‚È‚©‚Á‚½ê‡‚Ì•âŠ®
+		// LineŒn‚Í‘ÌÏ‚ğ‚½‚È‚¢‚½‚ß0‚Ì‚Ü‚Ü‚Æ‚·‚é
+		if (result.penetration <= 0.0f && a->GetShape() != COLLIDER_SHAPE::Line && b->GetShape() != COLLIDER_SHAPE::Line) {
+			const ColliderBase::AABB aAABB = a->GetAABB();
+
+			const ColliderBase::AABB bAABB = b->GetAABB();
+
+			const float overlapX = (std::min)(aAABB.max.x, bAABB.max.x) - (std::max)(aAABB.min.x, bAABB.min.x);
+
+			const float overlapY = (std::min)(aAABB.max.y, bAABB.max.y) - (std::max)(aAABB.min.y, bAABB.min.y);
+
+			const float overlapZ = (std::min)(aAABB.max.z, bAABB.max.z) - (std::max)(aAABB.min.z, bAABB.min.z);
+
+			result.penetration = (std::max)(0.0f, (std::min)({ overlapX,overlapY,overlapZ }));
+		}
+
+		CollisionResult aResult = result;
+		CollisionResult bResult = result;
+
+		// B‚©‚çA‚ÖŒü‚©‚¤–@ü‚ğA‚Ö’Ê’m‚µAB‚Ö‚Í”½“]‚µ‚½–@ü‚ğ’Ê’m‚·‚é
+		bResult.normal = -result.normal;
+
+		// A‚É‚ÍB‚©‚çA‚ÖAB‚É‚ÍA‚©‚çB‚ÖŒü‚­–@ü‚ğ’Ê’m‚·‚é
+		a->CallOnCollision(a->GetTag(), *b, aResult);
+
+		b->CallOnCollision(b->GetTag(), *a, bResult);
 	}
 }
 
 // Œ`ó‚ÌU‚è•ª‚¯
-bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b, Vector3& collisionPoint)
+bool CollisionManager::IsHit(ColliderBase* a, ColliderBase* b, CollisionResult& result)
 {
 	// “–‚½‚è”»’èƒtƒ‰ƒO‚ğŠm”F
-	if (!a->GetJudge() || !b->GetJudge()) { return false; }
+	if (!a->GetJudgeFlg() || !b->GetJudgeFlg()) { return false; }
 
-	// ƒ[ƒJƒ‹•Ï”‚ÅŠeŒ`ó‚ğ•ÛiƒQƒbƒgŠÖ”‚ÌŒÄ‚Ño‚µ‚ğ1‰ñ‚ÅÏ‚Ü‚¹‚é‚½‚ßj
-	const SHAPE aShape = a->GetShape(), bShape = b->GetShape();
+	const COLLIDER_SHAPE aShape = a->GetShape();
+	const COLLIDER_SHAPE bShape = b->GetShape();
 
-	// ‚Ç‚¿‚ç‚©A‚ ‚é‚¢‚Í—¼•û‚ÌŒ`ó‚ª–¢İ’è‚¾‚Á‚½‚ç”»’è‚È‚µifalse‚Å•Ô‹pj
-	if (aShape == SHAPE::NON || bShape == SHAPE::NON) { return false; }
+	if (aShape == COLLIDER_SHAPE::None || bShape == COLLIDER_SHAPE::None) { return false; }
 
-	// ‚»‚à‚»‚àA“¯‚¶ƒ^ƒO“¯m‚Í“–‚½‚è”»’è‚µ‚È‚¢
+	// “¯ˆêƒOƒ‹[ƒv‚É‘®‚·‚é“¯ˆêƒ^ƒO“¯m‚Í”»’è‚µ‚È‚¢
 	if (a->GetTag() == b->GetTag()) {
 		if (TAG_TO_GROUP_LIST.contains(a->GetTag())) { return false; }
 	}
 
-	// G‚È”»’èiŒy—Ê‰»–Ú“Ij
-	ColliderBase::AABB aAABB = a->GetAABB(), bAABB = b->GetAABB();
-	if (aAABB.max.x < bAABB.min.x || aAABB.min.x > bAABB.max.x ||
-		aAABB.max.y < bAABB.min.y || aAABB.min.y > bAABB.max.y ||
-		aAABB.max.z < bAABB.min.z || aAABB.min.z > bAABB.max.z)
+	// AABB‚É‚æ‚éG‚È”»’è
+	const ColliderBase::AABB aAABB = a->GetAABB();
+	const ColliderBase::AABB bAABB = b->GetAABB();
+
+	if (
+		aAABB.max.x < bAABB.min.x ||
+		aAABB.min.x > bAABB.max.x ||
+		aAABB.max.y < bAABB.min.y ||
+		aAABB.min.y > bAABB.max.y ||
+		aAABB.max.z < bAABB.min.z ||
+		aAABB.min.z > bAABB.max.z
+		)
 	{
 		return false;
 	}
 
+	// Õ“Ëî•ñ‚ğ‰Šú‰»
+	result = CollisionResult();
+
+	// –@ü‚ÌŒü‚«‚ğ”½“]‚³‚¹‚éƒ‰ƒ€ƒ_ŠÖ”
+	auto ReverseNormal = [&result](bool isHit) -> bool {
+		if (isHit) { result.normal = -result.normal; }
+		return isHit;
+		};
+
 #pragma region Œ`ó‚ğ”»•Ê‚µ‚Ä“KØ‚ÈŠÖ”‚É‚Ä”»’è‚ğs‚¤
 
-	// “¯Œ`ó“¯m`````````````````````````````````````````````````````````````````````````
-	
-	// ü•ª“¯m
-	if (aShape == SHAPE::LINE && bShape == SHAPE::LINE) { return LineToLine(dynamic_cast<LineCollider*>(a), dynamic_cast<LineCollider*>(b), collisionPoint); }
+	// ü•ª~ü•ª
+	if (aShape == COLLIDER_SHAPE::Line && bShape == COLLIDER_SHAPE::Line) {
+		return LineToLine(dynamic_cast<LineCollider*>(a), dynamic_cast<LineCollider*>(b), result);
+	}
 
-	// ‹…‘Ì“¯m
-	if (aShape == SHAPE::SPHERE && bShape == SHAPE::SPHERE) { return SphereToSphere(dynamic_cast<SphereCollider*>(a), dynamic_cast<SphereCollider*>(b), collisionPoint); }
+	// ‹…‘Ì~‹…‘Ì
+	if (aShape == COLLIDER_SHAPE::Sphere && bShape == COLLIDER_SHAPE::Sphere) {
+		return SphereToSphere(dynamic_cast<SphereCollider*>(a), dynamic_cast<SphereCollider*>(b), result);
+	}
 
-	// ƒJƒvƒZƒ‹“¯m
-	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::CAPSULE) { return CapsuleToCapsule(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<CapsuleCollider*>(b), collisionPoint); }
+	// ƒJƒvƒZƒ‹~ƒJƒvƒZƒ‹
+	if (aShape == COLLIDER_SHAPE::Capsule && bShape == COLLIDER_SHAPE::Capsule) {
+		return CapsuleToCapsule(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<CapsuleCollider*>(b), result);
+	}
 
-	// ƒ{ƒbƒNƒX“¯m
-	if (aShape == SHAPE::BOX && bShape == SHAPE::BOX) { return BoxToBox(dynamic_cast<BoxCollider*>(a), dynamic_cast<BoxCollider*>(b), collisionPoint); }
+	// ƒ{ƒbƒNƒX~ƒ{ƒbƒNƒX
+	if (aShape == COLLIDER_SHAPE::Box && bShape == COLLIDER_SHAPE::Box) {
+		return BoxToBox(dynamic_cast<BoxCollider*>(a), dynamic_cast<BoxCollider*>(b), result);
+	}
 
-	// ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ““¯m
-	if (aShape == SHAPE::MODEL && bShape == SHAPE::MODEL) { return ModelToModel(dynamic_cast<ModelCollider*>(a), dynamic_cast<ModelCollider*>(b), collisionPoint); }
+	// ƒƒbƒVƒ…~ƒƒbƒVƒ…
+	if (aShape == COLLIDER_SHAPE::Mesh && bShape == COLLIDER_SHAPE::Mesh) {
+		return MeshToMesh(dynamic_cast<MeshCollider*>(a), dynamic_cast<MeshCollider*>(b), result);
+	}
 
-	// XZ•½–Êã‚Ì‰~“¯m
-	if (aShape == SHAPE::XZ_CIRCLE && bShape == SHAPE::XZ_CIRCLE) { return XZCircleToXZCircle(dynamic_cast<XZCircleCollider*>(a), dynamic_cast<XZCircleCollider*>(b), collisionPoint); }
-
-	// `````````````````````````````````````````````````````````````````````````“¯Œ`ó“¯m
-	
-	// •ÊŒ`ó“¯m`````````````````````````````````````````````````````````````````````````
+	// XZ‰~~XZ‰~
+	if (aShape == COLLIDER_SHAPE::XzCircle && bShape == COLLIDER_SHAPE::XzCircle) {
+		return XZCircleToXZCircle(dynamic_cast<XZCircleCollider*>(a), dynamic_cast<XZCircleCollider*>(b), result);
+	}
 
 	// ü•ª~‹…‘Ì
-	if (aShape == SHAPE::LINE && bShape == SHAPE::SPHERE) { return LineToSphere(dynamic_cast<LineCollider*>(a), dynamic_cast<SphereCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::SPHERE && bShape == SHAPE::LINE) { return LineToSphere(dynamic_cast<LineCollider*>(b), dynamic_cast<SphereCollider*>(a), collisionPoint); }
+	if (aShape == COLLIDER_SHAPE::Line && bShape == COLLIDER_SHAPE::Sphere) {
+		return LineToSphere(dynamic_cast<LineCollider*>(a), dynamic_cast<SphereCollider*>(b), result);
+	}
+
+	// ‹…‘Ì~ü•ª
+	if (aShape == COLLIDER_SHAPE::Sphere && bShape == COLLIDER_SHAPE::Line) {
+		return ReverseNormal(LineToSphere(dynamic_cast<LineCollider*>(b), dynamic_cast<SphereCollider*>(a), result));
+	}
 
 	// ü•ª~ƒJƒvƒZƒ‹
-	if (aShape == SHAPE::LINE && bShape == SHAPE::CAPSULE) { return LineToCapsule(dynamic_cast<LineCollider*>(a), dynamic_cast<CapsuleCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::LINE) { return LineToCapsule(dynamic_cast<LineCollider*>(b), dynamic_cast<CapsuleCollider*>(a), collisionPoint); }
+	if (aShape == COLLIDER_SHAPE::Line && bShape == COLLIDER_SHAPE::Capsule) {
+		return LineToCapsule(dynamic_cast<LineCollider*>(a), dynamic_cast<CapsuleCollider*>(b), result);
+	}
+
+	// ƒJƒvƒZƒ‹~ü•ª
+	if (aShape == COLLIDER_SHAPE::Capsule && bShape == COLLIDER_SHAPE::Line) {
+		return ReverseNormal(LineToCapsule(dynamic_cast<LineCollider*>(b), dynamic_cast<CapsuleCollider*>(a), result));
+	}
 
 	// ü•ª~ƒ{ƒbƒNƒX
-	if (aShape == SHAPE::LINE && bShape == SHAPE::BOX) { return LineToBox(dynamic_cast<LineCollider*>(a), dynamic_cast<BoxCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::BOX && bShape == SHAPE::LINE) { return LineToBox(dynamic_cast<LineCollider*>(b), dynamic_cast<BoxCollider*>(a), collisionPoint); }
+	if (aShape == COLLIDER_SHAPE::Line && bShape == COLLIDER_SHAPE::Box) {
+		return LineToBox(dynamic_cast<LineCollider*>(a), dynamic_cast<BoxCollider*>(b), result);
+	}
 
-	// ü•ª~ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ“
-	if (aShape == SHAPE::LINE && bShape == SHAPE::MODEL) { return LineToModel(dynamic_cast<LineCollider*>(a), dynamic_cast<ModelCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::MODEL && bShape == SHAPE::LINE) { return LineToModel(dynamic_cast<LineCollider*>(b), dynamic_cast<ModelCollider*>(a), collisionPoint); }
+	// ƒ{ƒbƒNƒX~ü•ª
+	if (aShape == COLLIDER_SHAPE::Box && bShape == COLLIDER_SHAPE::Line) {
+		return ReverseNormal(LineToBox(dynamic_cast<LineCollider*>(b), dynamic_cast<BoxCollider*>(a), result));
+	}
+
+	// ü•ª~ƒƒbƒVƒ…
+	if (aShape == COLLIDER_SHAPE::Line && bShape == COLLIDER_SHAPE::Mesh) {
+		return LineToMesh(dynamic_cast<LineCollider*>(a), dynamic_cast<MeshCollider*>(b), result);
+	}
+
+	// ƒƒbƒVƒ…~ü•ª
+	if (aShape == COLLIDER_SHAPE::Mesh && bShape == COLLIDER_SHAPE::Line) {
+		return ReverseNormal(LineToMesh(dynamic_cast<LineCollider*>(b), dynamic_cast<MeshCollider*>(a), result));
+	}
 
 	// ‹…‘Ì~ƒJƒvƒZƒ‹
-	if (aShape == SHAPE::SPHERE && bShape == SHAPE::CAPSULE) { return SphereToCapsule(dynamic_cast<SphereCollider*>(a), dynamic_cast<CapsuleCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::SPHERE) { return SphereToCapsule(dynamic_cast<SphereCollider*>(b), dynamic_cast<CapsuleCollider*>(a), collisionPoint); }
+	if (aShape == COLLIDER_SHAPE::Sphere && bShape == COLLIDER_SHAPE::Capsule) {
+		return SphereToCapsule(dynamic_cast<SphereCollider*>(a), dynamic_cast<CapsuleCollider*>(b), result);
+	}
+
+	// ƒJƒvƒZƒ‹~‹…‘Ì
+	if (aShape == COLLIDER_SHAPE::Capsule && bShape == COLLIDER_SHAPE::Sphere) {
+		return ReverseNormal(SphereToCapsule(dynamic_cast<SphereCollider*>(b), dynamic_cast<CapsuleCollider*>(a), result));
+	}
 
 	// ‹…‘Ì~ƒ{ƒbƒNƒX
-	if (aShape == SHAPE::SPHERE && bShape == SHAPE::BOX) { return SphereToBox(dynamic_cast<SphereCollider*>(a), dynamic_cast<BoxCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::BOX && bShape == SHAPE::SPHERE) { return SphereToBox(dynamic_cast<SphereCollider*>(b), dynamic_cast<BoxCollider*>(a), collisionPoint); }
+	if (aShape == COLLIDER_SHAPE::Sphere && bShape == COLLIDER_SHAPE::Box) {
+		return SphereToBox(dynamic_cast<SphereCollider*>(a), dynamic_cast<BoxCollider*>(b), result);
+	}
 
-	// ‹…‘Ì~ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ“
-	if (aShape == SHAPE::SPHERE && bShape == SHAPE::MODEL) { return SphereToModel(dynamic_cast<SphereCollider*>(a), dynamic_cast<ModelCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::MODEL && bShape == SHAPE::SPHERE) { return SphereToModel(dynamic_cast<SphereCollider*>(b), dynamic_cast<ModelCollider*>(a), collisionPoint); }
+	// ƒ{ƒbƒNƒX~‹…‘Ì
+	if (aShape == COLLIDER_SHAPE::Box && bShape == COLLIDER_SHAPE::Sphere) {
+		return ReverseNormal(SphereToBox(dynamic_cast<SphereCollider*>(b), dynamic_cast<BoxCollider*>(a), result));
+	}
 
-	// ‹…‘Ì~XZ•½–Êã‚Ì‰~
-	if (aShape == SHAPE::SPHERE && bShape == SHAPE::XZ_CIRCLE) { return SphereToXZCircle(dynamic_cast<SphereCollider*>(a), dynamic_cast<XZCircleCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::XZ_CIRCLE && bShape == SHAPE::SPHERE) { return SphereToXZCircle(dynamic_cast<SphereCollider*>(b), dynamic_cast<XZCircleCollider*>(a), collisionPoint); }
+	// ‹…‘Ì~ƒƒbƒVƒ…
+	if (aShape == COLLIDER_SHAPE::Sphere && bShape == COLLIDER_SHAPE::Mesh) {
+		return SphereToMesh(dynamic_cast<SphereCollider*>(a), dynamic_cast<MeshCollider*>(b), result);
+	}
+
+	// ƒƒbƒVƒ…~‹…‘Ì
+	if (aShape == COLLIDER_SHAPE::Mesh && bShape == COLLIDER_SHAPE::Sphere) {
+		return ReverseNormal(SphereToMesh(dynamic_cast<SphereCollider*>(b), dynamic_cast<MeshCollider*>(a), result));
+	}
+
+	// ‹…‘Ì~XZ‰~
+	if (aShape == COLLIDER_SHAPE::Sphere && bShape == COLLIDER_SHAPE::XzCircle) {
+		return SphereToXZCircle(dynamic_cast<SphereCollider*>(a), dynamic_cast<XZCircleCollider*>(b), result);
+	}
+
+	// XZ‰~~‹…‘Ì
+	if (aShape == COLLIDER_SHAPE::XzCircle && bShape == COLLIDER_SHAPE::Sphere) {
+		return ReverseNormal(SphereToXZCircle(dynamic_cast<SphereCollider*>(b), dynamic_cast<XZCircleCollider*>(a), result));
+	}
 
 	// ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
-	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::BOX) { return CapsuleToBox(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<BoxCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::BOX && bShape == SHAPE::CAPSULE) { return CapsuleToBox(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<BoxCollider*>(a), collisionPoint); }
+	if (aShape == COLLIDER_SHAPE::Capsule && bShape == COLLIDER_SHAPE::Box) {
+		return CapsuleToBox(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<BoxCollider*>(b), result);
+	}
 
-	// ƒJƒvƒZƒ‹~ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ“
-	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::MODEL) { return SphereToModel(dynamic_cast<SphereCollider*>(a), dynamic_cast<ModelCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::MODEL && bShape == SHAPE::CAPSULE) { return SphereToModel(dynamic_cast<SphereCollider*>(b), dynamic_cast<ModelCollider*>(a), collisionPoint); }
+	// ƒ{ƒbƒNƒX~ƒJƒvƒZƒ‹
+	if (aShape == COLLIDER_SHAPE::Box && bShape == COLLIDER_SHAPE::Capsule) {
+		return ReverseNormal(CapsuleToBox(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<BoxCollider*>(a), result));
+	}
 
-	// ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~
-	if (aShape == SHAPE::CAPSULE && bShape == SHAPE::XZ_CIRCLE) { return CapsuleToXZCircle(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<XZCircleCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::XZ_CIRCLE && bShape == SHAPE::CAPSULE) { return CapsuleToXZCircle(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<XZCircleCollider*>(a), collisionPoint); }
+	// ƒJƒvƒZƒ‹~ƒƒbƒVƒ…
+	if (aShape == COLLIDER_SHAPE::Capsule && bShape == COLLIDER_SHAPE::Mesh) {
+		return CapsuleToMesh(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<MeshCollider*>(b), result);
+	}
 
-	// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹ƒ|ƒŠƒSƒ“
-	if (aShape == SHAPE::BOX && bShape == SHAPE::MODEL) { return BoxToModel(dynamic_cast<BoxCollider*>(a), dynamic_cast<ModelCollider*>(b), collisionPoint); }
-	if (aShape == SHAPE::MODEL && bShape == SHAPE::BOX) { return BoxToModel(dynamic_cast<BoxCollider*>(b), dynamic_cast<ModelCollider*>(a), collisionPoint); }
+	// ƒƒbƒVƒ…~ƒJƒvƒZƒ‹
+	if (aShape == COLLIDER_SHAPE::Mesh && bShape == COLLIDER_SHAPE::Capsule) {
+		return ReverseNormal(CapsuleToMesh(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<MeshCollider*>(a), result));
+	}
 
-	// `````````````````````````````````````````````````````````````````````````•ÊŒ`ó“¯m
+	// ƒJƒvƒZƒ‹~XZ‰~
+	if (aShape == COLLIDER_SHAPE::Capsule && bShape == COLLIDER_SHAPE::XzCircle) {
+		return CapsuleToXZCircle(dynamic_cast<CapsuleCollider*>(a), dynamic_cast<XZCircleCollider*>(b), result);
+	}
+
+	// XZ‰~~ƒJƒvƒZƒ‹
+	if (aShape == COLLIDER_SHAPE::XzCircle && bShape == COLLIDER_SHAPE::Capsule) {
+		return ReverseNormal(CapsuleToXZCircle(dynamic_cast<CapsuleCollider*>(b), dynamic_cast<XZCircleCollider*>(a), result));
+	}
+
+	// ƒ{ƒbƒNƒX~ƒƒbƒVƒ…
+	if (aShape == COLLIDER_SHAPE::Box && bShape == COLLIDER_SHAPE::Mesh) {
+		return BoxToMesh(dynamic_cast<BoxCollider*>(a), dynamic_cast<MeshCollider*>(b), result);
+	}
+
+	// ƒƒbƒVƒ…~ƒ{ƒbƒNƒX
+	if (aShape == COLLIDER_SHAPE::Mesh && bShape == COLLIDER_SHAPE::Box) {
+		return ReverseNormal(BoxToMesh(dynamic_cast<BoxCollider*>(b), dynamic_cast<MeshCollider*>(a), result));
+	}
 
 #pragma endregion
-	
-	// ‚Ç‚Ì‘g‚İ‡‚í‚¹‚É‚à‘®‚³‚È‚©‚Á‚½ê‡”»’è‚È‚µifalse‚Å•Ô‹pj
+
 	return false;
 }
 
-#pragma endregion
 
 #pragma region ŠeŒ`ó‚ÌÀ”»’è
 
 // ü•ª~ü•ª
-bool CollisionManager::LineToLine(LineCollider* a, LineCollider* b, Vector3& collisionPoint)
+bool CollisionManager::LineToLine(LineCollider* a, LineCollider* b, CollisionResult& result)
 {
 	return false;
 }
 
 // ‹…‘Ì~‹…‘Ì
-bool CollisionManager::SphereToSphere(SphereCollider* a, SphereCollider* b, Vector3& collisionPoint)
+bool CollisionManager::SphereToSphere(SphereCollider* a, SphereCollider* b, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğ‹‚ß‚é
 
@@ -409,19 +866,22 @@ bool CollisionManager::SphereToSphere(SphereCollider* a, SphereCollider* b, Vect
 	const Vector3 pointOnB = bPos + normal * bRadius;
 
 	// 2‚Â‚Ì•\–Ê“_‚Ì’†ŠÔ‚ğÕ“Ë“_‚Æ‚·‚é
-	collisionPoint = (pointOnA + pointOnB) * 0.5f;
+	result.point = (pointOnA + pointOnB) * 0.5f;
 
 #pragma endregion
 
 #pragma region ‰Ÿ‚µo‚µ‚ª•K—v‚©->•K—v‚È‚ç‰Ÿ‚µo‚µ
 
+	const float distance =
+		std::sqrt((std::max)(distanceSq, 0.0f));
+
+	const float overlap =
+		radiusSum - distance;
+
+	result.normal = normal;
+	result.penetration = overlap;
+
 	if (NeedPush(a, b)) {
-		// ’†SŠÔ‹——£
-		const float distance = std::sqrt(distanceSq);
-
-		// ‚ß‚è‚ñ‚¾—Ê
-		const float overlap = radiusSum - distance;
-
 		ApplyPush(a, b, normal, overlap);
 	}
 
@@ -431,7 +891,7 @@ bool CollisionManager::SphereToSphere(SphereCollider* a, SphereCollider* b, Vect
 }
 
 // ƒJƒvƒZƒ‹~ƒJƒvƒZƒ‹
-bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, Vector3& collisionPoint)
+bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 	// ü•ª‚Ì n“_/I“_ 
@@ -522,19 +982,18 @@ bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, 
 	const Vector3 pointOnB = pb + collisionNormal * bRadius;
 
 	// —¼•û‚Ì•\–Ê“_‚Ì’†ŠÔ‚ğÕ“ËÀ•W‚Æ‚·‚é
-	collisionPoint = (pointOnA + pointOnB) * 0.5f;
+	result.point = (pointOnA + pointOnB) * 0.5f;
 
 #pragma endregion
 
 #pragma region ‰Ÿ‚µo‚µ‚ª•K—v‚©->•K—v‚È‚ç‰Ÿ‚µo‚µ
+	const float overlap = radSum - dist;
+	result.normal = collisionNormal;
+	result.penetration = overlap;
+
 	// ‰Ÿ‚µo‚µ‚ª•K—v‚©‚Ç‚¤‚©
 	if (NeedPush(a, b)) {
-
-		// ‚ß‚è‚İ—Ê
-		float overlap = radSum - dist;
-
-		// ‰Ÿ‚µo‚µˆ—
-		ApplyPush(a, b, normal.Normalized(), overlap);
+		ApplyPush(a, b, collisionNormal, overlap);
 	}
 #pragma endregion
 
@@ -543,7 +1002,7 @@ bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, 
 }
 
 // ƒ{ƒbƒNƒX~ƒ{ƒbƒNƒX
-bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint)
+bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -629,9 +1088,12 @@ bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisi
 	const Vector3 pointOnB = b->GetSupportPoint(minimumAxis);
 
 	// —¼•û‚ÌÚGŒó•â“_‚Ì’†ŠÔ‚ğÕ“Ë“_‚Æ‚·‚é
-	collisionPoint = (pointOnA + pointOnB) * 0.5f;
+	result.point = (pointOnA + pointOnB) * 0.5f;
 
 #pragma endregion
+
+	result.normal = minimumAxis;
+	result.penetration = minimumOverlap;
 
 	// •K—v‚È‚ç‰Ÿ‚µo‚µ
 	if (NeedPush(a, b)) {
@@ -641,14 +1103,75 @@ bool CollisionManager::BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisi
 	return true;
 }
 
-// ƒ‚ƒfƒ‹~ƒ‚ƒfƒ‹
-bool CollisionManager::ModelToModel(ModelCollider* a, ModelCollider* b, Vector3& collisionPoint)
+// ƒƒbƒVƒ…~ƒƒbƒVƒ…
+bool CollisionManager::MeshToMesh(MeshCollider* a, MeshCollider* b, CollisionResult& result)
 {
+	// Ã“IƒƒbƒVƒ…“¯m‚ÍCollisionManager‚Ì‘g‚İ‡‚í‚¹’iŠK‚Å’Êí”»’è‚³‚ê‚È‚¢B
+	// “®“IƒƒbƒVƒ…“¯m‚ª•K—v‚Èê‡‚¾‚¯Œó•âOŠpŒ`‚ğBVH‚Åi‚è‚ŞB
+	for (unsigned int aIndex = 0; aIndex < a->GetTriangleNum(); aIndex++) {
+		Vector3 a0, a1, a2, aNormal;
+
+		a->GetWorldTriangle(aIndex, a0, a1, a2, aNormal);
+
+		const ColliderBase::AABB aTriangleAABB = MakeTriangleAABB(a0, a1, a2);
+
+		b->QueryTriangles(aTriangleAABB, meshQueryBufferA);
+
+		for (unsigned int bIndex : meshQueryBufferA)
+		{
+			Vector3 b0, b1, b2, bNormal;
+
+			b->GetWorldTriangle(bIndex, b0, b1, b2, bNormal);
+
+			const Vector3 aStarts[3] = { a0,a1,a2 };
+
+			const Vector3 aEnds[3] = { a1,a2,a0 };
+
+			for (int i = 0; i < 3; ++i) {
+				float hitRate = 0.0f;
+				Vector3 hitPoint;
+				Vector3 hitNormal;
+
+				if (SegmentToTriangle(aStarts[i], aEnds[i], b0, b1, b2, hitRate, hitPoint, hitNormal))
+				{
+					result.point = hitPoint;
+					result.normal = hitNormal;
+
+					if ((a->GetPos() - b->GetPos()).Dot(result.normal) < 0.0f) { result.normal = -result.normal; }
+
+					result.penetration = 0.0f;
+					return true;
+				}
+			}
+
+			const Vector3 bStarts[3] = { b0,b1,b2 };
+
+			const Vector3 bEnds[3] = { b1,b2,b0 };
+
+			for (int i = 0; i < 3; ++i) {
+				float hitRate = 0.0f;
+				Vector3 hitPoint;
+				Vector3 hitNormal;
+
+				if (SegmentToTriangle(bStarts[i], bEnds[i], a0, a1, a2, hitRate, hitPoint, hitNormal)) {
+					result.point = hitPoint;
+					result.normal = aNormal;
+
+					if ((a->GetPos() - b->GetPos()).Dot(result.normal) < 0.0f) { result.normal = -result.normal; }
+
+					result.penetration = 0.0f;
+
+					return true;
+				}
+			}
+		}
+	}
+
 	return false;
 }
 
 // XZ•½–Êã‚Ì‰~Œ`~XZ•½–Êã‚Ì‰~Œ`
-bool CollisionManager::XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, Vector3& collisionPoint)
+bool CollisionManager::XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 	// XZ•½–Êã‚ÌƒxƒNƒgƒ‹‚ğæ“¾
@@ -688,7 +1211,7 @@ bool CollisionManager::XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider*
 }
 
 // ü•ª~‹…‘Ì
-bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere, Vector3& collisionPoint)
+bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -715,7 +1238,11 @@ bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere, 
 #pragma region Õ“Ë“_‚ğİ’è
 
 	// ü•ªã‚É‚ ‚éA‹…‘Ì’†S‚Æ‚ÌÅ‹ß“_
-	collisionPoint = closestPoint;
+	result.point = closestPoint;
+
+	const float distance = std::sqrt((std::max)(distanceSq, 0.0f));
+	result.normal = (distance > 0.000001f) ? -difference / distance : -line->GetDirection().Normalized();
+	result.penetration = radius - distance;
 
 #pragma endregion
 
@@ -743,7 +1270,7 @@ bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere, 
 		// “–‚½‚ç‚È‚­‚È‚é‚Ü‚Å­‚µ‚¸‚Â‰Ÿ‚µo‚·
 		// –³ŒÀƒ‹[ƒv–h~‚Ì‚½‚ßÅ‘å50‰ñ
 		for (unsigned char i = 0; i < 50; ++i) {
-			line->SetTransformPosAdd(pushVector);
+			ApplyPushOneSide(line, sphere, pushVector);
 
 			if (!IsColliding()) { break; }
 		}
@@ -755,7 +1282,7 @@ bool CollisionManager::LineToSphere(LineCollider* line, SphereCollider* sphere, 
 }
 
 // ü•ª~ƒJƒvƒZƒ‹
-bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsule, Vector3& collisionPoint)
+bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsule, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -850,7 +1377,11 @@ bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsul
 #pragma region Õ“ËˆÊ’u‚ğİ’è
 
 	// ü•ªã‚É‚ ‚éAƒJƒvƒZƒ‹’†S²‚Æ‚ÌÅ‹ß“_
-	collisionPoint = lineClosest;
+	result.point = lineClosest;
+
+	const float distance = std::sqrt((std::max)(distanceSq, 0.0f));
+	result.normal = (distance > 0.000001f) ? difference / distance : -line->GetDirection().Normalized();
+	result.penetration = radius - distance;
 
 #pragma endregion
 
@@ -876,7 +1407,7 @@ bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsul
 
 		// “–‚½‚ç‚È‚­‚È‚é‚Ü‚Å×‚©‚­‰Ÿ‚µo‚·
 		for (int i = 0; i < 50; ++i) {
-			line->SetTransformPosAdd(pushVector);
+			ApplyPushOneSide(line, capsule, pushVector);
 
 			if (!IsColliding()) { break; }
 		}
@@ -888,7 +1419,7 @@ bool CollisionManager::LineToCapsule(LineCollider* line, CapsuleCollider* capsul
 }
 
 // ü•ª~ƒ{ƒbƒNƒX
-bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint)
+bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -999,39 +1530,30 @@ bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, Vector3& 
 	// ü•ª‚ªBox‚Ö“ü‚Á‚½ˆÊ’u
 	const float hitTime = (std::max)(enterTime, 0.0f);
 
-	collisionPoint = lineStart + lineVector * hitTime;
+	result.point = lineStart + lineVector * hitTime;
+
+	// Õ“Ë–Ê‚Ìƒ[ƒJƒ‹–@ü‚ğƒ[ƒ‹ƒh‹óŠÔ‚Ö•ÏŠ·
+	Vector3 worldHitNormal = boxAxes[0] * localHitNormal.x + boxAxes[1] * localHitNormal.y + boxAxes[2] * localHitNormal.z;
+	worldHitNormal.Normalize();
+
+	const float startDepth = -(lineStart - result.point).Dot(worldHitNormal);
+	const float endDepth = -(lineEnd - result.point).Dot(worldHitNormal);
+	float overlap = (std::max)(startDepth, endDepth);
+
+	if (overlap < 0.0f) { overlap = 0.0f; }
+	overlap += 0.001f;
+
+	result.normal = worldHitNormal;
+	result.penetration = overlap;
 
 #pragma endregion
 
 #pragma region Õ“ËŠm’èF•K—v‚É‰‚¶‚Ä‰Ÿ‚µo‚µ
 
 	if (NeedPush(line, box)) {
-		// Õ“Ë–Ê‚Ìƒ[ƒJƒ‹–@ü‚ğƒ[ƒ‹ƒh‹óŠÔ‚Ö•ÏŠ·
-		Vector3 worldHitNormal = boxAxes[0] * localHitNormal.x + boxAxes[1] * localHitNormal.y + boxAxes[2] * localHitNormal.z;
 
-		// ƒ[ƒ‹ƒh‹óŠÔ‚Ì–@ü‚ğ³‹K‰»
-		worldHitNormal.Normalize();
-
-		// ü•ª‚Ìn“_‚ªBox“à•”‚É‚ ‚éê‡AI“_‚æ‚è‚à[‚­“ü‚è‚ñ‚Å‚¢‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅA
-		const float startDepth = -(lineStart - collisionPoint).Dot(worldHitNormal);
-
-		// ü•ª‚ÌI“_‚ªBox“à•”‚É‚ ‚éê‡An“_‚æ‚è‚à[‚­“ü‚è‚ñ‚Å‚¢‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅA
-		const float endDepth = -(lineEnd - collisionPoint).Dot(worldHitNormal);
-
-		// n“_EI“_‚Ì‚¤‚¿A‚æ‚è[‚­“ü‚è‚ñ‚Å‚¢‚é•û‚ğg‚¤
-		float overlap = (std::max)(startDepth, endDepth);
-
-		// •‚“®¬”“_Œë·‚Å•‰‚Ì’l‚É‚È‚éê‡‚ª‚ ‚é‚Ì‚ÅA0–¢–‚È‚ç0‚É‚·‚é
-		if (overlap < 0.0f) { overlap = 0.0f; }
-
-		// •‚“®¬”“_Œë·‚É‚æ‚éÄÕ“Ë‚ğ–h‚®¬‚³‚È—]”’
-		overlap += 0.001f;
-
-		// Box‚ÌÚG–Ê–@ü•ûŒü‚Ö‰Ÿ‚µo‚·
-		line->SetTransformPosAdd(worldHitNormal * overlap);
-
-		// ãŒü‚«‚Ì–Ê‚ÉÚG
-		if (worldHitNormal.y > 0.5f) { line->CallOnGrounded(); }
+		// Box‚ÌÚG–Ê–@ü•ûŒü‚ÖA‹óŠÔ§–ñ‚ğl—¶‚µ‚Ä‰Ÿ‚µo‚·
+		ApplyPushOneSide(line, box, worldHitNormal * overlap);
 	}
 
 #pragma endregion
@@ -1039,14 +1561,45 @@ bool CollisionManager::LineToBox(LineCollider* line, BoxCollider* box, Vector3& 
 	return true;
 }
 
-// ü•ª~ƒ‚ƒfƒ‹
-bool CollisionManager::LineToModel(LineCollider* line, ModelCollider* model, Vector3& collisionPoint)
+// ü•ª~ƒƒbƒVƒ…
+bool CollisionManager::LineToMesh(LineCollider* line, MeshCollider* mesh, CollisionResult& result)
 {
-	return false;
+	const Vector3 start = line->GetStartPos();
+	const Vector3 end = line->GetEndPos();
+
+	mesh->QueryTriangles(line->GetAABB(), meshQueryBufferA);
+
+	float nearestRate = FLT_MAX;
+	bool isHit = false;
+
+	for (unsigned int triangleIndex : meshQueryBufferA) {
+		Vector3 p0, p1, p2, triangleNormal;
+
+		mesh->GetWorldTriangle(triangleIndex, p0, p1, p2, triangleNormal);
+
+		float hitRate = 0.0f;
+		Vector3 hitPoint;
+		Vector3 hitNormal;
+
+		if (!SegmentToTriangle(start, end, p0, p1, p2, hitRate, hitPoint, hitNormal)) { continue; }
+
+		if (hitRate >= nearestRate) { continue; }
+
+		nearestRate = hitRate;
+		result.point = hitPoint;
+		result.normal = -hitNormal;
+		result.penetration = 0.0f;
+
+		if (line->GetDirection().Dot(result.normal) > 0.0f) { result.normal = -result.normal; }
+
+		isHit = true;
+	}
+
+	return isHit;
 }
 
 // ‹…‘Ì~ƒJƒvƒZƒ‹
-bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, Vector3& collisionPoint)
+bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -1109,7 +1662,7 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 
 		// ‚ß‚è‚İ’†‚Å‚à•Î‚è‚ªo‚É‚­‚¢‚æ‚¤A
 		// —¼•\–Ê“_‚Ì’†ŠÔ‚ğ‘ã•\Õ“Ë“_‚É‚·‚é
-		collisionPoint = (pointOnCapsule + pointOnSphere) * 0.5f;
+		result.point = (pointOnCapsule + pointOnSphere) * 0.5f;
 	}
 	else {
 		// ‹…’†S‚ªƒJƒvƒZƒ‹’†S²‚ÆŠ®‘S‚Éˆê’v‚µ‚Ä‚¢‚éê‡A
@@ -1120,7 +1673,7 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 
 		fallbackNormal.Normalize();
 
-		collisionPoint = Q + fallbackNormal * rC;
+		result.point = Q + fallbackNormal * rC;
 
 		normal = fallbackNormal;
 	}
@@ -1129,10 +1682,9 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 
 #pragma region Õ“ËŠm’èF•K—v‚È‚ç‰Ÿ‚µo‚µ
 
-	if (NeedPush(sphere, capsule)) {
-		float dist = std::sqrt(distSq);
+	float dist = std::sqrt((std::max)(distSq, 0.0f));
 
-		if (dist < epsilon) {
+	if (dist < epsilon) {
 			// Š®‘Sˆê’v‚Íæ‚Ù‚ÇŒˆ‚ß‚½—\”õ•ûŒü‚ğg—p
 			if (normal.LengthSq() <= epsilon * epsilon) {
 				normal = -sphere->GetTransform().Velocity();
@@ -1143,9 +1695,13 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 			dist = 0.0f;
 		}
 
-		const float overlap = radiusSum - dist;
+	const float overlap = radiusSum - dist;
 
-		ApplyPush(sphere, capsule, normal.Normalized(), overlap);
+	result.normal = normal.Normalized();
+	result.penetration = overlap;
+
+	if (NeedPush(sphere, capsule)) {
+		ApplyPush(sphere, capsule, result.normal, overlap);
 	}
 
 #pragma endregion
@@ -1154,7 +1710,7 @@ bool CollisionManager::SphereToCapsule(SphereCollider* sphere, CapsuleCollider* 
 }
 
 // ‹…‘Ì~ƒ{ƒbƒNƒX
-bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint)
+bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -1226,7 +1782,7 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, Vec
 		overlap = radius - dist;
 
 		// Box•\–Êã‚ÌÅ‹ß“_‚ğÕ“Ë“_‚É‚·‚é
-		collisionPoint = nearest;
+		result.point = nearest;
 	}
 	else
 	{
@@ -1285,12 +1841,15 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, Vec
 		overlap = distanceToSurface + radius;
 
 		// ‘I‘ğ‚µ‚½ÅŠñ‚è–Êã‚Ì“_‚ğƒ[ƒ‹ƒhÀ•W‚Ö•ÏŠ·
-		collisionPoint = boxPos + boxAxes[0] * localSurfacePoint.x + boxAxes[1] * localSurfacePoint.y + boxAxes[2] * localSurfacePoint.z;
+		result.point = boxPos + boxAxes[0] * localSurfacePoint.x + boxAxes[1] * localSurfacePoint.y + boxAxes[2] * localSurfacePoint.z;
 	}
 
 #pragma endregion
 
 #pragma region Õ“ËŠm’èF•K—v‚É‰‚¶‚Ä‰Ÿ‚µo‚µ
+
+	result.normal = pushNormal;
+	result.penetration = (std::max)(overlap, 0.0f);
 
 	if (NeedPush(sphere, box)) {
 		if (overlap < 0.0f) { overlap = 0.0f; }
@@ -1303,38 +1862,63 @@ bool CollisionManager::SphereToBox(SphereCollider* sphere, BoxCollider* box, Vec
 	return true;
 }
 
-// ‹…‘Ì~ƒ‚ƒfƒ‹
-bool CollisionManager::SphereToModel(SphereCollider* sphere, ModelCollider* model, Vector3& collisionPoint)
+// ‹…‘Ì~ƒƒbƒVƒ…
+bool CollisionManager::SphereToMesh(SphereCollider* sphere, MeshCollider* mesh, CollisionResult& result)
 {
-	//// ‚Ü‚¸‹…‚ÌAABB‚ğì‚é
-	//ColliderBase::AABB sphereAABB = sphere->GetAABB();
+	mesh->QueryTriangles(sphere->GetAABB(), meshQueryBufferA);
 
-	//// ƒ‚ƒfƒ‹“à•”ƒ`ƒƒƒ“ƒN‚©‚ç‹ß‚¢OŠpŒ`‚¾‚¯æ“¾
-	//const auto& triangles = model->GetNearTriangles(sphereAABB);
+	const Vector3 spherePos = sphere->GetPos();
 
-	//for (const auto* tri : triangles) {
-	//	// OŠpŒ`AABB‚Æ‹…AABB‚ª—£‚ê‚Ä‚½‚çƒXƒLƒbƒv
-	//	if (!AABBToAABB(sphereAABB, tri->aabb)) { continue; }
+	const float radius = sphere->GetRadius();
 
-	//	// ‹…’†S‚©‚çOŠpŒ`‚Ö‚ÌÅ‹ß“_‚ğ‹‚ß‚é
-	//	Vector3 closest = ClosestPointOnTriangle(
-	//		sphere->GetPos(),
-	//		tri->p0,
-	//		tri->p1,
-	//		tri->p2
-	//	);
+	const float radiusSq = radius * radius;
 
-	//	Vector3 diff = sphere->GetPos() - closest;
+	bool isHit = false;
+	float maximumPenetration = -FLT_MAX;
 
-	//	// “–‚½‚Á‚½
-	//	if (diff.LengthSq() <= sphere->GetRadius() * sphere->GetRadius()) { return true; }
-	//}
+	for (unsigned int triangleIndex : meshQueryBufferA) {
+		Vector3 p0, p1, p2, triangleNormal;
 
-	return false;
+		mesh->GetWorldTriangle(triangleIndex, p0, p1, p2, triangleNormal);
+
+		const Vector3 closestPoint = ClosestPointOnTriangle(spherePos, p0, p1, p2);
+
+		Vector3 normal = spherePos - closestPoint;
+
+		const float distanceSq = normal.LengthSq();
+
+		if (distanceSq > radiusSq) { continue; }
+
+		const float distance = std::sqrt((std::max)(distanceSq, 0.0f));
+
+		if (distance > COLLISION_EPSILON) { normal /= distance; }
+		else
+		{
+			normal = triangleNormal;
+
+			if ((spherePos - p0).Dot(normal) < 0.0f) { normal = -normal; }
+		}
+
+		const float penetration = radius - distance;
+
+		if (penetration <= maximumPenetration) { continue; }
+
+		maximumPenetration = penetration;
+		result.point = closestPoint;
+		result.normal = normal;
+		result.penetration = penetration;
+		isHit = true;
+	}
+
+	if (isHit && NeedPush(sphere, mesh)) {
+		ApplyPush(sphere, mesh, result.normal, result.penetration);
+	}
+
+	return isHit;
 }
 
 // ‹…‘Ì~XZ•½–Êã‚Ì‰~Œ`
-bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, Vector3& collisionPoint)
+bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -1436,16 +2020,18 @@ bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider
 	const Vector3 pointOnSphere(spherePos.x - pushNormal.x * sphereRadius, collisionY, spherePos.z - pushNormal.z * sphereRadius);
 
 	// —¼•û‚Ì•\–Ê“_‚Ì’†ŠÔ‚ğ‘ã•\Õ“Ë“_‚É‚·‚é
-	collisionPoint = (pointOnCircle + pointOnSphere) * 0.5f;
+	result.point = (pointOnCircle + pointOnSphere) * 0.5f;
 
 #pragma endregion
 
 #pragma region Õ“ËŠm’èF•K—v‚È‚çXZ•ûŒü‚Ö‰Ÿ‚µo‚µ
 
-	if (NeedPush(sphere, xzcircle)) {
-		// XZ•½–Êã‚Ì‚ß‚è‚İ—Ê
-		const float overlap = radiusSum - distance;
+	const float overlap = radiusSum - distance;
 
+	result.normal = pushNormal;
+	result.penetration = overlap;
+
+	if (NeedPush(sphere, xzcircle)) {
 		ApplyPush(sphere, xzcircle, pushNormal, overlap);
 	}
 
@@ -1455,7 +2041,7 @@ bool CollisionManager::SphereToXZCircle(SphereCollider* sphere, XZCircleCollider
 }
 
 // ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
-bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, Vector3& collisionPoint)
+bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚Ìæ“¾
 
@@ -1564,7 +2150,7 @@ bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, 
 		const Vector3 pointOnCapsule = capsuleClosest - pushNormal * capsuleRadius;
 
 		// Box•\–Êã‚ÌÅ‹ß“_‚Æ‚Ì’†ŠÔ
-		collisionPoint = (pointOnCapsule + boxClosest) * 0.5f;
+		result.point = (pointOnCapsule + boxClosest) * 0.5f;
 	}
 	else {
 
@@ -1619,12 +2205,15 @@ bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, 
 		overlap = distanceToSurface + capsuleRadius;
 
 		// ÅŠñ‚è–Êã‚Ì“_‚ğƒ[ƒ‹ƒhÀ•W‚Ö•ÏŠ·
-		collisionPoint = boxPos + boxAxes[0] * localSurfacePoint.x + boxAxes[1] * localSurfacePoint.y + boxAxes[2] * localSurfacePoint.z;
+		result.point = boxPos + boxAxes[0] * localSurfacePoint.x + boxAxes[1] * localSurfacePoint.y + boxAxes[2] * localSurfacePoint.z;
 	}
 
 #pragma endregion
 
 #pragma region Õ“ËŠm’èF•K—v‚È‚ç‰Ÿ‚µo‚µ
+
+	result.normal = pushNormal;
+	result.penetration = (std::max)(overlap, 0.0f);
 
 	if (NeedPush(capsule, box)) {
 		if (overlap < 0.0f) { overlap = 0.0f; }
@@ -1637,14 +2226,65 @@ bool CollisionManager::CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, 
 	return true;
 }
 
-// ƒJƒvƒZƒ‹~ƒ‚ƒfƒ‹
-bool CollisionManager::CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model, Vector3& collisionPoint)
+// ƒJƒvƒZƒ‹~ƒƒbƒVƒ…
+bool CollisionManager::CapsuleToMesh(CapsuleCollider* capsule, MeshCollider* mesh, CollisionResult& result)
 {
-	return false;
+	mesh->QueryTriangles(capsule->GetAABB(), meshQueryBufferA);
+
+	const Vector3 capsuleStart = capsule->GetStartPos();
+
+	const Vector3 capsuleEnd = capsule->GetEndPos();
+
+	const float radius = capsule->GetRadius();
+
+	const float radiusSq = radius * radius;
+
+	bool isHit = false;
+	float maximumPenetration = -FLT_MAX;
+
+	for (unsigned int triangleIndex : meshQueryBufferA) {
+		Vector3 p0, p1, p2, triangleNormal;
+
+		mesh->GetWorldTriangle(triangleIndex, p0, p1, p2, triangleNormal);
+
+		Vector3 capsulePoint;
+		Vector3 trianglePoint;
+
+		const float distanceSq = SegmentToTriangleDistanceSq(capsuleStart, capsuleEnd, p0, p1, p2, capsulePoint, trianglePoint);
+
+		if (distanceSq > radiusSq) { continue; }
+
+		const float distance = std::sqrt((std::max)(distanceSq, 0.0f));
+
+		Vector3 normal = capsulePoint - trianglePoint;
+
+		if (distance > COLLISION_EPSILON) { normal /= distance; }
+		else {
+			normal = triangleNormal;
+
+			if ((capsule->GetPos() - p0).Dot(normal) < 0.0f) { normal = -normal; }
+		}
+
+		const float penetration = radius - distance;
+
+		if (penetration <= maximumPenetration) { continue; }
+
+		maximumPenetration = penetration;
+		result.point = trianglePoint;
+		result.normal = normal;
+		result.penetration = penetration;
+		isHit = true;
+	}
+
+	if (isHit && NeedPush(capsule, mesh)) {
+		ApplyPush(capsule, mesh, result.normal, result.penetration);
+	}
+
+	return isHit;
 }
 
 // ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~Œ`
-bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, Vector3& collisionPoint)
+bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, CollisionResult& result)
 {
 #pragma region •K—vî•ñ‚ğæ“¾
 
@@ -1781,15 +2421,18 @@ bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleColli
 	const Vector3 pointOnCapsule(closestOnCapsuleAxis.x - pushNormal.x * capsuleRadius, collisionY, closestOnCapsuleAxis.z - pushNormal.z * capsuleRadius);
 
 	// —¼Œ`ó‚Ì•\–Ê“_‚Ì’†ŠÔ
-	collisionPoint = (pointOnCircle + pointOnCapsule) * 0.5f;
+	result.point = (pointOnCircle + pointOnCapsule) * 0.5f;
 
 #pragma endregion
 
 #pragma region Õ“ËŠm’èF•K—v‚È‚çXZ•ûŒü‚Ö‰Ÿ‚µo‚µ
 
-	if (NeedPush(capsule, xzcircle)) {
-		const float overlap = radiusSum - distance;
+	const float overlap = radiusSum - distance;
 
+	result.normal = pushNormal;
+	result.penetration = overlap;
+
+	if (NeedPush(capsule, xzcircle)) {
 		ApplyPush(capsule, xzcircle, pushNormal, overlap);
 	}
 
@@ -1798,10 +2441,87 @@ bool CollisionManager::CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleColli
 	return true;
 }
 
-// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹
-bool CollisionManager::BoxToModel(BoxCollider* box, ModelCollider* model, Vector3& collisionPoint)
+// ƒ{ƒbƒNƒX~ƒƒbƒVƒ…
+bool CollisionManager::BoxToMesh(BoxCollider* box, MeshCollider* mesh, CollisionResult& result)
 {
-	return false;
+	mesh->QueryTriangles(box->GetAABB(), meshQueryBufferA);
+
+	bool isHit = false;
+	float minimumPenetration = FLT_MAX;
+
+	for (unsigned int triangleIndex : meshQueryBufferA) {
+		Vector3 p0, p1, p2, triangleNormal;
+
+		mesh->GetWorldTriangle(triangleIndex, p0, p1, p2, triangleNormal);
+
+		Vector3 normal;
+		float penetration = 0.0f;
+
+		if (!TriangleToOBB(p0, p1, p2, *box, normal, penetration)) { continue; }
+
+		if (penetration >= minimumPenetration) { continue; }
+
+		minimumPenetration = penetration;
+		result.normal = normal;
+		result.penetration = penetration;
+
+		const Vector3 triangleCenter = (p0 + p1 + p2) / 3.0f;
+
+		result.point = ClosestPointOnTriangle(box->GetPos(), p0, p1, p2);
+
+		isHit = true;
+	}
+
+	if (isHit && NeedPush(box, mesh)) {
+		ApplyPush(box, mesh, result.normal, result.penetration);
+	}
+
+	return isHit;
+}
+
+#pragma endregion
+
+#pragma region ‰Ÿ‚µo‚µ
+
+void CollisionManager::MoveCollider(ColliderBase* ownCollider, const Vector3& pushVector, const ColliderBase& otherCollider)const
+{
+	if (ownCollider == nullptr) { return; }
+
+	if (pushVector.LengthSq() <= 0.000001f) { return; }
+
+	ownCollider->SetTransformPosAdd(pushVector);
+
+	const Vector3 pushNormal = pushVector.Normalized();
+	if (pushNormal.y > 0.5f) { ownCollider->CallOnGrounded(ownCollider->GetTag(), otherCollider); }
+}
+
+void CollisionManager::ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const
+{
+	ApplyPush(a, b, normal * overlap);
+}
+
+void CollisionManager::ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const
+{
+	if (a == nullptr || b == nullptr) { return; }
+
+	const bool aDynamic = a->GetDynamicFlg();
+	const bool bDynamic = b->GetDynamicFlg();
+
+	// —¼•û“®“I‚Èê‡‚Íd‚İ‚É‰‚¶‚Ä•ª”z‚·‚é
+	if (aDynamic && bDynamic) {
+		float aRatio = 0.0f, bRatio = 0.0f;
+		WeightRatioCalculation(a->GetPushWeight(), b->GetPushWeight(), aRatio, bRatio);
+
+		MoveCollider(a, overlapVec * aRatio, *b);
+		MoveCollider(b, -overlapVec * bRatio, *a);
+	}
+	else if (aDynamic && !bDynamic) { MoveCollider(a, overlapVec, *b); }
+	else if (!aDynamic && bDynamic) { MoveCollider(b, -overlapVec, *a); }
+}
+
+void CollisionManager::ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const
+{
+	MoveCollider(dynamicColl, overlapVec, *staticColl);
 }
 
 #pragma endregion

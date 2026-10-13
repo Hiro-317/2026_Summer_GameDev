@@ -15,7 +15,7 @@ private:
 
 	void SubLoad(void)override {
 		// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
-		trans.Load("Character/Tomato/Tomato");
+		trans.LoadModel("Character/Tomato/Tomato");
 
 
 		trans.scale = 2.5f;

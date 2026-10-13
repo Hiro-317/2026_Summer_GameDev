@@ -2,13 +2,18 @@
 
 #include "../../../pch.h"
 
+#include "../../../Manager/TimeScale/TimeScale.h"
+
 AnimationController::AnimationController(int modelId) : 
 	modelId(modelId),
 	playType(-1),
 
 	playAnim(),
 
-	loopflg(false)
+	loopflg(false),
+
+	blendRate(),
+	isDetach()
 {
 }
 
@@ -16,34 +21,39 @@ AnimationController::~AnimationController(void)
 {
 }
 
-void AnimationController::Add(int type, float speed, const std::string path)
+void AnimationController::Add(int type, float speed, bool loop, const std::string path)
 {
 	Animation animation;
 	animation.model = MV1LoadModel(path.c_str());
 	animation.animIndex = -1;
-	Add(type, speed, animation);
+	Add(type, speed, loop, animation);
 }
 
-void AnimationController::AddInFbx(int type, float speed, int animIndex)
+void AnimationController::AddInFbx(int type, float speed, bool loop, int animIndex)
 {
 	Animation animation;
 	animation.model = -1;
 	animation.animIndex = animIndex;
 
-	Add(type, speed, animation);
-
+	Add(type, speed, loop, animation);
 }
-void AnimationController::Play(int type,bool loop)
+
+void AnimationController::Play(int type, signed char loop)
 {
+	// 同じアニメーションが再生されている場合は何もしない
 	if (playType == type) {
-		if (!loop) playAnim.step = 0.0f;
+
+		// ただし、ループ再生が無効な場合は、アニメーションの再生位置をリセットする
+		if ((loop == -1 && !playAnim.loop) || loop == (signed char)false) {
+			playAnim.step = 0.0f;
+		}
+
 		return;
 	}
-	if (playType != -1) {
-		if (isDetach == -1) {
 
-			MV1DetachAnim(modelId, prevAnim.attachNo);
-		}
+	// アニメーションが存在しない場合は何もしない
+	if (playType != -1) {
+		if (isDetach == -1) { MV1DetachAnim(modelId, prevAnim.attachNo); }
 		// モデルからアニメーションを外す
 		MV1DetachAnim(modelId, playAnim.attachNo);
 	}
@@ -67,7 +77,7 @@ void AnimationController::Play(int type,bool loop)
 
 
 	// 初期化
-	loopflg = loop;
+	loopflg = (loop == -1 && playAnim.loop) || loop == (signed char)true;
 	playAnim.step = 0.0f;
 
 	if (playAnim.model == -1) {
@@ -103,7 +113,7 @@ void AnimationController::Stop(void)
 void AnimationController::Update(void)
 {
 	// 再生
-	playAnim.step += playAnim.speed;
+	playAnim.step += playAnim.speed * TimeScale::Get();
 
 	if (prevAnim.speed != 0) {
 		while (blendRate <= 1.0f) {
@@ -119,7 +129,7 @@ void AnimationController::Update(void)
 
 			break;
 		}
-		blendRate += 0.1f;
+		blendRate += 0.1f * TimeScale::Get();
 	}
 	if (loopflg) {
 		if (playAnim.step >= playAnim.totalTime)playAnim.step = 0.0f;
@@ -131,7 +141,6 @@ void AnimationController::Update(void)
 
 	// アニメーション設定
 	MV1SetAttachAnimTime(modelId, playAnim.attachNo, playAnim.step);
-
 }
 
 
@@ -161,7 +170,7 @@ bool AnimationController::IsEnd(void) const
 	return ret;
 }
 
-void AnimationController::SetStep(float step)
+void AnimationController::SetAnimeStep(float step)
 {
 	playAnim.step = step;
 	if (loopflg) {
@@ -174,11 +183,12 @@ void AnimationController::SetStep(float step)
 	MV1SetAttachAnimTime(modelId, playAnim.attachNo, playAnim.step);
 }
 
-void AnimationController::Add(int type, float speed, Animation animation)
+void AnimationController::Add(int type, float speed, bool loop, Animation animation)
 {
 	if (animations.count(type) == 0) {
 		//追加
 		animation.speed = speed;
+		animation.loop = loop;
 		animations.emplace(type, animation);
 	}
 }

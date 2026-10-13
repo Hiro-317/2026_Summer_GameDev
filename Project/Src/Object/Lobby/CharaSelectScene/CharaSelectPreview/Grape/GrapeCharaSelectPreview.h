@@ -15,7 +15,7 @@ private:
 
 	void SubLoad(void)override {
 		// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
-		trans.Load("Character/Grape/GrapeModel");
+		trans.LoadModel("Character/Grape/GrapeModel");
 
 		trans.scale = 2;
 		trans.centerDiff = Vector3::Yonly(-250);

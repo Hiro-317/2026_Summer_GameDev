@@ -2,6 +2,8 @@
 
 #include "../BossSelectSpotBase.h"
 
+#include "../../../../Utility/Utility.h"
+
 class BossSelectBananaSpot : public BossSelectSpotBase
 {
 public:
@@ -13,7 +15,7 @@ public:
 			100.0f,
 			Vector3::YZonly(100.0f, -10.0f),
 			Vector3::XZonly(-2000.0f, 3000.0f),
-			Vector3::Yonly(Deg2Rad(-30.0f))
+			Quaternion::FromRotationY(Deg2Rad(-30.0f))
 		)
 	{
 	}

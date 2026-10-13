@@ -1,6 +1,6 @@
 #pragma once
 
-#include"../../Object/Common/Transform.h"
+#include"../../Object/Common/Transform/Transform.h"
 
 #include <algorithm>
 
@@ -9,13 +9,17 @@ class CameraEventBase;
 class CameraBase
 {
 public:
-
 	// カメラのクリップ範囲
 	static constexpr float VIEW_NEAR = 10.0f;
 	static constexpr float VIEW_FAR = 30000.0f;
 
-	// マウス感度
-	static constexpr float MOUSE_SENSI = 35.0f;
+	// カメラ回転におけるマウス感度のデフォルト値
+	static constexpr float DEFAULT_MOUSE_ROT_SENSI = 0.028571429f;
+	// カメラ回転におけるコントローラー感度のデフォルト値
+	static constexpr float DEFAULT_CONTROLLER_ROT_SENSI = 1.0f;
+
+	// カメラ移動における補間数値のデフォルト値
+	static constexpr float DEFAULT_SMOOTH_CAMERA_MOVE_RATE = 0.25f;
 
 	/// <summary>
 	/// コンストラクタ
@@ -53,6 +57,18 @@ public:
 	const Vector3& GetAngle(void)const { return angle; }
 	// 視野角
 	float GetFov(void)const { return fov; }
+
+	// 現在の時間倍率
+	float GetTimeScale(void)const;
+
+	// カメラ回転におけるマウス感度
+	static float GetMouseSensi(void) { return mouseRotSensi; }
+	// カメラ回転におけるコントローラー感度
+	static float GetControllerSensi(void) { return controllerRotSensi; }
+
+	// カメラ移動における補間数値
+	static float GetSmoothCameraMoveRate(void) { return smoothCameraMoveRate; }
+
 #pragma endregion
 
 #pragma region セット関数
@@ -62,6 +78,17 @@ public:
 	void SetAngle(const Vector3& angle) { this->angle = angle; }
 	// 視野角
 	void SetFov(float fov) { this->fov = fov; }
+
+	// 時間倍率を適用するか
+	void SetUseTimeScale(bool flg) { useTimeScale = flg; }
+
+	// カメラ回転におけるマウス感度
+	static void SetMouseSensi(float sensi) { mouseRotSensi = sensi; }
+	// カメラ回転におけるコントローラー感度
+	static void SetControllerSensi(float sensi) { controllerRotSensi = sensi; }
+
+	// カメラ移動における補間数値
+	static float SetSmoothCameraMoveRate(float rate) { smoothCameraMoveRate = rate; }
 #pragma endregion
 
 #pragma region イベント関数
@@ -110,7 +137,27 @@ protected:
 		return Vector3(-asinf(std::clamp(vec.y, -1.0f, 1.0f)), atan2f(vec.x, vec.z), 0.0f);
 	}
 
+	// カメラ回転入力情報を取得
+	static bool RotationInput(Vector3& out);
+
+	// カメラ移動入力情報を取得
+	static bool MoveInput(Vector3& out);
+
+	// カメラを補間しつつ指定の座標へ移動させる
+	static void SmoothCameraMove(Vector3& cameraPos, const Vector3& desiredPos);
+
 private:
+
+	// カメラ回転におけるマウス感度
+	static float mouseRotSensi;
+	// カメラ回転におけるコントローラー感度
+	static float controllerRotSensi;
+
+	// カメラ移動における補間数値
+	static float smoothCameraMoveRate;
+
+	// 時間倍率を適用するかどうか
+	bool useTimeScale;
 
 	// イベントカメラ
 	CameraEventBase* cameraEvent;

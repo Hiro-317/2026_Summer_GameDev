@@ -93,4 +93,24 @@ Vector3 ParameterLoad::GetParameterToVector3(const std::string& fileName, const 
     return Vector3(param[0], param[1], param[2]);
 }
 
+Vector2 ParameterLoad::GetParameterToVector2(const std::string& fileName, const std::string& parameterName) const
+{
+    const std::vector<float>& param = GetParameterArray(fileName, parameterName);
+
+    // —v‘f”•sˆê’v
+    if (param.size() != 2) { return Vector2(); }
+
+    return Vector2(param[0], param[1]);
+}
+
+Vector2I ParameterLoad::GetParameterToVector2I(const std::string& fileName, const std::string& parameterName) const
+{
+    const std::vector<float>& param = GetParameterArray(fileName, parameterName);
+
+    // —v‘f”•sˆê’v
+    if (param.size() != 2) { return Vector2I(); }
+
+    return Vector2I(param[0], param[1]);
+}
+
 void ParameterLoad::Release(void) { parameterMap.clear(); }

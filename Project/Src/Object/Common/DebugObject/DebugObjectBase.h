@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../ActorBase.h"
+#include "../ActorBase/ActorBase.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Camera/CurrentCamera.h"
 
 class DebugObjectBase : public ActorBase
@@ -54,6 +54,15 @@ private:
 	// 操作可能かどうか
 	bool isOperator;
 
+	void SubInit(void)override {
+		// 移動加速力
+		ACCEL_RATE = 3.0f;
+		// 移動減速力
+		DECEL_RATE = 3.0f;
+		// 最大移動速度
+		ACCEL_MAX = 15.0f;
+	}
+
 	void SubUpdate(void)override {
 		if (!isOperator) { return; }
 
@@ -61,18 +70,17 @@ private:
 		Vector3 vec = {};
 
 		// 操作
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_FRONT).now) { vec.z++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_BACK).now) { vec.z--; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_RIGHT).now) { vec.x++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_LEFT).now) { vec.x--; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_UP).now) { vec.y++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_OBJECT_DOWN).now) { vec.y--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugObjectFront).now) { vec.z++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugObjectBack).now) { vec.z--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugObjectRight).now) { vec.x++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugObjectLeft).now) { vec.x--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugObjectUp).now) { vec.y++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugObjectDown).now) { vec.y--; }
 
 		// カメラの角度に合わせて移動方向を回転させる
 		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 		// 移動
-		trans.pos += vec * 5.0f;
-		trans.angle.y = atan2f(vec.x, vec.z);
+		MoveAccel(vec);
 	}
 };

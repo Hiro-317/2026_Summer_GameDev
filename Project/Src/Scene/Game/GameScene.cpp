@@ -8,28 +8,28 @@
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Camera/MultifuncCamera/MultifuncCamera.h"
-#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 #include "../../Manager/Effect/EffectManager.h"
 
-#include "../../scene/SceneManager/SceneManager.h"
+#include "../SceneManager.h"
 
-#include "../ObjectUseDefine.h"
+#include "../ActorUseDefine.h"
 
 #include "Pause/GamePause.h"
 
 #include "../Common/GameDebugScene.h"
 
-#include "../../Object/Character/Player/PlayerManager/PlayerManager.h"
+#include "../../Object/Game/Player/PlayerManager/PlayerManager.h"
 
-#include "../../Object/Character/Boss/Tomato/TomatoBoss.h"
-#include "../../Object/Character/Boss/Grape/GrapeBoss.h"
-#include "../../Object/Character/Boss/Banana/BananaBoss.h"
+#include "../../Object/Game/Boss/Tomato/TomatoBoss.h"
+#include "../../Object/Game/Boss/Grape/GrapeBoss.h"
+#include "../../Object/Game/Boss/Banana/BananaBoss.h"
 
-#include "../../Object/Stage/TomatoBoss/TomatoBossStage.h"
-#include "../../Object/Stage/GrapeBoss/GrapeBossStage.h"
-#include "../../Object/Stage/BananaBoss/BananaBossStage.h"
+#include "../../Object/Game/Stage/TomatoBoss/TomatoBossStage.h"
+#include "../../Object/Game/Stage/GrapeBoss/GrapeBossStage.h"
+#include "../../Object/Game/Stage/BananaBoss/BananaBossStage.h"
 
 #include "../../Object/Common/DebugObject/BoxDebugObject.h"
 #include "../../Object/Common/DebugObject/SphereDebugObject.h"
@@ -54,40 +54,40 @@ void GameScene::SubPostLoad(void)
 
 	// ステージを生成
 	switch (selectBossType) {
-	case BOSS_TYPE::Tomato: { ObjAdd(new TomatoBossStage()); break; }
-	case BOSS_TYPE::Grape: { ObjAdd(new GrapeBossStage()); break; }
-	case BOSS_TYPE::Banana: { ObjAdd(new BananaBossStage()); break; }
+	case BOSS_TYPE::Tomato: { AddActor(new TomatoBossStage()); break; }
+	case BOSS_TYPE::Grape: { AddActor(new GrapeBossStage()); break; }
+	case BOSS_TYPE::Banana: { AddActor(new BananaBossStage()); break; }
 	default: { break; }
 	}
 
 	// プレイヤーを生成
-	ObjAdd(new PlayerManager());
-	playerInsRef = ObjSerch<PlayerManager>(objects);
+	AddActor(new PlayerManager());
+	playerInsRef = ActorSerch<PlayerManager>(actors);
 
 	// 接続されているプレイヤー数座標を取得する
 	std::vector<const Vector3*> pos;
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		pos.emplace_back(&ObjSerch<PlayerManager>(objects)->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
+		pos.emplace_back(&ActorSerch<PlayerManager>(actors)->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
 	}
 	// 接続されているプレイヤー数生存判定を取得する
 	std::vector<const bool*> live;
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		live.emplace_back(&ObjSerch<PlayerManager>(objects)->GetPlayerIns((MSG_SENDER_ID)id)->GetIsDeath());
+		live.emplace_back(&ActorSerch<PlayerManager>(actors)->GetPlayerIns((MSG_SENDER_ID)id)->GetIsDeath());
 	}
 
 	// ボスを生成
 	switch (selectBossType) {
-	case BOSS_TYPE::Tomato: { ObjAdd(new TomatoBoss(pos, live)); break; }
-	case BOSS_TYPE::Grape: { ObjAdd(new GrapeBoss(pos, live)); break; }
-	case BOSS_TYPE::Banana: { ObjAdd(new BananaBoss(pos, live)); break; }
+	case BOSS_TYPE::Tomato: { AddActor(new TomatoBoss(pos, live)); break; }
+	case BOSS_TYPE::Grape: { AddActor(new GrapeBoss(pos, live)); break; }
+	case BOSS_TYPE::Banana: { AddActor(new BananaBoss(pos, live)); break; }
 	default: { break; }
 	}
-	bossInsRef = ObjSerch<BossBase>(objects);
+	bossInsRef = ActorSerch<BossBase>(actors);
 
 	// プレイヤーにボスの座標をわたす
-	ObjSerch<PlayerManager>(objects)->SetBossPos(&ObjSerch<BossBase>(objects)->GetTrans().pos);
+	ActorSerch<PlayerManager>(actors)->SetBossPos(&ActorSerch<BossBase>(actors)->GetTrans().pos);
 }
 
 void GameScene::SubPostInit(void)
@@ -132,7 +132,7 @@ void GameScene::SubPostUpdate(void)
 	Vector3 pos = Vector3();
 
 	// 注目するか
-	if (Key::GetIns().GetInfo(KEY_TYPE::CAMERA_FOCUS).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::CameraFocus).down) {
 		focusFlg = !focusFlg;
 		if (focusFlg) {
 			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowAuto(
@@ -151,7 +151,7 @@ void GameScene::SubPostUpdate(void)
 
 #pragma region 遷移判定（ポーズも含む）
 	// ポーズ判定
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PushGamePause);
 		EffectManager::GetIns()->PauseEffect();
@@ -173,13 +173,13 @@ void GameScene::SubPostUpdate(void)
 		switch (SceneManager::GetIns().GetSelectBossType())
 		{
 		case BOSS_TYPE::Tomato:
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::DEFAULT, 90, 0xe33434, 0x000000);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::Default, 90, 0xe33434, 0x000000);
 			break;
 		case BOSS_TYPE::Grape:
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::DEFAULT, 90, 0x9338e8, 0x000000);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::Default, 90, 0x9338e8, 0x000000);
 			break;
 		case BOSS_TYPE::Banana:
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::DEFAULT, 90, 0xfcf80a, 0x000000);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Clear, FADE_TYPE::Default, 90, 0xfcf80a, 0x000000);
 			break;
 		default:
 			break;
@@ -188,18 +188,18 @@ void GameScene::SubPostUpdate(void)
 	}
 
 	// ゲームオーバー判定
-	if (ObjSerch<PlayerManager>(objects)->IsPlayerAllDeath()) {
+	if (ActorSerch<PlayerManager>(actors)->IsPlayerAllDeath()) {
 
 		// シーン切り替え時に前シーンのエフェクトを残さない
 		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
 
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::DEFAULT, 90, 0xffffff, 0x000000);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::Default, 90, 0xffffff, 0x000000);
 		return;
 	}
 
 #if _DEBUG
 	// シーンを再読み込み
-	if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_RELOAD).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::DebugReload).down) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
 
 		// シーン切り替え時に前シーンのエフェクトを残さない
@@ -242,9 +242,9 @@ void GameScene::CreateCamera(void)
 {
 	camera = new MultifuncCamera(
 		false,
-		&ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+		&ActorSerch<PlayerManager>(actors)->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
 		Vector3::YZonly(250, -550),
-		ObjSerch<PlayerManager>(objects)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
+		ActorSerch<PlayerManager>(actors)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
 		Deg2Rad(4.0f)
 	);
 }

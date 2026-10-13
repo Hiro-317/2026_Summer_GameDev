@@ -15,7 +15,7 @@ private:
 
 	void SubLoad(void)override {
 		// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
-		trans.Load("Character/Orange/OrangeModel");
+		trans.LoadModel("Character/Orange/OrangeModel");
 
 		trans.scale = 1.35f;
 		trans.centerDiff = Vector3::Yonly(-210);

@@ -15,7 +15,7 @@ private:
 
 	void SubLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Character/Peach/PeachModel");
+		trans.LoadModel("Character/Peach/PeachModel");
 
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));

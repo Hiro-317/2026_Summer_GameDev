@@ -2,16 +2,16 @@
 
 #include "../CameraEventBase.h"
 
-#include "../../../../Object/Common/Transform.h"
+#include "../../../../Common/Vector3.h"
 
 class CameraBase;
 
 class LookAtCameraEvent : public CameraEventBase
 {
 public:
-	LookAtCameraEvent(const Vector3& lookAtPos, const Vector3 lookAtOffset, CameraBase& camera, const Vector3& pos, const Vector3& angle, float fov, int frame);
+	LookAtCameraEvent(const Vector3& lookAtPos, const Vector3 lookAtOffset, CameraBase& camera, const Vector3& pos, const Vector3& angle, float fov, float frame);
 
-	LookAtCameraEvent(const Vector3& lookAtPos, const Vector3 lookAtOffset, int frame);
+	LookAtCameraEvent(const Vector3& lookAtPos, const Vector3 lookAtOffset, float frame);
 
 	~LookAtCameraEvent()override = default;
 
@@ -27,6 +27,7 @@ private:
 	// ’‹“_‚ğŠ„‚èo‚·’Ç]‘ÎÛ‚©‚ç‚Ì‘Š‘ÎÀ•W
 	const Vector3 lookAtOffset;
 
-	int maxFrame;
-	int currentFrame;
+	// ŠÔ
+	const float maxFrame;
+	float currentFrame;
 };

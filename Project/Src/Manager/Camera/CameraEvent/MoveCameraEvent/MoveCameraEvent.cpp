@@ -2,28 +2,30 @@
 
 #include <algorithm>
 
+#include "../../../TimeScale/TimeScale.h"
+
 #include "../../CameraBase.h"
 
-MoveCameraEvent::MoveCameraEvent(const Vector3& endPos, const Vector3& endAngle, float endFov, int frame) :
+MoveCameraEvent::MoveCameraEvent(const Vector3& endPos, const Vector3& endAngle, float endFov, float frame) :
 	CameraEventBase(),
 
 	startPos(), startAngle(), startFov(0.0f),
 
 	endPos(endPos), endAngle(endAngle), endFov(endFov),
 
-	maxFrame((std::max)(frame, 1)),
+	maxFrame((std::max)(frame, 1.0f)),
 	currentFrame(0)
 {
 }
 
-MoveCameraEvent::MoveCameraEvent(const CameraBase& camera, const Vector3& endLocalPos, const Vector3& endLocalAngle, float endLocalFov, int frame) :
+MoveCameraEvent::MoveCameraEvent(const CameraBase& camera, const Vector3& endLocalPos, const Vector3& endLocalAngle, float endLocalFov, float frame) :
     CameraEventBase(),
 
     startPos(), startAngle(), startFov(0.0f),
 
     endPos(camera.GetPos() + endLocalPos), endAngle(camera.GetAngle() + endLocalAngle), endFov(camera.GetFov() + endLocalFov),
 
-    maxFrame((std::max)(frame, 1)),
+    maxFrame((std::max)(frame, 1.0f)),
     currentFrame(0)
 {
 }
@@ -39,9 +41,9 @@ void MoveCameraEvent::Start(CameraBase& camera)
 
 void MoveCameraEvent::Update(CameraBase& camera)
 {
-    currentFrame++;
+    currentFrame += camera.GetTimeScale();
 
-    float rate = static_cast<float>(currentFrame) / static_cast<float>(maxFrame);
+    float rate = currentFrame / maxFrame;
 
     rate = std::clamp(rate, 0.0f, 1.0f);
 

@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-#include "../../../Application/Application.h"
+#include "../../../Utility/Utility.h"
 
-#include "../../Input/KeyManager.h"
+#include "../../../Application/Application.h"
 
 FollowAutoCamera::FollowAutoCamera(
 	const Vector3* targetPos,
@@ -45,9 +45,8 @@ void FollowAutoCamera::NormalUpdate(void)
 	// çÇÇ≥ï‚ê≥
 	desiredPos.y += std::clamp(((*targetPos - *focusPos) * 0.5f).Length(), 250.0f, 400.0f);
 
-	// ï‚ä‘ÅiÉKÉ^Ç¬Ç´ñhé~Åj
-	const float smooth = 0.1f;
-	pos += (desiredPos - pos) * smooth;
+	// à⁄ìÆ
+	SmoothCameraMove(pos, desiredPos);
 	if (pos.y <= CAMERA_DOWN) { pos.y = CAMERA_DOWN; }
 
 	// íçéãì_ÇéZèo

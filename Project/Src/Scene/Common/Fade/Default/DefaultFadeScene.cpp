@@ -14,7 +14,7 @@ DefaultFadeScene::DefaultFadeScene(unsigned short FADE_TIME, unsigned int FADE_O
 void DefaultFadeScene::SubFadeDraw(float ratio)
 {
 	const unsigned int color =
-		(GetFadeState() == STATE::FADE_IN) ? fadeInColor : fadeOutColor;
+		(GetFadeState() == STATE::FadeIn) ? fadeInColor : fadeOutColor;
 	const int alpha = static_cast<int>(255.0f * ratio);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "ChunkStDefine.h"
 
 #include "../../Object/Common/Collider/ColliderBase.h"
@@ -8,7 +10,7 @@ class LineCollider;
 class SphereCollider;
 class CapsuleCollider;
 class BoxCollider;
-class ModelCollider;
+class MeshCollider;
 class XZCircleCollider;
 
 class CollisionManager
@@ -132,6 +134,11 @@ private:
 	// d•¡”»’è–h~‚Ì”»’è‹L˜^
 	std::unordered_set<ColliderPairKey, ColliderPairKeyHash> checkedPairs;
 
+	// MeshCollider“à•”BVHŒŸõ—p‚Ìì‹Æƒoƒbƒtƒ@
+	// clear‚Ì‚İ‚ÅÄ—˜—p‚µA”»’è‚²‚Æ‚Ìƒƒ‚ƒŠŠm•Û‚ğ—}‚¦‚é
+	std::vector<unsigned int> meshQueryBufferA;
+	std::vector<unsigned int> meshQueryBufferB;
+
 
 #pragma region ”»’è‚ÌU‚è•ª‚¯
 
@@ -152,7 +159,7 @@ private:
 	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
 
 	// Œ`ó‚ÌU‚è•ª‚¯
-	bool IsHit(ColliderBase* a, ColliderBase* b, Vector3& collisionPoint);
+	bool IsHit(ColliderBase* a, ColliderBase* b, CollisionResult& result);
 
 #pragma endregion
 
@@ -161,22 +168,22 @@ private:
 	// “¯Œ`ó“¯m```````````````````````````````
 
 	// ü•ª~ü•ª
-	bool LineToLine(LineCollider* a, LineCollider* b, Vector3& collisionPoint);
+	bool LineToLine(LineCollider* a, LineCollider* b, CollisionResult& result);
 
 	// ‹…‘Ì~‹…‘Ì
-	bool SphereToSphere(SphereCollider* a, SphereCollider* b, Vector3& collisionPoint);
+	bool SphereToSphere(SphereCollider* a, SphereCollider* b, CollisionResult& result);
 
 	// ƒJƒvƒZƒ‹~ƒJƒvƒZƒ‹
-	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, Vector3& collisionPoint);
+	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, CollisionResult& result);
 
 	// ƒ{ƒbƒNƒX~ƒ{ƒbƒNƒX
-	bool BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint);
+	bool BoxToBox(BoxCollider* a, BoxCollider* b, CollisionResult& result);
 
-	// ƒ‚ƒfƒ‹~ƒ‚ƒfƒ‹
-	bool ModelToModel(ModelCollider* a, ModelCollider* b, Vector3& collisionPoint);
+	// ƒƒbƒVƒ…~ƒƒbƒVƒ…
+	bool MeshToMesh(MeshCollider* a, MeshCollider* b, CollisionResult& result);
 
 	// XZ•½–Êã‚Ì‰~Œ`~XZ•½–Êã‚Ì‰~Œ`
-	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, Vector3& collisionPoint);
+	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, CollisionResult& result);
 
 	// ```````````````````````````````“¯Œ`ó“¯m
 
@@ -184,40 +191,40 @@ private:
 	// •ÊŒ`ó“¯m```````````````````````````````
 
 	// ü•ª~‹…‘Ì
-	bool LineToSphere(LineCollider* line, SphereCollider* sphere, Vector3& collisionPoint);
+	bool LineToSphere(LineCollider* line, SphereCollider* sphere, CollisionResult& result);
 
 	// ü•ª~ƒJƒvƒZƒ‹
-	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule, Vector3& collisionPoint);
+	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule, CollisionResult& result);
 
 	// ü•ª~ƒ{ƒbƒNƒX
-	bool LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint);
+	bool LineToBox(LineCollider* line, BoxCollider* box, CollisionResult& result);
 
-	// ü•ª~ƒ‚ƒfƒ‹
-	bool LineToModel(LineCollider* line, ModelCollider* model, Vector3& collisionPoint);
+	// ü•ª~ƒƒbƒVƒ…
+	bool LineToMesh(LineCollider* line, MeshCollider* mesh, CollisionResult& result);
 
 	// ‹…‘Ì~ƒJƒvƒZƒ‹
-	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, Vector3& collisionPoint);
+	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, CollisionResult& result);
 
 	// ‹…‘Ì~ƒ{ƒbƒNƒX
-	bool SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint);
+	bool SphereToBox(SphereCollider* sphere, BoxCollider* box, CollisionResult& result);
 
-	// ‹…‘Ì~ƒ‚ƒfƒ‹
-	bool SphereToModel(SphereCollider* sphere, ModelCollider* model, Vector3& collisionPoint);
+	// ‹…‘Ì~ƒƒbƒVƒ…
+	bool SphereToMesh(SphereCollider* sphere, MeshCollider* mesh, CollisionResult& result);
 
 	// ‹…‘Ì~XZ•½–Êã‚Ì‰~Œ`
-	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, Vector3& collisionPoint);
+	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, CollisionResult& result);
 
 	// ƒJƒvƒZƒ‹~ƒ{ƒbƒNƒX
-	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, Vector3& collisionPoint);
+	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, CollisionResult& result);
 
-	// ƒJƒvƒZƒ‹~ƒ‚ƒfƒ‹
-	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model, Vector3& collisionPoint);
+	// ƒJƒvƒZƒ‹~ƒƒbƒVƒ…
+	bool CapsuleToMesh(CapsuleCollider* capsule, MeshCollider* mesh, CollisionResult& result);
 
 	// ƒJƒvƒZƒ‹~XZ•½–Êã‚Ì‰~Œ`
-	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, Vector3& collisionPoint);
+	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, CollisionResult& result);
 
-	// ƒ{ƒbƒNƒX~ƒ‚ƒfƒ‹
-	bool BoxToModel(BoxCollider* box, ModelCollider* model, Vector3& collisionPoint);
+	// ƒ{ƒbƒNƒX~ƒƒbƒVƒ…
+	bool BoxToMesh(BoxCollider* box, MeshCollider* mesh, CollisionResult& result);
 
 	// ```````````````````````````````•ÊŒ`ó“¯m
 
@@ -300,96 +307,22 @@ private:
 	}
 
 	/// <summary>
-	/// ‰Ÿ‚µo‚µˆ—
+	/// 2‚Â‚ÌƒRƒ‰ƒCƒ_[‚ğd‚İ‚É‡‚í‚¹‚Ä‰Ÿ‚µo‚·
 	/// </summary>
-	/// <param name="a">ƒRƒ‰ƒCƒ_[‚P</param>
-	/// <param name="b">ƒRƒ‰ƒCƒ_[‚Q</param>
-	/// <param name="normal">‰Ÿ‚µo‚µ•ûŒü</param>
-	/// <param name="overlap">‚ß‚è‚ñ‚¾—Ê</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const {
-		// “®“Iƒtƒ‰ƒO
-		bool aDynamic = a->GetDynamicFlg();
-		bool bDynamic = b->GetDynamicFlg();
-
-		// —¼•û“®“IƒIƒuƒWƒFƒNƒg‚Ìê‡
-		if (aDynamic && bDynamic)
-		{
-			float aRatio = 0.0f, bRatio = 0.0f;
-			WeightRatioCalculation(a->GetPushWeight(), b->GetPushWeight(), aRatio, bRatio);
-
-			a->SetTransformPos(a->GetTransform().pos + normal * (overlap * aRatio));
-			b->SetTransformPos(b->GetTransform().pos - normal * (overlap * bRatio));
-
-			if (normal.y > 0.5f) { a->CallOnGrounded(); }
-			else if (normal.y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// a‚¾‚¯“®“I‚Ìê‡
-		else if (aDynamic && !bDynamic)
-		{
-			a->SetTransformPos(a->GetTransform().pos + normal * overlap);
-			if (normal.y > 0.5f) { a->CallOnGrounded(); }
-		}
-		// b‚¾‚¯“®“I‚Ìê‡
-		else if (!aDynamic && bDynamic)
-		{
-			b->SetTransformPos(b->GetTransform().pos - normal * overlap);
-			if (normal.y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// —¼•ûÃ“IƒIƒuƒWƒFƒNƒg‚Ìê‡
-		else { /*‰½‚à‚µ‚È‚¢*/ }
-	}
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const;
 
 	/// <summary>
-	/// ‰Ÿ‚µo‚µˆ—
+	/// 2‚Â‚ÌƒRƒ‰ƒCƒ_[‚ğ‰Ÿ‚µo‚µƒxƒNƒgƒ‹‚É‡‚í‚¹‚Ä‰Ÿ‚µo‚·
 	/// </summary>
-	/// <param name="a">ƒRƒ‰ƒCƒ_[‚P</param>
-	/// <param name="b">ƒRƒ‰ƒCƒ_[‚Q</param>
-	/// <param name="overlapVec">‰Ÿ‚µo‚µƒxƒNƒgƒ‹</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const {
-		// “®“Iƒtƒ‰ƒO
-		bool aDynamic = a->GetDynamicFlg();
-		bool bDynamic = b->GetDynamicFlg();
-
-		// —¼•û“®“IƒIƒuƒWƒFƒNƒg‚Ìê‡
-		if (aDynamic && bDynamic)
-		{
-			float aRatio = 0.0f, bRatio = 0.0f;
-			WeightRatioCalculation(a->GetPushWeight(), b->GetPushWeight(), aRatio, bRatio);
-
-			a->SetTransformPos(a->GetTransform().pos + overlapVec * aRatio);
-			b->SetTransformPos(b->GetTransform().pos - overlapVec * bRatio);
-
-			Vector3 normalOverlapVec = overlapVec.Normalized();
-
-			if (normalOverlapVec.y > 0.5f) { a->CallOnGrounded(); }
-			else if (normalOverlapVec.y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// a‚¾‚¯“®“I‚Ìê‡
-		else if (aDynamic && !bDynamic)
-		{
-			a->SetTransformPos(a->GetTransform().pos + overlapVec);
-			if (overlapVec.Normalized().y > 0.5f) { a->CallOnGrounded(); }
-		}
-		// b‚¾‚¯“®“I‚Ìê‡
-		else if (!aDynamic && bDynamic)
-		{
-			b->SetTransformPos(b->GetTransform().pos - overlapVec);
-			if (overlapVec.Normalized().y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// —¼•ûÃ“IƒIƒuƒWƒFƒNƒg‚Ìê‡
-		else { /*‰½‚à‚µ‚È‚¢*/ }
-	}
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const;
 
 	/// <summary>
-	/// ‰Ÿ‚µo‚µˆ—
+	/// w’è‚µ‚½•Ğ•û‚ÌƒRƒ‰ƒCƒ_[‚¾‚¯‚ğ‰Ÿ‚µo‚·
 	/// </summary>
-	/// <param name="a">–³ğŒ‚É‰Ÿ‚µo‚³‚ê‚é•û</param>
-	/// <param name="b">–³ğŒ‚É“®‚©‚³‚¸‰Ÿ‚µo‚·•û</param>
-	/// <param name="overlapVec">‰Ÿ‚µo‚µƒxƒNƒgƒ‹</param>
-	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const {
-		dynamicColl->SetTransformPos(dynamicColl->GetTransform().pos + overlapVec);
-		if (overlapVec.Normalized().y > 0.5f) { dynamicColl->CallOnGrounded(); }
-	}
+	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const;
+
+	// ‰Ÿ‚µo‚µƒxƒNƒgƒ‹‚ğƒRƒ‰ƒCƒ_[‚Ö“K—p‚µAÚ’n”»’è‚às‚¤
+	void MoveCollider(ColliderBase* ownCollider, const Vector3& pushVector, const ColliderBase& otherCollider)const;
 #pragma endregion
 
 };

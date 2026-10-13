@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Character/CharacterBase.h"
+#include "../../Common/CharacterBase/CharacterBase.h"
 
 class BossSelectSkyShip : public CharacterBase
 {
@@ -32,9 +32,9 @@ public:
 	void SendUpdate(void)override;
 
 	// “–‚½‚è”»’è‚Ì’Ê’m
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 private:
 
-	void CharacterInit(void)override;
+	void SubInit(void)override;
 };

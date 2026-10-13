@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ActorBase.h"
+#include "../Common/ActorBase/ActorBase.h"
 
 #include "../../Application/Application.h"
 
@@ -20,7 +20,7 @@ public:
 		SetPushFlg(true);
 
 		// モデルをロード
-		trans.Load("BossSelect/BossSelectStage/BossSelectStage");
+		trans.LoadModel("BossSelect/BossSelectStage/BossSelectStage");
 
 		// スケール
 		trans.scale = 10.0f;
@@ -29,11 +29,11 @@ public:
 		trans.centerDiff = Vector3(0.0f, -416.71, 0.0f) * trans.scale;
 
 		// コライダー
-		ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(20000, 10000, 2000), Vector3::Zonly(-8500.0f)));
-		ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(20000, 10000, 2000), Vector3::Zonly(5000.0f)));
-		ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(2000, 10000, 20000), Vector3::Xonly(-6000.0f)));
-		ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(2000, 10000, 20000), Vector3::Xonly(6000.0f)));
+		AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(20000, 10000, 2000), Vector3::Zonly(-8500.0f)));
+		AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(20000, 10000, 2000), Vector3::Zonly(5000.0f)));
+		AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(2000, 10000, 20000), Vector3::Xonly(-6000.0f)));
+		AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(2000, 10000, 20000), Vector3::Xonly(6000.0f)));
 
-		ColliderCreate(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(4000, 10000, 1000), Vector3::XZonly(3000.0f, -7000.0f)));
+		AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, Vector3(4000, 10000, 1000), Vector3::XZonly(3000.0f, -7000.0f)));
 	}
 };

@@ -2,7 +2,7 @@
 
 #include "../CameraEventBase.h"
 
-#include "../../../../Object/Common/Transform.h"
+#include "../../../../Common/Vector3.h"
 
 class CameraBase;
 
@@ -17,7 +17,7 @@ public:
     /// <param name="startAngle">開始角度</param>
     /// <param name="startFov">開始視野角</param>
     /// <param name="frame">移動フレーム数</param>
-    StartCameraEvent(const Vector3& startPos, const Vector3& startAngle, float startFov, int frame);
+    StartCameraEvent(const Vector3& startPos, const Vector3& startAngle, float startFov, float frame);
 
     /// <summary>
     /// 現在のカメラ情報から指定したカメラ情報分移動した情報から、現在のカメラ情報（位置、角度、視野角）まで指定されたフレーム数で移動する
@@ -27,7 +27,7 @@ public:
     /// <param name="startLocalAngle">開始相対角度</param>
     /// <param name="startLocalFov">開始相対視野角</param>
     /// <param name="frame">移動フレーム数</param>
-    StartCameraEvent(const CameraBase& camera, const Vector3& startLocalPos, const Vector3& startLocalAngle, float startLocalFov, int frame);
+    StartCameraEvent(const CameraBase& camera, const Vector3& startLocalPos, const Vector3& startLocalAngle, float startLocalFov, float frame);
 
     ~StartCameraEvent()override = default;
 
@@ -49,8 +49,10 @@ private:
     Vector3 endAngle;
     float endFov;
 
-    int currentFrame;
-    int maxFrame;
+    // 移動フレーム数
+    const float maxFrame;
+    // 更新フレーム数
+    float currentFrame;
 
     // 補間
     float EaseInOut(float t);

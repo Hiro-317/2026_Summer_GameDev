@@ -1,8 +1,10 @@
 #include "BossSelectSpotBase.h"
 
-#include "../../../Scene/SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 #include "../../Common/Collider/XZCircleCollider.h"
+
+#include "BossSelectSpotArea.h"
 
 BossSelectSpotBase::BossSelectSpotBase(
 	BOSS_TYPE bossType,
@@ -10,11 +12,9 @@ BossSelectSpotBase::BossSelectSpotBase(
 	float defaultModelScale, float selectedModelScale,
 	float DEFAULT_COLLIDER_RADIUS,
 	Vector3 DEFAULT_SELECTED_IMAGE_OFFSET,
-	const Vector3& pos, const Vector3& angle
+	const Vector3& pos, const Quaternion& rotation
 ) :
 	ActorBase(),
-
-	bossType(bossType),
 
 	MODEL_PATH(MODEL_PATH),
 
@@ -27,32 +27,31 @@ BossSelectSpotBase::BossSelectSpotBase(
 	selected(false),
 
 	selectedEasingCounter(0.0f),
-	selectedEasingRate(0.0f)
+	selectedEasingRate(0.0f),
+
+	area(nullptr)
 {
 	trans.pos = pos;
-	trans.angle = angle;
+	trans.rotation = rotation;
+
+	AddChildActor(new BossSelectSpotArea(COLLIDER_RADIUS, bossType, selected, trans));
 }
 
 void BossSelectSpotBase::Load(void)
 {
 	// 静的オブジェクトに設定
 	SetDynamicFlg(false);
-	// オブジェクト設定の押し出しは無効
-	SetPushFlg(false);
+	// オブジェクト設定の押し出しを有効
+	SetPushFlg(true);
 
 	// モデルを読み込みむ
-	trans.Load(MODEL_PATH.c_str());
+	trans.LoadModel(MODEL_PATH.c_str());
 
 	// デフォルトスケール（非選択時）で初期化
 	trans.scale = MODEL_SCALE.at(false);
 
-	// 選択判定（飛行船が近くにいるか）を行うコライダー
-	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS, COLLIDER_RADIUS + COLLIDER_RADIUS_EXTRA, 10000.0f));
-
 	// 押し出しを行うコライダー
-	ColliderCreate(new XZCircleCollider(COLLIDER_TAG::BOSS, COLLIDER_RADIUS, 10000.0f));
-	// このコライダーの押し出し設定だけ有効にする
-	GetCollider().back()->SetPushFlg(true);
+	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS, COLLIDER_RADIUS, 10000.0f));
 }
 
 void BossSelectSpotBase::SubUpdate(void)
@@ -100,11 +99,3 @@ void BossSelectSpotBase::SelectedDraw(const int& selectedImage)
 	);
 }
 
-void BossSelectSpotBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
-{
-	if (other.GetTag() == SKY_SHIP_COLL_TAG) { 
-		selected = true;
-
-		SceneManager::GetIns().SetSelectBossType(bossType);
-	}
-}
