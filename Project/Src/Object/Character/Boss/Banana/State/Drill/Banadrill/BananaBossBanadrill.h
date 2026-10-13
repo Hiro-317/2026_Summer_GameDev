@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../../../../../ActorBase.h"
+#include "../../../../../CharacterBase.h"
 
 #include "../../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../../Common/Collider/XZCircleCollider.h"
 
 
-class BananaBossBanadrill : public ActorBase
+class BananaBossBanadrill : public CharacterBase
 {
 public:
 	/// <summary>
@@ -30,14 +30,17 @@ public:
 	void SetBanameranRot(const Vector3& rot) { banadrill.angle = rot; }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
-	void SetDrawArea(bool flg) { isDrawArea = flg; }
+	void SetOn(void) { isDrawArea = true; live = true; }
 
 	bool GetIsGround(void) { return isGround; }
 
-	void Update(void) override;
-	void AlphaDraw(void) override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) override;
 
 private:
+
+	void SubUpdate(void) override;
+	void SubDraw(void) override;
+	void SubAlphaDraw(void) override;
 
 	// ƒoƒiƒƒ‰ƒ“‚ÌƒTƒCƒY
 	const float SIZE = 3.0f;
@@ -71,6 +74,7 @@ private:
 
 	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
 	bool isDrawArea;
+	bool live;
 
 	// UŒ‚ŠÔ
 	int cnt;

@@ -178,6 +178,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Death\BananaBossDeathState.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrill.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrillManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Drill\BananaBossDrillState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.cpp" />
     <ClCompile Include="Src\Object\Character\Boss\Banana\State\Idle\BananaBossIdleState.cpp" />
@@ -345,6 +348,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Death\BananaBossDeathState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrill.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrillManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Drill\BananaBossDrillState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.h" />
     <ClInclude Include="Src\Object\Character\Boss\Banana\State\Idle\BananaBossIdleState.h" />
