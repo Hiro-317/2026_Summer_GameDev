@@ -43,20 +43,11 @@ void PlayerBase::Load(void)
 {
 	PlayerLoad();
 
-	if(Net::GetIns().GetConnectStatus().EntryCount() != 1) {
+	if (Net::GetIns().GetConnectStatus().EntryCount() != 1) {
 		// 観戦モード
 		AddState(
-			(int)STATE::OTHER_WATCH,
-			new OtherPlayerWatchState(
-				// 自分の状態に遷移する関数
-				[&]() { ChangeState((int)STATE::OTHER_WATCH); },
-				// 自分の状態かどうかを返す関数
-				[&]() { return state == (int)STATE::OTHER_WATCH; },
-				// 他プレイヤーの座標
-				otherPlayerTrans,
-				// ボスの座標
-				bossPos
-			)
+			STATE::OTHER_WATCH,
+			new OtherPlayerWatchState(otherPlayerTrans, bossPos)
 		);
 	}
 
@@ -169,10 +160,10 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 	case COLLIDER_TAG::PLAYER_HEAL: {	// 回復
 
 		// 回復量を取得
-		short heal = other.GetSkillStats().Power();
+		short heal = other.GetActor()->GetSkillStats().Power();
 
 		// 回復をクライアントへ送信
-		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), controlSenderId);
+		Net::GetIns().Send(MsgDataPlayerHeal(heal), controlSenderId);
 
 		// 回復させる
 		characterStats.HpHeal(heal);
@@ -184,7 +175,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 	case COLLIDER_TAG::PLAYER_BUFF: {	// バフ
 
 		// バフデータ構造体を取得
-		const ModifierData& modifier = other.GetSkillStats().ModifierPower();
+		const ModifierData& modifier = other.GetActor()->GetSkillStats().ModifierPower();
 
 		// バフをクライアントへ送信
 		Net::GetIns().Send(MsgDataPlayerModifier(modifier), controlSenderId);
@@ -201,7 +192,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 #pragma endregion
 
 	// 無敵時間の判定
-	if (GetInviCounter() > 0) { return; }
+	if (invincibleCounter > 0) { return; }
 
 #pragma region マイナス効果の判定
 
@@ -209,10 +200,10 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 	case COLLIDER_TAG::BOSS_ATTACK: {	// 被ダメージ
 
 		// ダメージ状態に遷移
-		ChangeState((int)STATE::DAMAGE);
+		ChangeState(STATE::DAMAGE);
 
 		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
+		const short damage = CalculateDamage(other.GetActor()->GetSkillStats().Power(), characterStats.defensePower.Value());
 
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
 		Net::GetIns().Send(MsgDataPlayerDamage(damage), controlSenderId);

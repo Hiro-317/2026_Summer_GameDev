@@ -258,6 +258,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\PlayerManager\PlayerFactory.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.cpp" />

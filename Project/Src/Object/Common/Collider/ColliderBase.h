@@ -87,6 +87,9 @@ public:
 
 #pragma region ゲット関数
 
+	// アクター取得
+	ActorBase* GetActor(void)const { return owner; }
+
 	// コライダー座標
 	Vector3 GetPos(void) const;
 

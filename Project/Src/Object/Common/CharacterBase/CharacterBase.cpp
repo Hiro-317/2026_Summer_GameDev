@@ -79,6 +79,10 @@ void CharacterBase::BaseUpdate(void)
 		for (std::pair<const int, CharacterStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
 	}
 
+	// 無敵時間更新
+	if (invincibleCounter > 0) { invincibleCounter--; }
+	else { invincibleCounter = 0; }
+
 	// アニメーション更新
 	if (anime) { anime->Update(); }
 }

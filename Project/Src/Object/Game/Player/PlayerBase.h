@@ -217,28 +217,28 @@ protected:
 	// 味方プレイヤーのターゲットを次へ
 	void TargetPlayerNext(void);
 
-	bool DodgeOnCollision(const STATE dodgeState, const ColliderBase& other) {
-		if (!Net::GetIns().IsHost()) { return false; }
-		if (GetInviCounter() > 0) { return false; }
+	//bool DodgeOnCollision(const STATE dodgeState, const ColliderBase& other) {
+	//	if (!Net::GetIns().IsHost()) { return false; }
+	//	if (GetInviCounter() > 0) { return false; }
 
-		// 回避中の無敵処理
-		if (state == (int)dodgeState) {
-			switch (other.GetTag()) {
-			case COLLIDER_TAG::BOSS_ATTACK:
-				// 回避成功時の無敵時間
-				SetInviCounter(DODGE_INVI_TIME);
+	//	// 回避中の無敵処理
+	//	if (state == (int)dodgeState) {
+	//		switch (other.GetTag()) {
+	//		case COLLIDER_TAG::BOSS_ATTACK:
+	//			// 回避成功時の無敵時間
+	//			SetInviCounter(DODGE_INVI_TIME);
 
-				// ホストが操作者だった場合表示「ミス！」を出現させる
-				if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
-				// ホスト以外が回避した場合、クライアント側に回避した通知を送る
-				else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); }
-				break;
-			}
-			return true;
-		}
+	//			// ホストが操作者だった場合表示「ミス！」を出現させる
+	//			if (isOwnOperator) { SubUiSerch<HitUI>()->MissSetting(); }
+	//			// ホスト以外が回避した場合、クライアント側に回避した通知を送る
+	//			else { Net::GetIns().Send(MsgDataPlayerMissNotice(operatorSenderId)); }
+	//			break;
+	//		}
+	//		return true;
+	//	}
 
-		return false;
-	}
+	//	return false;
+	//}
 
 	// ステート遷移関数
 	void ChangeState(int nextState)override;

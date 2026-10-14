@@ -38,6 +38,8 @@ ActorBase::ActorBase() :
 
 	parameter(nullptr),
 
+	skillStats(),
+
 	childActors(),
 
 	controlSenderId(MSG_SENDER_ID::None)
@@ -64,6 +66,8 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 	shader(nullptr),
 
 	parameter(new ParameterLoad(parameterPath)),
+
+	skillStats(),
 
 	childActors(),
 
@@ -157,6 +161,14 @@ void ActorBase::Release(void)
 		delete child;
 		child = nullptr;
 	}
+
+	// スキル情報の解放
+	for (SkillStats*& s : skillStats) {
+		if (!s) { continue; }
+		delete s;
+		s = nullptr;
+	}
+	skillStats.clear();
 
 	// シェーダーの解放
 	ResetShader();
@@ -255,10 +267,7 @@ void ActorBase::VelocityUpdate(bool	deceleration)
 
 void ActorBase::AddCollider(ColliderBase* newCollider)
 {
-	newCollider->SetTransformPtr(&trans);
-	newCollider->SetDynamicFlgPtr(&dynamicFlg);
-	newCollider->SetPushFlgPtr(&pushFlg);
-	newCollider->SetPushWeightPtr(&pushWeight);
+	newCollider->SetActorPtr(this);
 	newCollider->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result) { this->OnCollision(ownTag, other, result); });
 	newCollider->SetOnGroundedFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other) { this->OnGrounded(ownTag, other); });
 	colliders.emplace_back(newCollider);

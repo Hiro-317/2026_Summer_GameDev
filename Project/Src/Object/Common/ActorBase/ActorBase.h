@@ -90,6 +90,9 @@ public:
 	// 押し出しを行う際の重さ（0 ～ 100 で設定）
 	unsigned char GetPushWeight(void)const { return pushWeight; }
 
+	// スキル構造体
+	const SkillStats& GetSkillStats(void)const { return *skillStats; }
+
 	// 更新権限をもつID
 	const MSG_SENDER_ID& GetControlSenderId(void)const { return controlSenderId; }
 	// 自分が更新権限を持っているかどうか
@@ -166,6 +169,9 @@ protected:
 
 	// 誰が更新権限を持つか
 	MSG_SENDER_ID controlSenderId;
+
+	// スキル構造体
+	SkillStats* skillStats;
 
 #pragma region 初期設定
 

@@ -16,14 +16,14 @@ void PlayerManager::Load(void)
 		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
 		
 		// プレイヤーを生成
-		playerInfo.emplace_back(PlayerFactory::CreatePlayer((MSG_SENDER_ID)id));
+		playerInfoRef.emplace_back(PlayerFactory::CreatePlayer((MSG_SENDER_ID)id));
 	}
 	
-	for (PlayerInfo& own : playerInfo) {
+	for (PlayerInfo& own : playerInfoRef) {
 		// プレイヤーのロード
 		own.instance->Load();
 
-		for (PlayerInfo& other : playerInfo) {
+		for (PlayerInfo& other : playerInfoRef) {
 			// 自身以外のプレイヤーの座標を渡す
 			if (own.instance->GetOperatorSenderId() != other.instance->GetOperatorSenderId()) {
 				own.instance->SetOtherPlayerTrans(&other.instance->GetTrans());
@@ -36,7 +36,7 @@ void PlayerManager::Load(void)
 // 初期化処理
 void PlayerManager::Init(void)
 {
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& info : playerInfoRef) {
 		info.instance->Init();
 	}
 }
@@ -44,7 +44,7 @@ void PlayerManager::Init(void)
 // 更新処理
 void PlayerManager::Update(void)
 {
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& info : playerInfoRef) {
 		info.instance->Update();
 	}
 }
@@ -52,7 +52,7 @@ void PlayerManager::Update(void)
 // 描画処理
 void PlayerManager::Draw(void)
 {
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& info : playerInfoRef) {
 		info.instance->Draw();
 	}
 }
@@ -68,7 +68,7 @@ void PlayerManager::UiDraw(void)
 // 解放処理
 void PlayerManager::Release()
 {
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& info : playerInfoRef) {
 		info.instance->Release();
 	}
 }
@@ -82,14 +82,14 @@ void PlayerManager::AlphaDraw(void)
 
 void PlayerManager::ReceptionUpdate(void)
 {
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& info : playerInfoRef) {
 		info.instance->ReceptionUpdate();
 	}
 }
 
 void PlayerManager::SendUpdate(void)
 {
-	for (PlayerInfo& info : playerInfo) {
+	for (PlayerInfo& info : playerInfoRef) {
 		info.instance->SendUpdate();
 	}
 }
