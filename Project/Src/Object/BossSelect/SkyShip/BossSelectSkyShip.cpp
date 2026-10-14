@@ -41,21 +41,17 @@ void BossSelectSkyShip::Load(void)
 	AddState(
 		STATE::Start,
 		new BossSelectSkyShipStartState(
-			[&]() { ChangeState((int)STATE::Start); },
-			[&]() { return state == (int)STATE::Start; },
 			Vector3(-5000, 1500, 3000),
 			300,150,
-			trans.pos, trans.angle,
-			[&]() { ChangeState((int)STATE::Move); }
+			trans.pos, trans.rotation,
+			[&]() { ChangeState(STATE::Move); }
 		)
 	);
 
 	AddState(
-		(int)STATE::Move,
+		STATE::Move,
 		new BossSelectSkyShipMoveState(
-			[&]() { ChangeState((int)STATE::Move); },
-			[&]() { return state == (int)STATE::Move; },
-			30.0f, accelSum, trans.angle
+			std::bind(&BossSelectSkyShip::MoveAccel, this, std::placeholders::_1)
 		)
 	);
 }
@@ -68,10 +64,10 @@ void BossSelectSkyShip::SubInit(void)
 void BossSelectSkyShip::ReceptionUpdate(void)
 {
 	// ç¿ïWÅEäpìxÇÃìØä˙
-	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
-
+	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(controlSenderId)) {
+		
 		trans.pos = dataPtr->pos;
-		trans.angle = dataPtr->angle;
+		trans.rotation = dataPtr->rotation;
 
 		delete dataPtr;
 	}
@@ -79,15 +75,15 @@ void BossSelectSkyShip::ReceptionUpdate(void)
 
 void BossSelectSkyShip::SendUpdate(void)
 {
-	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId); }
+	if (IsOwnControl()) { Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.rotation), controlSenderId); }
 }
 
-void BossSelectSkyShip::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void BossSelectSkyShip::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (!isOwnOperator) { return; }
+	if (!IsOwnControl()) { return; }
 
 	if (other.GetTag() == COLLIDER_TAG::BOSS) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 			Net::GetIns().Send(MsgDataBossSelect((int)SceneManager::GetIns().GetSelectBossType()), Net::GetIns().GetSenderId());
 			Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::PushSceneBossConfirm));

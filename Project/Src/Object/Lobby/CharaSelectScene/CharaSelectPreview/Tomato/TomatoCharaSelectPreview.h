@@ -23,7 +23,6 @@ private:
 
 		CHARA_NAME = "ƒŠƒRƒsƒ“";
 
-
 		HP = GetParameterToInt("TomatoParameter", "PlayerHP");
 		ATTACK = GetParameterToInt("TomatoParameter", "PlayerAttackPower");
 		DEFENCE = GetParameterToInt("TomatoParameter", "PlayerDefensePower");

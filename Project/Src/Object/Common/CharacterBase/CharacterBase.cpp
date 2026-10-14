@@ -22,10 +22,48 @@ CharacterBase::CharacterBase() :
 {
 }
 
+CharacterBase::CharacterBase(short HP_MAX, short ATTACK_POWER, short DEFENSE_POWER, short SPEED_POWER) :
+	ActorBase(),
+
+	characterStats(HP_MAX, ATTACK_POWER, DEFENSE_POWER, SPEED_POWER),
+
+	state(-1),
+	stateMap(),
+
+	anime(nullptr)
+{
+}
+
 CharacterBase::CharacterBase(const std::string& parameterPath):
 	ActorBase(parameterPath),
 
-	state(0),
+	characterStats(0, 0, 0, 0),
+
+	state(-1),
+	stateMap(),
+
+	anime(nullptr)
+{
+}
+
+CharacterBase::CharacterBase(
+	const std::string fileName,
+	const std::string hpParameterID,
+	const std::string attackPowerParameterID,
+	const std::string defensePowerParameterID,
+	const std::string moveSpeedParameterID,
+	const std::string& parameterPath
+):
+	ActorBase(parameterPath),
+
+	characterStats(
+		GetParameter(fileName, hpParameterID),
+		GetParameter(fileName, attackPowerParameterID),
+		GetParameter(fileName, defensePowerParameterID),
+		GetParameter(fileName, moveSpeedParameterID)
+	),
+
+	state(-1),
 	stateMap(),
 
 	anime(nullptr)

@@ -76,18 +76,18 @@ void LobbyCharaPreviewBase::SubRelease(void)
 	}
 }
 
-void LobbyCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType)
+void LobbyCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType)
 {
 	AnimationControllerCreate();
 	for (int index = 0; index < inFbxMaxIndex; index++) {
-		anime->AddInFbx(index, speed, index);
+		anime->AddInFbx(index, speed, loop, index);
 	}
 	this->playAnimeType = playAnimeType;
 }
 
-void LobbyCharaPreviewBase::AddAnimation(const char* filePath, float speed, int index)
+void LobbyCharaPreviewBase::AddAnimation(int index, float speed, bool loop, const char* filePath)
 {
 	AnimationControllerCreate();
-	anime->Add(index, speed, filePath);
+	anime->Add(index, speed, loop, filePath);
 	playAnimeType = index;
 }

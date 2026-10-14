@@ -1,23 +1,21 @@
 #pragma once
 
-#include "../../../Character/CharacterStateBase.h"
+#include "../../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Vector3;
+struct Quaternion;
 
 class BossSelectSkyShipStartState : public CharacterStateBase
 {
 public:
 	BossSelectSkyShipStartState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-
 		const Vector3& LOCAL_START_POS,
 
 		int POS_MAX_FRAME,
 		int ANGLE_MAX_FRAME,
 
 		Vector3& pos,
-		Vector3& angle,
+		Quaternion& rotation,
 
 		const std::function<void(void)> MoveChangeState
 	);
@@ -51,15 +49,15 @@ private:
 	const int ANGLE_MAX_FRAME;
 
 	Vector3 START_POS;
-	Vector3 START_ANGLE;
+	Quaternion START_ROTATION;
 	Vector3 END_POS;
-	Vector3 END_ANGLE;
+	Quaternion END_ROTATION;
 
 	// 座標参照
 	Vector3& pos;
 
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 
 	const std::function<void(void)> MoveChangeState;
 

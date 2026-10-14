@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../../Manager/Net/NetWorkDefine.h"
+#include "../../../Common/ActorBase/ActorBase.h"
 
-#include "../../../ActorBase.h"
+#include "../../../../Manager/Net/NetWorkDefine.h"
 
 class AnimationController;
 class CameraBase;
@@ -18,7 +18,6 @@ public:
 	void Load(void)override;
 	void Update(void)override;
 	void Draw(void)override;
-	void AlphaDraw(void)override {}
 	// ～～～～～～～～～～～～～～～～
 
 private:
@@ -28,9 +27,8 @@ private:
 	void AnimationControllerCreate(void);
 
 	// 主要関数再定義～～～～～～～～～
-	virtual void SubLoad(void) = 0;
-	void SubInit(void)override;
-	void SubRelease(void)override;
+	void BaseInit(void)override;
+	void BaseRelease(void)override;
 	// ～～～～～～～～～～～～～～～～
 
 	// 再生するアニメーションのタイプ
@@ -41,6 +39,8 @@ private:
 	CameraBase* camera;
 
 protected:
+
+	virtual void SubLoad(void) = 0;
 
 	std::string CHARA_NAME;
 	// パラメーター
@@ -53,8 +53,20 @@ protected:
 	int skill_2_image;
 	int skill_3_image;
 
-	// モデルにくっついてるFBXアニメーションを登録する
-	void AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType);
-	// 別ファイルに保存されているFBXアニメーションを登録する
-	void AddAnimation(const char* filePath, float speed, int index = 0);
+	/// <summary>
+	/// モデルにくっついてるFBXアニメーションを全部登録する
+	/// </summary>
+	/// <param name="inFbxMaxIndex">くっついてるアニメーションの数</param>
+	/// <param name="speed">再生速度</param>
+	/// <param name="loop">ループ再生フラグ配列（指定なしで全てループ再生有効で登録）</param>
+	void AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType);
+
+	/// <summary>
+	/// 別ファイルに保存されているFBXアニメーションを登録する
+	/// </summary>
+	/// <param name="index">参照番号</param>
+	/// <param name="speed">再生速度</param>
+	/// <param name="loop">ループ再生フラグ</param>
+	/// <param name="filePath">パス</param>
+	void AddAnimation(int index, float speed, bool loop, const char* filePath);
 };

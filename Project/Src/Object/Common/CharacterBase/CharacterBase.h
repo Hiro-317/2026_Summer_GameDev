@@ -2,7 +2,7 @@
 
 #include "../ActorBase/ActorBase.h"
 
-#include <map>
+#include "CharacterStatsDefine.h"
 
 class CharacterStateBase;
 
@@ -14,12 +14,7 @@ public:
 
 	CharacterBase();
 
-	CharacterBase(
-		short HP_MAX,
-		short ATTACK_POWER,
-		short DEFENSE_POWER,
-		short SPEED_POWER
-	);
+	CharacterBase(short HP_MAX, short ATTACK_POWER, short DEFENSE_POWER, short SPEED_POWER);
 
 	CharacterBase(const std::string& parameterPath);
 
@@ -43,26 +38,11 @@ private:
 	// アニメーションコントローラーのインスタンス
 	AnimationController* anime;
 
-	// ステータス
-	CharacterStats characterStats;
-
 	// ステート管理用変数
 	int state;
 
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
-
-	// ステートの追加
-	void AddState(int stateNum, CharacterStateBase* stateIns);
-
-	// 状態番号を指定して自動遷移判定を登録する
-	void RegisterStateTransition(int beforeState, int afterState);
-
-	// 指定のステートへ遷移
-	void  ChangeState(int nextState);
-
-	// 指定のステートインスタンスをゲットする関数
-	CharacterStateBase& GetStateIns(int state);
 
 	// キャラクターベース固有の更新処理
 	void BaseUpdate(void) override final;
@@ -71,14 +51,21 @@ private:
 
 protected:
 
+	// ステータス
+	CharacterStats characterStats;
+
 #pragma region ステート管理関数
 
+	// ステートの追加
+	void AddState(int stateNum, CharacterStateBase* stateIns);
 	// ステートの追加
 	template<typename StateEnum>
 	void AddState(StateEnum stateNum, CharacterStateBase* stateIns) {
 		AddState(static_cast<int>(stateNum), stateIns);
 	}
 
+	// 状態番号を指定して自動遷移判定を登録する
+	void RegisterStateTransition(int beforeState, int afterState);
 	// 状態間の自動遷移判定を登録する
 	template<typename StateEnum>
 	void RegisterStateTransition(StateEnum beforeState, StateEnum afterState) {
@@ -86,9 +73,13 @@ protected:
 	}
 
 	// 指定のステートへ遷移
+	virtual void ChangeState(int nextState);
+	// 指定のステートへ遷移
 	template<typename StateEnum>
-	void  ChangeState(StateEnum nextState) { ChangeState(static_cast<int>(nextState)); }
+	void ChangeState(StateEnum nextState) { ChangeState(static_cast<int>(nextState)); }
 
+	// 指定のステートインスタンスをゲットする関数
+	CharacterStateBase& GetStateIns(int state);
 	// 指定のステートインスタンスをゲットする関数
 	template<typename StateEnum>
 	CharacterStateBase& GetStateIns(StateEnum state) { return GetStateIns(static_cast<int>(state)); }

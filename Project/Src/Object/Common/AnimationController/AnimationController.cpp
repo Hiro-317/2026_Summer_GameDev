@@ -4,7 +4,7 @@
 
 #include "../../../Manager/TimeScale/TimeScale.h"
 
-AnimationController::AnimationController(int modelId) : 
+AnimationController::AnimationController(const int& modelId) : 
 	modelId(modelId),
 	playType(-1),
 

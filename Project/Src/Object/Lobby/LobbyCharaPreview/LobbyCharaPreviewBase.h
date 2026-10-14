@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../ActorBase.h"
+#include "../../Common/ActorBase/ActorBase.h"
 
 class AnimationController;
 
@@ -51,8 +51,20 @@ protected:
 		Vector3(200, 600, 0)
 	};
 
-	// モデルにくっついてるFBXアニメーションを登録する
-	void AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType);
-	// 別ファイルに保存されているFBXアニメーションを登録する
-	void AddAnimation(const char* filePath, float speed, int index = 0);
+	/// <summary>
+	/// モデルにくっついてるFBXアニメーションを全部登録する
+	/// </summary>
+	/// <param name="inFbxMaxIndex">くっついてるアニメーションの数</param>
+	/// <param name="speed">再生速度</param>
+	/// <param name="loop">ループ再生フラグ配列（指定なしで全てループ再生有効で登録）</param>
+	void AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType);
+
+	/// <summary>
+	/// 別ファイルに保存されているFBXアニメーションを登録する
+	/// </summary>
+	/// <param name="index">参照番号</param>
+	/// <param name="speed">再生速度</param>
+	/// <param name="loop">ループ再生フラグ</param>
+	/// <param name="filePath">パス</param>
+	void AddAnimation(int index, float speed, bool loop, const char* filePath);
 };

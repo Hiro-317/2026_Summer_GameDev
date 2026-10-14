@@ -68,6 +68,7 @@ struct Quaternion
 
 #pragma endregion
 
+	static float Angle(const Quaternion& a, const Quaternion& b);
 
 #pragma region ‰‰ŽZ
 

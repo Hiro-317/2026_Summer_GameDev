@@ -2,35 +2,33 @@
 
 #include <algorithm>
 
+#include "../../../../Common/Vector3.h"
+#include "../../../../Common/Quaternion.h"
+
 #include "../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../Manager/Net/NetWorkManager.h"
 
 BossSelectSkyShipStartState::BossSelectSkyShipStartState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-
 	const Vector3& LOCAL_START_POS,
 
 	int POS_MAX_FRAME,
 	int ANGLE_MAX_FRAME,
 
 	Vector3& pos,
-	Vector3& angle,
+	Quaternion& rotation,
 
 	const std::function<void(void)> MoveChangeState
 ) :
-	CharacterStateBase(ownChangeState, isOwnState),
-
 	LOCAL_START_POS(LOCAL_START_POS),
 
 	POS_MAX_FRAME(POS_MAX_FRAME),
 	ANGLE_MAX_FRAME(ANGLE_MAX_FRAME),
 
-	START_POS(), START_ANGLE(),
-	END_POS(), END_ANGLE(),
+	START_POS(), START_ROTATION(),
+	END_POS(), END_ROTATION(),
 
 	pos(pos),
-	angle(angle),
+	rotation(rotation),
 
 	MoveChangeState(MoveChangeState),
 
@@ -43,15 +41,15 @@ BossSelectSkyShipStartState::BossSelectSkyShipStartState(
 void BossSelectSkyShipStartState::Enter(void)
 {
 	END_POS = pos;
-	END_ANGLE = angle;
+	END_ROTATION = rotation;
 
 	pos += LOCAL_START_POS;
 
 	Vector3 vec = (END_POS - pos).Normalized();
-	angle = Vector3(-asinf(std::clamp(vec.y, -1.0f, 1.0f)), atan2f(vec.x, vec.z), 0.0f);
+	rotation = Quaternion::FromEulerXZY(Vector3(-asinf(std::clamp(vec.y, -1.0f, 1.0f)), atan2f(vec.x, vec.z), 0.0f)).Normalized();
 
 	START_POS = pos;
-	START_ANGLE = angle;
+	START_ROTATION = rotation;
 
 	state = STATE::PosMove;
 }
@@ -86,7 +84,7 @@ void BossSelectSkyShipStartState::Update(void)
 
 		if (currentFrame >= ANGLE_MAX_FRAME) {
 			currentFrame = 0;
-			angle = END_ANGLE;
+			rotation = END_ROTATION;
 			state = STATE::None;
 			MoveChangeState();
 			break;
@@ -98,7 +96,7 @@ void BossSelectSkyShipStartState::Update(void)
 
 		rate = rate * rate * (3.0f - 2.0f * rate);
 
-		angle = START_ANGLE + (END_ANGLE - START_ANGLE) * rate;
+		rotation = Quaternion::Slerp(START_ROTATION, END_ROTATION, rate).Normalized();
 
 		break;
 	}
@@ -109,7 +107,7 @@ void BossSelectSkyShipStartState::Update(void)
 void BossSelectSkyShipStartState::Exit(void)
 {
 	pos = END_POS;
-	angle = END_ANGLE;
+	rotation = END_ROTATION;
 	CurrentCamera::Get().EndEvent();
 	Net::GetIns().Send(MsgDataCameraEvent(MsgDataCameraEvent::TYPE::EndEvent));
 }

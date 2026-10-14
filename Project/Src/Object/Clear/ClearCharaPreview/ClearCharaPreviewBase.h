@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../ActorBase.h"
+#include "../../Common/ActorBase/ActorBase.h"
 
 class AnimationController;
 
@@ -10,11 +10,6 @@ public:
 	ClearCharaPreviewBase(const Vector3& pos, unsigned char operatorNumber);
 	virtual ~ClearCharaPreviewBase()override = default;
 
-	// 読み込み処理再定義
-	void Load(void)override;
-	// 更新処理再定義
-	void Update(void)override;
-
 private:
 
 	// アニメーションコントローラー
@@ -22,19 +17,30 @@ private:
 	void AnimationControllerCreate(void);
 
 	// 主要関数再定義～～～～～～～～～
-	void SubInit(void)override;
-	void SubRelease(void)override;
+	void BaseInit(void)override;
+	void BaseUpdate(void)override;
+	void BaseRelease(void)override;
 	// ～～～～～～～～～～～～～～～～
 
 	// 再生するアニメーションのタイプ
 	int playAnimeType;
 
 protected:
-	virtual void CharacterLoad(void) = 0;
-	virtual void CharacterInit(void) {}
 
-	// モデルにくっついてるFBXアニメーションを登録する
-	void AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType);
-	// 別ファイルに保存されているFBXアニメーションを登録する
-	void AddAnimation(const char* filePath, float speed, int index = 0);
+	/// <summary>
+	/// モデルにくっついてるFBXアニメーションを全部登録する
+	/// </summary>
+	/// <param name="inFbxMaxIndex">くっついてるアニメーションの数</param>
+	/// <param name="speed">再生速度</param>
+	/// <param name="loop">ループ再生フラグ配列（指定なしで全てループ再生有効で登録）</param>
+	void AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType);
+
+	/// <summary>
+	/// 別ファイルに保存されているFBXアニメーションを登録する
+	/// </summary>
+	/// <param name="index">参照番号</param>
+	/// <param name="speed">再生速度</param>
+	/// <param name="loop">ループ再生フラグ</param>
+	/// <param name="filePath">パス</param>
+	void AddAnimation(int index, float speed, bool loop, const char* filePath);
 };

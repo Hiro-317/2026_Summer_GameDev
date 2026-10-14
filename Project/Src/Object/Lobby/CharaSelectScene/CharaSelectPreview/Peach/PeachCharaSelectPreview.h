@@ -25,7 +25,7 @@ private:
 		trans.centerDiff = Vector3::Yonly(-225);
 
 		// アニメーションを登録する
-		AddInFbxAnimation(7, 1.0f, 0);
+		AddInFbxAnimation(7, 1.0f, true, 0);
 
 		CHARA_NAME = "おももこまち";
 

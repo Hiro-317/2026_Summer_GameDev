@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../ActorBase.h"
+#include "../../Common/ActorBase/ActorBase.h"
 
-#include "ClearCharaPreviewBase.h"
-
-#include "../../CharaTypeDefine.h"
+#include "../../Common/CharaTypeDefine.h"
 
 #include "../../../Manager/Net/NetWorkDefine.h"
+
+class ClearCharaPreviewBase;
 
 class ClearCharaPreviewManager : public ActorBase
 {
@@ -18,7 +18,6 @@ public:
 	void Init(void)override;
 	void Update(void)override;
 	void Draw(void)override;
-	void AlphaDraw(void)override {}
 	void Release(void)override;
 
 	// SceneManagerの持つ情報をもとに指定のIDのキャラプレビューをロード

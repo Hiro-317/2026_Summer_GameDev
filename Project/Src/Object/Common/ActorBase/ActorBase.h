@@ -30,7 +30,7 @@ struct SkillStats;
 class ActorBase
 {
 public:
-	
+
 	// デフォルトコンストラクタ
 	ActorBase();
 	// パラメーターを外部から読み込む場合に使うコンストラクタ
@@ -90,6 +90,8 @@ public:
 	// 押し出しを行う際の重さ（0 ～ 100 で設定）
 	unsigned char GetPushWeight(void)const { return pushWeight; }
 
+	// 更新権限をもつID
+	const MSG_SENDER_ID& GetControlSenderId(void)const { return controlSenderId; }
 	// 自分が更新権限を持っているかどうか
 	bool IsOwnControl(void)const;
 
@@ -143,7 +145,6 @@ private:
 
 	// 子クラス
 	std::vector<ActorBase*> childActors;
-
 
 protected:
 

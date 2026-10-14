@@ -175,6 +175,16 @@ Quaternion Quaternion::FromMatrix(const MATRIX& matrix)
 	return result.Normalized();
 }
 
+float Quaternion::Angle(const Quaternion& a, const Quaternion& b)
+{
+	const float dot = std::clamp(
+		fabsf(Dot(a.Normalized(), b.Normalized())),
+		0.0f,
+		1.0f
+	);
+
+	return 2.0f * acosf(dot);
+}
 
 Quaternion Quaternion::operator*(const Quaternion& value) const
 {

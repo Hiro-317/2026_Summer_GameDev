@@ -20,7 +20,7 @@ public:
 	};
 
 	// コンストラクタ
-	AnimationController(int modelId);
+	AnimationController(const int& modelId);
 
 	// デストラクタ
 	~AnimationController(void);
@@ -56,7 +56,7 @@ public:
 
 private:
 	// アニメーションするモデルのハンドルID
-	int modelId;
+	const int& modelId;
 
 	// 種類別のアニメーションデータ
 	std::map<int, Animation> animations;

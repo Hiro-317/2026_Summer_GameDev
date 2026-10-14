@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../UI_Base.h"
-#include "../../../Common/Vector2.h"
+#include "../../../Common/Vector2I.h"
 
 class ToPlayerTargetUI : public UI_Base
 {

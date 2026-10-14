@@ -19,12 +19,7 @@ void ClearCharaPreviewBase::AnimationControllerCreate(void)
 	if (anime == nullptr) { anime = new AnimationController(trans.model); }
 }
 
-void ClearCharaPreviewBase::Load(void)
-{
-	CharacterLoad();
-}
-
-void ClearCharaPreviewBase::SubInit(void)
+void ClearCharaPreviewBase::BaseInit(void)
 {
 #pragma region 基底クラスにある機能の挙動設定
 	// 動的オブジェクトとしての挙動を無効にする
@@ -33,19 +28,17 @@ void ClearCharaPreviewBase::SubInit(void)
 	SetPushFlg(false);
 #pragma endregion
 
-	CharacterInit();
-
 	// アニメーション再生
 	if (anime) { anime->Play(playAnimeType); }
 }
 
-void ClearCharaPreviewBase::Update(void)
+void ClearCharaPreviewBase::BaseUpdate(void)
 {
 	// アニメーション更新
 	if (anime) { anime->Update(); }
 }
 
-void ClearCharaPreviewBase::SubRelease(void)
+void ClearCharaPreviewBase::BaseRelease(void)
 {
 	// アニメーションコントローラーを削除
 	if (anime) {
@@ -55,18 +48,18 @@ void ClearCharaPreviewBase::SubRelease(void)
 	}
 }
 
-void ClearCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType)
+void ClearCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType)
 {
 	AnimationControllerCreate();
 	for (int index = 0; index < inFbxMaxIndex; index++) {
-		anime->AddInFbx(index, speed, index);
+		anime->AddInFbx(index, speed, loop, index);
 	}
 	this->playAnimeType = playAnimeType;
 }
 
-void ClearCharaPreviewBase::AddAnimation(const char* filePath, float speed, int index)
+void ClearCharaPreviewBase::AddAnimation(int index, float speed, bool loop, const char* filePath)
 {
 	AnimationControllerCreate();
-	anime->Add(index, speed, filePath);
+	anime->Add(index, speed, loop, filePath);
 	playAnimeType = index;
 }

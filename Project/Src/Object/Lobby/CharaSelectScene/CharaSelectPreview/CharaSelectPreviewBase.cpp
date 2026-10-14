@@ -67,7 +67,7 @@ void CharaSelectPreviewBase::AnimationControllerCreate(void)
 	if (anime == nullptr) { anime = new AnimationController(trans.model); }
 }
 
-void CharaSelectPreviewBase::SubInit(void)
+void CharaSelectPreviewBase::BaseInit(void)
 {
 #pragma region Šî’êƒNƒ‰ƒX‚É‚ ‚é‹@”\‚Ì‹““®Ý’è
 	// “®“IƒIƒuƒWƒFƒNƒg‚Æ‚µ‚Ä‚Ì‹““®‚ð–³Œø‚É‚·‚é
@@ -122,7 +122,7 @@ void CharaSelectPreviewBase::Draw(void)
 	// ```````````````ŠeŽíƒXƒLƒ‹
 }
 
-void CharaSelectPreviewBase::SubRelease(void)
+void CharaSelectPreviewBase::BaseRelease(void)
 {
 	if (camera)	{
 		camera->Release();
@@ -143,18 +143,18 @@ void CharaSelectPreviewBase::SubRelease(void)
 	DeleteGraph(modelPreviewScreen);
 }
 
-void CharaSelectPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType)
+void CharaSelectPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType)
 {
 	AnimationControllerCreate();
 	for (int index = 0; index < inFbxMaxIndex; index++) {
-		anime->AddInFbx(index, speed, index);
+		anime->AddInFbx(index, speed, loop, index);
 	}
 	this->playAnimeType = playAnimeType;
 }
 
-void CharaSelectPreviewBase::AddAnimation(const char* filePath, float speed, int index)
+void CharaSelectPreviewBase::AddAnimation(int index, float speed, bool loop, const char* filePath)
 {
 	AnimationControllerCreate();
-	anime->Add(index, speed, filePath);
+	anime->Add(index, speed, loop, filePath);
 	playAnimeType = index;
 }

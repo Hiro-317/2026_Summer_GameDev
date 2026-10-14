@@ -1,22 +1,15 @@
 #pragma once
 
-#include "../../../Character/CharacterStateBase.h"
+#include "../../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Vector3;
+struct Quaternion;
 
 class BossSelectSkyShipMoveState : public CharacterStateBase
 {
 public:
 
-	BossSelectSkyShipMoveState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-
-		float MOVE_SPEED,
-
-		Vector3& accelSum,
-		Vector3& angle
-	);
+	BossSelectSkyShipMoveState(std::function<void(const Vector3&)> moveAccel);
 
 	~BossSelectSkyShipMoveState()override = default;
 
@@ -30,12 +23,6 @@ public:
 	void Exit(void)override;
 
 private:
-	// 移動速度
-	const float MOVE_SPEED;
-
-	// 移動量参照
-	Vector3& accelSum;
-
-	// 角度の参照
-	Vector3& angle;
+	// 移動関数のポインタ
+	const std::function<void(const Vector3&)> moveAccel;
 };

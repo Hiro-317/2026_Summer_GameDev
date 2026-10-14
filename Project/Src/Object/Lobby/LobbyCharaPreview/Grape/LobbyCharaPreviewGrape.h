@@ -17,7 +17,7 @@ private:
 		// モデルのスケール
 		trans.scale = 2.5f;
 
-		AddInFbxAnimation(11, 1.0f, 0);
+		AddInFbxAnimation(11, 1.0f, true, 0);
 
 		// 操作者を示すイメージの高さ
 		operatorImagePos = 600.0f;

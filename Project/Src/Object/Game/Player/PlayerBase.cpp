@@ -11,30 +11,8 @@
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
 
-
 PlayerBase::PlayerBase(
-
-	short HP_MAX,
-	short ATTACK_POWER,
-	short DEFENSE_POWER,
-	short SPEED_POWER,
-
-	std::string modelPath
-) :
-	CharacterBase(
-		HP_MAX,
-		ATTACK_POWER,
-		DEFENSE_POWER,
-		SPEED_POWER),
-	otherPlayerTrans()
-{
-	trans.LoadModel(("Character/" + modelPath).c_str());
-	this->operatorSenderId = operatorSenderId;
-	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
-}
-
-PlayerBase::PlayerBase(
-	MSG_SENDER_ID operatorSenderId,
+	MSG_SENDER_ID controlSenderId,
 
 	const std::string fileName,
 	const std::string hpParameterID,
@@ -58,11 +36,10 @@ PlayerBase::PlayerBase(
 {
 	trans.LoadModel(("Character/" + modelPath).c_str());
 
-	this->operatorSenderId = operatorSenderId;
-	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
+	this->controlSenderId = controlSenderId;
 }
 
-void PlayerBase::CharacterLoad(void)
+void PlayerBase::Load(void)
 {
 	PlayerLoad();
 
@@ -87,13 +64,16 @@ void PlayerBase::CharacterLoad(void)
 	// モデルを読み込む
 
 	// モデルのスケールを設定
-	trans.scale = MODEL_SCALE;
+	trans.scale = GetParameterToVector3("Model", "Scale");
 
 	// モデルの中心点のズレ
-	trans.centerDiff = MODEL_CENTER_DIFF;
+	trans.centerDiff = GetParameterToVector3("Model", "CenterDiff") * trans.scale;
 
 	// 角度のズレ(ローカル回転)
-	trans.localAngle = MODEL_LOCAL_ROT;
+	trans.localRotation =
+		Quaternion::FromEulerXZY(
+			Deg2Rad(GetParameterToVector3("Model", "LocalRot"))
+		);
 
 #pragma endregion
 
@@ -109,153 +89,76 @@ void PlayerBase::CharacterLoad(void)
 	SetPushFlg(true);
 
 	// 押し出す力の大きさを設定する
-	SetPushWeight(COLLISION_PUSH_WEIGHT);
-
-	// 無敵中に赤点滅を表示しない
-	SetInviEffectFlg(false);
+	SetPushWeight((unsigned char)GetParameterToInt("Collider", "CollisionPushWeight"));
 
 #pragma endregion
 
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	AddCollider(new LineCollider(COLLIDER_TAG::PLAYER, LINE_COLLIDER_START_POS, LINE_COLLIDER_END_POS));
+	AddCollider(new LineCollider(COLLIDER_TAG::PLAYER, Vector3(), -Vector3::Yonly(MODEL_SIZE.y * 0.5f)));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	AddCollider(
 		new CapsuleCollider(
 			COLLIDER_TAG::PLAYER,
-			CAPSULE_COLLIDER_START_POS, CAPSULE_COLLIDER_END_POS,
-			CAPSULE_COLLIDER_RADIUS
+			Vector3::Yonly(
+				(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate") -
+				(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
+			),
+			-Vector3::Yonly(
+				(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate") -
+				(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate") -
+				GetParameter("Collider", "ClimbOverHeight")
+			),
+			(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
 		)
 	);
 
 #pragma endregion
-
-	// まとめて読み込み処理
-	for (ActorBase*& c : subObjArray) { c->Load(); }
 }
 
-void PlayerBase::CharacterInit(void)
+void PlayerBase::SubInit(void)
 {
 	// 位置を初期位置にする
-	trans.pos = INIT_POS + Vector3::Xonly(150.0f) * (float)operatorSenderId;
+	trans.pos = GetParameterToVector3("Init", "Pos") + Vector3::Xonly(150.0f) * (float)controlSenderId;
 
 	// 初期状態を移動状態にする
-	state = (int)STATE::MOVE;
-
-	for (ActorBase*& c : subObjArray) { c->Init(); }
+	ChangeState(STATE::MOVE);
 
 	TargetPlayerNext();
 }
 
-void PlayerBase::CharacterUpdate(void)
+void PlayerBase::SubUpdate(void)
 {
-	// 自身が死亡していたら更新処理は行わない
-	if (GetIsDeath()) { return; }
-
 	interestPos = trans.pos + INTEREST_POS;
 
-	// 下位クラスの更新処理
-	for (ActorBase*& c : subObjArray) { c->Update(); }
-
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_TO_PLAYER_TARGET).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerToPlayerTarget).down) {
 		TargetPlayerNext();
 	}
 
 	// HPがゼロ以下になったら死亡状態に遷移
-	if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
-		ChangeState((int)STATE::DEATH);
-	}
-
-#ifdef _DEBUG		// クールタイム用
-	//if (CheckHitKey(KEY_INPUT_0)) {
-	//	short damage = 10;
-	//	characterStats.hp -= damage;
-	//	// プレイヤーが受けるダメージ値を、クライアント側に送信
-	//	Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
-	//}
-#endif // _DEBUG
-}
-
-void PlayerBase::CharacterRemoteUpdate(void)
-{
-	for (ActorBase*& c : subObjArray) { c->Update(); }
-}
-
-void PlayerBase::CharacterDraw(void)
-{
-	for (ActorBase*& c : subObjArray) { c->Draw(); }
-}
-
-void PlayerBase::CharacterAlphaDraw(void)
-{
-	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
-}
-
-void PlayerBase::CharacterUiDraw(void)
-{
-	// デバッグ用描画
-	if (App::GetIns().IsDrawDebug()) {
-		int number = 0;
-		if (isOwnOperator) {
-			number = 0;
-		}
-		else {
-			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-				if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
-				number++;
-				if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
-			}
-		}
-
-		// 1行ずつ描画するためのラムダ式（デバッグ用）
-		int yPos = 150; int xPos[4] = { 0, 400, 600, 900 };  const int FONT_SIZE = 20;
-
-		auto debugDrwStr = [&](std::string str)->void {
-			DrawStringToHandle(xPos[number], yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
-			yPos += FONT_SIZE;
-			};
-
-		// 加速度をデバッグ表示
-		//debugDrwStr("プレイヤー～～～～～～");
-		//debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
-		//debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
-		//debugDrwStr("スタミナ:" + std::to_string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).GetDashStamina()));
-		//debugDrwStr("息切れ:" + std::string(dynamic_cast<PlayerMoveState&>(GetStateIns((int)STATE::MOVE)).IsTired() ? "true" : "false"));
-		//debugDrwStr("HP：" + std::to_string(characterStats.hp));
-		//debugDrwStr("～～～～～～('#；ω;`)");
+	if (characterStats.hp <= 0 && GetState() != (int)STATE::DEATH) {
+		ChangeState(STATE::DEATH);
 	}
 }
 
-void PlayerBase::CharacterRelease(void)
-{
-	for (ActorBase*& c : subObjArray) {
-		if (c) {
-			c->Release();
-			delete c;
-			c = nullptr;
-		}
-	}
-	subObjArray.clear();
-}
-
-void PlayerBase::ChangeState(int state)
+void PlayerBase::ChangeState(int nextState)
 {
 	// 状態遷移
-	CharacterBase::ChangeState(state);
+	CharacterBase::ChangeState(nextState);
 
 	// 遷移するステート(状態)を送信
-	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerState(state)); }
+	if (IsOwnControl()) { Net::GetIns().Send(MsgDataPlayerState(nextState)); }
 }
 
-void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
 	// 判定そのものはホストがすべて請け負う
 	if (!Net::GetIns().IsHost()) { return; }
 
 	// 死亡状態の場合何もしない
-	if (state == (int)STATE::DEATH) { return; }
+	if (GetState() == (int)STATE::DEATH) { return; }
 
 	// 衝突物のコライダータグを取得
 	COLLIDER_TAG otherColliderTag = other.GetTag();
@@ -269,7 +172,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		short heal = other.GetSkillStats().Power();
 
 		// 回復をクライアントへ送信
-		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerHeal(other.GetSkillStats().Power()), controlSenderId);
 
 		// 回復させる
 		characterStats.HpHeal(heal);
@@ -284,7 +187,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		const ModifierData& modifier = other.GetSkillStats().ModifierPower();
 
 		// バフをクライアントへ送信
-		Net::GetIns().Send(MsgDataPlayerModifier(modifier), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerModifier(modifier), controlSenderId);
 		
 		// バフをかける
 		characterStats.AddModifier(modifier);
@@ -312,7 +215,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		const short damage = CalculateDamage(other.GetSkillStats().Power(), characterStats.defensePower.Value());
 
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), controlSenderId);
 
 		// ダメージ値分HPを減らす
 		characterStats.hp -= damage;
@@ -324,14 +227,15 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 #pragma endregion
 }
 
-void PlayerBase::AnimePlay(int type, bool loop)
+void PlayerBase::AnimePlay(int type, signed char loop)
 {
 	// 自身の操作者プレイヤーの更新により、呼び出された再生の場合、
 	// 自身のPC以外のすべてに再生したことを送信する
-	if (isOwnOperator) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
+	if (IsOwnControl()) { Net::GetIns().Send(MsgDataPlayerAnimeType(type, loop)); }
 
 	CharacterBase::AnimePlay(type, loop);
 }
+
 void PlayerBase::TargetPlayerNext(void)
 {
 	// ターゲット選択処理
@@ -354,16 +258,16 @@ void PlayerBase::TargetPlayerNext(void)
 	targetIconPos = HP_UI_POS[targetPlayerIndex] + ICON_LOCAL_POS;
 
 	if (!Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataPlayerToPlayerTarget((unsigned char)targetPlayerIndex), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerToPlayerTarget((unsigned char)targetPlayerIndex), controlSenderId);
 	}
 }
 
 void PlayerBase::ReceptionUpdate(void)
 {
 	// 座標・角度の同期
-	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(operatorSenderId)) {
+	while (MsgDataPlayerTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerTrans>(controlSenderId)) {
 		// 自分のキャラ（操作対象）の場合
-		if (isOwnOperator) {
+		if (IsOwnControl()) {
 			// ホストから送られた座標と今の自分の座標の距離を測る
 			float diff = (trans.pos - dataPtr->pos).Length();
 
@@ -374,19 +278,19 @@ void PlayerBase::ReceptionUpdate(void)
 			}
 
 			// ホストから送られた角度と今の自分の角度のずれを測る
-			diff = (trans.angle - dataPtr->angle).Length();
+			diff = Quaternion::Angle(trans.rotation, dataPtr->rotation);
 
 			// 誤差が小さいなら無視
 			if (diff > 0.5f) {
 				// 誤差が大きい場合、少しずつホストから送られた角度を寄せる（補間）
-				trans.angle = trans.angle * 0.9f + dataPtr->angle * 0.1f;
+				trans.rotation = Quaternion::Slerp(trans.rotation, dataPtr->rotation, 0.1f);
 			}
 
 		}
 		// 他人のキャラなら、そのまま同期
 		else { 
-			trans.pos = dataPtr->pos; 
-			trans.angle = dataPtr->angle;
+			trans.pos = dataPtr->pos;
+			trans.rotation = dataPtr->rotation;
 		}
 
 
@@ -394,41 +298,41 @@ void PlayerBase::ReceptionUpdate(void)
 	}
 
 	// アニメーション
-	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(operatorSenderId, true)) {
+	while (MsgDataPlayerAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerAnimeType>(controlSenderId, true)) {
 		AnimePlay(dataPtr->animeType, dataPtr->loop);
 		delete dataPtr;
 	}
 
 	// 攻撃を受けた時のダメージ
-	while (MsgDataPlayerDamage* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerDamage>(operatorSenderId)) {
+	while (MsgDataPlayerDamage* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerDamage>(controlSenderId)) {
 		characterStats.hp -= dataPtr->damage;
-		ChangeState((int)STATE::DAMAGE);
+		ChangeState(STATE::DAMAGE);
 
 		delete dataPtr;
 	}
 
 	// HP
-	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(operatorSenderId)) {
+	while (MsgDataPlayerHp* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHp>(controlSenderId)) {
 		characterStats.hp = dataPtr->hp;
 		delete dataPtr;
 	}
 
 	// 回復
-	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(operatorSenderId)) {
+	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(controlSenderId)) {
 		characterStats.HpHeal(dataPtr->heal);
 		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0.0f, &trans);
 		delete dataPtr;
 	}
 
 	// バフ
-	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(operatorSenderId)) {
+	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(controlSenderId)) {
 		characterStats.AddModifier(dataPtr->modifier);
 		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0.0f, &trans);
 		delete dataPtr;
 	}
 
 	// 味方ターゲット変更
-	while (MsgDataPlayerToPlayerTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerToPlayerTarget>(operatorSenderId)) {
+	while (MsgDataPlayerToPlayerTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerToPlayerTarget>(controlSenderId)) {
 
 		targetPlayerIndex = dataPtr->targetIndex;
 
@@ -445,11 +349,11 @@ void PlayerBase::ReceptionUpdate(void)
 	}
 
 	// 回避した時の「ミス！」表示
-	while (MsgDataPlayerMissNotice* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(operatorSenderId)) 
+	while (MsgDataPlayerMissNotice* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(controlSenderId)) 
 	{
 		if (!Net::GetIns().IsHost()) {
 			if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
-				SubUiSerch<HitUI>()->MissSetting();
+				//SubUiSerch<HitUI>()->MissSetting();
 			}
 		}
 		
@@ -459,8 +363,8 @@ void PlayerBase::ReceptionUpdate(void)
 
 void PlayerBase::SendUpdate(void)
 {
-	if (Net::GetIns().IsHost() || isOwnOperator) {
+	if (Net::GetIns().IsHost() || IsOwnControl()) {
 		// 自身の座標と角度を
-		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.angle), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.rotation), controlSenderId);
 	} 
 }

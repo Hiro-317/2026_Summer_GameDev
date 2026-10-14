@@ -21,7 +21,7 @@ private:
 		trans.centerDiff = Vector3(0, 60, 0) * trans.scale;
 
 		// アニメーションを登録する
-		AddInFbxAnimation(10, 1.0f, 0);
+		AddInFbxAnimation(10, 1.0f, true, 0);
 
 		// 操作者を示すイメージの高さ
 		operatorImagePos = 650.0f;

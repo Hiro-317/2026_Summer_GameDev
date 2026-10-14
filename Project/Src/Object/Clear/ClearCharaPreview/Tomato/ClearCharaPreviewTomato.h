@@ -8,9 +8,7 @@ public:
 	ClearCharaPreviewTomato(const Vector3& pos, unsigned char operatorNumber) : ClearCharaPreviewBase(pos, operatorNumber) {}
 	~ClearCharaPreviewTomato()override = default;;
 
-private:
-
-	void CharacterLoad(void)override {
+	void Load(void)override {
 		// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
 		trans.LoadModel("Character/Tomato/Tomato");
 

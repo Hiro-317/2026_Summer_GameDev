@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../../Common/ActorBase/ActorBase.h"
+
 #include "../../../Manager/Net/NetWorkDefine.h"
 
-#include "../../ActorBase.h"
-
-#include "../../CharaTypeDefine.h"
+#include "../../Common/CharaTypeDefine.h"
 
 class CharaSelectPreviewBase;
 
@@ -18,7 +18,6 @@ public:
 	void Init(void)override;
 	void Update(void)override;
 	void Draw(void)override;
-	void AlphaDraw(void)override {}
 	void Release(void)override;
 
 	void ChangeCharacter(CHARA_TYPE select);

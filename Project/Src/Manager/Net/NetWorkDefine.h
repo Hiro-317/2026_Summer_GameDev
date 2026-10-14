@@ -3,12 +3,13 @@
 #include "../../pch.h"
 
 #include "../../Common/Vector3.h"
+#include "../../Common/Quaternion.h"
 
-#include "../Input/KeyManager.h"
+#include "../Input/InputManager.h"
 
 #include "SenderID_Define.h"
 
-#include "../../Object/Character/ModifierDefine.h"
+#include "../../Object/Common/CharacterBase/ModifierDefine.h"
 
 // データタイプ（<> <- 送信者）
 enum class MSG_DATA_TYPE
@@ -531,18 +532,18 @@ struct MsgDataPlayerTrans
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
     Vector3 pos;
-    Vector3 angle;
+    Quaternion rotation;
 
-    MsgDataPlayerTrans(const Vector3& pos, const Vector3& angle) :
+    MsgDataPlayerTrans(const Vector3& pos, const Quaternion& rotation) :
         header(DATA_TYPE),
         pos(pos),
-        angle(angle)
+        rotation(rotation)
     {
     }
     MsgDataPlayerTrans(void) :
         header(DATA_TYPE),
         pos(),
-        angle()
+        rotation()
     {
     }
 };
@@ -559,9 +560,9 @@ struct MsgDataPlayerAnimeType
     MsgDataHeader header;
 
     int animeType;
-    bool loop;
+    signed char loop;
 
-    MsgDataPlayerAnimeType(int animeType, bool loop) :
+    MsgDataPlayerAnimeType(int animeType, signed char loop) :
         header(DATA_TYPE),
         animeType(animeType),
         loop(loop)
@@ -587,9 +588,9 @@ struct MsgDataPlayerInput
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
     KEY_TYPE type;
-    Key::KEY_INFO key;
+    Input::KEY_INFO key;
 
-    MsgDataPlayerInput(KEY_TYPE type, const Key::KEY_INFO& key) :
+    MsgDataPlayerInput(KEY_TYPE type, const Input::KEY_INFO& key) :
         header(DATA_TYPE),
         type(type),
         key(key)

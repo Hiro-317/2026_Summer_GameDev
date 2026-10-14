@@ -2,7 +2,7 @@
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../CharacterBase.h"
+#include "../../Common/CharacterBase/CharacterBase.h"
 
 #include "CommonPlayerState/TripleAttack/PlayerTripleAttackStDefine.h"
 
@@ -11,15 +11,6 @@
 class PlayerBase : public CharacterBase
 {
 public:
-	PlayerBase(
-
-		short HP_MAX,
-		short ATTACK_POWER,
-		short DEFENSE_POWER,
-		short SPEED_POWER,
-
-		std::string modelPath
-	);
 
 	/// <summary>
 	/// ƒvƒŒƒCƒ„[ƒx[ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -48,35 +39,19 @@ public:
 
 	~PlayerBase()override = default;
 
-
-	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	std::vector<ColliderBase*> GetCollider(void)const override {
-		std::vector<ColliderBase*> ret = {};
-		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
-
-		// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚Ì•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ActorBase* const& subObj : subObjArray) {
-			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
-		}
-		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
-		return ret;
-	}
+	void Load(void)override;
 
 	// ƒ{ƒX‚ÌÀ•Wæ“¾
 	void SetBossPos(const Vector3* bossPos) { this->bossPos = bossPos; }
 
-	// ƒ[ƒh
-	virtual void PlayerLoad(void) = 0;
 
 	const Vector3& GetInterestPos(void) const { return INTEREST_POS; }
-	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
 
 	// ©gˆÈŠO‚ÌƒvƒŒƒCƒ„[À•W‚ğæ“¾
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
 	// “–‚½‚è”»’èˆ—
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
@@ -84,15 +59,14 @@ public:
 private:
 
 	// ƒƒCƒ“ˆ—``````````````
-	void CharacterLoad(void)override;
-	void CharacterInit(void)override;
-	void CharacterUpdate(void)override;
-	void CharacterRemoteUpdate(void)override;
-	void CharacterDraw(void)override;
-	void CharacterAlphaDraw(void)override;
-	void CharacterUiDraw(void)override;
-	void CharacterRelease(void)override;
+	void SubInit(void)override;
+	void SubUpdate(void)override;
+	void SubDraw(void)override;
+	void SubRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
+	
+	// ŒÂ•Êƒ[ƒh
+	virtual void PlayerLoad(void) = 0;
 
 protected:
 
@@ -101,16 +75,7 @@ protected:
 	// ƒ‚ƒfƒ‹``````````````````````````````
 
 	// ƒXƒP[ƒ‹
-	const Vector3 MODEL_SCALE = GetParameterToVector3("Model", "Scale");
-
-	// ƒTƒCƒY
-	const Vector3 MODEL_SIZE = GetParameterToVector3("Model", "Size") * MODEL_SCALE;
-
-	// ’†S“_‚ÌƒYƒŒ
-	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("Model", "CenterDiff") * MODEL_SCALE;
-
-	// Šp“x‚ÌƒYƒŒ
-	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("Model", "LocalRot") * (DX_PI_F / 180.0f);
+	const Vector3 MODEL_SIZE = GetParameterToVector3("Model", "Size") * GetParameterToVector3("Model", "Scale");
 
 	// `````````````````````````````````
 
@@ -151,9 +116,6 @@ protected:
 
 
 	// •Ï”‰Šú‰»Œn``````````````````````````
-
-	// ‰ŠúÀ•W
-	const Vector3 INIT_POS = GetParameterToVector3("Init", "Pos");
 
 	// ’‹“_‚Ì‘Š‘ÎÀ•W
 	const Vector3 INTEREST_POS = GetParameterToVector3("Init", "InterestPos");
@@ -205,20 +167,6 @@ protected:
 
 		MAX
 	};
-
-	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ
-	std::vector<ActorBase*> subObjArray;
-	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ‚Ì’†‚©‚ç“Á’è‚ÌƒIƒuƒWƒFƒNƒg‚ğ’T‚·
-	template<typename SubClass = ActorBase>
-	SubClass* SubObjSerch(unsigned char index = 0) {
-		for (ActorBase* obj : subObjArray) {
-			if (dynamic_cast<SubClass*>(obj)) {
-				if (index > 0) { index--; continue; }
-				return dynamic_cast<SubClass*>(obj);
-			}
-		}
-		return nullptr;
-	}
 
 	// UI@````````````````````````````````
 	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 600, Application::SCREEN_SIZE_Y_HALF + 300);
@@ -293,16 +241,11 @@ protected:
 	}
 
 	// ƒXƒe[ƒg‘JˆÚŠÖ”
-	void ChangeState(int state)override;
+	void ChangeState(int nextState)override;
+	using CharacterBase::ChangeState;
 
 	// ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒvƒŒƒCŠÖ”
-	void AnimePlay(int type, bool loop = true)override;
-
-	void PlayerDeathSetting(void) { 
-		SetJudge(false);
-		SetIsDraw(false); 
-		SetIsDeath(true);
-	}
+	void AnimePlay(int type, signed char loop = -1)override;
 
 #pragma endregion
 };
