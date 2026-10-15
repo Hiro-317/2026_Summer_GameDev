@@ -1,8 +1,8 @@
 #include "PlayerMoveState.h"
 
-#include "../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../Manager/Input/InputManager.h"
 #include "../../../../../Manager/Camera/CurrentCamera.h"
-#include "../../../../Character/CharacterStatsDefine.h"
+#include "../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
 PlayerMoveState::PlayerMoveState(
 	const std::function<void(void)>& ownChangeState,
@@ -120,4 +120,13 @@ void PlayerMoveState::AlwaysUpdate(void)
 			isTired = false;
 		}
 	}
+}
+
+float PlayerMoveState::MOVE_SPEED(bool isDash)const 
+{
+	return (playerStats.speedPower.Value() * 0.5f) * (isDash ? DASH_SPEED_RATE : 1.0f);
+}
+float PlayerMoveState::MOVE_SPEED_MAX(bool isDash)const 
+{
+	return playerStats.speedPower.Value() * (isDash ? DASH_SPEED_RATE : 1.0f);
 }

@@ -2,7 +2,9 @@
 
 #include "../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "../../../../../Common/Vector3.h"
+struct Vector3;
+struct Quaternion;
+struct CharacterStats;
 
 class PlayerMoveState : public CharacterStateBase
 {
@@ -21,11 +23,8 @@ public:
 	/// <param name="PlayWalkAnime">歩きアニメーションの再生関数のポインタ</param>
 	/// <param name="PlayRunAnime">走りアニメーションの再生関数のポインタ</param>
 	PlayerMoveState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats,
-		const std::function<void(void)>& PlayIdleAnime,
+		Vector3& accelSum, float& ACCEL_MAX, Quaternion& angle, const CharacterStats& playerStats,
 		const std::function<void(void)>& PlayWalkAnime,
 		const std::function<void(void)>& PlayRunAnime
 	);
@@ -54,14 +53,10 @@ private:
 
 #pragma region 定数
 
-	const float MOVE_SPEED(bool isDash)const {
-		return (playerStats.speedPower.Value() * 0.5f) * (isDash ? DASH_SPEED_RATE : 1.0f);
-	}
+	float MOVE_SPEED(bool isDash)const;
 
 	// 最大移動量
-	const float MOVE_SPEED_MAX(bool isDash) const {
-		return playerStats.speedPower.Value() * (isDash ? DASH_SPEED_RATE : 1.0f);
-	}
+	float MOVE_SPEED_MAX(bool isDash) const;
 
 	// ダッシュの移動量倍率
 	const float DASH_SPEED_RATE;
