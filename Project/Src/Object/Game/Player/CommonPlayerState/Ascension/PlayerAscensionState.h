@@ -1,15 +1,11 @@
 #pragma once
-#include "../../../CharacterStateBase.h"
+#include "../../../../Common/CharacterBase/CharacterStateBase.h"
 
 class PlayerAscensionState : public CharacterStateBase
 {
 public:
 
-	PlayerAscensionState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		const std::function<void(void)> DefaultChangeState
-	);
+	PlayerAscensionState(const std::function<void(void)> DefaultChangeState);
 
 	~PlayerAscensionState()override = default;
 

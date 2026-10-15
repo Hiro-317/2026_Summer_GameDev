@@ -5,7 +5,7 @@
 
 #include "../../../../../Common/Vector3.h"
 
-#include "../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../Manager/Input/InputManager.h"
 
 #include "../../../../Common/Collider/ColliderBase.h"
 

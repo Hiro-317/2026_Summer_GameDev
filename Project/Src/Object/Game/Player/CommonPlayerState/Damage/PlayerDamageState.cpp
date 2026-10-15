@@ -1,14 +1,11 @@
 #include "PlayerDamageState.h"
 
 PlayerDamageState::PlayerDamageState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	const std::function<void(void)> PlayDamageAnime,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void()> InviStart,
 	const std::function<void()> DefaultChangeState
 ) :
-	CharacterStateBase(ownChangeState,isOwnState),
 	PlayDamageAnime(PlayDamageAnime),
 	IsAnimeEnd(IsAnimeEnd),
 	InviStart(InviStart),

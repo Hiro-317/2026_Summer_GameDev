@@ -1,26 +1,27 @@
 #pragma once
 
-#include "../../../CharacterStateBase.h"
+#include "../../../../Common/CharacterBase/CharacterStateBase.h"
 
 #include "../../../../../Common/Vector3.h"
+#include "../../../../../Common/Quaternion.h"
 
-#include "../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../Manager/Input/InputManager.h"
 
 class PlayerDodgeState : public CharacterStateBase
 {
 public:
 	PlayerDodgeState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		KEY_TYPE DODGE_KEY,
 		int COOL_TIME, float DODGE_MOVE_SPEED, 
 		float INVI_START_TIME, float INVI_END_TIME,
-		Vector3& pos, Vector3& angle,
-		const std::function<void(void)> PlayDodgeAnime,
-		const std::function<float(void)> GetAnimePlayRatio,
-		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(unsigned char)> SetInviCounter,
-		const std::function<void(void)> DefaultChangeState
+
+		const Quaternion& rotation,
+
+		bool& isInvincible,
+		
+		std::function<void(void)> PlayDodgeAnime,
+		std::function<float(void)> GetAnimePlayRatio,
+		std::function<void(void)> DefaultChangeState
 	);
 	~PlayerDodgeState()override = default;
 	void OwnStateConditionUpdate(void)override;
@@ -54,20 +55,21 @@ private:
 	// 座標の参照
 	Vector3& pos;
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
+
+	// 回避無敵判定
+	bool& isInvincible;
 
 	// 攻撃アニメーションの再生関数のポインタ
 	const std::function<void(void)> PlayDodgeAnime;
 	// アニメーションの再生割合を取得する関数のポインタ
 	const std::function<float(void)> GetAnimePlayRatio;
-	// アニメーションが終了したかのフラグを取得する関数のポインタ
-	const std::function<bool(void)> IsAnimeEnd;
 
 	// 攻撃終了後の状態遷移関数のポインタ
 	const std::function<void(void)> DefaultChangeState;
 
-	// 無敵カウンターをセットする関数のポインタ
-	const std::function<void(unsigned char)> SetInviCounter;
 #pragma endregion
 
+	// クールタイム計測
+	int coolTimeCounter;
 };

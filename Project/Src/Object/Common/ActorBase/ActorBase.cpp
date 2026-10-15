@@ -17,6 +17,8 @@
 
 #include "../DataLoad/ParameterLoad.h"
 
+#include "../CharacterBase/CharacterStatsDefine.h"
+
 ActorBase::ActorBase() :
 	trans(),
 	colliders(),
@@ -163,12 +165,10 @@ void ActorBase::Release(void)
 	}
 
 	// スキル情報の解放
-	for (SkillStats*& s : skillStats) {
-		if (!s) { continue; }
-		delete s;
-		s = nullptr;
+	if (skillStats != nullptr) {
+		delete skillStats;
+		skillStats = nullptr;
 	}
-	skillStats.clear();
 
 	// シェーダーの解放
 	ResetShader();

@@ -2,11 +2,11 @@
 
 #include <array>
 
-#include "../../../CharacterStateBase.h"
+#include "../../../../Common/CharacterBase/CharacterStateBase.h"
 
 #include "../../../../../Common/Vector3.h"
 
-#include "../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../Manager/Input/InputManager.h"
 
 #include "PlayerTripleAttackCollOperator.h"
 

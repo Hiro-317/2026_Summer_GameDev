@@ -1,16 +1,13 @@
 #include "PlayerDeathState.h"
 
 PlayerDeathState::PlayerDeathState(
-	const std::function<void(void)>& ownChangeState, 
-	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, Vector3& angle,
+	Vector3& pos, Quaternion& rotation,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> PlayDeathAnime,
 	const std::function<void(void)> PlayerDeathSetting,
 	const std::function<void(void)> DefaultChangeState
 ):
-	CharacterStateBase(ownChangeState,isOwnState),
-	pos(pos), angle(angle),
+	pos(pos), rotation(rotation),
 	IsAnimeEnd(IsAnimeEnd),
 	PlayDeathAnime(PlayDeathAnime),
 	PlayerDeathSetting(PlayerDeathSetting),

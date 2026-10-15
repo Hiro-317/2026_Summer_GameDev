@@ -1,16 +1,15 @@
 #pragma once
 
-#include "../../../CharacterStateBase.h"
+#include "../../../../Common/CharacterBase/CharacterStateBase.h"
 
 #include "../../../../../Common/Vector3.h"
+#include "../../../../../Common/Quaternion.h"
 
 class PlayerDeathState : public CharacterStateBase
 {
 public:
 	PlayerDeathState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle,
+		Vector3& pos, Quaternion& rotation,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> PlayDeathAnime,
 		const std::function<void(void)> PlayerDeathSetting,
@@ -31,7 +30,7 @@ private:
 	// 座標の参照
 	Vector3& pos;
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// アニメーションが終了したかのフラグを取得する関数のポインタ
 	const std::function<bool(void)> IsAnimeEnd;
