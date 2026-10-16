@@ -68,7 +68,6 @@ struct Quaternion
 
 #pragma endregion
 
-	static float Angle(const Quaternion& a, const Quaternion& b);
 
 #pragma region ‰‰Z
 
@@ -162,4 +161,10 @@ struct Quaternion
 	);
 
 #pragma endregion
+
+	/// <summary>
+	/// Y²‰ñ“]Šp“x‚ğæ“¾‚·‚é
+	/// </summary>
+	/// <returns>Y²‰ñ“]Šp“xiƒ‰ƒWƒAƒ“j</returns>
+	float GetYaw(void) const;
 };

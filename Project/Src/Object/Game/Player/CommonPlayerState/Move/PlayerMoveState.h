@@ -9,24 +9,28 @@ struct CharacterStats;
 class PlayerMoveState : public CharacterStateBase
 {
 public:
+	
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="DASH_SPEED_RATE">ダッシュの移動量倍率</param>
-	/// <param name="DASH_STAMINA_MAX">ダッシュのスタミナの最大量（1フレームずつデクリメント）</param>
-	/// <param name="accelSum">移動量の参照</param>
-	/// <param name="ACCEL_MAX">横軸加速度の最大値の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="PlayIdleAnime">待機アニメーションの再生関数のポインタ</param>
-	/// <param name="PlayWalkAnime">歩きアニメーションの再生関数のポインタ</param>
-	/// <param name="PlayRunAnime">走りアニメーションの再生関数のポインタ</param>
+	/// <param name="stats"></param>
+	/// <param name="ACCEL_MAX"></param>
+	/// <param name="DASH_SPEED_RATE"></param>
+	/// <param name="DASH_STAMINA_MAX"></param>
+	/// <param name="moveAccel"></param>
+	/// <param name="ACCEL_MAX"></param>
+	/// <param name="playAnimeWalk"></param>
+	/// <param name="playAnimeRun"></param>
 	PlayerMoveState(
-		float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-		Vector3& accelSum, float& ACCEL_MAX, Quaternion& angle, const CharacterStats& playerStats,
-		const std::function<void(void)>& PlayWalkAnime,
-		const std::function<void(void)>& PlayRunAnime
+		const CharacterStats& stats,
+		float DASH_SPEED_RATE,
+		short DASH_STAMINA_MAX,
+
+		std::function<void(const Vector3&)> moveAccel,
+		float& ACCEL_MAX,
+
+		std::function<void(void)> playAnimeWalk,
+		std::function<void(void)> playAnimeRun
 	);
 
 	~PlayerMoveState()override = default;
@@ -45,7 +49,7 @@ public:
 	void AlwaysUpdate(void)override;
 
 	// スタミナを返す関数
-	const short& GetDashStamina(void)const { return dashStamina; }
+	short GetDashStamina(void)const { return dashStamina; }
 	// 息切れかどうかを返す関数
 	bool IsTired(void)const { return isTired; }
 
@@ -53,41 +57,29 @@ private:
 
 #pragma region 定数
 
-	float MOVE_SPEED(bool isDash)const;
-
-	// 最大移動量
-	float MOVE_SPEED_MAX(bool isDash) const;
-
 	// ダッシュの移動量倍率
 	const float DASH_SPEED_RATE;
 
 	// ダッシュのスタミナの最大量（1フレームずつデクリメント）
 	const short DASH_STAMINA_MAX;
 
-	// 加速度の減衰量
-	const float ATTENUATION;
-
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
 
-	// 移動量参照
-	Vector3& accelSum;
+	// ステータス
+	const CharacterStats& stats;
+
+	// 移動関数のポインタ
+	const std::function<void(const Vector3&)> moveAccel;
 
 	// 横軸加速度の最大値の参照
 	float& ACCEL_MAX;
 
-	// 角度の参照
-	Vector3& angle;
-
-	const CharacterStats& playerStats;
-
-	// 待機アニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayIdleAnime;
 	// 歩きアニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayWalkAnime;
+	const std::function<void(void)> playAnimeWalk;
 	// 走りアニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayRunAnime;
+	const std::function<void(void)> playAnimeRun;
 
 #pragma endregion
 
@@ -99,4 +91,13 @@ private:
 
 	// 息切れ(1度スタミナが0になったかどうか)
 	bool isTired;
+
+	// 移動方向入力取得
+	Vector3 InputVec(void)const;
+
+	// 現在
+	float MOVE_SPEED(bool isDash)const;
+
+	// 最大移動量
+	float MOVE_SPEED_MAX(bool isDash) const;
 };

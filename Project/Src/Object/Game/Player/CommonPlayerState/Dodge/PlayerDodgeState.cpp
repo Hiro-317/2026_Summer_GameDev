@@ -1,22 +1,43 @@
 #include "PlayerDodgeState.h"
 
+#include "../../../../../Common/Vector3.h"
+#include "../../../../../Common/Quaternion.h"
+
 PlayerDodgeState::PlayerDodgeState(
 	KEY_TYPE DODGE_KEY,
-	int COOL_TIME, float DODGE_MOVE_SPEED, 
-	float INVI_START_TIME, float INVI_END_TIME,
-	Vector3& pos, Quaternion& rotation, bool& isInvincible,
-	const std::function<void(void)> PlayDodgeAnime,
-	const std::function<float(void)> GetAnimePlayRatio,
-	const std::function<void(void)> DefaultChangeState
-) :
+	
+	int COOL_TIME,
+
+	float INVI_START_TIME,
+	float INVI_END_TIME,
+
+	const Quaternion& rotation,
+
+	std::function<void(const Vector3&)> moveAccel,
+	bool& isInvincible,
+	
+	std::function<void(void)> playDodgeAnime,
+	std::function<float(void)> getAnimePlayRatio,
+	std::function<void(void)> defaultChangeState
+):
 	DODGE_KEY(DODGE_KEY),
-	COOL_TIME(COOL_TIME), 
-	DODGE_MOVE_SPEED(DODGE_MOVE_SPEED),
-	INVI_START_TIME(INVI_START_TIME), INVI_END_TIME(INVI_END_TIME),
-	pos(pos), rotation(rotation), isInvincible(isInvincible),
-	PlayDodgeAnime(PlayDodgeAnime),
-	GetAnimePlayRatio(GetAnimePlayRatio),
-	DefaultChangeState(DefaultChangeState)
+
+	COOL_TIME(COOL_TIME),
+
+	INVI_START_TIME(INVI_START_TIME),
+	INVI_END_TIME(INVI_END_TIME),
+
+	rotation(rotation),
+
+	moveAccel(moveAccel),
+
+	isInvincible(isInvincible),
+
+	playDodgeAnime(playDodgeAnime),
+	getAnimePlayRatio(getAnimePlayRatio),
+	defaultChangeState(defaultChangeState),
+
+	coolTimeCounter()
 {
 }
 
@@ -26,15 +47,13 @@ void PlayerDodgeState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Input::GetIns().GetInfo(DODGE_KEY).down) {
-		OwnChangeState();
-	}
+	if (Input::GetIns().GetInfo(DODGE_KEY).down) { OwnChangeState(); }
 }
 
 void PlayerDodgeState::Enter(void)
 {
 	// アニメーションの再生
-	PlayDodgeAnime();
+	playDodgeAnime();
 
 	// 攻撃のクールタイムをセットする
 	coolTimeCounter = COOL_TIME;
@@ -43,13 +62,13 @@ void PlayerDodgeState::Enter(void)
 void PlayerDodgeState::Update(void)
 {
 	// 無敵判定終了前移動させる
-	if (GetAnimePlayRatio() <= INVI_END_TIME) {
+	if (getAnimePlayRatio() <= INVI_END_TIME) {
 		// 回避の移動処理
-		pos += Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized() * DODGE_MOVE_SPEED;
+		moveAccel(rotation.Rotate(Vector3::Zonly(1.0f)));
 	}
 
 	// アニメーションが終了していたら指定の通常状態に遷移させる
-	if (GetAnimePlayRatio() >= 1.0f) { DefaultChangeState(); }
+	if (getAnimePlayRatio() >= 1.0f) { defaultChangeState(); }
 }
 
 void PlayerDodgeState::Exit(void)
