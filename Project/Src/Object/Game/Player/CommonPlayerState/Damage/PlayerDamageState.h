@@ -13,10 +13,10 @@ public:
 	/// <param name="IsAnimeEnd">アニメーションが終了したかどうかを返す関数</param>
 	/// <param name="DefaultChangeState">次の状態に遷移する関数</param>
 	PlayerDamageState(
-		const std::function<void(void)> PlayDamageAnime,
-		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(void)> InviStart,
-		const std::function<void(void)> DefaultChangeState
+		std::function<void(void)> playDamageAnime,
+		std::function<bool(void)> isAnimeEnd,
+		std::function<void(void)> inviStart,
+		std::function<void(void)> defaultChangeState
 	);
 
 	// デストラクタ
@@ -34,15 +34,15 @@ private:
 
 #pragma region 関数ポインタ
 	// アニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayDamageAnime;
+	const std::function<void(void)> playDamageAnime;
 	// アニメーションが終了したかのフラグを取得する関数のポインタ
-	const std::function<bool(void)> IsAnimeEnd;
+	const std::function<bool(void)> isAnimeEnd;
 
 	// 無敵時間のセット関数
-	const std::function<void(void)> InviStart;
+	const std::function<void(void)> inviStart;
 
 	// ダメージ状態終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
 #pragma endregion
 
 };

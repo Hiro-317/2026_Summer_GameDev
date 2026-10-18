@@ -15,7 +15,7 @@ public:
 	/// <summary>
 	/// プレイヤーベースのコンストラクタ
 	/// </summary>
-	/// <param name="operatorSenderId">誰が操作権を持つか</param>
+	/// <param name="controlSenderId">誰が操作権を持つか</param>
 	/// <param name="fileName">パラメーターのパス</param>
 	/// <param name="hpParameterID">HPパラメーターの名前</param>
 	/// <param name="attackPowerParameterID">攻撃力パラメーターの名前</param>
@@ -24,7 +24,7 @@ public:
 	/// <param name="parameterPath">外部からパラメーターを読み込むためのファイルパス</param>
 	/// <param name="modelPath">プレイヤーモデルのファイルパス</param>
 	PlayerBase(
-		MSG_SENDER_ID operatorSenderId,
+		MSG_SENDER_ID controlSenderId,
 
 		const std::string fileName,
 		const std::string hpParameterID,
@@ -131,10 +131,10 @@ protected:
 	const float MOVE_SPEED_MAX = GetParameter("Move","SpeedMax");
 
 	// ダッシュの移動量倍率
-	const float DASH_SPEED_RATE = GetParameter("Move", "DashSpeedRate");
+	const float DASH_SPEED_RATE = ;
 
 	// ダッシュのスタミナの最大量（1フレームずつデクリメント）
-	const short DASH_STAMINA_MAX = (short)GetParameterToInt("Move", "DashStaminaMax");
+	const short DASH_STAMINA_MAX = ;
 
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～移動状態
@@ -153,6 +153,8 @@ protected:
 	enum class STATE
 	{
 		NONE = -1,
+
+		IDLE,			// 待機状態
 
 		MOVE,			// 移動状態
 

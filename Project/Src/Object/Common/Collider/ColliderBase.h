@@ -14,6 +14,8 @@ struct Transform;
 
 #include "ColliderTagDefine.h"
 
+struct SkillStats;
+
 // 衝突結果構造体
 struct CollisionResult
 {
@@ -70,6 +72,9 @@ public:
 	// デバッグ描画
 	virtual void DrawDebug(unsigned int color = 0xffffff) = 0;
 
+	// 解放
+	virtual void Release(void);
+
 
 #pragma region 初期設定
 
@@ -105,20 +110,8 @@ public:
 	// コライダー回転を適用したベクトルを取得
 	Vector3 VTrans(const Vector3& v) const;
 
-	// モデル制御情報を直接取得
-	const Transform& GetTransform(void) const;
-
-	// 動的オブジェクトか否か
-	bool GetDynamicFlg(void) const;
-
 	// 当たり判定フラグ
 	bool GetJudgeFlg(void) const;
-
-	// 押し出しのフラグ
-	bool GetPushFlg(void) const;
-
-	// 押し出し時の重さ
-	unsigned char GetPushWeight(void) const;
 
 	// 当たり判定のタイプ
 	COLLIDER_TAG GetTag(void) const;
@@ -135,6 +128,9 @@ public:
 	// 自分が占有している範囲
 	virtual AABB GetAABB(void) const = 0;
 
+	// スキル構造体
+	SkillStats* GetSkillStats(void)const { return skillStats; }
+
 #pragma endregion
 
 
@@ -146,6 +142,9 @@ public:
 
 	// 当たり判定フラグセット
 	void SetJudgeFlg(bool flg);
+
+	// スキル構造体
+	void SetSkillStats(SkillStats* skill) { skillStats = skill; }
 
 #pragma endregion
 
@@ -175,6 +174,9 @@ private:
 
 	// 接地したときに呼び出す関数
 	std::function<void(COLLIDER_TAG, const ColliderBase&)> OnGrounded;
+
+	// スキル構造体
+	SkillStats* skillStats;
 
 protected:
 

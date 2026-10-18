@@ -164,12 +164,6 @@ void ActorBase::Release(void)
 		child = nullptr;
 	}
 
-	// スキル情報の解放
-	if (skillStats != nullptr) {
-		delete skillStats;
-		skillStats = nullptr;
-	}
-
 	// シェーダーの解放
 	ResetShader();
 
@@ -183,6 +177,7 @@ void ActorBase::Release(void)
 	// 当たり判定情報を解放
 	for (ColliderBase*& collider : colliders) {
 		if (!collider) { continue; }
+		collider->Release();
 		delete collider;
 		collider = nullptr;
 	}

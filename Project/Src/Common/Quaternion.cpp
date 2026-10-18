@@ -175,6 +175,28 @@ Quaternion Quaternion::FromMatrix(const MATRIX& matrix)
 	return result.Normalized();
 }
 
+float Quaternion::Angle(const Quaternion& a, const Quaternion& b)
+{
+	// ³‹K‰»
+	Quaternion q1 = a.Normalized();
+	Quaternion q2 = b.Normalized();
+
+	// “àÏ
+	float dot =
+		q1.x * q2.x +
+		q1.y * q2.y +
+		q1.z * q2.z +
+		q1.w * q2.w;
+
+	// q ‚Æ -q ‚Í“¯‚¶‰ñ“]‚ğ•\‚·‚½‚ßâ‘Î’l‚ğæ‚é
+	dot = fabsf(dot);
+
+	// •‚“®¬”“_Œë·‘Îô
+	dot = std::clamp(dot, 0.0f, 1.0f);
+
+	// Å’Z‰ñ“]Šp“x‚ğæ“¾
+	return 2.0f * acosf(dot);
+}
 
 Quaternion Quaternion::operator*(const Quaternion& value) const
 {

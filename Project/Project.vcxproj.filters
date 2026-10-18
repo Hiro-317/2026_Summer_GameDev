@@ -169,6 +169,8 @@
     <ClCompile Include="Src\Scene\Common\PostEffect\GrayScalePostEffect\GrayScalePostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\PostEffectBase.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotArea.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\Idle\PlayerIdleState.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\PlayerManager\PlayerFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -233,7 +235,6 @@
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierState.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
-    <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Grape\GrapePlayer.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.h" />
@@ -392,6 +393,7 @@
     <ClInclude Include="Src\Scene\Common\PostEffect\GrayScalePostEffect\GrayScalePostEffect.h" />
     <ClInclude Include="Src\Scene\Game\Pause\GamePause.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\BossSelectSpotArea.h" />
+    <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\Idle\PlayerIdleState.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

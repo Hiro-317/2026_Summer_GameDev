@@ -5,31 +5,32 @@
 
 #include "PlayerSingleModifierCollOperator.h"
 
-
 PlayerSingleModifierState::PlayerSingleModifierState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
+	KEY_TYPE HEAL_KEY,
+
+	int COOL_TIME,
+
+	float COLL_START_TIME,
 
 	PlayerSingleModifierCollOperator& collOperator,
 
-	float COLL_START_TIME, KEY_TYPE HEAL_KEY,
-	int COOL_TIME,
-	const std::function<void(void)> PlayHealAnime,
-	const std::function<float(void)> GetAnimePlayRatio,
-	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> DefaultChangeState
+	std::function<void(void)> playHealAnime,
+	std::function<float(void)> getAnimePlayRatio,
+	std::function<void(void)> defaultChangeState
 ) :
-	CharacterStateBase(ownChangeState, isOwnState),
+	HEAL_KEY(HEAL_KEY),
+
+	COOL_TIME(COOL_TIME),
+
+	COLL_START_TIME(COLL_START_TIME),
 
 	collOperator(collOperator),
-	COLL_START_TIME(COLL_START_TIME),
-	HEAL_KEY(HEAL_KEY),
-	COOL_TIME(COOL_TIME),
-	PlayHealAnime(PlayHealAnime),
-	GetAnimePlayRatio(GetAnimePlayRatio),
-	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState),
-	isModifierEnd(false)
+
+	playHealAnime(playHealAnime),
+	getAnimePlayRatio(getAnimePlayRatio),
+	defaultChangeState(defaultChangeState),
+
+	coolTimeCounter()
 {
 }
 
@@ -39,33 +40,36 @@ void PlayerSingleModifierState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
-	if (Key::GetIns().GetInfo(HEAL_KEY).down) { OwnChangeState(); }
+	if (Input::GetIns().GetInfo(HEAL_KEY).down) { OwnChangeState(); }
 }
 
 void PlayerSingleModifierState::Enter(void)
 {
+	// クールタイムをセット
 	coolTimeCounter = COOL_TIME;
+
+	// 判定管理のリセット
 	collOperator.CollOff();
 	collOperator.ResetIsHit();
-	isModifierEnd = false;
-	PlayHealAnime();
+
+	// アニメーション再生
+	playHealAnime();
 }
 
 void PlayerSingleModifierState::Update(void)
 {
-	if (!isModifierEnd && GetAnimePlayRatio() > COLL_START_TIME) {
-		collOperator.CollOn();
-		isModifierEnd = true;
-	}
+	if (getAnimePlayRatio() > COLL_START_TIME) {
 
-	if (IsAnimeEnd()) { DefaultChangeState(); }
+		collOperator.CollOn();
+
+		if (getAnimePlayRatio() >= 1.0f) { defaultChangeState(); }
+	}
 }
 
 void PlayerSingleModifierState::Exit(void)
 {
 	collOperator.CollOff();
 	collOperator.ResetIsHit();
-	isModifierEnd = false;
 }
 
 void PlayerSingleModifierState::AlwaysUpdate(void)

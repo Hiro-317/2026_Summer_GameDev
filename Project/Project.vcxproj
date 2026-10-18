@@ -229,6 +229,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\Death\PlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\Dodge\PlayerDodgeState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\Damage\PlayerDamageState.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\Idle\PlayerIdleState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.cpp" />
@@ -413,6 +414,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\Damage\PlayerDamageState.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\Death\PlayerDeathState.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\Dodge\PlayerDodgeState.h" />
+    <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\Idle\PlayerIdleState.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\OtherPlayerWatch\OtherPlayerWatchState.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\SimpleAttack\PlayerSimpleAttackState.h" />
@@ -420,7 +422,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\SingleModifier\PlayerSingleModifierState.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackState.h" />
-    <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Grape\GrapePlayer.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Grape\GrapeUniqueState\Bomb\GrapePlayerBombState.h" />

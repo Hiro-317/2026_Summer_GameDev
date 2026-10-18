@@ -10,10 +10,10 @@ class PlayerDeathState : public CharacterStateBase
 public:
 	PlayerDeathState(
 		Vector3& pos, Quaternion& rotation,
-		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(void)> PlayDeathAnime,
-		const std::function<void(void)> PlayerDeathSetting,
-		const std::function<void(void)> DefaultChangeState
+		std::function<bool(void)> isAnimeEnd,
+		std::function<void(void)> playDeathAnime,
+		std::function<void(void)> playerDeathSetting,
+		std::function<void(void)> defaultChangeState
 	);
 
 	~PlayerDeathState()override = default;
@@ -33,12 +33,12 @@ private:
 	Quaternion& rotation;
 
 	// アニメーションが終了したかのフラグを取得する関数のポインタ
-	const std::function<bool(void)> IsAnimeEnd;
+	const std::function<bool(void)> isAnimeEnd;
 	// 死亡アニメーション
-	const std::function<void(void)> PlayDeathAnime;
+	const std::function<void(void)> playDeathAnime;
 	// 死亡後の設定
-	const std::function<void(void)> PlayerDeathSetting;
+	const std::function<void(void)> playerDeathSetting;
 	// ダメージ状態終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
 };
 

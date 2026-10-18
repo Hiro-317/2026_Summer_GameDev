@@ -6,10 +6,17 @@
 #include "../../../../../Manager/Font/FontManager.h"
 
 #include "../../CommonPlayerState/Move/PlayerMoveState.h"
+
+#include "../../CommonPlayerState/TripleAttack/PlayerTripleAttackCollOperator.h"
 #include "../../CommonPlayerState/TripleAttack/PlayerTripleAttackState.h"
+
+#include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 #include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackState.h"
+
 #include "../../CommonPlayerState/Dodge/PlayerDodgeState.h"
+
 #include "../../CommonPlayerState/Damage/PlayerDamageState.h"
+
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
@@ -54,29 +61,49 @@ void OrangePlayer::PlayerLoad(void)
 #pragma region プレイヤーが抱える下位クラスを生成する
 
 	// 三弾攻撃の当たり判定オペレーターを生成する
-	subObjArray.emplace_back(
+	AddChildActor(
 		new PlayerTripleAttackCollOperator(
-			SKILL_1_TARGET_SERCH_RANGE,
+			// 探索範囲
+			GetParameter("TripleAttack", "TargetSerchRange"),
+			// コライダータグ
 			COLLIDER_TAG::PLAYER_ATTACK,
-			SKILL_1_COLL_SIZE_TABLE,
-			SKILL_1_COLL_LOCAL_POS,
-			SKILL_1_ATTACK_RATE_PERCENT,
-			trans.pos, trans.angle,
-			operatorSenderId,
+			// 攻撃判定の大きさ（球状の半径）
+			GetParameter("TripleAttack", "CollSize1"),
+			// 攻撃判定発生座標（プレイヤーからの相対座標）
+			GetParameterToVector3("TripleAttack", "CollLocalPos"),
+			// 各段の攻撃倍率
+			{
+				(short)GetParameter("TripleAttack", "AttackRatePercent"),
+				(short)GetParameter("TripleAttack", "AttackRatePercent"),
+				(short)GetParameter("TripleAttack", "AttackRatePercent")
+			},
+			// モデル制御情報
+			trans,
+			// 操作権ID
+			controlSenderId,
+			// ステータス
 			characterStats
 		)
 	);
 
 	// キック用の当たり判定オペレーターを生成する
-	subObjArray.emplace_back(
+	AddChildActor(
 		new PlayerSimpleAttackCollOperator(
-			SKILL_2_TARGET_SERCH_RANGE,
-			SKILL_2_COLL_TAG,
-			SKILL_2_COLL_SIZE_TABLE,
-			SKILL_2_COLL_LOCAL_POS,
-			trans.pos, trans.angle,
-			SKILL_2_ATTACK_RATE_PERCENT,
-			operatorSenderId,
+			// 探索範囲
+			GetParameter("SimpleAttack", "TargetSerchRange"),
+			// コライダータグ
+			COLLIDER_TAG::PLAYER_ATTACK,
+			// 攻撃判定の大きさ（球状の半径）
+			GetParameter("SimpleAttack", "CollSize"),
+			// 攻撃判定発生座標（プレイヤーからの相対座標）
+			GetParameterToVector3("SimpleAttack", "CollLocalPos"),
+			// 攻撃倍率
+			GetParameterToInt("SimpleAttack", "AttackRatePercent"),
+			// モデル制御情報の参照
+			trans,
+			// 操作権IDの参照
+			controlSenderId,
+			// ステータスの参照
 			characterStats
 		)
 	);
@@ -88,73 +115,57 @@ void OrangePlayer::PlayerLoad(void)
 
 	// 移動状態を追加する
 	AddState(
-		(int)STATE::MOVE,
+		STATE::MOVE,
 		new PlayerMoveState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::MOVE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::MOVE; },
-			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
-			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
-			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX, trans.angle, characterStats,
-			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
-			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
+			// ステータスの参照
+			characterStats,
+			// ダッシュの移動量倍率
+			GetParameter("Move", "DashSpeedRate"),
+			// スタミナ量
+			(short)GetParameterToInt("Move", "DashStaminaMax"),
+			// 移動用の関数
+			std::bind(&OrangePlayer::MoveAccel,this,std::placeholders::_1),
+			// 横軸加速度の最大値の参照
+			ACCEL_MAX,
+			// 歩きアニメーション再生
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
+			// 走りアニメーション再生
 			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
 		)
 	);
 
-	// 三弾攻撃状態用のコンテキスト構造体を定義して設定～～～～～～～～～～～
-	PlayerTripleAttackStateContext stateSkill1Context;
-
-	// キー
-	stateSkill1Context.ATTACK_KEY = KEY_TYPE::PLAYER_SKILL_1;
-	// クールタイム
-	stateSkill1Context.COOL_TIME = SKILL_1_COOL_TIME;
-	// 攻撃が次段に繋がる猶予時間
-	stateSkill1Context.ATTACK_NEXT_STAGE_CONTINUE_TIME = SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME;
-	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
-	stateSkill1Context.COLL_START_TIME = SKILL_1_COLL_START_TIME;
-	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
-	stateSkill1Context.COLL_END_TIME = SKILL_1_COLL_END_TIME;
-	// 攻撃中の移動速度
-	stateSkill1Context.ATTACK_MOVE_SPEED = SKILL_1_ATTACK_MOVE_SPEED;
-
-	// 当たり判定のオペレーター
-	stateSkill1Context.collOperator = SubObjSerch<PlayerTripleAttackCollOperator>();
-	
-	// 座標
-	stateSkill1Context.pos = &trans.pos;
-	// 角度
-	stateSkill1Context.angle = &trans.angle;
-
-	// 攻撃1～3段目アニメーションの再生関数のポインタ
-	stateSkill1Context.PlayAttackAnimes = {
-		[&]() { AnimePlay((int)ANIME_TYPE::PUNCH1,false); },
-		[&]() { AnimePlay((int)ANIME_TYPE::PUNCH2,false); },
-		[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3,false); }
-	};
-	// アニメーションの再生割合を取得する関数のポインタ
-	stateSkill1Context.GetAnimePlayRatio = std::bind(&OrangePlayer::GetAnimeRatio, this);
-	// アニメーションが終了したかのフラグを取得する関数のポインタ
-	stateSkill1Context.IsAnimeEnd = std::bind(&OrangePlayer::IsAnimeEnd, this);
-
-	// 攻撃終了後の状態遷移関数のポインタ
-	stateSkill1Context.DefaultChangeState = [&]() { state = (int)STATE::MOVE; };
-
-	// ～～～～～～～～～～～三弾攻撃状態用のコンテキスト構造体を定義して設定
-
 	// 三段攻撃状態を追加する
 	AddState(
-		(int)STATE::SKILL_1,	
+		STATE::SKILL_1,	
 		new PlayerTripleAttackState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_1); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_1; },
-			// コンテキスト構造体
-			stateSkill1Context
+			KEY_TYPE::PlayerSkill1,
+			GetParameterToInt("TripleAttack", "CoolTime"),
+			GetParameterToInt("TripleAttack", "AttackNextStageContinueTime"),
+			{
+				GetParameter("TripleAttack","CollStartTime1"),
+				GetParameter("TripleAttack","CollStartTime2"),
+				GetParameter("TripleAttack","CollStartTime3")
+			},
+			{
+				GetParameter("TripleAttack","CollEndTime1"),
+				GetParameter("TripleAttack","CollEndTime2"),
+				GetParameter("TripleAttack","CollEndTime3"),
+			},
+			
+			,
+			// モデル制御情報の参照
+			trans,
+			// 各段のアニメーション再生
+			std::bind(&OrangePlayer::MoveAccel, this, std::placeholders::_1),
+			{
+				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH1); },
+				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH2); },
+				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3); }
+			},
+			// アニメーションの再生割合を取得する関数
+			std::bind(&OrangePlayer::GetAnimeRatio,this),
+			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
@@ -342,13 +353,13 @@ void OrangePlayer::PlayerLoad(void)
 #pragma endregion 
 }
 
-void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
 	// 回避時の当たり判定処理(回避成功したら、ダメージ処理をスルーする)
 	if (PlayerBase::DodgeOnCollision(STATE::SKILL_3, other)) { return; }
 
 	// 敵の攻撃を受けた時のダメージ処理
-	PlayerBase::OnCollision(ownTag, other, collisionPoint);
+	PlayerBase::OnCollision(ownTag, other, result);
 }
 
 void OrangePlayer::ReceptionUpdate(void)

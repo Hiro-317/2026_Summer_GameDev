@@ -11,6 +11,8 @@
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
 
+#include "../../Common/CharacterBase/CharacterStatsDefine.h"
+
 PlayerBase::PlayerBase(
 	MSG_SENDER_ID controlSenderId,
 
@@ -52,7 +54,6 @@ void PlayerBase::Load(void)
 	}
 
 #pragma region モデル
-	// モデルを読み込む
 
 	// モデルのスケールを設定
 	trans.scale = GetParameterToVector3("Model", "Scale");
@@ -115,7 +116,7 @@ void PlayerBase::SubInit(void)
 	trans.pos = GetParameterToVector3("Init", "Pos") + Vector3::Xonly(150.0f) * (float)controlSenderId;
 
 	// 初期状態を移動状態にする
-	ChangeState(STATE::MOVE);
+	ChangeState(STATE::IDLE);
 
 	TargetPlayerNext();
 }
@@ -160,7 +161,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 	case COLLIDER_TAG::PLAYER_HEAL: {	// 回復
 
 		// 回復量を取得
-		short heal = other.GetActor()->GetSkillStats().Power();
+		short heal = other.GetSkillStats()->Power();
 
 		// 回復をクライアントへ送信
 		Net::GetIns().Send(MsgDataPlayerHeal(heal), controlSenderId);
@@ -175,7 +176,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 	case COLLIDER_TAG::PLAYER_BUFF: {	// バフ
 
 		// バフデータ構造体を取得
-		const ModifierData& modifier = other.GetActor()->GetSkillStats().ModifierPower();
+		const ModifierData& modifier = other.GetSkillStats()->ModifierPower();
 
 		// バフをクライアントへ送信
 		Net::GetIns().Send(MsgDataPlayerModifier(modifier), controlSenderId);
@@ -203,7 +204,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		ChangeState(STATE::DAMAGE);
 
 		// ボスの攻撃力とプレイヤーの防御力で、最終的なダメージ値を計算
-		const short damage = CalculateDamage(other.GetActor()->GetSkillStats().Power(), characterStats.defensePower.Value());
+		const short damage = CalculateDamage(other.GetSkillStats()->Power(), characterStats.defensePower.Value());
 
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
 		Net::GetIns().Send(MsgDataPlayerDamage(damage), controlSenderId);

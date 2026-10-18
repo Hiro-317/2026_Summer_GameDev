@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../../../../ActorBase.h"
+#include "../../../../Common/ActorBase/ActorBase.h"
 #include "../../../../../Manager/Effect/EffectManager.h"
 #include "../../../../../Manager/Net/NetWorkManager.h"
+
+class SphereCollider;
 
 class PlayerSingleModifierCollOperator : public ActorBase
 {
@@ -12,7 +14,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="COLL_TAG">コライダー判別用タグ</param>
-	/// <param name="operatorSenderId">送信者ID</param>
+	/// <param name="controlSenderId">送信者ID</param>
 	/// <param name="sendColliderKinds">コライダーの種類</param>
 	/// <param name="targetPos">バフ・回復対象の座標</param>
 	/// <param name="SKILL_POWER">バフ・回復量</param>
@@ -20,9 +22,13 @@ public:
 	/// <param name="MODIFIER_TYPE">バフタイプ</param>
 	PlayerSingleModifierCollOperator(
 		COLLIDER_TAG COLL_TAG,
-		MSG_SENDER_ID operatorSenderId,
+
+		const MSG_SENDER_ID& controlSenderId,
+
 		MsgDataPlayerCollOperator::COLLIDER_TYPE sendColliderKinds,
+
 		const Vector3* const& targetPos,
+
 		const short SKILL_POWER,
 		const short SKILL_TIME = -1,
 		const ModifierType MODIFIER_TYPE = ModifierType::None
@@ -35,32 +41,13 @@ public:
 	void Load(void)override;
 
 	// 当たり判定処理
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	// 攻撃の判定を発生させる
-	void CollOn(void)
-	{
-		if (isHit) { return; }
-
-		// 当たり判定開始
-		SetJudge(true);
-
-		if (!Net::GetIns().IsHost()) {
-			// コライダーの種類を送信
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, sendColliderKinds), operatorSenderId);
-		}
-	}
+	void CollOn(void);
 
 	// 攻撃の判定を消す
-	void CollOff(void) {
-		SetJudge(false);
-		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(
-				MsgDataPlayerCollOperator(false, sendColliderKinds),
-				operatorSenderId
-			);
-		}
-	}
+	void CollOff(void);
 
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }
@@ -72,11 +59,11 @@ private:
 	// コライダー判別用タグ
 	const COLLIDER_TAG COLL_TAG;
 
-	// バフタイプ
-	const ModifierType MODIFIER_TYPE;
-
 	// 当たり判定の半径
 	const float COLL_RADIUS = 1.0f;
+
+	// バフタイプ
+	const ModifierType MODIFIER_TYPE;
 
 	// 効果量
 	const short SKILL_POWER;
@@ -89,7 +76,7 @@ private:
 #pragma region 受け取る参照変数
 
 	// 送信ID
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID& controlSenderId;
 
 	// 送信するコライダー種類
 	const MsgDataPlayerCollOperator::COLLIDER_TYPE sendColliderKinds;
@@ -98,6 +85,9 @@ private:
 	const Vector3* const& targetPos;
 
 #pragma endregion
+
+	// 生成するコライダーの参照
+	SphereCollider* modifierCollRef;
 
 	// 攻撃のヒット管理のフラグ
 	bool isHit;

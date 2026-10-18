@@ -1,15 +1,15 @@
 #include "PlayerDamageState.h"
 
 PlayerDamageState::PlayerDamageState(
-	const std::function<void(void)> PlayDamageAnime,
-	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void()> InviStart,
-	const std::function<void()> DefaultChangeState
+	std::function<void(void)> playDamageAnime,
+	std::function<bool(void)> isAnimeEnd,
+	std::function<void()> inviStart,
+	std::function<void()> defaultChangeState
 ) :
-	PlayDamageAnime(PlayDamageAnime),
-	IsAnimeEnd(IsAnimeEnd),
-	InviStart(InviStart),
-	DefaultChangeState(DefaultChangeState)
+	playDamageAnime(playDamageAnime),
+	isAnimeEnd(isAnimeEnd),
+	inviStart(inviStart),
+	defaultChangeState(defaultChangeState)
 {
 }
 
@@ -17,17 +17,17 @@ PlayerDamageState::PlayerDamageState(
 void PlayerDamageState::Enter(void)
 {
 	// アニメーション再生
-	PlayDamageAnime();
+	playDamageAnime();
 
 	// 無敵カウンターを設定
-	InviStart();
+	inviStart();
 }
 
 // 更新処理
 void PlayerDamageState::Update(void)
 {
 	// 元の状態に遷移
-	if (IsAnimeEnd()) { DefaultChangeState(); }
+	if (isAnimeEnd()) { defaultChangeState(); }
 }
 
 // 状態遷移前1度行う終了処理

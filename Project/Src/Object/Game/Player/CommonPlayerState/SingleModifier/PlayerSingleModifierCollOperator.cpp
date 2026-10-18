@@ -2,22 +2,37 @@
 
 #include "../../../../Common/Collider/SphereCollider.h"
 
+#include "../../../../Common/CharacterBase/CharacterStatsDefine.h"
+
 PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
-	COLLIDER_TAG COLL_TAG, 
-	MSG_SENDER_ID operatorSenderId,
+	COLLIDER_TAG COLL_TAG,
+
+	const MSG_SENDER_ID& controlSenderId,
+
 	MsgDataPlayerCollOperator::COLLIDER_TYPE sendColliderKinds,
+
 	const Vector3* const& targetPos,
+
 	const short SKILL_POWER,
-	const short SKILL_TIME,
-	const ModifierType MODIFIER_TYPE
-) : 
+	const short SKILL_TIME = -1,
+	const ModifierType MODIFIER_TYPE = ModifierType::None
+) :
 	COLL_TAG(COLL_TAG),
-	operatorSenderId(operatorSenderId),
+
+	controlSenderId(controlSenderId),
+
 	sendColliderKinds(sendColliderKinds),
+
 	targetPos(targetPos),
+
 	SKILL_POWER(SKILL_POWER),
 	SKILL_TIME(SKILL_TIME),
 	MODIFIER_TYPE(MODIFIER_TYPE),
+
+	modifierCollRef(nullptr),
+
+	isHit(false),
+
 	targetTrans()
 {
 }
@@ -36,16 +51,32 @@ void PlayerSingleModifierCollOperator::Load(void)
 	SetPushFlg(false);
 
 #pragma endregion
-	// 効果時間が未設定(-1)の場合、回復スキルとみなす
-	if (SKILL_TIME == -1) { CreateHealSkill(operatorSenderId, SKILL_POWER, COLL_TAG); }
-	else { CreateModifierSkill(operatorSenderId, MODIFIER_TYPE, SKILL_POWER, SKILL_TIME, COLL_TAG); }
 
-	// 当たり判定情報を生成する
-	AddCollider(new SphereCollider(COLL_TAG, COLL_RADIUS));
-	SetJudge(false);
+#pragma region 当たり判定情報を生成する
+
+	// コライダーを生成
+	modifierCollRef = new SphereCollider(COLL_TAG, COLL_RADIUS);
+
+	// スキル情報を登録
+	if (SKILL_TIME == -1) {
+		// 効果時間が未設定(-1)の場合、回復スキルとみなす
+		modifierCollRef->SetSkillStats(new SkillStats(SKILL_POWER));
+	}
+	else {
+		// 効果時間が設定されていた場合、バフ/デバフ スキルとみなす
+		modifierCollRef->SetSkillStats(new SkillStats(MODIFIER_TYPE, controlSenderId, SKILL_POWER, SKILL_TIME));
+	}
+
+	// アクターに追加
+	AddCollider(modifierCollRef);
+
+#pragma endregion
+
+	// 当たり判定を切る
+	SetJudgeFlg(false);
 }
 
-void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
 	switch (other.GetTag())
 	{
@@ -58,12 +89,43 @@ void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const Co
 
 void PlayerSingleModifierCollOperator::SubUpdate(void)
 {
-	if (GetJudgeFlg()) {
-		// 当たったら当たり判定を消す
-		if (isHit) { CollOff(); } 
-		trans.pos = *targetPos;
+	if (!GetJudgeFlg()) { return; }
+
+	// ヒットチェック
+	if (isHit) {
+
+		// 当たり判定を消す
+		CollOff();
+
+		// 終了
+		return;
 	}
 
+	if (!targetPos) { return; }
+
+	// 追従
+	trans.pos = *targetPos;
 	targetTrans.pos = *targetPos;
 }
 
+void PlayerSingleModifierCollOperator::CollOn(void)
+{
+	if (isHit) { return; }
+
+	// 当たり判定開始
+	SetJudgeFlg(true);
+
+	if (!Net::GetIns().IsHost()) {
+		// コライダーの種類を送信
+		Net::GetIns().Send(MsgDataPlayerCollOperator(true, sendColliderKinds), controlSenderId);
+	}
+}
+
+void PlayerSingleModifierCollOperator::CollOff(void)
+{
+	SetJudgeFlg(false);
+
+	if (!Net::GetIns().IsHost()) {
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, sendColliderKinds), controlSenderId);
+	}
+}

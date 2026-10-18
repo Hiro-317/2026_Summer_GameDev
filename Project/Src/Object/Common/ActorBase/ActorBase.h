@@ -24,9 +24,6 @@ class ParameterLoad;
 struct Vector2;
 struct Vector2I;
 
-struct CharacterStats;
-struct SkillStats;
-
 class ActorBase
 {
 public:
@@ -90,9 +87,6 @@ public:
 	// 押し出しを行う際の重さ（0 ～ 100 で設定）
 	unsigned char GetPushWeight(void)const { return pushWeight; }
 
-	// スキル構造体
-	const SkillStats& GetSkillStats(void)const { return *skillStats; }
-
 	// 更新権限をもつID
 	const MSG_SENDER_ID& GetControlSenderId(void)const { return controlSenderId; }
 	// 自分が更新権限を持っているかどうか
@@ -102,6 +96,9 @@ public:
 	virtual void ReceptionUpdate(void) {}
 	// 送信処理（通信）
 	virtual void SendUpdate(void) {}
+
+	// 座標セット
+	void SetPos(const Vector3& pos) { trans.pos = pos; }
 
 private:
 
@@ -169,9 +166,6 @@ protected:
 
 	// 誰が更新権限を持つか
 	MSG_SENDER_ID controlSenderId;
-
-	// スキル構造体
-	SkillStats* skillStats;
 
 #pragma region 初期設定
 

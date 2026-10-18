@@ -261,51 +261,42 @@ public:
 		return ModifierData(modifierType, SKILL_POWER, SKILL_TIME);
 	}
 
-	// コライダータグ
-	const COLLIDER_TAG COLL_TAG;
-
-	// 操作者
-	const MSG_SENDER_ID operatorSenderId;
-
 	/// <summary>
 	/// 攻撃/回復 スキル生成
 	/// </summary>
 	/// <param name="SKILL_POWER">技威力</param>
 	/// <param name="characterStats">ステータスのポインタ（回復などの攻撃力や会心率ダメを参照しないスキルの場合は未設定でOK）</param>
-	SkillStats(
-		MSG_SENDER_ID operatorSenderId,
-		short SKILL_POWER,
-		const CharacterStats* characterStats = nullptr,
-		COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON
-	) :
-		operatorSenderId(operatorSenderId),
+	SkillStats(short SKILL_POWER, const CharacterStats* characterStats = nullptr) :
 		SKILL_POWER(SKILL_POWER),
+
 		attackPower(characterStats ? &characterStats->attackPower : nullptr),
 		critical(characterStats ? &characterStats->critical : nullptr),
-		COLL_TAG(COLL_TAG),
-		SKILL_TIME(0), modifierType(0)
+
+		SKILL_TIME(0),
+		modifierType(0)
 	{
 	}
 
 	/// <summary>
 	/// バフ/デバフ スキル生成
 	/// </summary>
-	/// <param name="operatorSenderId">操作者ID</param>
 	/// <param name="modifierType">バフ/デバフ タイプ（同タイプの重複不可）</param>
+	/// <param name="controlSenderId">操作権ID</param>
 	/// <param name="SKILL_POWER">補正倍率(バフ/デバフ)の数値（0が基準値 例:80%->1.8倍 -80%->0.2倍）</param>
 	/// <param name="SKILL_TIME">効果時間（フレーム数）</param>
-	/// <param name="COLL_TAG">どのコライダーに紐づけるか（未設定(NON)の場合コライダーのタグ関係なく紐づけられる）</param>
 	SkillStats(
-		MSG_SENDER_ID operatorSenderId,
 		ModifierType modifierType,
-		short SKILL_POWER, short SKILL_TIME,
-		COLLIDER_TAG COLL_TAG = COLLIDER_TAG::NON) :
+		const MSG_SENDER_ID& controlSenderId,
+		short SKILL_POWER,
+		short SKILL_TIME
+	) :
+		modifierType(ModifierTypeConversionId(controlSenderId, modifierType)),
 
-		operatorSenderId(operatorSenderId),
-		modifierType(ModifierTypeConversionId(operatorSenderId, modifierType)),
-		SKILL_POWER(SKILL_POWER), SKILL_TIME(SKILL_TIME),
-		COLL_TAG(COLL_TAG),
-		attackPower(nullptr), critical(nullptr)
+		SKILL_POWER(SKILL_POWER),
+		SKILL_TIME(SKILL_TIME),
+
+		attackPower(nullptr),
+		critical(nullptr)
 	{
 	}
 };

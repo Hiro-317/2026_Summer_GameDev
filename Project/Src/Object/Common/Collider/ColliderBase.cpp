@@ -4,6 +4,8 @@
 
 #include "../ActorBase/ActorBase.h"
 
+#include "../CharacterBase/CharacterStatsDefine.h"
+
 CollisionResult::CollisionResult(void) :
 	point(),
 	normal(),
@@ -28,6 +30,13 @@ ColliderBase::ColliderBase(COLLIDER_TAG type, const Vector3& pos, const Quaterni
 {
 }
 
+void ColliderBase::Release(void)
+{
+	delete skillStats;
+	skillStats = nullptr;
+
+	owner = nullptr;
+}
 
 void ColliderBase::SetActorPtr(ActorBase* ptr)
 {
@@ -103,56 +112,11 @@ Vector3 ColliderBase::VTrans(const Vector3& v) const
 	return Vector3(VTransform(v.ToVECTOR(), GetRotationMat()));
 }
 
+bool ColliderBase::GetJudgeFlg(void) const { return judgeFlg; }
 
-const Transform& ColliderBase::GetTransform(void) const
-{
-	assert(owner != nullptr);
+COLLIDER_TAG ColliderBase::GetTag(void) const { return tag; }
 
-	return owner->GetTrans();
-}
-
-
-bool ColliderBase::GetDynamicFlg(void) const
-{
-	assert(owner != nullptr);
-
-	return owner->GetDynamicFlg();
-}
-
-
-bool ColliderBase::GetJudgeFlg(void) const
-{
-	return judgeFlg;
-}
-
-
-bool ColliderBase::GetPushFlg(void) const
-{
-	assert(owner != nullptr);
-
-	return owner->GetPushFlg();
-}
-
-
-unsigned char ColliderBase::GetPushWeight(void) const
-{
-	assert(owner != nullptr);
-
-	return owner->GetPushWeight();
-}
-
-
-COLLIDER_TAG ColliderBase::GetTag(void) const
-{
-	return tag;
-}
-
-
-COLLIDER_SHAPE ColliderBase::GetShape(void) const
-{
-	return shape;
-}
-
+COLLIDER_SHAPE ColliderBase::GetShape(void) const { return shape; }
 
 void ColliderBase::CallOnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {

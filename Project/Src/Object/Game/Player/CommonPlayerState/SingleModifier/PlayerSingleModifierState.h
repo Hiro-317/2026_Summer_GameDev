@@ -12,15 +12,17 @@ class PlayerSingleModifierState : public CharacterStateBase
 public:
 
 	PlayerSingleModifierState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		PlayerSingleModifierCollOperator& collOperator,
-		float COLL_START_TIME, KEY_TYPE HEAL_KEY,
+		KEY_TYPE HEAL_KEY,
+
 		int COOL_TIME,
-		const std::function<void(void)> PlayHealAnime,
-		const std::function<float(void)> GetAnimePlayRatio,
-		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<void(void)> DefaultChangeState
+
+		float COLL_START_TIME,
+
+		PlayerSingleModifierCollOperator& collOperator,
+
+		std::function<void(void)> playHealAnime,
+		std::function<float(void)> getAnimePlayRatio,
+		std::function<void(void)> defaultChangeState
 	);
 	~PlayerSingleModifierState() = default;
 
@@ -41,14 +43,14 @@ private:
 
 #pragma region 定数
 
+	// 遷移するためのキー
+	const KEY_TYPE HEAL_KEY;
+
 	// 攻撃そのもののクールタイム
 	const int COOL_TIME;
 
 	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
 	const float COLL_START_TIME;
-
-	// 遷移するためのキー
-	const KEY_TYPE HEAL_KEY;
 
 #pragma endregion
 
@@ -59,14 +61,13 @@ private:
 	PlayerSingleModifierCollOperator& collOperator;
 
 	// 攻撃アニメーションの再生関数のポインタ
-	const std::function<void(void)> PlayHealAnime;
+	const std::function<void(void)> playHealAnime;
 	// アニメーションの再生割合を取得する関数のポインタ
-	const std::function<float(void)> GetAnimePlayRatio;
-	// アニメーションが終了したかのフラグを取得する関数のポインタ
-	const std::function<bool(void)> IsAnimeEnd;
+	const std::function<float(void)> getAnimePlayRatio;
 	// 攻撃終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
+
 #pragma endregion
 
-	bool isModifierEnd;
+	int coolTimeCounter;
 };

@@ -68,6 +68,13 @@ struct Quaternion
 
 #pragma endregion
 
+	/// <summary>
+	/// 2‚Â‚ÌQuaternionŠÔ‚ÌÅ’Z‰ñ“]Šp“x‚ğæ“¾‚·‚éiƒ‰ƒWƒAƒ“j
+	/// </summary>
+	/// <param name="a">‰ñ“]A</param>
+	/// <param name="b">‰ñ“]B</param>
+	/// <returns>Šp“x·i0 ` ƒÎj</returns>
+	static float Angle(const Quaternion& a, const Quaternion& b);
 
 #pragma region ‰‰Z
 

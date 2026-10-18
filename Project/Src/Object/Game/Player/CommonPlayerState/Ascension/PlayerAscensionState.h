@@ -5,7 +5,7 @@ class PlayerAscensionState : public CharacterStateBase
 {
 public:
 
-	PlayerAscensionState(const std::function<void(void)> DefaultChangeState);
+	PlayerAscensionState(std::function<void(void)> defaultChangeState);
 
 	~PlayerAscensionState()override = default;
 
@@ -20,7 +20,7 @@ private:
 
 #pragma region 関数ポインタ
 	// ダメージ状態終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
 #pragma endregion
 
 };

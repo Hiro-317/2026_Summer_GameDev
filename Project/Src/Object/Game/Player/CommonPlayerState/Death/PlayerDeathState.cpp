@@ -2,32 +2,30 @@
 
 PlayerDeathState::PlayerDeathState(
 	Vector3& pos, Quaternion& rotation,
-	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> PlayDeathAnime,
-	const std::function<void(void)> PlayerDeathSetting,
-	const std::function<void(void)> DefaultChangeState
+	std::function<bool(void)> isAnimeEnd,
+	std::function<void(void)> playDeathAnime,
+	std::function<void(void)> playerDeathSetting,
+	std::function<void(void)> defaultChangeState
 ):
 	pos(pos), rotation(rotation),
-	IsAnimeEnd(IsAnimeEnd),
-	PlayDeathAnime(PlayDeathAnime),
-	PlayerDeathSetting(PlayerDeathSetting),
-	DefaultChangeState(DefaultChangeState)
+	isAnimeEnd(isAnimeEnd),
+	playDeathAnime(playDeathAnime),
+	playerDeathSetting(playerDeathSetting),
+	defaultChangeState(defaultChangeState)
 {
 }
 
 void PlayerDeathState::Enter(void)
 {
-	PlayDeathAnime();
+	playDeathAnime();
 }
 
 void PlayerDeathState::Update(void)
 {
-	if (IsAnimeEnd()) {
-		DefaultChangeState();
-	}
+	if (isAnimeEnd()) { defaultChangeState(); }
 }
 
 void PlayerDeathState::Exit(void)
 {
-	PlayerDeathSetting();
+	playerDeathSetting();
 }

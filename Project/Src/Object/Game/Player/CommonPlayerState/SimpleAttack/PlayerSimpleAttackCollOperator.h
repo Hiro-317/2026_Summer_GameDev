@@ -1,16 +1,19 @@
 #pragma once
 
-#include "../../../../ActorBase.h"
-#include "../../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../Common/ActorBase/ActorBase.h"
 
-#include "../../../../Common/Collider/ColliderBase.h"
+#include "../../../../Common/Collider/ColliderTagDefine.h"
+
+#include "../../../../../Manager/Net/SenderID_Define.h"
+
+class SphereCollider;
 
 struct CharacterStats;
 
 class PlayerSimpleAttackCollOperator : public ActorBase
 {
 public:
-
+	
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -18,31 +21,35 @@ public:
 	/// <param name="COLL_TAG">攻撃のタグ</param>
 	/// <param name="COLL_SIZE">攻撃判定のサイズ（半径）</param>
 	/// <param name="COLL_LOCAL_POS">攻撃判定のローカル座標</param>
+	/// <param name="ATTACK_RATE_PERCENT">攻撃倍率</param>
 	/// <param name="playerPos">プレイヤーの座標</param>
-	/// <param name="playerAngle">プレイヤーの向き</param>
+	/// <param name="playerRotation">プレイヤーの向き</param>
+	/// <param name="controlSenderId">操作権</param>
+	/// <param name="playerStats">ステータス</param>
 	PlayerSimpleAttackCollOperator(
+
 		float FIND_ATTACK_TARGET_RANGE,
-		COLLIDER_TAG COLL_TAG, float COLL_SIZE,
+
+		COLLIDER_TAG COLL_TAG, 
+		float COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
 
-		const Vector3& playerPos,
-		const Vector3& playerAngle,
+		short ATTACK_RATE_PERCENT,
 
-		const short ATTACK_RATE_PERCENT,
+		const Transform& playerTrans,
 
-		MSG_SENDER_ID operatorSenderId,
+		const MSG_SENDER_ID& controlSenderId,
+
 		const CharacterStats& playerStats
 	);
 	~PlayerSimpleAttackCollOperator()override = default;
 
 	void Load(void)override;
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	// 攻撃対象を探索
-	void TargetSerch(void) {
-		ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(true);
-	}
+	void TargetSerch(void);
 
 	// 攻撃対象が見つかったかどうかを取得
 	bool GetIsFindAttackTarget(void)const { return isFindAttackTarget; }
@@ -50,26 +57,17 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 攻撃の判定を発生させる
-	void CollOn(void) { 
-		if (!isHit)ColliderSerch(GetCollider(), COLL_TAG).back()->SetJudgeFlg(true);
-		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
-		}
-	}
+	void CollOn(void);
 
 	// 攻撃の判定を消す
-	void CollOff(void) { 
-		ColliderSerch(GetCollider(), COLL_TAG).back()->SetJudgeFlg(false);
-		if (!Net::GetIns().IsHost()) {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
-		}
-	}
+	void CollOff(void);
 
 	// 攻撃対象をリセットする
 	void ResetTarget(void) { isFindAttackTarget = false; targetPos = nullptr; }
 
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }
+
 private:
 
 #pragma region 定数
@@ -86,27 +84,33 @@ private:
 	// 攻撃判定のローカル座標
 	const Vector3 COLL_LOCAL_POS;
 
+	// 攻撃倍率
 	const short ATTACK_RATE_PERCENT;
 
 #pragma endregion
 
 #pragma region 受け取る参照変数
 
-	// プレイヤーの座標
-	const Vector3& playerPos;
-	// プレイヤーの向き
-	const Vector3& playerAngle;
+	// プレイヤー座標の参照
+	const Transform& playerTrans;
 
-	const MSG_SENDER_ID operatorSenderId;
+	// 操作権
+	const MSG_SENDER_ID& controlSenderId;
 
+	// ステータス
 	const CharacterStats& playerStats;
 
 #pragma endregion
 
+	// 探索用のコライダーの参照用
+	SphereCollider* findCollRef; 
+	// 攻撃用のコライダーの参照用
+	SphereCollider* attackCollRef;
+
 	// 攻撃対象が見つかったかどうか
 	bool isFindAttackTarget;
 
-	// 攻撃対象の座標
+	// 攻撃対象の座標の参照用
 	const Vector3* targetPos;
 
 	// 攻撃のヒット管理のフラグ

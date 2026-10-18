@@ -1,7 +1,7 @@
 #include "PlayerAscensionState.h"
 
-PlayerAscensionState::PlayerAscensionState(const std::function<void()> DefaultChangeState) :
-	DefaultChangeState(DefaultChangeState)
+PlayerAscensionState::PlayerAscensionState( std::function<void()> defaultChangeState) :
+	defaultChangeState(defaultChangeState)
 {
 }
 
