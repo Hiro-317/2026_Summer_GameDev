@@ -1,20 +1,13 @@
 #pragma once
 
-#include "../../../../../CharacterStateBase.h"
+#include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "../../../../../../../Common/Vector3.h"
+struct Transform;
 
 class TomatoPlayerDeathState : public CharacterStateBase
 {
 public:
-	TomatoPlayerDeathState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle,
-		const std::function<void(void)> PlayerDeathSetting,
-		const std::function<void(void)> PlayerIsDeathTrue,
-		const std::function<void(void)> DefaultChangeState
-	);
+	TomatoPlayerDeathState(Transform& playerTrans, std::function<void(void)> playerDeathSetting);
 
 	~TomatoPlayerDeathState()override = default;
 
@@ -27,17 +20,11 @@ public:
 
 private:
 
-	// 座標の参照
-	Vector3& pos;
-	// 角度の参照
-	Vector3& angle;
+	// モデル制御情報の参照
+	Transform& playerTrans;
 
 	// 死亡後の設定
-	const std::function<void(void)> PlayerDeathSetting;
-	// 死亡フラグをtrueにする関数のポインタ
-	const std::function<void(void)> PlayerIsDeathTrue;
-	// ダメージ状態終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> playerDeathSetting;
 
 	float animeCounter;
 };

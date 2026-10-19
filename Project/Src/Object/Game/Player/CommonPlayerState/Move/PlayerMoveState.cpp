@@ -1,7 +1,11 @@
 #include "PlayerMoveState.h"
 
+#include "../../../../../Manager/TimeScale/TimeScale.h"
+
 #include "../../../../../Manager/Input/InputManager.h"
+
 #include "../../../../../Manager/Camera/CurrentCamera.h"
+
 #include "../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
 PlayerMoveState::PlayerMoveState(
@@ -23,7 +27,9 @@ PlayerMoveState::PlayerMoveState(
 	playAnimeWalk(playAnimeWalk),
 	playAnimeRun(playAnimeRun),
 
-	isDash(false), dashStamina(DASH_STAMINA_MAX), isTired(false)
+	isDash(false),
+	dashStamina((float)DASH_STAMINA_MAX),
+	isTired(false)
 {
 }
 
@@ -70,10 +76,12 @@ void PlayerMoveState::Update(void)
 		if (isDash) {
 
 			// ダッシュしているときはスタミナを減らす
-			if (--dashStamina < 0) {
-				dashStamina = 0;
+			dashStamina -= TimeScale::Get();
 
-				// 息切れ
+			// 息切れ
+			if (dashStamina <= 0.0f) {
+				dashStamina = 0.0f;
+
 				isTired = true;
 			}
 
@@ -95,8 +103,11 @@ void PlayerMoveState::AlwaysUpdate(void)
 {
 	// ダッシュしていないときはスタミナを回復させる
 	if (!isDash) {
-		if (++dashStamina > DASH_STAMINA_MAX) {
-			dashStamina = DASH_STAMINA_MAX;
+
+		dashStamina += TimeScale::Get();
+
+		if (dashStamina >= (float)DASH_STAMINA_MAX) {
+			dashStamina = (float)DASH_STAMINA_MAX;
 
 			// 息切れ回復
 			isTired = false;

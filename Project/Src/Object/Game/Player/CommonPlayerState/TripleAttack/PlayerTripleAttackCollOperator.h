@@ -2,7 +2,7 @@
 
 #include "../../../../Common/ActorBase/ActorBase.h"
 
-#include "../../../../../Manager/Net/SenderID_Define.h"
+#include "../../../../../Manager/Net/NetWorkDefine.h"
 
 #include "../../../../Common/Collider/ColliderTagDefine.h"
 
@@ -34,7 +34,9 @@ public:
 		float COLL_SIZE,
 		const Vector3& COLL_LOCAL_POS,
 
-		const std::array<short, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max> ATTACK_RATE_PERCENT,
+		const std::array<short, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max>& ATTACK_RATE_PERCENT,
+
+		const std::array<MsgDataPlayerCollOperator::COLLIDER_TYPE, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max>& SEND_COLLIDER_TYPE,
 
 		const Transform& playerTrans,
 
@@ -90,6 +92,9 @@ private:
 
 	// 三段攻撃の攻撃倍率
 	const std::array<short, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max> ATTACK_RATE_PERCENT;
+
+	// 攻撃を送信する際のタイプ
+	const std::array<MsgDataPlayerCollOperator::COLLIDER_TYPE, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max> SEND_COLLIDER_TYPE;
 
 #pragma endregion
 

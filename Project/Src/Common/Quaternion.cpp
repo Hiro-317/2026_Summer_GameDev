@@ -363,6 +363,15 @@ Vector3 Quaternion::Rotate(const Vector3& vec) const
 	);
 }
 
+void Quaternion::AddAngle(const Vector3& angle)
+{
+	const Quaternion addRotation = Quaternion::FromEulerXZY(angle);
+
+	// ‰ñ“]‚Ì‡¬‡˜‚ğŠmÀ‚ÉŠù‘¶‚Ìs—ñ‹K–ñ‚Ö‡‚í‚¹‚éB
+	const MATRIX result = MMult(ToMatrix(), addRotation.ToMatrix());
+
+	*this = Quaternion::FromMatrix(result);
+}
 
 Quaternion Quaternion::Slerp(
 	const Quaternion& start,

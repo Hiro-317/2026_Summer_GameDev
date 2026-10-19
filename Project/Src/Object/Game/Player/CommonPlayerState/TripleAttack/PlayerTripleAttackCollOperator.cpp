@@ -13,7 +13,9 @@ PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 	float COLL_SIZE,
 	const Vector3& COLL_LOCAL_POS,
 
-	const std::array<short, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max> ATTACK_RATE_PERCENT,
+	const std::array<short, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max>& ATTACK_RATE_PERCENT,
+
+	const std::array<MsgDataPlayerCollOperator::COLLIDER_TYPE, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::Max>& SEND_COLLIDER_TYPE,
 
 	const Transform& playerTrans,
 
@@ -28,6 +30,8 @@ PlayerTripleAttackCollOperator::PlayerTripleAttackCollOperator(
 	COLL_LOCAL_POS(COLL_LOCAL_POS),
 
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+
+	SEND_COLLIDER_TYPE(SEND_COLLIDER_TYPE),
 
 	playerTrans(playerTrans),
 
@@ -147,25 +151,7 @@ void PlayerTripleAttackCollOperator::CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage)
 	if (!isHit) { attackCollRef[(int)stage]->SetJudgeFlg(true); }
 
 	if (!Net::GetIns().IsHost()) {
-
-		switch (stage) {
-
-		case PLAYER_TRIPLE_ATTACK_STAGE::First: {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_1));
-			break;
-		}
-
-		case PLAYER_TRIPLE_ATTACK_STAGE::Second: {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_2));
-			break;
-		}
-
-		case PLAYER_TRIPLE_ATTACK_STAGE::Third: {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_3));
-			break;
-		}
-
-		}
+		Net::GetIns().Send(MsgDataPlayerCollOperator(true, SEND_COLLIDER_TYPE[(int)stage]));
 	}
 }
 
@@ -183,25 +169,7 @@ void PlayerTripleAttackCollOperator::CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage)
 
 	// コライダー消去通知を送信
 	if (!Net::GetIns().IsHost()) {
-
-		switch (stage) {
-
-		case PLAYER_TRIPLE_ATTACK_STAGE::First: {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_1));
-			break;
-		}
-
-		case PLAYER_TRIPLE_ATTACK_STAGE::Second: {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_2));
-			break;
-		}
-
-		case PLAYER_TRIPLE_ATTACK_STAGE::Third: {
-			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_3));
-			break;
-		}
-
-		}
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, SEND_COLLIDER_TYPE[(int)stage]));
 	}
 }
 

@@ -1,7 +1,10 @@
 #pragma once
-#include "../../../../../CharacterStateBase.h"
 
-#include "../HeadButt/TomatoPlayerHeadButtCollOperator.h"
+#include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
+
+class PlayerSimpleAttackCollOperator;
+
+struct Transform;
 
 class TomatoPlayerHeadButtState : public CharacterStateBase
 {
@@ -9,13 +12,17 @@ public:
 
 	// コンストラクタ
 	TomatoPlayerHeadButtState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		TomatoPlayerHeadButtCollOperator& collOperator,
-		const int COOL_TIME,
-		const float ATTACK_TIME, const float ATTACK_SPEED,
-		Vector3& pos, Vector3& angle,
-		const std::function<void(void)> DefaultChangeState
+
+		int COOL_TIME,
+
+		float COLL_START_TIME,
+		float COLL_END_TIME,
+
+		PlayerSimpleAttackCollOperator& collOperator,
+
+		Transform& trans,
+
+		std::function<void(void)> defaultChangeState
 	);
 
 	// デストラクタ
@@ -45,34 +52,29 @@ private:
 	// クールタイム
 	const int COOL_TIME;
 
-	const float ATTACK_SPEED;
-
-	// 突進してから終了までのカウントタイム
-	const float ATTACK_TIME;	
+	// 攻撃の判定を発生させる開始時間
+	const float COLL_START_TIME;
+	// 攻撃の判定を発生させる終了時間
+	const float COLL_END_TIME;
 
 #pragma endregion 
 
 #pragma region 変数定義
 
-	// 座標の参照
-	Vector3& pos;
+	// 当たり判定管理クラスの参照
+	PlayerSimpleAttackCollOperator& collOperator;
 
-	// 角度の参照
-	Vector3& angle;
-
-	TomatoPlayerHeadButtCollOperator& collOperator;
-
-	// 向いている方向
-	Vector3 moveDir;
-
-	// 終了までのカウント用
-	float timeCounter;
-
-	float startY;
+	// プレイヤーのモデル制御情報の参照
+	Transform& playerTrans;
 
 	// 攻撃終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
 
-#pragma endregion 
+#pragma endregion
 
+	// このステートに遷移してからの時間計測
+	float time;
+
+	// クールタイム計測
+	float coolTimeCounter;
 };

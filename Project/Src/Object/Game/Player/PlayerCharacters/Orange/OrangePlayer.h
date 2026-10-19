@@ -7,6 +7,8 @@
 class PlayerTripleAttackCollOperator;
 class PlayerSimpleAttackCollOperator;
 
+class HitUI;
+
 class OrangePlayer : public PlayerBase
 {
 public:
@@ -20,6 +22,7 @@ public:
 
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
+
 private:
 
 #pragma region 定数定義
@@ -90,4 +93,7 @@ private:
 
 	// 回避中の無敵判定
 	bool isInvincible;
+
+	// 回避に使うヒットUIクラスの参照
+	HitUI* hitUiRef;
 };

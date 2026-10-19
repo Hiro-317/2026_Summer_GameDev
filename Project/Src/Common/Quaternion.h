@@ -153,6 +153,9 @@ struct Quaternion
 	/// </summary>
 	Vector3 Rotate(const Vector3& vec) const;
 
+	// ©g‚ğ‰ñ“]
+	void AddAngle(const Vector3& angle);
+
 #pragma endregion
 
 

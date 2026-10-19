@@ -1,5 +1,7 @@
 #include "PlayerSingleModifierCollOperator.h"
 
+#include "../../../../../Manager/Net/NetWorkManager.h"
+
 #include "../../../../Common/Collider/SphereCollider.h"
 
 #include "../../../../Common/CharacterBase/CharacterStatsDefine.h"
@@ -64,7 +66,7 @@ void PlayerSingleModifierCollOperator::Load(void)
 	}
 	else {
 		// 効果時間が設定されていた場合、バフ/デバフ スキルとみなす
-		modifierCollRef->SetSkillStats(new SkillStats(MODIFIER_TYPE, controlSenderId, SKILL_POWER, SKILL_TIME));
+		modifierCollRef->SetSkillStats(new SkillStats(MODIFIER_TYPE, controlSenderId, SKILL_POWER, (float)SKILL_TIME));
 	}
 
 	// アクターに追加

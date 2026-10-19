@@ -16,6 +16,8 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 
 	short ATTACK_RATE_PERCENT,
 
+	MsgDataPlayerCollOperator::COLLIDER_TYPE SEND_COLLIDER_TYPE,
+
 	const Transform& playerTrans,
 
 	const MSG_SENDER_ID& controlSenderId,
@@ -31,6 +33,8 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 	COLL_LOCAL_POS(COLL_LOCAL_POS),
 
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+
+	SEND_COLLIDER_TYPE(SEND_COLLIDER_TYPE),
 
 	playerTrans(playerTrans),
 
@@ -72,7 +76,7 @@ void PlayerSimpleAttackCollOperator::Load(void)
 	// 攻撃用のコライダーを生成
 	attackCollRef = new SphereCollider(COLL_TAG, COLL_SIZE, COLL_LOCAL_POS);
 	// 攻撃用のコライダーにスキル情報を登録
-	attackCollRef->SetSkillStats(new SkillStats(controlSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG));
+	attackCollRef->SetSkillStats(new SkillStats(ATTACK_RATE_PERCENT, &playerStats));
 	// 攻撃用のコライダーをアクターに追加
 	AddCollider(attackCollRef);
 
@@ -149,7 +153,7 @@ void PlayerSimpleAttackCollOperator::CollOn(void)
 	if (!isHit) { attackCollRef->SetJudgeFlg(true); }
 
 	if (!Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(true, SEND_COLLIDER_TYPE));
 	}
 }
 
@@ -160,6 +164,6 @@ void PlayerSimpleAttackCollOperator::CollOff(void)
 	attackCollRef->SetJudgeFlg(false);
 
 	if (!Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, SEND_COLLIDER_TYPE));
 	}
 }

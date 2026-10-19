@@ -6,6 +6,8 @@
 
 #include "../../../Manager/Net/SenderID_Define.h"
 
+#include "../../Common/CharaTypeDefine.h"
+
 #include "CommonPlayerState/TripleAttack/PlayerTripleAttackStDefine.h"
 
 class PlayerBase : public CharacterBase
@@ -131,6 +133,13 @@ protected:
 		"HP/P3Back.png",
 		"HP/P4Back.png",
 	};
+	// 画像の名前（アイコンキャラ）
+	static const inline std::string ICON_CHARA_IMAGE_NAME[(int)CHARA_TYPE::Max] = {
+		"HP/OrangeIcon.png",
+		"HP/TomatoIcon.png",
+		"HP/PeachIcon.png",
+		"HP/GrapeIcon.png",
+	};
 	// 画像の名前（アイコン枠）
 	static const inline std::string ICON_FRAME_IMAGE_NAME[(int)MSG_SENDER_ID::Max] = {
 		"HP/P1Frame.png",
@@ -139,12 +148,15 @@ protected:
 		"HP/P4Frame.png",
 	};
 
+	// 画像サイズ（アイコン）
+	static const inline Vector2I ICON_IMAGE_SIZE = Vector2I(70, 73);
+
 	// HPバー（アイコン付き）の描画位置テーブル
 	const Vector2I HP_UI_DRAW_POS[(int)MSG_SENDER_ID::Max] = {
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF),
-		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (HP_IMAGE_SIZE.y + 35)),
-		Vector2I(80, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 35) * 2)),
-		Vector2I(80, App::SCREEN_SIZE_Y_HALF + ((HP_IMAGE_SIZE.y + 35) * 3)),
+		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 1)),
+		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 2)),
+		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 3)),
 	};
 #pragma endregion
 

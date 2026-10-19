@@ -1,5 +1,6 @@
 #include "PlayerTripleAttackState.h"
 
+#include "../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../Manager/Sound/SoundManager.h"
 
 #include "PlayerTripleAttackCollOperator.h"
@@ -51,14 +52,14 @@ PlayerTripleAttackState::PlayerTripleAttackState(
 	coolTimeCounter(),
 
 	attackStage(PLAYER_TRIPLE_ATTACK_STAGE::None),
-	attackNextStageContinueTimeCounter(0)
+	attackNextStageContinueTimeCounter()
 {
 }
 
 void PlayerTripleAttackState::OwnStateConditionUpdate(void)
 {
 	// 攻撃のクールタイム中は状態遷移しない
-	if (coolTimeCounter > 0) { return; }
+	if (coolTimeCounter > 0.0f) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
 	if (Input::GetIns().GetInfo(ATTACK_KEY).down) { OwnChangeState(); }
@@ -73,10 +74,10 @@ void PlayerTripleAttackState::Enter(void)
 	if (attackStage == (PLAYER_TRIPLE_ATTACK_STAGE)((int)PLAYER_TRIPLE_ATTACK_STAGE::Max - 1)) {
 
 		// 最終段なら、攻撃のクールタイムをセットする
-		coolTimeCounter = COOL_TIME;
+		coolTimeCounter = (float)COOL_TIME;
 
 		// 次段に繋がるまでのカウンターをセットする
-		attackNextStageContinueTimeCounter = 0;
+		attackNextStageContinueTimeCounter = 0.0f;
 	}
 
 	// 攻撃対象の探索を開始する
@@ -183,27 +184,30 @@ void PlayerTripleAttackState::AlwaysUpdate(void)
 	// 自身の状態でないときは、攻撃のクールタイムと次段に繋がるまでのカウンターを減らす
 	if (!IsOwnState()) {
 		// 攻撃のクールタイムを減らす
-		if (coolTimeCounter > 0) { 
-			coolTimeCounter--;
+		if (coolTimeCounter > 0.0f) { 
+			coolTimeCounter -= TimeScale::Get();
 
-			if(coolTimeCounter <= 0) {
+			if(coolTimeCounter <= 0.0f) {
+
+				coolTimeCounter = 0.0f;
+
 				// 攻撃段数をリセットする
 				attackStage = PLAYER_TRIPLE_ATTACK_STAGE::None;
 			}
 		}
 
 		// 次段に繋がるまでのカウンターを減らす
-		if (attackNextStageContinueTimeCounter > 0) {
-			attackNextStageContinueTimeCounter--;
+		if (attackNextStageContinueTimeCounter > 0.0f) {
+			attackNextStageContinueTimeCounter -= TimeScale::Get();
 
 			// 猶予時間がなくなったら
-			if (attackNextStageContinueTimeCounter <= 0) {
+			if (attackNextStageContinueTimeCounter <= 0.0f) {
 
 				// 攻撃段数をリセットする
 				attackStage = PLAYER_TRIPLE_ATTACK_STAGE::None;
 
 				// 攻撃のクールタイムをセットする
-				coolTimeCounter = COOL_TIME;
+				coolTimeCounter = (float)COOL_TIME;
 			}
 		}
 	}

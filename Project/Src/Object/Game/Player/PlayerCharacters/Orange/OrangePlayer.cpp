@@ -5,6 +5,8 @@
 #include "../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../Manager/Font/FontManager.h"
 
+#include "../../../../../Scene/SceneManager.h"
+
 #include "../../../../Common/Collider/ColliderBase.h"
 
 #include "../../CommonPlayerState/Idle/PlayerIdleState.h"
@@ -42,14 +44,17 @@ OrangePlayer::OrangePlayer(MSG_SENDER_ID controlSenderId) :
 		"Orange/OrangeModel"
 	),
 
-	tripleAttackCollOperatorRef(nullptr)
+	tripleAttackCollOperatorRef(nullptr),
+	kickCollOperatorRef(nullptr),
+
+	isInvincible(false),
+
+	hitUiRef(nullptr)
 {
 }
 
-
 void OrangePlayer::PlayerLoad(void)
 {
-
 #pragma region ÉÇÉfÉã
 
 	// ÉAÉjÉÅÅ[ÉVÉáÉìÅ`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
@@ -83,6 +88,12 @@ void OrangePlayer::PlayerLoad(void)
 				(short)GetParameter("TripleAttack", "AttackRatePercent"),
 				(short)GetParameter("TripleAttack", "AttackRatePercent")
 			},
+			// äeíiÇÃëóêMÉRÉâÉCÉ_Å[É^ÉCÉv
+			{
+				MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_1,
+				MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_2,
+				MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_3
+			},
 			// ÉÇÉfÉãêßå‰èÓïÒ
 			trans,
 			// ëÄçÏå†ID
@@ -107,6 +118,8 @@ void OrangePlayer::PlayerLoad(void)
 			GetParameterToVector3("SimpleAttack", "CollLocalPos"),
 			// çUåÇî{ó¶
 			GetParameterToInt("SimpleAttack", "AttackRatePercent"),
+			// ëóêMÉRÉâÉCÉ_Å[É^ÉCÉv
+			MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack,
 			// ÉÇÉfÉãêßå‰èÓïÒÇÃéQè∆
 			trans,
 			// ëÄçÏå†IDÇÃéQè∆
@@ -298,75 +311,81 @@ void OrangePlayer::PlayerLoad(void)
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
 			number++;
-			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+			if (controlSenderId == (MSG_SENDER_ID)id) { break; }
 		}
 	}
 
-	// HPÇÃìoò^
-	ui_ArrayIns.emplace_back(
-		new CharacterHpUI(
-			characterStats.hp,
-			characterStats.hpMax.Value(),
-			HP_FRAME_IMAGE_NAME,
-			HP_IMAGE_NAME,
-			HP_LOST_IMAGE_NAME,
-			"OrangeIcon",
-			"P" + std::to_string((int)operatorSenderId + 1) + "Frame",
-			"P" + std::to_string((int)operatorSenderId + 1) + "Back",
-			HP_IMAGE_SIZE,
-			HP_GAUGE_OFFSET,
-			HP_UI_POS[number],
-			FILE_PATH_TYPE::PLAYER_HP,
-			""
+	// HPÉoÅ[UIÇÃìoò^
+	AddChildActor(
+		new HpBarUI(
+			PLAYER_UI_IMAGE_FILE_PATH + HP_FRAME_IMAGE_NAME,
+			PLAYER_UI_IMAGE_FILE_PATH + HP_IMAGE_NAME,
+			PLAYER_UI_IMAGE_FILE_PATH + HP_LOST_IMAGE_NAME,
+
+			HP_FRAME_IMAGE_SIZE,
+			HP_BAR_IMAGE_SIZE,
+
+			HP_UI_DRAW_POS[number],
+
+			characterStats,
+
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_BACK_IMAGE_NAME[number],
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_CHARA_IMAGE_NAME[(int)SceneManager::GetIns().GetSelectCharaType(controlSenderId)],
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_FRAME_IMAGE_NAME[number],
+
+			ICON_IMAGE_SIZE
 		)
 	);
 
 	// é©ï™Ç™ëÄçÏé“Ç©Ç«Ç§Ç©
-	if (isOwnOperator) {
+	if (IsOwnControl()) {
 
-		// ÉXÉ^É~ÉiÇÃUIìoò^
-		ui_ArrayIns.emplace_back(
+		// ÉXÉ^É~ÉiUIÇÃìoò^
+		AddChildActor(
 			new PlayerStaminaUI(
-				dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
-				DASH_STAMINA_MAX
+				GetParameter("Move", "DashStaminaMax"),
+				dynamic_cast<PlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
+				trans.pos
 			)
 		);
 
-		// ÉXÉLÉã1ÇÃUI
-		ui_ArrayIns.emplace_back(
+		// ÉXÉLÉã1UIÇÃìoò^
+		AddChildActor(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
-				dynamic_cast<PlayerTripleAttackState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-				SKILL_1_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
+				GetParameterToInt("TripleAttack", "CoolTime"),
+				dynamic_cast<PlayerTripleAttackState*>(&GetStateIns(STATE::SKILL_1))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Yellow,
 				"SkillSlotTripleAttack"
 			)
 		);
 
-		// ÉXÉLÉã2ÇÃUI
-		ui_ArrayIns.emplace_back(
+		// ÉXÉLÉã2UIÇÃìoò^
+		AddChildActor(
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
-				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-				SKILL_2_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
+				GetParameterToInt("SimpleAttack", "CoolTime"),
+				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns(STATE::SKILL_2))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Red,
 				"SkillSlotSimpleAttack"
 			)
 		);
 
-		// ÉXÉLÉã3ÇÃUI
-		ui_ArrayIns.emplace_back(
+		// ÉXÉLÉã3UIÇÃìoò^
+		AddChildActor(
 			new PlayerSkillUI(
-				SKILL3_UI_DRAW_POS,
-				dynamic_cast<PlayerDodgeState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-				SKILL_3_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::BLUE,
+				SKILL2_UI_DRAW_POS,
+				GetParameterToInt("Dodge", "CoolTime"),
+				dynamic_cast<PlayerDodgeState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Blue,
 				"SkillSlotDodge"
 			)
 		);
-	}
 
-	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+		// ÉqÉbÉgUIÇÃê∂ê¨ / ìoò^
+		hitUiRef = new HitUI();
+		AddChildActor(hitUiRef);
+	}
 
 #pragma endregion 
 }
@@ -379,6 +398,7 @@ void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, c
 		if (other.GetTag() == COLLIDER_TAG::BOSS_ATTACK) {
 
 			// âÒîê¨å˜ÇÃÉGÉtÉFÉNÉgÇî≠ê∂
+			hitUiRef->MissSetting(result.point);
 
 			// í èÌÇÃñ≥ìGîªíËÇî≠ê∂Ç≥ÇπÇÈ
 			invincibleCounter = 30;
@@ -441,6 +461,3 @@ void OrangePlayer::SendUpdate(void)
 {
 	PlayerBase::SendUpdate();
 }
-
-
-

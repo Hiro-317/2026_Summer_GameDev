@@ -4,6 +4,9 @@
 
 #include "../../../../../Common/Vector2.h"
 
+class PlayerSimpleAttackCollOperator;
+class PlayerSingleModifierCollOperator;
+
 class PeachPlayer : public PlayerBase
 {
 public:
@@ -14,9 +17,6 @@ public:
 
 	// ロード
 	void PlayerLoad(void)override;
-
-	// 当たり判定処理
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
 
 	// 同期処理
 	void ReceptionUpdate(void)override;
@@ -51,52 +51,12 @@ private:
 		2.5f	// HEAL,
 	};
 
-#pragma region スキル1の定数定義
+	// 通常攻撃(パンチ)の当たり判定管理クラスの参照
+	PlayerSimpleAttackCollOperator* punchCollOperatorRef;
 
-	// スキル2状態～～～～～～～～～～～～～～～～～～～～～～～～～～～
+	// 回復の当たり判定管理クラスの参照
+	PlayerSingleModifierCollOperator* healCollOperatorRef;
 
-	// 攻撃対象の探索範囲
-	const float SKILL_1_TARGET_SERCH_RANGE = GetParameter("SimpleAttack", "TargetSerchRange");
-
-	// 当たり判定のタグ
-	const COLLIDER_TAG SKILL_1_COLL_TAG = COLLIDER_TAG::PLAYER_ATTACK;
-
-	// 当たり判定のサイズ（半径）
-	const float SKILL_1_COLL_SIZE_TABLE = GetParameter("SimpleAttack", "CollSize");
-
-	// 当たり判定のオフセット
-	const Vector3 SKILL_1_COLL_LOCAL_POS = GetParameterToVector3("SimpleAttack", "CollLocalPos");
-
-	// 攻撃そのもののクールタイム
-	const int SKILL_1_COOL_TIME = GetParameterToInt("SimpleAttack", "CoolTime");
-
-	// 攻撃の判定を発生させる開始時間（アニメーションの再生割合）
-	const float SKILL_1_COLL_START_TIME = GetParameter("SimpleAttack", "CollStartTime");
-
-	// 攻撃の判定を発生させる終了時間（アニメーションの再生割合）
-	const float SKILL_1_COLL_END_TIME = GetParameter("SimpleAttack", "CollEndTime");
-
-	// 攻撃中の移動速度
-	const float SKILL_1_ATTACK_MOVE_SPEED = GetParameter("SimpleAttack", "AttackMoveSpeed");
-
-	// スキルの攻撃倍率
-	const short SKILL_1_ATTACK_RATE_PERCENT = GetParameterToInt("SimpleAttack", "AttackRatePercent");
-
-	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～スキル2状態
-#pragma endregion
-
-#pragma region スキル2の定数定義
-
-	//// 当たり判定のタグ
-	//const COLLIDER_TAG SKILL_2_COLL_TAG = COLLIDER_TAG::PLAYER_ATTACK;
-
-	//// 攻撃そのもののクールタイム
-	//const int SKILL_2_COOL_TIME = GetParameterToInt("SingleHeal", "CoolTime");
-
-#pragma endregion 
-
-#pragma region スキル3の定数定義
-
-
-#pragma endregion 
+	// バフの当たり判定管理クラスの参照
+	PlayerSingleModifierCollOperator* buffCollOperatorRef;
 };

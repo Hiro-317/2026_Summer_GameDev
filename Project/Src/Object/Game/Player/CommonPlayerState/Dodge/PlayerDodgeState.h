@@ -53,6 +53,9 @@ public:
 	void Exit(void)override;
 	void AlwaysUpdate(void)override;
 
+	// クールタイムを参照
+	const float& GetCoolTimeCounter(void)const { return coolTimeCounter; }
+
 private:
 
 #pragma region 定数

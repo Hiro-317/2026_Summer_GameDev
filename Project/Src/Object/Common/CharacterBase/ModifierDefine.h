@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../../Manager/TimeScale/TimeScale.h"
+
 #include "../../../Manager/Net/SenderID_Define.h"
 
 #pragma region バフ/デバフ に関する定義
@@ -75,11 +77,12 @@ struct ModifierData
 	// 増減率(バフ/デバフ)の数値（0.0が基準値）（生成関数を通して基準値を補正 例:80->0.8 -80->-0.8）
 	float rate;
 	// 効果時間（フレーム数）
-	short time;
+	float time;
 
 	// 効果時間の更新（戻り値：「true」= 効果時間継続、「false」= 効果時間終了）
 	bool TimeUpdate(void) {
-		if (--time > 0) { return true; }
+		time -= TimeScale::Get();
+		if (time > 0.0f) { return true; }
 		else { return false; }
 	}
 
@@ -89,9 +92,9 @@ struct ModifierData
 	/// <param name="id">ID（同IDの重複不可）</param>
 	/// <param name="rate">補正倍率(バフ/デバフ)の数値（0が基準値 例:80->1.8倍 -80->0.2倍）</param>
 	/// <param name="time">効果時間（フレーム数）</param>
-	ModifierData(unsigned char id, short rate, short time) : id(id), rate(((float)rate * 0.01f)), time(time) {}
+	ModifierData(unsigned char id, short rate, float time) : id(id), rate(((float)rate * 0.01f)), time(time) {}
 
-	ModifierData(void) :id(0), rate(0.0f), time(0) {}
+	ModifierData(void) :id(0), rate(0.0f), time(0.0f) {}
 };
 
 #pragma endregion

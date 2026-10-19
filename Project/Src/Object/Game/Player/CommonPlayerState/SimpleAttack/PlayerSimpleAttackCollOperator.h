@@ -4,7 +4,7 @@
 
 #include "../../../../Common/Collider/ColliderTagDefine.h"
 
-#include "../../../../../Manager/Net/SenderID_Define.h"
+#include "../../../../../Manager/Net/NetWorkDefine.h"
 
 class SphereCollider;
 
@@ -22,6 +22,7 @@ public:
 	/// <param name="COLL_SIZE">攻撃判定のサイズ（半径）</param>
 	/// <param name="COLL_LOCAL_POS">攻撃判定のローカル座標</param>
 	/// <param name="ATTACK_RATE_PERCENT">攻撃倍率</param>
+	/// <param name="SEND_COLLIDER_TYPE">攻撃を送信する際のタイプ</param>
 	/// <param name="playerPos">プレイヤーの座標</param>
 	/// <param name="playerRotation">プレイヤーの向き</param>
 	/// <param name="controlSenderId">操作権</param>
@@ -35,6 +36,8 @@ public:
 		const Vector3& COLL_LOCAL_POS,
 
 		short ATTACK_RATE_PERCENT,
+
+		MsgDataPlayerCollOperator::COLLIDER_TYPE SEND_COLLIDER_TYPE,
 
 		const Transform& playerTrans,
 
@@ -86,6 +89,9 @@ private:
 
 	// 攻撃倍率
 	const short ATTACK_RATE_PERCENT;
+
+	// 攻撃を送信する際のタイプ
+	MsgDataPlayerCollOperator::COLLIDER_TYPE SEND_COLLIDER_TYPE;
 
 #pragma endregion
 

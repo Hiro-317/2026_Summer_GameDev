@@ -1,27 +1,29 @@
 #include "TomatoPlayerHeadButtState.h"
 
-#include "../../../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../../../Manager/Input/InputManager.h"
+
 
 TomatoPlayerHeadButtState::TomatoPlayerHeadButtState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	TomatoPlayerHeadButtCollOperator& collOperator,
-	const int COOL_TIME,
-	const float ATTACK_TIME, const float ATTACK_SPEED,
-	Vector3& pos, Vector3& angle,
-	const std::function<void(void)> DefaultChangeState
-) :
-	CharacterStateBase(ownChangeState, isOwnState),
-	collOperator(collOperator),
+	int COOL_TIME,
+	float ATTACK_TIME,
+	float ATTACK_SPEED,
+
+	PlayerSimpleAttackCollOperator& collOperator,
+
+	Transform& playerTrans,
+
+	std::function<void(void)> defaultChangeState
+):
 	COOL_TIME(COOL_TIME),
 	ATTACK_TIME(ATTACK_TIME),
 	ATTACK_SPEED(ATTACK_SPEED),
-	pos(pos), angle(angle),
-	DefaultChangeState(DefaultChangeState),
-	timeCounter(0),
-	startY(0.0f)
-{
+	
+	collOperator(collOperator),
 
+	playerTrans(playerTrans),
+
+	defaultChangeState(defaultChangeState)
+{
 }
 
 void TomatoPlayerHeadButtState::OwnStateConditionUpdate(void)

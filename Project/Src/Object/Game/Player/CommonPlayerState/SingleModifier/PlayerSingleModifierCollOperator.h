@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../../../../Common/ActorBase/ActorBase.h"
+
 #include "../../../../../Manager/Effect/EffectManager.h"
-#include "../../../../../Manager/Net/NetWorkManager.h"
+
+#include "../../../../../Manager/Net/NetWorkDefine.h"
 
 class SphereCollider;
 
@@ -15,7 +17,7 @@ public:
 	/// </summary>
 	/// <param name="COLL_TAG">コライダー判別用タグ</param>
 	/// <param name="controlSenderId">送信者ID</param>
-	/// <param name="sendColliderKinds">コライダーの種類</param>
+	/// <param name="sendColliderKinds">送信タイプ</param>
 	/// <param name="targetPos">バフ・回復対象の座標</param>
 	/// <param name="SKILL_POWER">バフ・回復量</param>
 	/// <param name="SKILL_TIME">効果時間（-1ならヒールとして判断する</param>

@@ -239,7 +239,7 @@ private:
 	const Critical* critical;
 
 	// この技が バフ/デバフ だった場合の効果時間
-	const short SKILL_TIME;
+	const float SKILL_TIME;
 
 	// この技が バフ/デバフ だった場合の バフ/デバフ タイプ
 	const unsigned char modifierType;
@@ -288,7 +288,7 @@ public:
 		ModifierType modifierType,
 		const MSG_SENDER_ID& controlSenderId,
 		short SKILL_POWER,
-		short SKILL_TIME
+		float SKILL_TIME
 	) :
 		modifierType(ModifierTypeConversionId(controlSenderId, modifierType)),
 

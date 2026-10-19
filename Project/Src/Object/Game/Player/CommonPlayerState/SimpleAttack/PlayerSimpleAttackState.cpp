@@ -1,5 +1,6 @@
 #include "PlayerSimpleAttackState.h"
 
+#include "../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../Manager/Sound/SoundManager.h"
 
 #include "PlayerSimpleAttackCollOperator.h"
@@ -47,7 +48,7 @@ PlayerSimpleAttackState::PlayerSimpleAttackState(
 void PlayerSimpleAttackState::OwnStateConditionUpdate(void)
 {
 	// 攻撃のクールタイム中は状態遷移しない
-	if (coolTimeCounter > 0) { return; }
+	if (coolTimeCounter > 0.0f) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
 	if (Input::GetIns().GetInfo(ATTACK_KEY).down) { OwnChangeState(); }
@@ -60,7 +61,7 @@ void PlayerSimpleAttackState::Enter(void)
 
 
 	// 攻撃のクールタイムをセットする
-	coolTimeCounter = COOL_TIME;
+	coolTimeCounter = (float)COOL_TIME;
 
 
 	// 当たり判定を消去
@@ -165,6 +166,10 @@ void PlayerSimpleAttackState::AlwaysUpdate(void)
 	// 自身の状態でないときは、攻撃のクールタイムを減らす
 	if (!IsOwnState()) {
 		// 攻撃のクールタイムを減らす
-		if (coolTimeCounter > 0) { coolTimeCounter--; }
+		if (coolTimeCounter > 0.0f) { 
+			coolTimeCounter -= TimeScale::Get();
+
+			if (coolTimeCounter <= 0.0f) { coolTimeCounter = 0.0f; }
+		}
 	}
 }

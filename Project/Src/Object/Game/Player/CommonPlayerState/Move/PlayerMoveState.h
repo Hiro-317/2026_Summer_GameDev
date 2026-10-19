@@ -49,7 +49,7 @@ public:
 	void AlwaysUpdate(void)override;
 
 	// スタミナを返す関数
-	short GetDashStamina(void)const { return dashStamina; }
+	const float& GetDashStamina(void)const { return dashStamina; }
 	// 息切れかどうかを返す関数
 	bool IsTired(void)const { return isTired; }
 
@@ -87,7 +87,7 @@ private:
 	bool isDash;
 
 	// ダッシュスタミナ
-	short dashStamina;
+	float dashStamina;
 
 	// 息切れ(1度スタミナが0になったかどうか)
 	bool isTired;

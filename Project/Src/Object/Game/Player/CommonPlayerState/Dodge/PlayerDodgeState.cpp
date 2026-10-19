@@ -3,6 +3,8 @@
 #include "../../../../../Common/Vector3.h"
 #include "../../../../../Common/Quaternion.h"
 
+#include "../../../../../Manager/TimeScale/TimeScale.h"
+
 PlayerDodgeState::PlayerDodgeState(
 	KEY_TYPE DODGE_KEY,
 	
@@ -44,7 +46,7 @@ PlayerDodgeState::PlayerDodgeState(
 void PlayerDodgeState::OwnStateConditionUpdate(void)
 {
 	// 攻撃のクールタイム中は状態遷移しない
-	if (coolTimeCounter > 0) { return; }
+	if (coolTimeCounter > 0.0f) { return; }
 
 	// 攻撃キーのダウントリガーで状態遷移
 	if (Input::GetIns().GetInfo(DODGE_KEY).down) { OwnChangeState(); }
@@ -56,7 +58,7 @@ void PlayerDodgeState::Enter(void)
 	playDodgeAnime();
 
 	// 攻撃のクールタイムをセットする
-	coolTimeCounter = COOL_TIME;
+	coolTimeCounter = (float)COOL_TIME;
 }
 
 void PlayerDodgeState::Update(void)
@@ -80,6 +82,10 @@ void PlayerDodgeState::AlwaysUpdate(void)
 {
 	// 自身の状態でないときクールタイムを減らす
 	if (!IsOwnState()) {
-		if (coolTimeCounter > 0) { coolTimeCounter--; }
+		// 攻撃のクールタイムを減らす
+		if (coolTimeCounter > 0.0f) {
+			coolTimeCounter -= TimeScale::Get();
+			if (coolTimeCounter <= 0.0f) { coolTimeCounter = 0.0f; }
+		}
 	}
 }

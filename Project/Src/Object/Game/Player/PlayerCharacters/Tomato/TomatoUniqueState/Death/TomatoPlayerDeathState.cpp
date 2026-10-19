@@ -1,18 +1,15 @@
 #include "TomatoPlayerDeathState.h"
 
-TomatoPlayerDeathState::TomatoPlayerDeathState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	Vector3& pos, Vector3& angle,
-	const std::function<void(void)> PlayerDeathSetting,
-	const std::function<void(void)> PlayerIsDeathTrue,
-	const std::function<void(void)> DefaultChangeState
-) :
-	CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), angle(angle),
-	PlayerIsDeathTrue(PlayerIsDeathTrue),
-	PlayerDeathSetting(PlayerDeathSetting),
-	DefaultChangeState(DefaultChangeState),
+#include "../../../../../../../Utility/Utility.h"
+
+#include "../../../../../../../Manager/TimeScale/TimeScale.h"
+
+#include "../../../../../../Common/Transform/Transform.h"
+
+TomatoPlayerDeathState::TomatoPlayerDeathState(Transform& playerTrans, std::function<void(void)> playerDeathSetting) :
+	playerTrans(playerTrans),
+	playerDeathSetting(playerDeathSetting),
+
 	animeCounter(0.0f)
 {
 }
@@ -20,18 +17,17 @@ TomatoPlayerDeathState::TomatoPlayerDeathState(
 void TomatoPlayerDeathState::Enter(void)
 {
 	animeCounter = 30.0f;
-	angle.x = 60.0f;
+	playerTrans.rotation = Quaternion::FromRotationX(Deg2Rad(180.0f));
 }
 
 void TomatoPlayerDeathState::Update(void)
 {
-	pos.y += animeCounter;
-	animeCounter -= 0.2f;
-	angle.y -= 0.4f;
+	playerTrans.pos.y += animeCounter*TimeScale::Get();
+	animeCounter -= 0.2f*TimeScale::Get();
+	playerTrans.AddAngleYDeg(3.0f * TimeScale::Get());
 
 	if (animeCounter <= 0.0f) {
-		PlayerDeathSetting();
-		DefaultChangeState();
+		playerDeathSetting();
 		animeCounter = 0.0f;
 	}
 }
@@ -39,5 +35,4 @@ void TomatoPlayerDeathState::Update(void)
 void TomatoPlayerDeathState::Exit(void)
 {
 	animeCounter = 0.0f;
-	PlayerIsDeathTrue();
 }

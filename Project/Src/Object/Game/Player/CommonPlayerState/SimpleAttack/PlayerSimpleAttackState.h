@@ -59,6 +59,9 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
+	// クールタイムを参照
+	const float& GetCoolTimeCounter(void)const { return coolTimeCounter; }
+
 private:
 
 #pragma region 定数
@@ -114,5 +117,5 @@ private:
 	STEP step;
 
 	// クールタイム計測
-	int coolTimeCounter;
+	float coolTimeCounter;
 };
