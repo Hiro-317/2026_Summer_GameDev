@@ -576,7 +576,7 @@ void CollisionManager::CheckPairOnce(ColliderBase* a, ColliderBase* b)
 
 		result.penetration = (std::max)(result.penetration, 0.0f);
 
-		// ”»’èŠÖ”‘¤‚Å‚ß‚è‚İ—Ê‚ğ–¾¦‚Å‚«‚È‚©‚Á‚½ê‡‚Ì•âŠ®
+		// ”»’èŠÖ”‘¤‚Å‚ß‚è‚İ—Ê‚ğ–¾¦‚Å‚«‚È‚©‚Á‚½ê‡‚Ì•âŠÔ
 		// LineŒn‚Í‘ÌÏ‚ğ‚½‚È‚¢‚½‚ß0‚Ì‚Ü‚Ü‚Æ‚·‚é
 		if (result.penetration <= 0.0f && a->GetShape() != COLLIDER_SHAPE::Line && b->GetShape() != COLLIDER_SHAPE::Line) {
 			const ColliderBase::AABB aAABB = a->GetAABB();

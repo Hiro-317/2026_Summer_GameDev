@@ -1,15 +1,11 @@
 #include "PlayerManager.h"
 
+#include "../../../../Manager/Net/NetWorkManager.h"
 
-PlayerManager::PlayerManager()
-{
-}
+#include "../PlayerBase.h"
 
-PlayerManager::~PlayerManager()
-{
-}
+PlayerManager::PlayerManager() : playerInfoRef() {}
 
-// ロード
 void PlayerManager::Load(void)
 {
 	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
@@ -20,76 +16,27 @@ void PlayerManager::Load(void)
 	}
 	
 	for (PlayerInfo& own : playerInfoRef) {
-		// プレイヤーのロード
-		own.instance->Load();
-
 		for (PlayerInfo& other : playerInfoRef) {
 			// 自身以外のプレイヤーの座標を渡す
-			if (own.instance->GetOperatorSenderId() != other.instance->GetOperatorSenderId()) {
+			if (own.instance->GetControlSenderId() != other.instance->GetControlSenderId()) {
 				own.instance->SetOtherPlayerTrans(&other.instance->GetTrans());
 			}
 		}
 	}
 
+	// 下位アクターに追加
+	for (PlayerInfo& player : playerInfoRef) { AddChildActor(player.instance); }
 }
 
-// 初期化処理
-void PlayerManager::Init(void)
+bool PlayerManager::IsPlayerAllDeath(void) const
 {
-	for (PlayerInfo& info : playerInfoRef) {
-		info.instance->Init();
+	for (const PlayerInfo& info : playerInfoRef) {
+		if (!info.instance->GetIsDeath()) { return false; }
 	}
+	return true;
 }
 
-// 更新処理
-void PlayerManager::Update(void)
+void PlayerManager::SetBossPos(const Vector3* bossPos)
 {
-	for (PlayerInfo& info : playerInfoRef) {
-		info.instance->Update();
-	}
-}
-
-// 描画処理
-void PlayerManager::Draw(void)
-{
-	for (PlayerInfo& info : playerInfoRef) {
-		info.instance->Draw();
-	}
-}
-
-// UI描画処理
-void PlayerManager::UiDraw(void)
-{
-	for (PlayerInfo& info : playerInfo) {
-		info.instance->UiDraw();
-	}
-}
-
-// 解放処理
-void PlayerManager::Release()
-{
-	for (PlayerInfo& info : playerInfoRef) {
-		info.instance->Release();
-	}
-}
-
-void PlayerManager::AlphaDraw(void)
-{
-	for (PlayerInfo& info : playerInfo) {
-		info.instance->AlphaDraw();
-	}
-}
-
-void PlayerManager::ReceptionUpdate(void)
-{
-	for (PlayerInfo& info : playerInfoRef) {
-		info.instance->ReceptionUpdate();
-	}
-}
-
-void PlayerManager::SendUpdate(void)
-{
-	for (PlayerInfo& info : playerInfoRef) {
-		info.instance->SendUpdate();
-	}
+	for (PlayerInfo& info : playerInfoRef) { info.instance->SetBossPos(bossPos); }
 }

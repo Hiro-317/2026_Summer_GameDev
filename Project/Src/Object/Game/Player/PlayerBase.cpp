@@ -3,10 +3,10 @@
 #include "../../../Manager/Font/FontManager.h"
 #include "../../../Manager/Effect/EffectManager.h"
 
+#include "../../../Manager/Net/NetWorkManager.h"
+
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
-
-#include "../../UI/HitUI/HitUI.h"
 
 #include "../../Common/Collider/LineCollider.h"
 #include "../../Common/Collider/CapsuleCollider.h"
@@ -123,8 +123,6 @@ void PlayerBase::SubInit(void)
 
 void PlayerBase::SubUpdate(void)
 {
-	interestPos = trans.pos + INTEREST_POS;
-
 	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerToPlayerTarget).down) {
 		TargetPlayerNext();
 	}

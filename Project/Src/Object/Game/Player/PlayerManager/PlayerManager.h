@@ -4,7 +4,7 @@
 
 #include "PlayerFactory.h"
 
-#include "../../../../Manager/Net/NetWorkManager.h"
+#include "../../../../Manager/Net/SenderID_Define.h"
 
 class PlayerBase;
 
@@ -13,7 +13,7 @@ class PlayerManager : public ActorBase
 public:
 
 	PlayerManager();	// コンストラクタ
-	~PlayerManager();	// デストラクタ
+	~PlayerManager()override = default;	// デストラクタ
 
 	void Load(void)override;
 
@@ -22,17 +22,10 @@ public:
 
 	const PlayerBase* GetPlayerIns(const MSG_SENDER_ID id)const { return playerInfoRef[(int)id].instance; }
 
-	const bool IsPlayerAllDeath(void)const {
-		for (const PlayerInfo& info : playerInfoRef) {
-			if (!info.instance->GetIsDeath()) { return false; }
-		}
-		return true;
-	}
+	bool IsPlayerAllDeath(void)const;
 
 	// ボスの座標のポインタをセット
-	void SetBossPos(const Vector3* bossPos) {
-		for (PlayerInfo& info : playerInfoRef) { info.instance->SetBossPos(bossPos); } 
-	}
+	void SetBossPos(const Vector3* bossPos);
 
 private:
 

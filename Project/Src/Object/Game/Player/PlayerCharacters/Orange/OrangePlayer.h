@@ -5,11 +5,12 @@
 #include "../../../../../Common/Vector2.h"
 
 class PlayerTripleAttackCollOperator;
+class PlayerSimpleAttackCollOperator;
 
 class OrangePlayer : public PlayerBase
 {
 public:
-	OrangePlayer(MSG_SENDER_ID operatorSenderId);	
+	OrangePlayer(MSG_SENDER_ID controlSenderId);
 	~OrangePlayer()override = default;
 
 	void PlayerLoad(void)override;
@@ -22,89 +23,6 @@ public:
 private:
 
 #pragma region ’è”’è‹`
-
-
-
-	// ƒXƒLƒ‹1ó‘Ô```````````````````````````
-
-	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
-	const float SKILL_1_TARGET_SERCH_RANGE = ;
-
-	// “–‚½‚è”»’è‚ÌƒTƒCƒYƒe[ƒuƒ‹i”¼Œaj
-	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_SIZE_TABLE =
-	{
-		GetParameter("TripleAttack","CollSize1"),
-		GetParameter("TripleAttack","CollSize2"),
-		GetParameter("TripleAttack","CollSize3"),
-	};
-
-	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
-	const Vector3 SKILL_1_COLL_LOCAL_POS = ;
-
-	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_1_COOL_TIME = ;
-
-	// UŒ‚‚ªŸ’i‚ÉŒq‚ª‚é—P—\ŠÔ
-	const int SKILL_1_ATTACK_NEXT_STAGE_CONTINUE_TIME = ;
-
-	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_START_TIME =
-	;
-	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const std::array<float, (size_t)PLAYER_TRIPLE_ATTACK_STAGE::MAX> SKILL_1_COLL_END_TIME =
-	;
-
-	// ```````````````````````````ƒXƒLƒ‹1ó‘Ô
-
-
-	// ƒXƒLƒ‹2ó‘Ô```````````````````````````
-
-	// UŒ‚‘ÎÛ‚Ì’Tõ”ÍˆÍ
-	const float SKILL_2_TARGET_SERCH_RANGE = GetParameter("SimpleAttack", "TargetSerchRange");
-
-	// “–‚½‚è”»’è‚Ìƒ^ƒO
-	const COLLIDER_TAG SKILL_2_COLL_TAG = ;
-
-	// “–‚½‚è”»’è‚ÌƒTƒCƒYi”¼Œaj
-	const float SKILL_2_COLL_SIZE_TABLE = ;
-
-	// “–‚½‚è”»’è‚ÌƒIƒtƒZƒbƒg
-	const Vector3 SKILL_2_COLL_LOCAL_POS = ;
-
-	// UŒ‚‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_2_COOL_TIME = GetParameterToInt("SimpleAttack", "CoolTime");
-
-	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_2_COLL_START_TIME = GetParameter("SimpleAttack", "CollStartTime");
-
-	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_2_COLL_END_TIME = GetParameter("SimpleAttack", "CollEndTime");
-
-	// UŒ‚’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_2_ATTACK_MOVE_SPEED = GetParameter("SimpleAttack", "AttackMoveSpeed");
-
-	// ƒXƒLƒ‹‚ÌUŒ‚”{—¦
-	const short SKILL_2_ATTACK_RATE_PERCENT = ;
-
-	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
-
-
-	// ƒXƒLƒ‹3ó‘Ô```````````````````````````
-
-	// ‰ñ”ğ‚»‚Ì‚à‚Ì‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	const int SKILL_3_COOL_TIME = GetParameterToInt("Dodge","CoolTime");
-
-	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éŠJnŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_3_INVI_START_TIME = GetParameter("Dodge","InviStartTime");
-	// ‰ñ”ğ‚Ì–³“G”»’è‚ğ”­¶‚³‚¹‚éI—¹ŠÔiƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡j
-	const float SKILL_3_INVI_END_TIME = GetParameter("Dodge","InviEndTime");
-
-	// ‰ñ”ğ’†‚ÌˆÚ“®‘¬“x
-	const float SKILL_3_MOVE_SPEED = GetParameter("Dodge","DodgeMoveSpeed");
-
-	// ```````````````````````````ƒXƒLƒ‹2ó‘Ô
-
-
 
 	// ƒAƒjƒ[ƒVƒ‡ƒ“``````````````````````````
 
@@ -164,4 +82,12 @@ private:
 
 #pragma endregion ’è”’è‹`
 
+	// O’iUŒ‚‚Ì“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX‚ÌQÆ
+	PlayerTripleAttackCollOperator* tripleAttackCollOperatorRef;
+
+	// R‚èUŒ‚‚Ì“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX‚ÌQÆ
+	PlayerSimpleAttackCollOperator* kickCollOperatorRef;
+
+	// ‰ñ”ğ’†‚Ì–³“G”»’è
+	bool isInvincible;
 };

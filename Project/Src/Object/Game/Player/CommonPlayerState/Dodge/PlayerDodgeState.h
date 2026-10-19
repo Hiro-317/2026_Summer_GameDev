@@ -13,6 +13,19 @@ class PlayerDodgeState : public CharacterStateBase
 {
 public:
 
+	/// <summary>
+	/// 回避
+	/// </summary>
+	/// <param name="DODGE_KEY">使用するキー</param>
+	/// <param name="COOL_TIME">クールタイム</param>
+	/// <param name="INVI_START_TIME">無敵判定発生開始時間</param>
+	/// <param name="INVI_END_TIME">無敵判定発生終了時間</param>
+	/// <param name="rotation">回転情報の参照</param>
+	/// <param name="moveAccel">移動関数</param>
+	/// <param name="isInvincible">無敵判定操作参照</param>
+	/// <param name="playDodgeAnime">回避アニメーション再生関数</param>
+	/// <param name="getAnimePlayRatio">アニメーション再生割合取得関数</param>
+	/// <param name="defaultChangeState">回避行動終了後の状態遷移関数</param>
 	PlayerDodgeState(
 		KEY_TYPE DODGE_KEY,
 

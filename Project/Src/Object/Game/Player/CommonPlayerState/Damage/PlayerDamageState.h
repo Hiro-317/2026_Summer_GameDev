@@ -5,13 +5,14 @@
 class PlayerDamageState : public CharacterStateBase
 {
 public:
+	
 	/// <summary>
-	/// コンストラクタ
+	/// ダメージ
 	/// </summary>
-	/// <param name="INVI_TIME">無敵時間</param>
-	/// <param name="PlayDamageAnime">アニメーション再生関数</param>
-	/// <param name="IsAnimeEnd">アニメーションが終了したかどうかを返す関数</param>
-	/// <param name="DefaultChangeState">次の状態に遷移する関数</param>
+	/// <param name="playDamageAnime">アニメーション再生関数</param>
+	/// <param name="isAnimeEnd">アニメーションが終了したかどうかを返す関数</param>
+	/// <param name="inviStart">無敵判定発生関数</param>
+	/// <param name="defaultChangeState">次の状態に遷移する関数</param>
 	PlayerDamageState(
 		std::function<void(void)> playDamageAnime,
 		std::function<bool(void)> isAnimeEnd,

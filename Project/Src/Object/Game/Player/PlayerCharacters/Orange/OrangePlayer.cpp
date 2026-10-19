@@ -5,6 +5,9 @@
 #include "../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../Manager/Font/FontManager.h"
 
+#include "../../../../Common/Collider/ColliderBase.h"
+
+#include "../../CommonPlayerState/Idle/PlayerIdleState.h"
 #include "../../CommonPlayerState/Move/PlayerMoveState.h"
 
 #include "../../CommonPlayerState/TripleAttack/PlayerTripleAttackCollOperator.h"
@@ -19,15 +22,15 @@
 
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 
-#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
-#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
+#include "../../../UI/HpBarUI.h"
+#include "../../../UI/HitUI.h"
 
+#include "../../PlayerUI/PlayerSkillUI.h"
+#include "../../PlayerUI/PlayerStaminaUI.h"
 
-
-OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
+OrangePlayer::OrangePlayer(MSG_SENDER_ID controlSenderId) :
 	PlayerBase(
-		operatorSenderId,
+		controlSenderId,
 
 		"OrangeParameter",
 		"PlayerHP",
@@ -36,7 +39,10 @@ OrangePlayer::OrangePlayer(MSG_SENDER_ID operatorSenderId) :
 		"PlayerMoveSpeed",
 
 		"Data/Parameter/Character/Player/Orange/",
-		"Orange/OrangeModel")
+		"Orange/OrangeModel"
+	),
+
+	tripleAttackCollOperatorRef(nullptr)
 {
 }
 
@@ -61,7 +67,7 @@ void OrangePlayer::PlayerLoad(void)
 #pragma region プレイヤーが抱える下位クラスを生成する
 
 	// 三弾攻撃の当たり判定オペレーターを生成する
-	AddChildActor(
+	tripleAttackCollOperatorRef =
 		new PlayerTripleAttackCollOperator(
 			// 探索範囲
 			GetParameter("TripleAttack", "TargetSerchRange"),
@@ -83,11 +89,13 @@ void OrangePlayer::PlayerLoad(void)
 			controlSenderId,
 			// ステータス
 			characterStats
-		)
-	);
+		);
+	// 下位クラスに追加
+	AddChildActor(tripleAttackCollOperatorRef);
+
 
 	// キック用の当たり判定オペレーターを生成する
-	AddChildActor(
+	kickCollOperatorRef =
 		new PlayerSimpleAttackCollOperator(
 			// 探索範囲
 			GetParameter("SimpleAttack", "TargetSerchRange"),
@@ -105,13 +113,19 @@ void OrangePlayer::PlayerLoad(void)
 			controlSenderId,
 			// ステータスの参照
 			characterStats
-		)
-	);
+		);
+	// 下位クラスに追加
+	AddChildActor(kickCollOperatorRef);
 
 #pragma endregion
 
-
 #pragma region 状態設定
+
+	// 待機状態を追加する
+	AddState(
+		STATE::IDLE,
+		new PlayerIdleState([&]() { AnimePlay(ANIME_TYPE::IDLE); })
+	);
 
 	// 移動状態を追加する
 	AddState(
@@ -136,23 +150,28 @@ void OrangePlayer::PlayerLoad(void)
 
 	// 三段攻撃状態を追加する
 	AddState(
-		STATE::SKILL_1,	
+		STATE::SKILL_1,
 		new PlayerTripleAttackState(
+			// 使用するキー
 			KEY_TYPE::PlayerSkill1,
+			// クールタイム
 			GetParameterToInt("TripleAttack", "CoolTime"),
+			// 次段につながるまでの猶予時間
 			GetParameterToInt("TripleAttack", "AttackNextStageContinueTime"),
+			// 各段の攻撃判定発生開始時間
 			{
 				GetParameter("TripleAttack","CollStartTime1"),
 				GetParameter("TripleAttack","CollStartTime2"),
 				GetParameter("TripleAttack","CollStartTime3")
 			},
+			// 各段の攻撃判定発生終了時間
 			{
 				GetParameter("TripleAttack","CollEndTime1"),
 				GetParameter("TripleAttack","CollEndTime2"),
 				GetParameter("TripleAttack","CollEndTime3"),
 			},
-			
-			,
+			// 攻撃判定管理
+			* tripleAttackCollOperatorRef,
 			// モデル制御情報の参照
 			trans,
 			// 各段のアニメーション再生
@@ -163,7 +182,7 @@ void OrangePlayer::PlayerLoad(void)
 				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3); }
 			},
 			// アニメーションの再生割合を取得する関数
-			std::bind(&OrangePlayer::GetAnimeRatio,this),
+			std::bind(&OrangePlayer::GetAnimeRatio, this),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
 			[&]() { ChangeState(STATE::IDLE); }
 		)
@@ -171,100 +190,99 @@ void OrangePlayer::PlayerLoad(void)
 
 	// 攻撃状態を追加する (キック)
 	AddState(
-		(int)STATE::SKILL_2,
+		STATE::SKILL_2,
 		new PlayerSimpleAttackState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_2); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_2; },
-			// 定数（使用するキー / クールタイム / 攻撃の判定を発生させる 開始 / 終了 時間（アニメーションの再生割合）/ 攻撃中の移動速度）
-			KEY_TYPE::PLAYER_SKILL_2, SKILL_2_COOL_TIME, SKILL_2_COLL_START_TIME, SKILL_2_COLL_END_TIME, SKILL_2_ATTACK_MOVE_SPEED,
-			// 当たり判定のオペレーター
-			*SubObjSerch<PlayerSimpleAttackCollOperator>(),
-			// 座標 / 角度
-			trans.pos, trans.angle,
-			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::KICK, false); },
-			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
-			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+			// 使用するキー
+			KEY_TYPE::PlayerSkill2,
+			// クールタイム
+			GetParameterToInt("SimpleAttack", "CoolTime"),
+			// 攻撃判定発生開始時間
+			GetParameter("SimpleAttack", "CollStartTime"),
+			// 攻撃判定発生終了時間
+			GetParameter("SimpleAttack", "CollEndTime"),
+			// 攻撃判定管理
+			*kickCollOperatorRef,
+			// モデル制御情報の参照
+			trans,
+			// 移動用の関数
+			std::bind(&OrangePlayer::MoveAccel, this, std::placeholders::_1),
+			// アニメーション再生
+			[&]() { AnimePlay(ANIME_TYPE::KICK); },
+			// アニメーションの再生割合を取得する関数
+			std::bind(&OrangePlayer::GetAnimeRatio, this),
+			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
 	AddState(
-		(int)STATE::SKILL_3,
+		STATE::SKILL_3,
 		new PlayerDodgeState(
-			// 自分の状態に関する関数
-			[&]() { ChangeState((int)STATE::SKILL_3); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_3; },
-			// 定数（使用するキー / クールタイム / 回避中の移動速度 / 無敵時間の 開始 / 終了時間（アニメーションの再生割合
-			KEY_TYPE::PLAYER_SKILL_3, SKILL_3_COOL_TIME, SKILL_3_MOVE_SPEED,
-			SKILL_3_INVI_START_TIME, SKILL_3_INVI_END_TIME,
-			// 座標 / 角度
-			trans.pos, trans.angle,
-			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::DODGE, false); },
-			// アニメーションの再生割合を取得する関数のポインタ / アニメーションの終了フラグを取得する関数のポインタ
-			[&]() { return GetAnimeRatio(); }, [&]() { return IsAnimeEnd(); },
-			// 無敵時間のセット関数
-			std::bind(&OrangePlayer::SetInviCounter, this, std::placeholders::_1),
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+			// 使用するキー
+			KEY_TYPE::PlayerSkill3,
+			// クールタイム
+			GetParameterToInt("Dodge", "CoolTime"),
+			// 無敵判定発生開始時間
+			GetParameter("Dodge", "InviStartTime"),
+			// 無敵判定発生終了時間
+			GetParameter("Dodge", "InviEndTime"),
+			// 回転情報の参照
+			trans.rotation,
+			// 移動用の関数
+			std::bind(&OrangePlayer::MoveAccel, this, std::placeholders::_1),
+			// 無敵判定操作
+			isInvincible,
+			// アニメーション再生
+			[&]() { AnimePlay(ANIME_TYPE::DODGE); },
+			// アニメーションの再生割合を取得する関数
+			std::bind(&OrangePlayer::GetAnimeRatio, this),
+			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
 	AddState(
-		(int)STATE::DAMAGE,
+		STATE::DAMAGE,
 		new PlayerDamageState(
-			// 自分の状態に関する関数
-			[&]() { ChangeState((int)STATE::DAMAGE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::DAMAGE; },
-			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
-			// アニメーションの終了フラグを取得する関数のポインタ
-			[&]() { return IsAnimeEnd(); },
+			// アニメーションの再生
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			// アニメーションの終了フラグを取得する関数
+			std::bind(OrangePlayer::IsAnimeEnd, this),
 			// 無敵時間のセット関数
-			[&]() { SetInviCounter(DODGE_INVI_TIME); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+			[&]() { invincibleCounter = 30; },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
 	// 死亡状態を追加する
 	AddState(
-		(int)STATE::DEATH,
+		STATE::DEATH,
 		new PlayerDeathState(
-			// 自分の状態に関する関数
-			[&]() { ChangeState((int)STATE::DEATH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::DEATH; },
-			// 座標 / 角度
-			trans.pos, trans.angle,
-			// アニメーション終了判定ゲット関数のポインタ
-			[&]() { return IsAnimeEnd(); },
-			// 死亡アニメーション再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
-			// 死亡後の設定関数のポインタ
-			[&]() { PlayerDeathSetting(); },
-			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+			// アニメーションの再生
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			// アニメーションの終了フラグを取得する関数
+			std::bind(OrangePlayer::IsAnimeEnd, this),
+			// 死亡演出終了後の処理
+			[&]() {
+				if (Net::GetIns().GetConnectStatus().EntryCount() > 1) {
+					ChangeState((int)STATE::OTHER_WATCH);
+				}
+			}
 		)
 	);
 
-	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
-	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
-		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
-		};
+	// 待機状態/移動状態 -> スキル1 の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_1);
 
-	// 移動状態 -> スキル1 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
-	// 移動状態 -> スキル2 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
-	// 移動中 -> スキル3の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+	// 待機状態/移動状態 -> スキル2 の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_2);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_2);
+
+	// 待機状態/移動中 -> スキル3の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_3);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion
 
@@ -272,7 +290,7 @@ void OrangePlayer::PlayerLoad(void)
 
 	// HPUIの座標設定
 	int number = 0;
-	if (isOwnOperator) {
+	if (IsOwnControl()) {
 		number = 0;
 	}
 	else {
@@ -355,8 +373,17 @@ void OrangePlayer::PlayerLoad(void)
 
 void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	// 回避時の当たり判定処理(回避成功したら、ダメージ処理をスルーする)
-	if (PlayerBase::DodgeOnCollision(STATE::SKILL_3, other)) { return; }
+	// 回避時の特殊無敵判定
+	if (isInvincible) {
+		// ダメージが発生するコライダーを検出
+		if (other.GetTag() == COLLIDER_TAG::BOSS_ATTACK) {
+
+			// 回避成功のエフェクトを発生
+
+			// 通常の無敵判定を発生させる
+			invincibleCounter = 30;
+		}
+	}
 
 	// 敵の攻撃を受けた時のダメージ処理
 	PlayerBase::OnCollision(ownTag, other, result);
@@ -366,49 +393,40 @@ void OrangePlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
 
-	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
-		state = dataPtr->state;
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(controlSenderId)) {
 
-		switch ((STATE)state) {
-		case PlayerBase::STATE::SKILL_1: {
-			SubObjSerch<PlayerTripleAttackCollOperator>()->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::SKILL_2: {
-			SubObjSerch<PlayerSimpleAttackCollOperator>()->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::SKILL_3: {
-			break;
-		}
-		case PlayerBase::STATE::DEATH: {
-			PlayerDeathSetting();
-			break;
-		}
-
-		default: { break; }
-		}
+		ChangeState(dataPtr->state);
 
 		delete dataPtr;
 	}
 
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(controlSenderId)) {
 		
 		switch (dataPtr->collKinds) {
 
-		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_1:
-		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_2:
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_1: {
+			// 三段攻撃（1段目）
+			if (dataPtr->isCollider) { tripleAttackCollOperatorRef->CollOn(PLAYER_TRIPLE_ATTACK_STAGE::First); }
+			else { tripleAttackCollOperatorRef->CollOff(PLAYER_TRIPLE_ATTACK_STAGE::First); }
+			break;
+		}
+		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_2: {
+			// 三段攻撃（2段目）
+			if (dataPtr->isCollider) { tripleAttackCollOperatorRef->CollOn(PLAYER_TRIPLE_ATTACK_STAGE::Second); }
+			else { tripleAttackCollOperatorRef->CollOff(PLAYER_TRIPLE_ATTACK_STAGE::Second); }
+			break;
+		}
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerTripleAttack_3: {
-			// 三段攻撃
-			if (dataPtr->isCollider) { SubObjSerch<PlayerTripleAttackCollOperator>()->CollOn((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds); }
-			else { SubObjSerch<PlayerTripleAttackCollOperator>()->CollOff((PLAYER_TRIPLE_ATTACK_STAGE)dataPtr->collKinds); }
+			// 三段攻撃（3段目）
+			if (dataPtr->isCollider) { tripleAttackCollOperatorRef->CollOn(PLAYER_TRIPLE_ATTACK_STAGE::Third); }
+			else { tripleAttackCollOperatorRef->CollOff(PLAYER_TRIPLE_ATTACK_STAGE::Third); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack: {
 			// キック
-			if (dataPtr->isCollider) { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOn(); }
-			else { SubObjSerch<PlayerSimpleAttackCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { kickCollOperatorRef->CollOn(); }
+			else { kickCollOperatorRef->CollOff(); }
 			break;
 		}
 

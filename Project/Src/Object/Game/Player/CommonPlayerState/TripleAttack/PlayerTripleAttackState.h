@@ -6,6 +6,8 @@
 
 #include "../../../../../Manager/Input/InputManager.h"
 
+#include "PlayerTripleAttackStDefine.h"
+
 class PlayerTripleAttackCollOperator;
 
 struct Transform;
@@ -13,18 +15,6 @@ struct Transform;
 class PlayerTripleAttackState : public CharacterStateBase
 {
 public:
-
-	// 攻撃の段階
-	enum class	PLAYER_TRIPLE_ATTACK_STAGE
-	{
-		None = -1,
-
-		First,
-		Second,
-		Third,
-
-		Max
-	};
 
 	/// <summary>
 	/// プレイヤーの3段攻撃状態を管理するクラス
