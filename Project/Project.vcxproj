@@ -252,7 +252,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Damage\TomatoPlayerDamageState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.cpp" />
-    <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Move\TomatoPlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.cpp" />
@@ -437,7 +436,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Damage\TomatoPlayerDamageState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.h" />
-    <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Move\TomatoPlayerMoveState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.h" />

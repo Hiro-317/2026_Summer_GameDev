@@ -72,7 +72,6 @@
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoPlayer.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Damage\TomatoPlayerDamageState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.cpp" />
-    <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Move\TomatoPlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.cpp" />
@@ -92,12 +91,6 @@
     <ClCompile Include="Src\Object\Lobby\LobbyCharaPreview\LobbyCharaPreviewManager.cpp" />
     <ClCompile Include="Src\Object\Game\Stage\GrapeBoss\GrapeBossStage.cpp" />
     <ClCompile Include="Src\Object\Game\Stage\TomatoBoss\TomatoBossStage.cpp" />
-    <ClCompile Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.cpp" />
-    <ClCompile Include="Src\Object\UI\HitUI\HitUI.cpp" />
-    <ClCompile Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.cpp" />
-    <ClCompile Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.cpp" />
-    <ClCompile Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.cpp" />
-    <ClCompile Include="Src\Object\UI\UI_Base.cpp" />
     <ClCompile Include="Src\Scene\Clear\ClearScene.cpp" />
     <ClCompile Include="Src\Scene\Common\Option\OptionScene.cpp" />
     <ClCompile Include="Src\Scene\GameOver\GameOver.cpp" />
@@ -171,6 +164,11 @@
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotArea.cpp" />
     <ClCompile Include="Src\Object\Game\Player\CommonPlayerState\Idle\PlayerIdleState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerManager\PlayerFactory.cpp" />
+    <ClCompile Include="Src\Object\Game\UI\HpBarUI.cpp" />
+    <ClCompile Include="Src\Object\Game\UI\HitUI.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\PlayerUI\PlayerSkillUI.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\PlayerUI\PlayerStaminaUI.cpp" />
+    <ClCompile Include="Src\Object\Game\Player\PlayerUI\ToPlayerTargetUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -250,7 +248,6 @@
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoPlayer.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Damage\TomatoPlayerDamageState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.h" />
-    <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Move\TomatoPlayerMoveState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.h" />
@@ -294,13 +291,6 @@
     <ClInclude Include="Src\Object\Lobby\LobbyStage\LobbyStage.h" />
     <ClInclude Include="Src\Object\Game\Stage\GrapeBoss\GrapeBossStage.h" />
     <ClInclude Include="Src\Object\Game\Stage\TomatoBoss\TomatoBossStage.h" />
-    <ClInclude Include="Src\Object\UI\CharacterHpUI\CharacterHpUI.h" />
-    <ClInclude Include="Src\Object\UI\HitUI\HitUI.h" />
-    <ClInclude Include="Src\Object\UI\PlayerSkillUI\PlayerSkillUI.h" />
-    <ClInclude Include="Src\Object\UI\PlayerStaminaUI\PlayerStaminaUI.h" />
-    <ClInclude Include="Src\Object\UI\ToPlayerTargetUI\ToPlayerTargetUI.h" />
-    <ClInclude Include="Src\Object\UI\UIDefine.h" />
-    <ClInclude Include="Src\Object\UI\UI_Base.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Clear\ClearScene.h" />
     <ClInclude Include="Src\Scene\Common\Option\OptionScene.h" />
@@ -394,6 +384,12 @@
     <ClInclude Include="Src\Scene\Game\Pause\GamePause.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\BossSelectSpotArea.h" />
     <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\Idle\PlayerIdleState.h" />
+    <ClInclude Include="Src\Object\Game\Player\CommonPlayerState\TripleAttack\PlayerTripleAttackStDefine.h" />
+    <ClInclude Include="Src\Object\Game\UI\HpBarUI.h" />
+    <ClInclude Include="Src\Object\Game\UI\HitUI.h" />
+    <ClInclude Include="Src\Object\Game\Player\PlayerUI\PlayerSkillUI.h" />
+    <ClInclude Include="Src\Object\Game\Player\PlayerUI\PlayerStaminaUI.h" />
+    <ClInclude Include="Src\Object\Game\Player\PlayerUI\ToPlayerTargetUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

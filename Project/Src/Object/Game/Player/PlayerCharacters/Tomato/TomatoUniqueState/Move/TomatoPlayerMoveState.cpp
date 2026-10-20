@@ -1,110 +1,134 @@
 #include "TomatoPlayerMoveState.h"
 
+#include <cmath>
+
+#include "../../../../../../../Manager/TimeScale/TimeScale.h"
+#include "../../../../../../../Manager/Input/InputManager.h"
+
 #include "../../../../../../../Manager/Camera/CurrentCamera.h"
 
-TomatoPlayerMoveState::TomatoPlayerMoveState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState, 
-	float DASH_SPEED_RATE, short DASH_STAMINA_MAX, 
-	float ATTENUATION, Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats)
-	:
-	CharacterStateBase(ownChangeState, isOwnState),
-	DASH_SPEED_RATE(DASH_SPEED_RATE), DASH_STAMINA_MAX(DASH_STAMINA_MAX), 
-	ATTENUATION(ATTENUATION), accelSum(accelSum), ACCEL_MAX(ACCEL_MAX), angle(angle), playerStats(playerStats),
+#include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../../Common/Transform/Transform.h"
 
-	isDash(false),
-	dashStamina(DASH_STAMINA_MAX), 
-	isTired(false)
+TomatoPlayerMoveState::TomatoPlayerMoveState(
+    const CharacterStats& stats,
+    float DASH_SPEED_RATE,
+    short DASH_STAMINA_MAX,
+    std::function<void(const Vector3&)> moveAccel,
+    float& ACCEL_MAX,
+    Transform& playerTrans,
+    float ROLL_RADIUS
+) :
+    stats(stats),
+    DASH_SPEED_RATE(DASH_SPEED_RATE),
+    DASH_STAMINA_MAX(DASH_STAMINA_MAX),
+    moveAccel(moveAccel),
+    ACCEL_MAX(ACCEL_MAX),
+    playerTrans(playerTrans),
+    ROLL_RADIUS(ROLL_RADIUS),
+    isDash(false),
+    dashStamina(static_cast<float>(DASH_STAMINA_MAX)),
+    isTired(false)
 {
 }
 
 void TomatoPlayerMoveState::OwnStateConditionUpdate(void)
 {
-	// ˆÚ“®‚É‚©‚©‚í‚éƒL[‚Ìƒ_ƒEƒ“ƒgƒŠƒK[‚ğğŒ‚É‚·‚é
-	if (
-		Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).down ||
-		Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).down ||
-		Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).down ||
-		Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).down ||
-		Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).down
-		) {
-		// ©•ª‚Ìó‘Ô‚É‘JˆÚ
-		OwnChangeState();
-	}
+    if (InputVec() != 0.0f) { OwnChangeState(); }
 }
 
 void TomatoPlayerMoveState::Enter(void)
 {
+    // rotationã¯ä¿æŒã™ã‚‹ã€‚å†å…¥å ´æ™‚ã‚‚è»¢ãŒã‚Šå§¿å‹¢ã‚’å¼•ãç¶™ãã€‚
 }
 
 void TomatoPlayerMoveState::Update(void)
 {
-	// ƒRƒ“ƒgƒ[ƒ‰[‚Ì“ü—Í‚ğæ“¾
-	Vector3 vec = Key::GetIns().GetLeftStickVec().ToVector3XZ();
+    Vector3 inputVec = InputVec();
 
-	// “ü—Í‚ª‚È‚¯‚ê‚ÎŸ‚ÉƒL[ƒ{[ƒh‚Ì“ü—Í‚ğæ“¾
-	if (vec == 0.0f) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).now) { vec.x++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).now) { vec.x--; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).now) { vec.z++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { vec.z--; }
-	}
+    isDash = !isTired &&
+        Input::GetIns().GetInfo(KEY_TYPE::PlayerDash).now &&
+        inputVec != 0.0f;
 
-	// ƒ_ƒbƒVƒ…ƒtƒ‰ƒO‚ğ—§‚Ä‚é
-	isDash = (isTired) ? false : Key::GetIns().GetInfo(KEY_TYPE::PLAYER_DASH).now && vec != 0.0f;
+    ACCEL_MAX = MOVE_SPEED_MAX(isDash);
 
-	// ˆÚ“®—Ê‚ÌÅ‘å’l‚ğXV‚·‚é
-	ACCEL_MAX = MOVE_SPEED_MAX(isDash);
-	// ‚à‚µ‰Á‘¬“x‚Ì‡Œv‚ªÅ‘å’l‚ğ’´‚¦‚Ä‚¢‚½‚çA‚»‚Ì’l‚©‚ç1ƒtƒŒ[ƒ€•ªŒ¸Š‚µ‚½’l‚ğÅ‘å’l‚É‚·‚é
-	if (ACCEL_MAX < accelSum.Length()) { ACCEL_MAX = accelSum.Length() - ATTENUATION; }
+    if (inputVec != 0.0f) {
+        inputVec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetRotation().GetYaw()));
+        moveAccel(inputVec);
 
-	// ÅI“I‚É“ü—Í‚ª‚ ‚ê‚Î‰Á‘¬“x‚É‰ÁZ‚·‚é
-	if (vec != 0.0f) {
+        if (isDash) {
+            dashStamina -= TimeScale::Get();
+            if (dashStamina <= 0.0f) {
+                dashStamina = 0.0f;
+                isTired = true;
+            }
+        }
+    }
 
-		// ³‹K‰»
-		vec.Normalize();
-
-		// ˆÚ“®•ûŒü‚ğƒJƒƒ‰‚Å‰ñ“]‚³‚¹‚é
-		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
-
-		// ˆÚ“®—Ê‚ğ‰ÁZ
-		accelSum += vec * MOVE_SPEED(isDash);
-
-		// ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚é‚Æ‚«‚ÍƒXƒ^ƒ~ƒi‚ğŒ¸‚ç‚·
-		if (isDash && --dashStamina < 0) {
-			dashStamina = 0;
-
-			// ‘§Ø‚ê
-			isTired = true;
-		}
-		
-		// ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚é‚Æ‚«‚Í‘–‚éƒAƒjƒ[ƒVƒ‡ƒ“‚É‚·‚é
-		// ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚È‚¢‚Æ‚«‚Í•à‚­ƒAƒjƒ[ƒVƒ‡ƒ“‚É‚·‚é
-		angle.x += Deg2Rad(MOVE_SPEED_MAX(isDash) * 0.5f);
-	}
-	else {
-		// ‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“‚É‚·‚é
-		angle.x = Deg2Rad(0.0f);
-	}
-
-	// Šp“x‚ğ“ü—Í•ûŒü‚ÉŒü‚¯‚é
-	if (vec != 0.0f) { angle.y = atan2f(vec.x, vec.z); }
+    // åŠ é€Ÿåº¦ã§ã¯ãªãã€å®Ÿéš›ã«ç§»å‹•ã—ãŸè·é›¢ã§è»¢ãŒã‚‹ã€‚
+    UpdateRolling();
 }
 
 void TomatoPlayerMoveState::Exit(void)
 {
-	accelSum = 0.0f; // ‰Á‘¬“x‚ğƒŠƒZƒbƒg
+    isDash = false;
+    // rotationã¯æˆ»ã•ãªã„ã€‚è»¢ãŒã‚Šå§¿å‹¢ã‚’ç¶­æŒã™ã‚‹ã€‚
 }
 
 void TomatoPlayerMoveState::AlwaysUpdate(void)
 {
-	// ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚È‚¢‚Æ‚«‚ÍƒXƒ^ƒ~ƒi‚ğ‰ñ•œ‚³‚¹‚é
-	if (!isDash) {
-		if (++dashStamina > DASH_STAMINA_MAX) {
-			dashStamina = DASH_STAMINA_MAX;
+    if (!isDash) {
+        dashStamina += TimeScale::Get();
+        if (dashStamina >= static_cast<float>(DASH_STAMINA_MAX)) {
+            dashStamina = static_cast<float>(DASH_STAMINA_MAX);
+            isTired = false;
+        }
+    }
+}
 
-			// ‘§Ø‚ê‰ñ•œ
-			isTired = false;
-		}
-	}
+Vector3 TomatoPlayerMoveState::InputVec(void) const
+{
+    // è¿”å´ç”¨ä¸€æ™‚å¤‰æ•°
+    Vector3 vec = Vector3();
+
+    // ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å…¥åŠ›ã‚’å–å¾—
+    vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
+
+    // å…¥åŠ›ãŒãªã‘ã‚Œã°æ¬¡ã«ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›ã‚’å–å¾—
+    if (vec == 0.0f) {
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
+        vec.Normalize();
+    }
+
+    return vec;
+}
+
+float TomatoPlayerMoveState::MOVE_SPEED_MAX(bool dash) const
+{
+    return stats.speedPower.Value() * (dash ? DASH_SPEED_RATE : 1.0f);
+}
+
+void TomatoPlayerMoveState::UpdateRolling(void)
+{
+    if (ROLL_RADIUS <= 0.0f) { return; }
+
+    // Yæˆåˆ†ã¯é™¤å¤–ã™ã‚‹ã€‚ã‚¸ãƒ£ãƒ³ãƒ—ãƒ»è½ä¸‹ã§ã¯è»¢ãŒã‚‰ãªã„ã€‚
+    const Vector3 velocity = playerTrans.Velocity();
+    const Vector3 move(velocity.x, 0.0f, velocity.z);
+    const float distance = move.Length();
+    if (distance <= 0.0001f) { return; }
+
+    // ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã§ã®è»¢ãŒã‚Šè»¸ = ä¸Šæ–¹å‘ Ã— ç§»å‹•æ–¹å‘ã€‚
+    const Vector3 direction = move / distance;
+    const Vector3 worldAxis(direction.z, 0.0f, -direction.x);
+
+    // ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã§ã®å›è»¢ã‚’rotationã¸ç›´æ¥è¿½åŠ ã™ã‚‹ã€‚
+    // Transformã®è¡Œåˆ—è¦ç´„ã§ã¯ã€ç¾åœ¨ã®å›è»¢ * è¿½åŠ å›è»¢ ã®é †ã€‚
+    const float rollAngle = distance / ROLL_RADIUS;
+    const MATRIX deltaMat = MGetRotAxis(worldAxis.ToVECTOR(), rollAngle);
+    const MATRIX newRotationMat = MMult(playerTrans.RotationMat(), deltaMat);
+    playerTrans.SetRotation(Quaternion::FromMatrix(newRotationMat));
 }

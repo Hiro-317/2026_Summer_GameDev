@@ -2,6 +2,8 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../../../../Common/Vector3.h"
+
 class PlayerSimpleAttackCollOperator;
 
 struct Transform;
@@ -12,11 +14,11 @@ public:
 
 	// コンストラクタ
 	TomatoPlayerHeadButtState(
-
 		int COOL_TIME,
 
 		float COLL_START_TIME,
 		float COLL_END_TIME,
+		float STATE_END_TIME,
 
 		PlayerSimpleAttackCollOperator& collOperator,
 
@@ -56,6 +58,11 @@ private:
 	const float COLL_START_TIME;
 	// 攻撃の判定を発生させる終了時間
 	const float COLL_END_TIME;
+	// このステートを終了する時間
+	const float STATE_END_TIME;
+
+	// モデル座標のズレのデフォルト
+	const Vector3 DEFAULT_CENTER_DIFF;
 
 #pragma endregion 
 
@@ -77,4 +84,11 @@ private:
 
 	// クールタイム計測
 	float coolTimeCounter;
+
+	// 頭突き移動量（モデルのローカル +Z 方向）
+	static constexpr float HEADBUTT_DISTANCE = 2.0f;
+	static constexpr float HEADBUTT_WINDUP = 0.25f;
+
+	// 攻撃判定の有効状態
+	bool collActive;
 };

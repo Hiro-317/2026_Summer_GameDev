@@ -1,85 +1,53 @@
 #pragma once
 
-#include "../../../../../CharacterStateBase.h"
+#include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
+
+#include <functional>
+
+#include "../../../../../../../Common/Vector3.h"
+
+struct CharacterStats;
+struct Transform;
 
 class TomatoPlayerMoveState : public CharacterStateBase
 {
 public:
+    
+    // ãƒˆãƒžãƒˆç”¨ç§»å‹•ã‚¹ãƒ†ãƒ¼ãƒˆï¼šãƒ¢ãƒ‡ãƒ«ã‚’å®Ÿç§»å‹•è·é›¢ã«åˆã‚ã›ã¦è»¢ãŒã™
+    TomatoPlayerMoveState(
+        const CharacterStats& stats,
+        float DASH_SPEED_RATE,
+        short DASH_STAMINA_MAX,
+        std::function<void(const Vector3&)> moveAccel,
+        float& ACCEL_MAX,
+        Transform& playerTrans,
+        float ROLL_RADIUS);
 
-	TomatoPlayerMoveState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		float DASH_SPEED_RATE, short DASH_STAMINA_MAX, float ATTENUATION,
-		Vector3& accelSum, float& ACCEL_MAX, Vector3& angle, const CharacterStats& playerStats
-	);
+    ~TomatoPlayerMoveState() override = default;
 
-	~TomatoPlayerMoveState()override = default;
+    void OwnStateConditionUpdate(void) override;
+    void Enter(void) override;
+    void Update(void) override;
+    void Exit(void) override;
+    void AlwaysUpdate(void) override;
 
-	// Ž©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éðŒŠÖ”
-	void OwnStateConditionUpdate(void);
-
-	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	void Enter(void)override;
-	// XVˆ—
-	void Update(void)override;
-	// ó‘Ô‘JˆÚ‘O1“xs‚¤I—¹ˆ—
-	void Exit(void)override;
-
-	// ó‘ÔŠÖŒW‚È‚­ŒÄ‚Ño‚·ˆ—
-	void AlwaysUpdate(void)override;
-
-	// ƒXƒ^ƒ~ƒi‚ð•Ô‚·ŠÖ”
-	const short& GetDashStamina(void)const { return dashStamina; }
-	// ‘§Ø‚ê‚©‚Ç‚¤‚©‚ð•Ô‚·ŠÖ”
-	bool IsTired(void)const { return isTired; }
+    const float& GetDashStamina(void) const { return dashStamina; }
+    bool IsTired(void) const { return isTired; }
 
 private:
+    const CharacterStats& stats;
+    const float DASH_SPEED_RATE;
+    const short DASH_STAMINA_MAX;
+    const std::function<void(const Vector3&)> moveAccel;
+    float& ACCEL_MAX;
+    Transform& playerTrans;
+    const float ROLL_RADIUS;
 
-#pragma region ’è”
+    bool isDash;
+    float dashStamina;
+    bool isTired;
 
-	const float MOVE_SPEED(bool isDash)const {
-		return (playerStats.speedPower.Value() * 0.5f) * (isDash ? DASH_SPEED_RATE : 1.0f);
-	}
-
-	// Å‘åˆÚ“®—Ê
-	const float MOVE_SPEED_MAX(bool isDash) const {
-		return playerStats.speedPower.Value() * (isDash ? DASH_SPEED_RATE : 1.0f);
-	}
-
-	// ƒ_ƒbƒVƒ…‚ÌˆÚ“®—Ê”{—¦
-	const float DASH_SPEED_RATE;
-
-	// ƒ_ƒbƒVƒ…‚ÌƒXƒ^ƒ~ƒi‚ÌÅ‘å—Êi1ƒtƒŒ[ƒ€‚¸‚ÂƒfƒNƒŠƒƒ“ƒgj
-	const short DASH_STAMINA_MAX;
-
-	// ‰Á‘¬“x‚ÌŒ¸Š—Ê
-	const float ATTENUATION;
-
-#pragma endregion
-
-#pragma region Žó‚¯Žæ‚éŽQÆ•Ï”EŠÖ”
-
-	// ˆÚ“®—ÊŽQÆ
-	Vector3& accelSum;
-
-	// ‰¡Ž²‰Á‘¬“x‚ÌÅ‘å’l‚ÌŽQÆ
-	float& ACCEL_MAX;
-
-	// Šp“x‚ÌŽQÆ
-	Vector3& angle;
-
-	// ƒLƒƒƒ‰ƒNƒ^[‚ÌƒXƒe[ƒ^ƒX
-	const CharacterStats& playerStats;
-
-#pragma endregion
-
-	// ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
-	bool isDash;
-
-	// ƒ_ƒbƒVƒ…ƒXƒ^ƒ~ƒi
-	short dashStamina;
-
-	// ‘§Ø‚ê(1“xƒXƒ^ƒ~ƒi‚ª0‚É‚È‚Á‚½‚©‚Ç‚¤‚©)
-	bool isTired;
-
+    Vector3 InputVec(void) const;
+    float MOVE_SPEED_MAX(bool isDash) const;
+    void UpdateRolling(void);
 };
