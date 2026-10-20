@@ -21,7 +21,7 @@ void BananaBossBanamerang::Load(void)
 
 	CreateAttackSkill(operatorSenderId, 85, &stats, COLLIDER_TAG::BOSS_ATTACK);
 	SetPushFlg(false);
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPtr(&banamerang);
 

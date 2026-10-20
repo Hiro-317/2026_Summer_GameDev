@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../../ActorBase.h"
+#include "../../../../../Common/ActorBase/ActorBase.h"
 
 struct CharacterStats;
 
@@ -21,7 +21,7 @@ public:
 
 	void Load(void)override;
 
-	void CollSet(bool flg) { SetJudge(flg); }
+	void CollSet(bool flg) { SetJudgeFlg(flg); }
 
 	void SetPos(const Vector3& pos) { trans.pos = pos; }
 	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }

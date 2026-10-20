@@ -2,7 +2,7 @@
 
 #include "../../../../Scene/SceneManager.h"
 
-#include "../../../Common/Common/CharaTypeDefine.h"
+#include "../../../Common/CharaTypeDefine.h"
 
 #include "../PlayerCharacters/Orange/OrangePlayer.h"
 #include "../PlayerCharacters/Tomato/TomatoPlayer.h"

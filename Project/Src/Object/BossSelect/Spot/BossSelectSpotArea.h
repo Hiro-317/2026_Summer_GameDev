@@ -2,7 +2,7 @@
 
 #include "../../Common/ActorBase/ActorBase.h"
 
-#include "../../Common/Common/CharaTypeDefine.h"
+#include "../../Common/CharaTypeDefine.h"
 
 class BossSelectSpotArea : public ActorBase
 {

@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../ActorBase.h"
 
+#include "../../../../Common/ActorBase/ActorBase.h"
 
 // 種類の列挙型定義
 enum class WeaponType {
@@ -64,7 +64,7 @@ public:
 	void ResetCount(void) { count = 0.0f; }
 
 	// コライダーのオン/オフ
-	void SetColliderFlg(bool flg) { SetJudge(flg); }
+	void SetColliderFlg(bool flg) { SetJudgeFlg(flg); }
 	void ResetEnd(void) { end = false; }
 
 	// 攻撃が終わったか

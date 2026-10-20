@@ -120,7 +120,7 @@ void Transform::SetLocalAngleDeg(const Vector3& deg)
 
 #pragma endregion
 
-void Transform::LoadModel(std::string path)
+void Transform::LoadModel(const std::string& path)
 {
 	model = MV1LoadModel(("Data/Model/" + path + ".mv1").c_str());
 }
@@ -128,11 +128,6 @@ void Transform::LoadModel(std::string path)
 void Transform::Duplicate(int model)
 {
 	this->model = MV1DuplicateModel(model);
-}
-
-void Transform::LoadEffect(std::string path)
-{
-	model = LoadEffekseerEffect(("Data/Effect/" + path + ".efk").c_str());
 }
 
 void Transform::Attach(void)

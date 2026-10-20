@@ -40,7 +40,7 @@ void TomatoStampCollOperator::Load(void)
 	// “–‚½‚è”»’èî•ñ‚ð¶¬‚·‚é
 	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS, 1000.0f));
 	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS, 1000.0f));
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	// UŒ‚”ÍˆÍ‚Ì“–‚½‚è”»’è
 	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);

@@ -36,14 +36,14 @@ public:
 
 	// UŒ‚‚Ì”»’è‚ğ”­¶‚³‚¹‚é
 	void CollOn(void) { 
-		if (!isHit)SetJudge(true); 
+		if (!isHit)SetJudgeFlg(true); 
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp));
 		}
 	}
 	// UŒ‚‚Ì”»’è‚ğÁ‚·
 	void CollOff(void) { 
-		SetJudge(false); 
+		SetJudgeFlg(false); 
 		if (!Net::GetIns().IsHost()) {
 			Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp));
 		}

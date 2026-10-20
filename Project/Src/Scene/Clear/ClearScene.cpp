@@ -15,9 +15,9 @@
 
 #include "../../Scene/SceneManager.h"
 
-#include "../ObjectUseDefine.h"
+#include "../ActorUseDefine.h"
 
-#include "../../Object/SkyDome/SkyDome.h"
+#include "../../Object/Common/SkyBox/SkyBox.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Clear/ClearCharaPreview/ClearCharaPreviewManager.h"
 
@@ -37,9 +37,8 @@ void ClearScene::SubPostLoad(void)
 	clearTimeFrameImage = LoadGraph("Data/Image/Clear/ClearTimeFrame.png");
 
 	// オブジェクト生成
-	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
-	ObjAdd(new ClearCharaPreviewManager());
+	AddActor(new LobbyStage());
+	AddActor(new ClearCharaPreviewManager());
 }
 
 void ClearScene::SubPostInit(void)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../../ActorBase.h"
+#include "../../../../../Common/ActorBase/ActorBase.h"
 
 #include "../../../../../Common/Collider/ColliderBase.h"
 
@@ -28,7 +28,7 @@ public:
 	// UŒ‚”ÍˆÍ‚Ì•`‰æÝ’è
 	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
 	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
-	void Off(void) { SetJudge(false); isDrawArea = false; }
+	void Off(void) { SetJudgeFlg(false); isDrawArea = false; }
 
 private:
 

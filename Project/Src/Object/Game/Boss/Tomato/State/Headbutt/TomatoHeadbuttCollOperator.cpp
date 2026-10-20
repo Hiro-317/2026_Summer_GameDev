@@ -29,7 +29,7 @@ void TomatoHeadbuttCollOperator::Load(void)
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	collBack.Load("Range/LineRangeBack");
 	collFront.Load("Range/LineRangeFront");

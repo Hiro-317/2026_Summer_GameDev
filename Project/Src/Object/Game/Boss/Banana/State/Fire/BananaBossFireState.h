@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../CharacterStateBase.h"
+#include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 #include "BananaFireCollOperator.h"
 #include "../../../../../../Common/Vector3.h"

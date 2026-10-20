@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../../../../CharacterStateBase.h"
-
+#include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 class BananaBossDeathState : public CharacterStateBase
 {

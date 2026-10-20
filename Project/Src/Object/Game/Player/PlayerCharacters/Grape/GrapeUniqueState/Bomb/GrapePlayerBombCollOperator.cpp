@@ -46,7 +46,7 @@ void GrapePlayerBombCollOperator::Load(void)
 	AddCollider(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 100.0f));
 
 	// ‰Šú‰»ˆ—
-	SetJudge(false);
+	SetJudgeFlg(false);
 	isBlast = false;
 	isAttackTargetFind = false;
 	isInit = false;

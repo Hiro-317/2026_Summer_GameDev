@@ -22,7 +22,7 @@ GrapeBossStraight::GrapeBossStraight(int model, int front, int back)
 
 	trans.scale = Vector3(ATTACK_SIZE);
 
-	SetJudge(false);
+	SetJudgeFlg(false);
 	SetPushFlg(false);
 	// èdóÕñ≥éã
 	SetGravityFlg(false);
@@ -41,7 +41,7 @@ void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& oth
 	if (ownTag == COLLIDER_TAG::BOSS_ATTACK_AREA) {
 
 		end = true;
-		SetJudge(false);
+		SetJudgeFlg(false);
 	}
 }
 

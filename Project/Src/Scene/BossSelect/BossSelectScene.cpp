@@ -6,14 +6,14 @@
 #include "../../Manager/Camera/CameraEvent/LookAtCameraEvent/LookAtCameraEvent.h"
 
 #include "../../Scene/SceneManager.h"
-#include "../ObjectUseDefine.h"
+#include "../ActorUseDefine.h"
 
 #include "BossConfirm/BossConfirmScene.h"
 
 #include "../../Manager/Camera/FollowRemote/FollowRemoteCamera.h"
 #include "../../Manager/Camera/Free/FreeCamera.h"
 
-#include "../../Object/SkyDome/SkyDome.h"
+#include "../../Object/Common/SkyBox/SkyBox.h"
 #include "../../Object/BossSelect/BossSelectStage.h"
 #include "../../Object/BossSelect/SkyShip/BossSelectSkyShip.h"
 

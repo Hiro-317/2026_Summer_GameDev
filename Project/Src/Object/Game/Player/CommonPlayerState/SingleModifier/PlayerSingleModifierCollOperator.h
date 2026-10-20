@@ -2,8 +2,6 @@
 
 #include "../../../../Common/ActorBase/ActorBase.h"
 
-#include "../../../../../Manager/Effect/EffectManager.h"
-
 #include "../../../../../Manager/Net/NetWorkDefine.h"
 
 class SphereCollider;

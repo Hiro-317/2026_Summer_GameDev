@@ -22,7 +22,7 @@ void GrapeKickDownCollOperator::Load(void)
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	collBack.Load("Range/CircleRangeBack");
 	collFront.Load("Range/CircleRangeFront");

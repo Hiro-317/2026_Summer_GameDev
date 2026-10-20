@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../CharacterStateBase.h"
+#include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 #include "GrapeKickDownCollOperator.h"
 #include "../../Weapon/GrapeBossWeaponManager.h"

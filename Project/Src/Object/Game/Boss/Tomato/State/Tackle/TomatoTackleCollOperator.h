@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../../../ActorBase.h"
+#include "../../../../../Common/ActorBase/ActorBase.h"
 
-#include "../../../../../Common/Collider/ColliderBase.h"
+class XZCircleCollider;
 
 struct CharacterStats;
 
@@ -15,17 +15,20 @@ public:
 	/// <param name="stats">ステータス</param>
 	TomatoTackleCollOperator(
 		const float TO_PLAYER_DISTANCE,
-		MSG_SENDER_ID operatorSenderId,
+
+		const MSG_SENDER_ID& controlSenderId,
+
 		const CharacterStats& stats,
+
 		const ParameterLoad& collParam
 	);
 	~TomatoTackleCollOperator()override = default;
 
 	void Load(void)override;
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
-	void CollSet(bool flg) { ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
+	void CollSet(bool flg) { ColliderSerch(GetColliders(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
 
 	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); }
 	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
@@ -57,21 +60,29 @@ private:
 
 #pragma region 受け取る参照変数
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID& controlSenderId;
 
 	const CharacterStats& stats;
 
 #pragma endregion
 
-	void SubAlphaDraw(void) override;
+	void SubDraw(void) override;
 	void SubRelease(void) override;
 
-	bool stageHit;
+	// 攻撃判定用当たり判定管理クラスの参照
+	XZCircleCollider* attackCollRef;
+	// ステージとの押し出し用当たり判定管理クラスの参照
+	XZCircleCollider* stagePushCollRef;
 
-	int rate;
-
+	// 攻撃範囲モデル制御情報
 	Transform collBack;
 	Transform collFront;
+
+	// ステージとの当たり判定管理フラグ
+	bool stageHit;
+
+	// 
+	int rate;
 
 	// 攻撃範囲描画フラグ
 	bool isDrawArea;

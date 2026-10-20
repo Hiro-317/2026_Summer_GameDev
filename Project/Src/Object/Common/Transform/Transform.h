@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "../../../Common/Vector3.h"
 #include "../../../Common/Quaternion.h"
 
@@ -141,19 +143,12 @@ struct Transform
 	/// モデルをロード
 	/// </summary>
 	/// <param name="path">モデルのパス（Data/Model/～.mv1）</param>
-	void LoadModel(std::string path);
+	void LoadModel(const std::string& path);
 
 	/// <summary>
 	/// モデルを複製
 	/// </summary>
 	void Duplicate(int model);
-
-	/// <summary>
-	/// エフェクトをロード
-	/// </summary>
-	/// <param name="path">エフェクトのパス（Data/Effect/～.efk）</param>
-	void LoadEffect(std::string path);
-
 
 	// Transform情報をモデルに適用
 	void Attach(void);

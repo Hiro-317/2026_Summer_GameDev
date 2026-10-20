@@ -25,7 +25,7 @@ void BananaScratchCollOperator::Load(void)
 
 	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 	SetPushFlg(false);
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	collBack.centerDiff = Vector3::XZonly(pos.x, pos.z) + DIFF;
 	collFront.centerDiff = Vector3::XZonly(pos.x, pos.z) + DIFF;

@@ -210,9 +210,9 @@ void GrapeBoss::PlayerLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// ボス自体のコライダの消滅
-			[&]() { SetJudge(false); },
+			[&]() { SetJudgeFlg(false); },
 			// ボス自体のコライダの再生
-			[&]() { SetJudge(true); },
+			[&]() { SetJudgeFlg(true); },
 			// クールタイムの設定
 			[&]() { coolTime = STAMP_COOLTIME; }
 		)

@@ -41,7 +41,7 @@ void GrapePlayerThrowCollOperator::Load(void)
 	AddCollider(new SphereCollider(COLL_TAG, 50.0f));
 
 	// ‰Šú‰»ˆ—
-	SetJudge(false);
+	SetJudgeFlg(false);
 	isBlast = false;
 
 	// Å‰‚Í•`‰æ‚µ‚È‚¢

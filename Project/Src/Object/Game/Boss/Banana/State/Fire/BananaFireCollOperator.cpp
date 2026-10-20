@@ -19,7 +19,7 @@ void BananaFireCollOperator::Load(void)
 
 	CreateAttackSkill(operatorSenderId, 100, &stats, COLLIDER_TAG::BOSS_ATTACK);
 	SetPushFlg(false);
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPos(POS);
 

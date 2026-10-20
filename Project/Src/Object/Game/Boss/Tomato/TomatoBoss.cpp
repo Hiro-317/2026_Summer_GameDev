@@ -151,7 +151,7 @@ void TomatoBoss::PlayerLoad(void)
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
-			[&]() { SetJudge(true); },
+			[&]() { SetJudgeFlg(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
@@ -174,9 +174,9 @@ void TomatoBoss::PlayerLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// 攻撃時に当たり判定を消すように
-			[&]() { SetJudge(false); },
+			[&]() { SetJudgeFlg(false); },
 			// 落下中は当たり判定を再生させる
-			[&]() { SetJudge(true); },
+			[&]() { SetJudgeFlg(true); },
 			// クールタイムの設定
 			[&]() { coolTime = STAMP_COOLTIME; }
 		)
@@ -201,7 +201,7 @@ void TomatoBoss::PlayerLoad(void)
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
-			[&]() { SetJudge(true); },
+			[&]() { SetJudgeFlg(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定

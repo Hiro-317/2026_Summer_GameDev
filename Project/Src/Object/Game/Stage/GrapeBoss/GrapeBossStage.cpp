@@ -1,9 +1,9 @@
 #include "GrapeBossStage.h"
 
-#include "../../Common/Collider/BoxCollider.h"
-#include "../../Common/Collider/CapsuleCollider.h"
-#include "../../Common/Collider/SphereCollider.h"
-#include "../../Common/Collider/XZCircleCollider.h"
+#include "../../../Common/Collider/BoxCollider.h"
+#include "../../../Common/Collider/CapsuleCollider.h"
+#include "../../../Common/Collider/SphereCollider.h"
+#include "../../../Common/Collider/XZCircleCollider.h"
 
 GrapeBossStage::GrapeBossStage() :
 	ActorBase("Data/Parameter/Stage/Grape/"), sky()
@@ -14,7 +14,7 @@ void GrapeBossStage::Load(void)
 {
 	trans.LoadModel("Stage/GrapeBoss/GrapeBossStage");
 
-	sky.Load("Stage/Sky");
+	sky.LoadModel("Stage/Sky");
 
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;

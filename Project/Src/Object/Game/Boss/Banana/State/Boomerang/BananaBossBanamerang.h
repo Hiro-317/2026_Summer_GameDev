@@ -20,8 +20,8 @@ public:
 
 	void Load(void)override;
 
-	void CollSet(bool flg) { SetJudge(flg); }
-	void Off(void) { isDrawArea = false; SetJudge(false); }
+	void CollSet(bool flg) { SetJudgeFlg(flg); }
+	void Off(void) { isDrawArea = false; SetJudgeFlg(false); }
 
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 

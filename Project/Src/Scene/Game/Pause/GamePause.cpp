@@ -7,7 +7,6 @@
 #include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
-#include "../../../Manager/Effect/EffectManager.h"
 
 GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
 	SceneBase(),
@@ -47,7 +46,6 @@ void GamePause::SubPostUpdate(void)
 			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().PopScene();
 			Input::GetIns().SetMouseFixed(true);
-			EffectManager::GetIns()->PlayEffect();
 			return;
 		}
 
@@ -68,7 +66,6 @@ void GamePause::SubPostUpdate(void)
 
 				Snd::GetIns().Play("SystemButton");
 
-				EffectManager::GetIns()->StopEffectAll();
 				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				return;
 			}
@@ -93,7 +90,6 @@ void GamePause::SubPostUpdate(void)
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
 				Input::GetIns().SetMouseFixed(true);
-				EffectManager::GetIns()->PlayEffect();
 				return;
 			}
 
@@ -111,7 +107,6 @@ void GamePause::SubPostUpdate(void)
 
 			case MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect: {
 				Snd::GetIns().Play("SystemButton");
-				EffectManager::GetIns()->StopEffectAll();
 				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				break;
 			}
@@ -120,7 +115,6 @@ void GamePause::SubPostUpdate(void)
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
 				Input::GetIns().SetMouseFixed(true);
-				EffectManager::GetIns()->PlayEffect();
 				break;
 			}
 			case MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch: {

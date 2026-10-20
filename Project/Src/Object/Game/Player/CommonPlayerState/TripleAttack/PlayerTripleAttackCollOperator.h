@@ -2,6 +2,8 @@
 
 #include "../../../../Common/ActorBase/ActorBase.h"
 
+#include <array>
+
 #include "../../../../../Manager/Net/NetWorkDefine.h"
 
 #include "../../../../Common/Collider/ColliderTagDefine.h"

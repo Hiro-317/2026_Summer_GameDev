@@ -38,7 +38,7 @@ void TomatoPlayerStampCollOperator::Load(void)
 	AddCollider(new SphereCollider(COLL_TAG, 300.0f));
 
 	// 初期化処理
-	SetJudge(false);
+	SetJudgeFlg(false);
 	isHit = false;
 
 	// スキルのダメージ量の設定

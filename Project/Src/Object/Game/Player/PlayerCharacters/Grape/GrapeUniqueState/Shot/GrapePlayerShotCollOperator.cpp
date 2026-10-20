@@ -42,7 +42,7 @@ void GrapePlayerShotCollOperator::Load(void)
 	AddCollider(new SphereCollider(COLL_TAG, 50.0f));
 
 	// èâä˙âªèàóù
-	SetJudge(false);
+	SetJudgeFlg(false);
 
 	// ç≈èâÇÕï`âÊÇµÇ»Ç¢
 	SetIsDraw(false);
@@ -99,14 +99,14 @@ void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 }
 
 void GrapePlayerShotCollOperator::CollOn(void) {
-	SetJudge(true);
+	SetJudgeFlg(true);
 	if (!Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataPlayerCollOperator(true, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot));
 	}
 }
 
 void GrapePlayerShotCollOperator::CollOff(void) {
-	SetJudge(false);
+	SetJudgeFlg(false);
 	if (!Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataPlayerCollOperator(false, MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot));
 	}

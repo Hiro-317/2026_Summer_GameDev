@@ -1,5 +1,6 @@
 #pragma once
-#include "../../../../../CharacterStateBase.h"
+
+#include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 #include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 
