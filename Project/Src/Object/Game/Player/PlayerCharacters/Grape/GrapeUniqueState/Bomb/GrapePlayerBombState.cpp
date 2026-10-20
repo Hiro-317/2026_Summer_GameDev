@@ -1,6 +1,6 @@
 #include "GrapePlayerBombState.h"
 
-#include "../../../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../../../Manager/Input/InputManager.h"
 
 GrapePlayerBombState::GrapePlayerBombState(
 	const std::function<void(void)>& ownChangeState,
@@ -28,7 +28,7 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
 		OwnChangeState();
 	}
 }

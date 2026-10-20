@@ -17,7 +17,7 @@ public:
 	TomatoBossDeathState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& scale, Vector3& angle,
+		Vector3& scale, Quaternion& rotation,
 		const std::function<void(void)> IsDeath
 	);
 	~TomatoBossDeathState()override = default;
@@ -39,7 +39,7 @@ private:
 	Vector3& scale;
 
 	// ボスの角度
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// ボスの初期サイズ
 	const Vector3& defaultScale;

@@ -5,11 +5,11 @@
 #include "../../Application/Application.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
-#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 
-#include "../SceneManager/SceneManager.h"
+#include "../../Scene/SceneManager.h"
 
 #include "../Common/Option/OptionScene.h"
 #include "End/EndScene.h"
@@ -114,7 +114,7 @@ void TitleScene::SubPostUpdate(void)
 #pragma region 操作/進行
 
 	// ゲーム終了処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// 再生中の音声を一時停止
 		Snd::GetIns().Pause();
@@ -128,7 +128,7 @@ void TitleScene::SubPostUpdate(void)
 	}
 
 	// 操作によって選択肢を変える
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		// 1つ前のタイプへ
 		nowSelect = (SELECT)((int)nowSelect - 1);
 		// 範囲外だったら逆の端へ
@@ -137,7 +137,7 @@ void TitleScene::SubPostUpdate(void)
 		// 演出を初期化
 		selectEasingCounter = 0.0f;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		// 1つ次のタイプへ
 		nowSelect = (SELECT)((int)nowSelect + 1);
 		// 範囲外だったら逆の端へ
@@ -148,7 +148,7 @@ void TitleScene::SubPostUpdate(void)
 	}
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 現在の選択状態に応じて分岐
 		switch (nowSelect) {

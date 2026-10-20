@@ -20,7 +20,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED,
-		Vector3& pos, Vector3& angle, 
+		Vector3& pos, Quaternion& rotation, 
 		const std::vector<const Vector3*> playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayRunAnime,
@@ -56,7 +56,7 @@ private:
 	Vector3& pos;
 
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;

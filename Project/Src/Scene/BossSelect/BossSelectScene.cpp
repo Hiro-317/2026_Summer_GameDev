@@ -1,11 +1,11 @@
 #include "BossSelectScene.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
-#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Input/InputManager.h"
 
 #include "../../Manager/Camera/CameraEvent/LookAtCameraEvent/LookAtCameraEvent.h"
 
-#include "../SceneManager/SceneManager.h"
+#include "../../Scene/SceneManager.h"
 #include "../ObjectUseDefine.h"
 
 #include "BossConfirm/BossConfirmScene.h"
@@ -58,7 +58,7 @@ void BossSelectScene::SubPostInit(void)
 
 void BossSelectScene::SubPostUpdate(void)
 {
-	if (Net::GetIns().IsHost() && Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Net::GetIns().IsHost() && Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		if (Net::GetIns().GetState() == Net::NetState::None) {
 			// ÉVÅ[ÉìëJà⁄
@@ -132,7 +132,7 @@ void BossSelectScene::SubUiDraw(void)
 	DrawGraph(0, 0, boardImage, true);
 
 	if (Net::GetIns().IsHost()) {
-		DrawRotaGraph3(0, App::SCREEN_SIZE_Y, 0, 300, 0.8, 0.8, 0, operatorGuideImage[(int)Key::GetIns().LastInputKinds()], true);
+		DrawRotaGraph3(0, App::SCREEN_SIZE_Y, 0, 300, 0.8, 0.8, 0, operatorGuideImage[(int)Input::GetIns().LastInputKinds()], true);
 	}
 }
 

@@ -4,7 +4,7 @@
 
 #include "../../Application/Application.h"
 
-#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 #include "../../Manager/Net/NetWorkManager.h"
@@ -13,7 +13,7 @@
 
 #include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
 
-#include "../SceneManager/SceneManager.h"
+#include "../../Scene/SceneManager.h"
 
 #include "../ObjectUseDefine.h"
 
@@ -81,8 +81,8 @@ void ClearScene::SubPreUpdate(void)
 void ClearScene::SubPostUpdate(void)
 {
 	if (Net::GetIns().IsHost()) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down ||
-			Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down ||
+			Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 			if (Net::GetIns().GetState() == Net::NetState::None) {
 				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);

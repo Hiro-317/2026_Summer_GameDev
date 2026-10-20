@@ -4,7 +4,7 @@
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 #include "../../ObjectUseDefine.h"
 
@@ -34,7 +34,7 @@ void LobbyCharaSelectScene::SubPostLoad(void)
 void LobbyCharaSelectScene::SubPostUpdate(void)
 {
 	// 戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// このシーンを破棄
 		SceneManager::GetIns().PopScene();
@@ -46,7 +46,7 @@ void LobbyCharaSelectScene::SubPostUpdate(void)
 	bool changeCharacter = false;;
 
 	// 操作権者による操作によって選択キャラを変える
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
 		// 1つ前のタイプへ
 		selectCharaType = (CHARA_TYPE)((int)selectCharaType - 1);
 		// 範囲外だったら逆の端へ
@@ -54,7 +54,7 @@ void LobbyCharaSelectScene::SubPostUpdate(void)
 		// キャラを変更したことを記録
 		changeCharacter = true;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
 		// 1つ次のタイプへ
 		selectCharaType = (CHARA_TYPE)((int)selectCharaType + 1);
 		// 範囲外だったら逆の端へ
@@ -66,7 +66,7 @@ void LobbyCharaSelectScene::SubPostUpdate(void)
 	if (changeCharacter) { ObjSerch<CharaSelectPreviewManager>(objects)->ChangeCharacter(selectCharaType); }
 
 	// キャラ確定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 範囲チェック
 		if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { return; }

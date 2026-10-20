@@ -25,7 +25,7 @@ public:
 
 	void SetPos(const Vector3& pos) { trans.pos = pos; }
 	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }
-	void SetAngle(const float& angle) { collBack.angle.y = collFront.angle.y = angle; }
+	void SetAngle(const float& angle) { collBack.rotation = collFront.rotation = Quaternion::FromRotationY(angle); }
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, SCALE.y, SCALE.z); }
 
 	// çUåÇîÕàÕÇÃï`âÊê›íË

@@ -28,13 +28,13 @@ void BananaBossStage::Load(void)
 
 	// モデルのズレ
 	trans.centerDiff = GetParameterToVector3("Model", "CenterDiff") * trans.scale;
-	trans.localAngle = GetParameterToVector3("Model", "LocalAngle");
+	trans.localRotation = Quaternion::FromEulerXZY(GetParameterToVector3("Model", "LocalAngle"));
 
 	// 座標
 	trans.pos = GetParameterToVector3("Model", "Pos");
 
 	// 角度
-	trans.angle = GetParameterToVector3("Model", "Angle");
+	trans.rotation = Quaternion::FromEulerXZY(GetParameterToVector3("Model", "Angle"));
 
 #pragma endregion
 

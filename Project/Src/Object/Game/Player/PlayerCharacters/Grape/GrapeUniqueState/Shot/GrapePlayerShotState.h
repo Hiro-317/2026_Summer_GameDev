@@ -13,7 +13,7 @@ public:
 		const std::function<bool(void)>& isOwnState,
 		GrapePlayerShotCollOperator& collOperator,
 		const int COOL_TIME,
-		Vector3& pos, Vector3& angle,
+		Vector3& pos, Quaternion& rotation,
 		const Vector3*& bossPos,
 		const std::function<void(void)> PlayAnime,
 		const std::function<bool(void)> IsAnimeEnd,
@@ -48,7 +48,7 @@ private:
 	// ç¿ïWÇÃéQè∆
 	Vector3& pos;
 
-	Vector3& angle;
+	Quaternion& rotation;
 
 	const Vector3*& bossPos;
 

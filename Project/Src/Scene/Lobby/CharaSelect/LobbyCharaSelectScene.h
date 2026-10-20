@@ -4,7 +4,7 @@
 
 #include "../../SceneBase.h"
 
-#include "../../../Object/CharaTypeDefine.h"
+#include "../../../Object/Common/CharaTypeDefine.h"
 
 class LobbyCharaSelectScene : public SceneBase
 {

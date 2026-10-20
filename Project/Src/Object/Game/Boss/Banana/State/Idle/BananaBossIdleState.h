@@ -3,6 +3,7 @@
 #include "../../../../CharacterStateBase.h"
 
 #include "../../../../../../Common/Vector3.h"
+#include "../../../../../../Common/Quaternion.h"
 
 class BananaBossIdleState : public CharacterStateBase
 {
@@ -29,7 +30,7 @@ public:
 	BananaBossIdleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle, 
+		Vector3& pos, Quaternion& rotation, 
 		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> CoolTime,
 		const std::function<int(void)> GetTarget,
@@ -60,7 +61,7 @@ private:
 	// 座標の参照
 	Vector3& pos;
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;

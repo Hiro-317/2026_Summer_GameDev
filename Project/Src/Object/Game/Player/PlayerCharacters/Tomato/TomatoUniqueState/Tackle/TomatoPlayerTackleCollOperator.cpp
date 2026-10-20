@@ -5,7 +5,7 @@
 TomatoPlayerTackleCollOperator::TomatoPlayerTackleCollOperator(
 	COLLIDER_TAG COLL_TAG,
 	const short ATTACK_RATE_PERCENT,
-	const Vector3& playerPos, const Vector3& playerAngle,
+	const Vector3& playerPos, const Quaternion& playerAngle,
 	MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& playerStats
 ) :
@@ -51,7 +51,7 @@ void TomatoPlayerTackleCollOperator::Update(void)
 {
 	// 座標と角度をプレイヤーの座標に追従
 	trans.pos = playerPos;
-	trans.angle = playerAngle;
+	trans.rotation = playerAngle;
 
 }
 

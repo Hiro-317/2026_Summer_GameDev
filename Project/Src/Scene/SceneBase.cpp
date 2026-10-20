@@ -16,15 +16,22 @@
 
 #include "Common/PostEffect/PostEffectBase.h"
 
+#include "../Object/Common/SkyBox/SkyBox.h"
+
 SceneBase::SceneBase(void) :
 
 	state(STATE::Created),
 
+	collision(nullptr),
+
+	postEffects(),
+
 	mainScreen(-1),
 	tempScreen(),
 
+	skyBox(nullptr),
+
 	camera(nullptr),
-	collision(nullptr),
 
 	actors()
 {
@@ -54,8 +61,9 @@ void SceneBase::Load(void)
 	// シーンごとに独立したカメラを生成する
 	CreateCamera();
 
-	// 全Actorが追加された後、巨大な静的オブジェクト等のチャンクを一度構築する
-	if (collision != nullptr) { collision->InitBuildChunks(); }
+
+	// スカイボックスを生成
+	if (UseSkyBox()) { skyBox = new SkyBox(); }
 
 	state = STATE::Loaded;
 }
@@ -70,8 +78,14 @@ void SceneBase::Init(void)
 	// カメラ初期化
 	if (camera != nullptr) { camera->Init(); }
 
+	// スカイボックス初期化
+	if (skyBox != nullptr) { skyBox->Init(); }
+
 	// シーンが所有するActorをすべて初期化する
 	for (ActorBase* actor : actors) { actor->Init(); }
+
+	// 全Actorが追加された後、巨大な静的オブジェクト等のチャンクを一度構築する
+	if (collision != nullptr) { collision->InitBuildChunks(); }
 
 	// 派生先の初期化（後）
 	SubPostInit();
@@ -90,22 +104,20 @@ void SceneBase::Update(void)
 	// カメラ情報をDxLibへ反映
 	if (camera != nullptr) { camera->Apply(); }
 
-	// オブジェクト全ての受信処理
-	for (ActorBase* actor : actors) { actor->ReceptionUpdate(); }
 	// オブジェクト全ての更新処理
 	for (ActorBase* actor : actors) { actor->Update(); }
 
 	// 当たり判定更新
 	if (collision != nullptr) { collision->Check(); }
 
-	// オブジェクト全ての送信処理
-	for (ActorBase* actor : actors) { actor->SendUpdate(); }
-
 	// 当たり判定による押し出し後に行う共通処理
 	SubPostUpdate();
 
 	// カメラ更新
 	if (camera != nullptr) { camera->Update(); }
+
+	// スカイボックス更新
+	if (skyBox != nullptr) { skyBox->Update(); }
 
 	// ポストエフェクト更新
 	for (PostEffectBase* postEffect : postEffects) { postEffect->Update(); }
@@ -128,9 +140,12 @@ void SceneBase::Draw(void)
 
 #pragma region メイン描画
 
+	// スカイボックス描画
+	if (skyBox != nullptr) { skyBox->Draw(); }
+
 	// 通常描画
 	SubPreDraw();
-	ActorsDraw(actors, ACTOR_DRAW_TYPE::Normal);
+	ActorsDraw(actors, ACTOR_DRAW_TYPE::Default);
 	SubPostDraw();
 
 	// 半透明描画
@@ -141,7 +156,7 @@ void SceneBase::Draw(void)
 	ActorsColliderDebugDraw(actors);
 
 	// デバッグ用チャンク描画
-	if (collision != nullptr && camera != nullptr) { collision->DrawChunkGrid(camera->GetPos()); }
+	//if (collision != nullptr && camera != nullptr) { collision->DrawChunkGrid(camera->GetPos()); }
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
@@ -169,6 +184,21 @@ void SceneBase::Draw(void)
 
 		// 次は反対側の一時スクリーンを使用
 		tempIndex = 1 - tempIndex;
+	}
+
+	// ポストエフェクトの終了確認
+	for (auto it = postEffects.begin(); it != postEffects.end();) {
+		PostEffectBase* effect = *it;
+
+		if (effect == nullptr) { it = postEffects.erase(it); continue; }
+
+		// 再生が終了したら自動削除
+		if (effect->IsFinished()) {
+			effect->Release();
+			delete effect;
+			it = postEffects.erase(it);
+		}
+		else { ++it; }
 	}
 
 #pragma endregion
@@ -213,6 +243,13 @@ void SceneBase::Release(void)
 	}
 	actors.clear();
 
+	// スカイボックス解放
+	if (skyBox != nullptr) {
+		skyBox->Release();
+		delete skyBox;
+		skyBox = nullptr;
+	}
+
 	// 当たり判定管理解放
 	if (collision != nullptr) {
 		collision->Clear();
@@ -233,10 +270,9 @@ void SceneBase::Release(void)
 		mainScreen = -1;
 	}
 	for (int& screen : tempScreen) {
-		if (screen >= 0) {
-			DeleteGraph(screen);
-			screen = -1;
-		}
+		if (screen == 0) { continue; }
+		DeleteGraph(screen);
+		screen = -1;
 	}
 
 	// 派生先の解放（後）

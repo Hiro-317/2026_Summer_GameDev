@@ -1,6 +1,6 @@
 #include "BossSelectSpotManager.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 
 #include "Tomato/BossSelectTomatoSpot.h"
 #include "Grape/BossSelectGrapeSpot.h"
@@ -51,7 +51,7 @@ void BossSelectSpotManager::SubUpdate(void)
 void BossSelectSpotManager::SubDraw(void)
 {
 	for (BossSelectSpotBase* s : spot) { s->Draw(); }
-	for (BossSelectSpotBase* s : spot) { s->SelectedDraw(selectedImage[(int)Key::GetIns().LastInputKinds()]); }
+	for (BossSelectSpotBase* s : spot) { s->SelectedDraw(selectedImage[(int)Input::GetIns().LastInputKinds()]); }
 }
 
 void BossSelectSpotManager::SubAlphaDraw(void)

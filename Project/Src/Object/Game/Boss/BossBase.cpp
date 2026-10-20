@@ -64,7 +64,7 @@ void BossBase::CharacterLoad(void)
 	trans.centerDiff = MODEL_CENTER_DIFF;
 
 	// 角度のズレ(ローカル回転)
-	trans.localAngle = MODEL_LOCAL_ROT;
+	trans.localRotation = Quaternion::FromEulerXZY(MODEL_LOCAL_ROT);
 
 #pragma endregion
 
@@ -121,7 +121,7 @@ void BossBase::CharacterInit(void)
 {
 	// 位置を初期位置にする
 	trans.pos = INIT_POS;
-	trans.angle = INIT_ROT;
+	trans.rotation = Quaternion::FromEulerXZY(INIT_ROT);
 
 	// 初期状態を移動状態にする
 	ChangeState(static_cast<int>(STATE::IDLE));
@@ -307,7 +307,7 @@ void BossBase::ReceptionUpdate(void)
 
 		// 座標/角度を同期
 		trans.pos = dataPtr->pos;
-		trans.angle = dataPtr->angle;
+		trans.rotation = dataPtr->rotation;
 		trans.scale = dataPtr->scale;
 		delete dataPtr;
 	}
@@ -358,6 +358,6 @@ void BossBase::ReceptionUpdate(void)
 void BossBase::SendUpdate(void)
 {
 	if (Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.angle, trans.scale));
+		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.rotation, trans.scale));
 	}
 }

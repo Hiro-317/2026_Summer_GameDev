@@ -2,14 +2,14 @@
 
 #include "../../pch.h"
 
-#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
 #include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 
-#include "../../Scene/SceneManager/SceneManager.h"
+#include "../../Scene/../Scene/SceneManager.h"
 
 #include "../ObjectUseDefine.h"
 
@@ -90,20 +90,20 @@ void LobbyScene::SubPostInit(void)
 void LobbyScene::SubPostUpdate(void)
 {
 	// タイトル画面に戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 		Snd::GetIns().Play("SystemButton");
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Title);
 	}
 
 	// 左
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
 		Snd::GetIns().Play("SystemSelect");
 
 		choice = (CHOICE)((int)choice - 1);
 		if (choice <= CHOICE::None) { choice = (CHOICE)((int)CHOICE::None + 1); }
 	}
 	// 右
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
 		Snd::GetIns().Play("SystemSelect");
 
 		choice = (CHOICE)((int)choice + 1);
@@ -112,7 +112,7 @@ void LobbyScene::SubPostUpdate(void)
 
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 		Snd::GetIns().Play("SystemButton");
 
 		// 選択肢ごとの処理
@@ -173,7 +173,7 @@ void LobbyScene::SubPostDraw(void)
 		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)((CHOICE)i == choice)], true);
 	}
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
-	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Input::GetIns().LastInputKinds()], true);
 
 }
 

@@ -60,16 +60,17 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 攻撃の判定を発生させる
-	void CollOn(void);
+	void CollOn(bool sendNetwork = true);
 
 	// 攻撃の判定を消す
-	void CollOff(void);
+	void CollOff(bool sendNetwork = true);
 
 	// 攻撃対象をリセットする
 	void ResetTarget(void) { isFindAttackTarget = false; targetPos = nullptr; }
 
 	// 攻撃のヒット管理のフラグをリセットする
 	void ResetIsHit(void) { isHit = false; }
+	bool GetIsHit(void)const { return isHit; }
 
 private:
 

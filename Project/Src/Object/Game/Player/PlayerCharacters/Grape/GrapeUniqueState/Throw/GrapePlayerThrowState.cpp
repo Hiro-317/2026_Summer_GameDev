@@ -5,7 +5,7 @@ GrapePlayerThrowState::GrapePlayerThrowState(
 	const std::function<bool(void)>& isOwnState,
 	GrapePlayerThrowCollOperator& collOperator,
 	const int COOL_TIME,
-	Vector3& pos, Vector3& angle,
+	Vector3& pos, Quaternion& rotation,
 	const Vector3*& bossPos,
 	const std::function<void(void)> PlayAnime,
 	const std::function<bool(void)> IsAnimeEnd,
@@ -15,7 +15,7 @@ GrapePlayerThrowState::GrapePlayerThrowState(
 	CharacterStateBase(ownChangeState, isOwnState),
 	collOperator(collOperator),
 	COOL_TIME(COOL_TIME),
-	pos(pos), angle(angle),
+	pos(pos), rotation(rotation),
 	bossPos(bossPos),
 	PlayAnime(PlayAnime),
 	IsAnimeEnd(IsAnimeEnd),
@@ -32,7 +32,7 @@ void GrapePlayerThrowState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).down) {
 		OwnChangeState();
 	}
 }
@@ -49,7 +49,7 @@ void GrapePlayerThrowState::Enter(void)
 void GrapePlayerThrowState::Update(void)
 {
 	// 突進方向の取得
-	moveVec = Vector3::XZonly(sinf(angle.y), cosf(angle.y)).Normalized();
+	moveVec = rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f));
 	// ボスへの方向を取得
 	Vector3 bossVec = (*bossPos - pos).Normalized();
 
@@ -57,7 +57,7 @@ void GrapePlayerThrowState::Update(void)
 	float dot = moveVec.Dot(bossVec);
 
 	// 一定範囲内なら、ボスの方を向かせる補正をかける
-	if (dot > Deg2Rad(30.0f)) { angle.y = atan2f(bossVec.x, bossVec.z); }
+	if (dot > Deg2Rad(30.0f)) { rotation = Quaternion::FromRotationY(atan2f(bossVec.x, bossVec.z)); }
 
 	if (AnimeRatio() < 0.3f) {
 		if (!isThrow) {

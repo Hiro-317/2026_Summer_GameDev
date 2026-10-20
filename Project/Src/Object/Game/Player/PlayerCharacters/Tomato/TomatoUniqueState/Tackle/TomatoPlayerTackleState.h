@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../../../CharacterStateBase.h"
 
-#include "TomatoPlayerTackleCollOperator.h"
+#include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 
 class TomatoPlayerTackleState : public CharacterStateBase
 {
@@ -11,10 +11,10 @@ public:
 	TomatoPlayerTackleState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		TomatoPlayerTackleCollOperator& collOperator,
+		PlayerSimpleAttackCollOperator& collOperator,
 		int COOL_TIME,
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Vector3& angle,
+		Vector3& pos, Quaternion& rotation,
 		const std::function<void(void)> ChargeAttackBuff,
 		const std::function<void(void)> ChargeAttackBuffDelete,
 		const std::function<void(void)> DefaultChangeState
@@ -74,9 +74,9 @@ private:
 	Vector3& pos;
 
 	// äpìxÇÃéQè∆
-	Vector3& angle;
+	Quaternion& rotation;
 
-	TomatoPlayerTackleCollOperator& collOperator;
+	PlayerSimpleAttackCollOperator& collOperator;
 
 	// å¸Ç¢ÇƒÇ¢ÇÈï˚å¸
 	Vector3 moveDir;

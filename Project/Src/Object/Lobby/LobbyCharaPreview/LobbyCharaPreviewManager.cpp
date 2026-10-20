@@ -2,7 +2,7 @@
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../../../Scene/SceneManager/SceneManager.h"
+#include "../../../Scene/../Scene/SceneManager.h"
 
 #include "Orange/LobbyCharaPreviewOrange.h"
 #include "Tomato/LobbyCharaPreviewTomato.h"

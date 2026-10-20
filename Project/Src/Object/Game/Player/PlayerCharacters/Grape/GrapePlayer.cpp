@@ -46,7 +46,7 @@ void GrapePlayer::PlayerLoad(void)
 		new GrapePlayerShotCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL1_ATTACK_RATE,
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			operatorSenderId,
 			characterStats
 		)
@@ -57,7 +57,7 @@ void GrapePlayer::PlayerLoad(void)
 		new GrapePlayerThrowCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL2_ATTACK_RATE,
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			operatorSenderId,
 			characterStats
 		)
@@ -72,7 +72,7 @@ void GrapePlayer::PlayerLoad(void)
 			ATTACK_COUNT_TIME,
 			// 爆弾の待機時間
 			ATTACK_START_TIME,
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			operatorSenderId,
 			characterStats
 		)
@@ -89,7 +89,7 @@ void GrapePlayer::PlayerLoad(void)
 			[&]() { return state == (int)STATE::SKILL_1; },
 			*SubObjSerch<GrapePlayerShotCollOperator>(),
 			SKILL1_COOL_TIME,
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			bossPos,
 			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
 			[&]() { return IsAnimeEnd(); },
@@ -111,7 +111,7 @@ void GrapePlayer::PlayerLoad(void)
 			// クールタイム
 			SKILL2_COOL_TIME,
 			// 座標 / 角度
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			// ボスの座標
 			bossPos,
 			// アニメーション再生関数のポインタ
@@ -159,7 +159,7 @@ void GrapePlayer::PlayerLoad(void)
 			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
 			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
 			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX, trans.angle, characterStats,
+			accelSum, ACCEL_MAX, trans.rotation, characterStats,
 			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
 			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
@@ -194,7 +194,7 @@ void GrapePlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DEATH; },
 			// 座標 / 角度
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			// アニメーション終了判定ゲット関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 死亡アニメーション再生関数のポインタ

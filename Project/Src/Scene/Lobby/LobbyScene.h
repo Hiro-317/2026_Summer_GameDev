@@ -4,7 +4,7 @@
 
 #include "../SceneBase.h"
 
-#include "../../Common/Vector2.h"
+#include "../../Common/Vector2I.h"
 
 #include "../../Application/Application.h"
 

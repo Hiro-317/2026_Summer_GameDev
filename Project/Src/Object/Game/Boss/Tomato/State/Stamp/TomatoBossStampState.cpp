@@ -10,7 +10,7 @@ TomatoBossStampState::TomatoBossStampState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	TomatoStampCollOperator* collOperator,
-	Vector3& pos, Vector3& angle, const bool& isGround,
+	Vector3& pos, Quaternion& rotation, const bool& isGround,
 	const std::vector<const Vector3*>playerPos,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> DefaultChangeState,
@@ -19,7 +19,7 @@ TomatoBossStampState::TomatoBossStampState(
 	const std::function<void(void)> SetCoolTime
 ) :CharacterStateBase(ownChangeState, isOwnState),
 	collOperator(collOperator), 
-	pos(pos), angle(angle), isGround(isGround),
+	pos(pos), rotation(rotation), isGround(isGround),
 	playerPos(playerPos),
 	GetTarget(GetTarget),
 	DefaultChangeState(DefaultChangeState),
@@ -46,7 +46,7 @@ void TomatoBossStampState::Enter(void)
 	isAttack = true;
 	SetCoolTime();
 	Vector3 tmp = *playerPos.at(target) - pos;
-	angle.y = atan2f(tmp.x, tmp.z);
+	rotation = Quaternion::FromRotationY(atan2f(tmp.x, tmp.z));
 
 	SoundManager::GetIns().Play("StampJump");
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB));

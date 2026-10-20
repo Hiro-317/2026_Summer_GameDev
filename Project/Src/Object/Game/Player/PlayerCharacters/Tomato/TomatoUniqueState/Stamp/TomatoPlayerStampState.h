@@ -2,7 +2,7 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "TomatoPlayerStampCollOperator.h"
+#include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 
 class TomatoPlayerStampState : public CharacterStateBase
 {
@@ -12,10 +12,10 @@ public:
 	TomatoPlayerStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		TomatoPlayerStampCollOperator& collOperator,
+		PlayerSimpleAttackCollOperator& collOperator,
 		int COOL_TIME,
 		float JUMP_POWER, float STAMP_FALL_SPEED, 
-		Vector3& pos, Vector3& angle, Vector3& accelSum,
+		Vector3& pos, Quaternion& rotation, Vector3& accelSum,
 		const std::function<void(void)> ChangeIsGravity,
 		const std::function<bool(void)> IsGround,
 		const std::function<void(void)> DefaultChangeState
@@ -71,12 +71,12 @@ private:
 	// 座標の参照
 	Vector3& pos;
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 	// 加速度の参照
 	Vector3& accelSum;
 
 	// 当たり判定管理クラス
-	TomatoPlayerStampCollOperator& collOperator;
+	PlayerSimpleAttackCollOperator& collOperator;
 
 	// プレイヤーの重力のオンオフ切り替え関数
 	const std::function<void(void)> ChangeIsGravity;

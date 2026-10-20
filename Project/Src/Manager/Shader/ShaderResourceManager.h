@@ -129,6 +129,12 @@ private:
 			VERTEX_SHADER_TYPE::Water,
 			"WaterVS"
 		},
+
+		// スカイボックス
+		{
+			VERTEX_SHADER_TYPE::SkyBox,
+			"SkyBoxVS"
+		},
 	};
 
 	// 頂点シェーダー
@@ -170,8 +176,37 @@ private:
 			"FocusLinesPS"
 		},
 
+		// 集中線
+		{
+			PIXEL_SHADER_TYPE::UnderWater,
+			"UnderWaterPS"
+		},
 
-	#pragma endregion 
+		// ゴゴゴゴ…エフェクト
+		{
+			PIXEL_SHADER_TYPE::Menacing,
+			"MenacingPS"
+		},
+
+		// 炎ポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::PurpleFlame,
+			"PurpleFlamePS"
+		},
+
+		// ダメージフラッシュポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::DamageFlash,
+			"DamageFlashPS"
+		},
+
+	#pragma endregion
+
+		// スカイボックス
+		{
+			PIXEL_SHADER_TYPE::SkyBox,
+			"SkyBoxPS"
+		},
 
 	};
 

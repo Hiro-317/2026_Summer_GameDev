@@ -5,15 +5,6 @@
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\Common\Vector3.cpp" />
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombBig.cpp" />
-    <ClCompile Include="Src\Manager\Effect\Bomb\EffectBombSmall.cpp" />
-    <ClCompile Include="Src\Manager\Effect\Buff\EffectBuff.cpp" />
-    <ClCompile Include="Src\Manager\Effect\EffectManager.cpp" />
-    <ClCompile Include="Src\Manager\Effect\Heal\EffectHeal.cpp" />
-    <ClCompile Include="Src\Manager\Effect\StampLand\EffectStampLand.cpp" />
-    <ClCompile Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.cpp" />
-    <ClCompile Include="Src\Manager\Effect\TackleCharge\TackleCharge.cpp" />
-    <ClCompile Include="Src\Manager\Effect\TackleMove\EffectTackleMove.cpp" />
     <ClCompile Include="Src\Manager\Font\FontManager.cpp" />
     <ClCompile Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.cpp" />
     <ClCompile Include="Src\Manager\Net\NetWorkManager.cpp" />
@@ -133,7 +124,6 @@
     <ClCompile Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.cpp" />
     <ClCompile Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.cpp" />
-    <ClCompile Include="Src\Manager\Effect\Fire\EffectFire.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBanamerang.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBoomerangState.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Fire\BananaBossFireState.cpp" />
@@ -169,6 +159,11 @@
     <ClCompile Include="Src\Object\Game\Player\PlayerUI\PlayerSkillUI.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerUI\PlayerStaminaUI.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerUI\ToPlayerTargetUI.cpp" />
+    <ClCompile Include="Src\Object\Common\SkyBox\SkyBox.cpp" />
+    <ClCompile Include="Src\Scene\Common\PostEffect\MenacingPostEffect\MenacingPostEffect.cpp" />
+    <ClCompile Include="Src\Scene\Common\PostEffect\PurpleFlamePostEffect\PurpleFlamePostEffect.cpp" />
+    <ClCompile Include="Src\Scene\Common\PostEffect\UnderWaterPostEffect\UnderWaterPostEffect.cpp" />
+    <ClCompile Include="Src\Scene\Common\PostEffect\DamageFlashPostEffect\DamageFlashPostEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -176,17 +171,6 @@
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Common\Vector3.h" />
     <ClInclude Include="Src\Manager\Collision\ChunkStDefine.h" />
-    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombBig.h" />
-    <ClInclude Include="Src\Manager\Effect\Bomb\EffectBombSmall.h" />
-    <ClInclude Include="Src\Manager\Effect\Buff\EffectBuff.h" />
-    <ClInclude Include="Src\Manager\Effect\EffectBase.h" />
-    <ClInclude Include="Src\Manager\Effect\EffectFactory.h" />
-    <ClInclude Include="Src\Manager\Effect\EffectManager.h" />
-    <ClInclude Include="Src\Manager\Effect\Heal\EffectHeal.h" />
-    <ClInclude Include="Src\Manager\Effect\StampLand\EffectStampLand.h" />
-    <ClInclude Include="Src\Manager\Effect\StampShockWave\EffectStampShockWave.h" />
-    <ClInclude Include="Src\Manager\Effect\TackleCharge\TackleCharge.h" />
-    <ClInclude Include="Src\Manager\Effect\TackleMove\EffectTackleMove.h" />
     <ClInclude Include="Src\Manager\Font\FontManager.h" />
     <ClInclude Include="Src\Manager\Net\HostAddressProvider\HostAddressProvider.h" />
     <ClInclude Include="Src\Manager\Net\NetWorkDefine.h" />
@@ -344,7 +328,6 @@
     <ClInclude Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.h" />
-    <ClInclude Include="Src\Manager\Effect\Fire\EffectFire.h" />
     <ClInclude Include="Src\Manager\Ranking\Ranking.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBoomerangState.h" />
@@ -390,6 +373,11 @@
     <ClInclude Include="Src\Object\Game\Player\PlayerUI\PlayerSkillUI.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerUI\PlayerStaminaUI.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerUI\ToPlayerTargetUI.h" />
+    <ClInclude Include="Src\Object\Common\SkyBox\SkyBox.h" />
+    <ClInclude Include="Src\Scene\Common\PostEffect\UnderWaterPostEffect\UnderWaterPostEffect.h" />
+    <ClInclude Include="Src\Scene\Common\PostEffect\MenacingPostEffect\MenacingPostEffect.h" />
+    <ClInclude Include="Src\Scene\Common\PostEffect\PurpleFlamePostEffect\PurpleFlamePostEffect.h" />
+    <ClInclude Include="Src\Scene\Common\PostEffect\DamageFlashPostEffect\DamageFlashPostEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />
@@ -464,5 +452,7 @@
     <FxCompile Include="Src\Shader\Shadow\ShadowVS_NMap8Frame.hlsl" />
     <FxCompile Include="Src\Shader\Water\WaterPS.hlsl" />
     <FxCompile Include="Src\Shader\Water\WaterVS.hlsl" />
+    <FxCompile Include="Src\Shader\SkyBox\SkyBoxPS.hlsl" />
+    <FxCompile Include="Src\Shader\SkyBox\SkyBoxVS.hlsl" />
   </ItemGroup>
 </Project>

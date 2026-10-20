@@ -4,7 +4,7 @@
 
 #include "LobbyCharaPreviewBase.h"
 
-#include "../../CharaTypeDefine.h"
+#include "../../Common/CharaTypeDefine.h"
 
 #include "../../../Manager/Net/NetWorkDefine.h"
 

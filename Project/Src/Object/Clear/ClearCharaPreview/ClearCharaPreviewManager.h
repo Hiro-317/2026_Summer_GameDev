@@ -2,7 +2,7 @@
 
 #include "../../Common/ActorBase/ActorBase.h"
 
-#include "../../Common/CharaTypeDefine.h"
+#include "../../Common/Common/CharaTypeDefine.h"
 
 #include "../../../Manager/Net/NetWorkDefine.h"
 

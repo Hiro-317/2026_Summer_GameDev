@@ -1,6 +1,6 @@
 #include "TomatoPlayerStampState.h"
 
-#include "../../../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../../../Manager/Input/InputManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../../../../Manager/Effect/EffectManager.h"
@@ -8,10 +8,10 @@
 TomatoPlayerStampState::TomatoPlayerStampState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	TomatoPlayerStampCollOperator& collOperator,
+	PlayerSimpleAttackCollOperator& collOperator,
 	int COOL_TIME,
 	float JUMP_POWER, float STAMP_FALL_SPEED,
-	Vector3& pos, Vector3& angle, Vector3& accelSum,
+	Vector3& pos, Quaternion& rotation, Vector3& accelSum,
 	const std::function<void(void)> ChangeIsGravity,
 	const std::function<bool(void)> IsGround,
 	const std::function<void(void)> DefaultChangeState
@@ -20,7 +20,7 @@ TomatoPlayerStampState::TomatoPlayerStampState(
 	collOperator(collOperator),
 	COOL_TIME(COOL_TIME),
 	JUMP_POWER(JUMP_POWER), STAMP_FALL_SPEED(STAMP_FALL_SPEED),
-	pos(pos), angle(angle), accelSum(accelSum),
+	pos(pos), rotation(rotation), accelSum(accelSum),
 	ChangeIsGravity(ChangeIsGravity),
 	IsGround(IsGround),
 	DefaultChangeState(DefaultChangeState),
@@ -36,7 +36,7 @@ void TomatoPlayerStampState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
 		OwnChangeState();
 	}
 }
@@ -49,7 +49,7 @@ void TomatoPlayerStampState::Enter(void)
 	coolTimeCounter = COOL_TIME;
 
 	// 角度を水平に
-	angle.x = 0.0f;
+	rotation = Quaternion::FromRotationY(atan2f(rotation.Rotate(Vector3(0, 0, 1)).x, rotation.Rotate(Vector3(0, 0, 1)).z));
 
 	// ジャンプの初速を設定
 	VelocityY = JUMP_POWER;
@@ -62,7 +62,7 @@ void TomatoPlayerStampState::Enter(void)
 void TomatoPlayerStampState::Update(void)
 {
 	trans.pos = pos;
-	trans.angle = angle;
+	trans.rotation = rotation;
 
 	// 攻撃終了フラグがtrueの場合ステートを抜ける
 	if (isEnd) {
@@ -126,14 +126,14 @@ void TomatoPlayerStampState::AlwaysUpdate(void)
 void TomatoPlayerStampState::JumpMove(void)
 {
 	//コントローラーの入力を取得
-	Vector3 vec = Key::GetIns().GetLeftStickVec().ToVector3XZ();
+	Vector3 vec = Input::GetIns().GetLeftStickVec().ToVector3XZ();
 
 	// 入力がなければ次にキーボードの入力を取得
 	if (vec == 0.0f) {
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).now) { vec.x++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).now) { vec.x--; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).now) { vec.z++; }
-		if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { vec.z--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).now) { vec.x++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).now) { vec.x--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).now) { vec.z++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { vec.z--; }
 	}
 
 	// 最終的に入力があれば加速度に加算する
@@ -149,5 +149,5 @@ void TomatoPlayerStampState::JumpMove(void)
 		accelSum += vec * JUMP_MOVE_SPEED;
 	}
 	// 角度を入力方向に向ける
-	if (vec != 0.0f) { angle.y = atan2f(vec.x, vec.z); }
+	if (vec != 0.0f) { rotation = Quaternion::FromRotationY(atan2f(vec.x, vec.z)); }
 }

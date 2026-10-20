@@ -66,7 +66,7 @@ void BananaBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// 自分の座標、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos,
+			trans.pos, trans.rotation, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
 			// ターゲット番号の取得
@@ -230,7 +230,7 @@ void BananaBoss::ReceptionUpdate(void)
 		{
 			SubObjSerch<BananaBossBanamerang>()->SetScale(dataPtr->scale);
 			SubObjSerch<BananaBossBanamerang>()->SetBanameranPos(dataPtr->pos);
-			SubObjSerch<BananaBossBanamerang>()->SetBanameranRot(Vector3::Yonly(dataPtr->angle));
+			SubObjSerch<BananaBossBanamerang>()->SetBanameranRot(Quaternion::FromRotationY(dataPtr->angle));
 			break;
 		}
 		default:
@@ -286,7 +286,7 @@ void BananaBoss::CharacterInit(void)
 {
 	// 位置を初期位置にする
 	trans.pos = INIT_POS;
-	trans.angle = INIT_ROT;
+	trans.rotation = Quaternion::FromEulerXZY(INIT_ROT);
 
 	// 重力無効
 	ActorBase::SetGravityFlg(false);

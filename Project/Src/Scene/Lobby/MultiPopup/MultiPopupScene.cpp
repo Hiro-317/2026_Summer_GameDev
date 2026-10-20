@@ -1,11 +1,13 @@
 #include "MultiPopupScene.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../pch.h"
+
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Font/FontManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 #include "MatchingLoadingScene.h"
 #include "Password/PasswordScene.h"
@@ -74,7 +76,7 @@ void MultiPopupScene::SubPostInit(void)
 void MultiPopupScene::SubPostUpdate(void)
 {
 	// タイトル画面に戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemButton");
@@ -86,7 +88,7 @@ void MultiPopupScene::SubPostUpdate(void)
 	}
 
 	// パスワード入力
-	if (Key::GetIns().GetInfo(KEY_TYPE::MULTI_POP_UP_PASSWORD).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::MultiPopUpPassword).down) {
 		// 効果音
 		Snd::GetIns().Play("SystemButton");
 
@@ -97,7 +99,7 @@ void MultiPopupScene::SubPostUpdate(void)
 	}
 
 	// 左
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -108,7 +110,7 @@ void MultiPopupScene::SubPostUpdate(void)
 		if (select <= SELECT::None) { select = (SELECT)((int)SELECT::None + 1); }
 	}
 	// 右
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -120,7 +122,7 @@ void MultiPopupScene::SubPostUpdate(void)
 	}
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 選択中での状態分け
 		switch (select) {
@@ -182,7 +184,7 @@ void MultiPopupScene::SubPostDraw(void)
 	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x++; }
 
 	DrawRotaGraph(1100, 130, 1, 0, passwordFrameImage, true);
-	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Input::GetIns().LastInputKinds()], true);
 	unsigned short providerPassword = Net::GetIns().GetAddressProviderPassword();
 	if (providerPassword != 0) {
 		DrawFormatStringToHandle(
@@ -208,12 +210,12 @@ void MultiPopupScene::SubPostDraw(void)
 		SELECT_POS[(int)select].x + ENTER_KEY_LOCAL_POS.x,
 		SELECT_POS[(int)select].y + ENTER_KEY_LOCAL_POS.y + (int)(selectEasing * ENTER_KEY_LOCAL_POS_EASING_RATE),
 		0.75f + selectEasing, 0,
-		enterKeyImage[(int)Key::GetIns().LastInputKinds()],
+		enterKeyImage[(int)Input::GetIns().LastInputKinds()],
 		true
 	);
 
 	// 画面左上に配置するとじるキー
-	DrawRotaGraph(EXIT_KEY_POS.x, EXIT_KEY_POS.y, 1 + selectEasing, 0, exitKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(EXIT_KEY_POS.x, EXIT_KEY_POS.y, 1 + selectEasing, 0, exitKeyImage[(int)Input::GetIns().LastInputKinds()], true);
 
 }
 

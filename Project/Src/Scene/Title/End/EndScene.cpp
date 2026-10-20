@@ -3,9 +3,11 @@
 #include"../../../Utility/Utility.h"
 
 #include"../../../Application/Application.h"
-#include"../../SceneManager/SceneManager.h"
-#include"../../../Manager/Input/KeyManager.h"
+
+#include"../../../Manager/Input/InputManager.h"
 #include"../../../Manager/Sound/SoundManager.h"
+
+#include"../../../Scene/SceneManager.h"
 
 EndScene::EndScene() :
 	SceneBase(),
@@ -60,7 +62,7 @@ void EndScene::SubPostInit(void)
 void EndScene::SubPostUpdate(void)
 {
 	// 戻るボタンでタイトルに戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 		Snd::GetIns().Play("SystemButton");
 		SoundManager::GetIns().PausePlay();
 		SceneManager::GetIns().PopScene();
@@ -74,7 +76,7 @@ void EndScene::SubPostUpdate(void)
 		// 選択状態「Yes」中の処理
 
 		// 右ボタンを押したら
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 			// 効果音
 			Snd::GetIns().Play("SystemSelect");
 
@@ -83,7 +85,7 @@ void EndScene::SubPostUpdate(void)
 		}
 
 		// 決定ボタンを押したら
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 			// 効果音
 			Snd::GetIns().Play("SystemButton");
 
@@ -101,7 +103,7 @@ void EndScene::SubPostUpdate(void)
 		// 選択状態「No」中の処理
 
 		// 左ボタンを押したら
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 			// 効果音
 			Snd::GetIns().Play("SystemSelect");
 
@@ -110,7 +112,7 @@ void EndScene::SubPostUpdate(void)
 		}
 
 		// 決定ボタンを押したら
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 			// 効果音
 			Snd::GetIns().Play("SystemButton");
 

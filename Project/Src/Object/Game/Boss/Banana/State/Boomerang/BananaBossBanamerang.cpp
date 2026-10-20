@@ -34,8 +34,8 @@ void BananaBossBanamerang::Load(void)
 	collBack.scale = SCALE;
 	collFront.scale = Vector3(0.0f);
 
-	collBack.localAngle = Vector3::Yonly(Deg2Rad(180.0f));
-	collFront.localAngle = Vector3::Yonly(Deg2Rad(180.0f));
+	collBack.localRotation = Quaternion::FromRotationY(Deg2Rad(180.0f));
+	collFront.localRotation = Quaternion::FromRotationY(Deg2Rad(180.0f));
 
 	isDrawArea = false;
 }

@@ -7,11 +7,11 @@
 TomatoBossDeathState::TomatoBossDeathState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	Vector3& scale, Vector3& angle,
+	Vector3& scale, Quaternion& rotation,
 	const std::function<void(void)> IsDeath
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	scale(scale), angle(angle), defaultScale(defaultScale),
+	scale(scale), rotation(rotation), defaultScale(defaultScale),
 	IsDeath(IsDeath)
 {
 }
@@ -27,7 +27,7 @@ void TomatoBossDeathState::Update(void)
 	if (cnt <= CHANGE_COUNT) {
 
 		cnt++;
-		angle.y += ROTATION_POW;
+		rotation.AddAngle(Vector3(0.0f, ROTATION_POW, 0.0f));
 		scale *= SCALE_POW;
 	}
 	else {

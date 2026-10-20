@@ -1,11 +1,11 @@
 #include "PasswordScene.h"
 
 #include "../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../Manager/Input/KeyManager.h"
+#include "../../../../Manager/Input/InputManager.h"
 
 #include "../../../../Manager/Font/FontManager.h"
 
-#include "../../../SceneManager/SceneManager.h"
+#include "../../../../Scene/SceneManager.h"
 
 PasswordScene::PasswordScene() :
 	nowTypingPass(),
@@ -90,7 +90,7 @@ void PasswordScene::SubPostInit(void)
 
 void PasswordScene::SubPostUpdate(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 		SceneManager::GetIns().PopScene();
 		return;
 	}
@@ -129,7 +129,7 @@ void PasswordScene::SubPostDraw(void)
 	}
 
 	// •Â‚¶‚éƒ{ƒ^ƒ“
-	drawImage(exitImage[(int)Key::GetIns().LastInputKinds()], EXIT_POS);
+	drawImage(exitImage[(int)Input::GetIns().LastInputKinds()], EXIT_POS);
 
 #pragma endregion
 }
@@ -159,187 +159,187 @@ void PasswordScene::SubPreRelease(void)
 
 void PasswordScene::SelectZeroKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Eight;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Seven;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Nine;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down && !nowTypingPass.empty()) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down && !nowTypingPass.empty()) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectOneKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Four;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Two;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectTwoKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Five;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::One;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Three;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectThreeKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Six;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Two;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Delete;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectFourKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::One;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Seven;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Five;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectFiveKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Two;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Eight;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Four;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Six;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectSixKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Three;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Nine;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Five;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Enter;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectSevenKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Four;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Zero;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Eight;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectEightKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Five;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Zero;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Seven;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Nine;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectNineKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Six;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Zero;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Eight;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		nowNumberKey = NUMBER_KEY::Enter;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) { TypePassNumber((int)nowNumberKey); }
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) { TypePassNumber((int)nowNumberKey); }
 }
 
 void PasswordScene::SelectDeleteKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		nowNumberKey = NUMBER_KEY::Enter;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Three;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 		DeletePassNumber();
 	}
 }
 
 void PasswordScene::SelectEnterKeyOperator(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		nowNumberKey = NUMBER_KEY::Delete;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		nowNumberKey = NUMBER_KEY::Nine;
 	}
 
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 		if (nowTypingPass.size() > 0) {
 			Net::GetIns().SetAddressProviderPassword(std::stoi(nowTypingPass));
 		}

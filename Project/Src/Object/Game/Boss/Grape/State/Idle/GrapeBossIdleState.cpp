@@ -5,7 +5,7 @@
 GrapeBossIdleState::GrapeBossIdleState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, Vector3& angle,
+	Vector3& pos, Quaternion& rotation,
 	const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
@@ -20,7 +20,7 @@ GrapeBossIdleState::GrapeBossIdleState(
 	const std::function<void(void)> RandomChangeState
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), angle(angle),
+	pos(pos), rotation(rotation),
 	playerPos(playerPos),
 	CoolTime(CoolTime),
 	GetTarget(GetTarget),
@@ -54,7 +54,8 @@ void GrapeBossIdleState::Update(void)
 		// プレイヤーとの角度を出す
 		Vector3 tmp = *playerPos.at(target) - pos;
 		float dir = atan2f(tmp.x, tmp.z);
-		float norm = dir - angle.y;
+		Vector3 forward = rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f));
+		float norm = dir - atan2f(forward.x, forward.z);
 
 		// 角度があってなかったら
 		if (abs(norm) > NOT_ROT) {
@@ -81,22 +82,22 @@ void GrapeBossIdleState::Update(void)
 			// 右なら足す
 			if (norm > 0.0f) {
 				if (norm > ROT_POW) {
-					angle.y += ROT_POW;
+					rotation = Quaternion::FromRotationY(atan2f(forward.x, forward.z) + ROT_POW);
 				}
 				else {
 					// 角度があってるならおろす
-					angle.y = dir;
+					rotation = Quaternion::FromRotationY(dir);
 					angleFlg = false;
 				}
 			}
 			// 左なら引く
 			else {
 				if (norm < -ROT_POW) {
-					angle.y -= ROT_POW;
+					rotation = Quaternion::FromRotationY(atan2f(forward.x, forward.z) - ROT_POW);
 				}
 				else {
 					// 角度があってるならおろす
-					angle.y = dir;
+					rotation = Quaternion::FromRotationY(dir);
 					angleFlg = false;
 				}
 			}

@@ -5,7 +5,7 @@
 TomatoPlayerStampCollOperator::TomatoPlayerStampCollOperator(
 	COLLIDER_TAG COLL_TAG,
 	const short ATTACK_RATE_PERCENT,
-	const Vector3& playerPos, const Vector3& playerAngle,
+	const Vector3& playerPos, const Quaternion& playerAngle,
 	MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& playerStats
 ) :
@@ -49,7 +49,7 @@ void TomatoPlayerStampCollOperator::Update(void)
 {
 	// 座標と角度をプレイヤーの座標に追従
 	trans.pos = playerPos;
-	trans.angle = playerAngle;
+	trans.rotation = playerAngle;
 }
 
 void TomatoPlayerStampCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)

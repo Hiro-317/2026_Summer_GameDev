@@ -27,7 +27,7 @@ public:
 	GrapeBossStraightState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle,
+		Vector3& pos, Quaternion& rotation,
 		BombType* bombType,
 		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> GetTarget,
@@ -66,7 +66,7 @@ private:
 	Vector3& pos;
 
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// ボムの参照
 	BombType* bombType;

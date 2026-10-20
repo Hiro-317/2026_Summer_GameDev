@@ -4,7 +4,7 @@
 
 #include "../../../Application/Application.h"
 #include "../../SceneManager.h"
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Effect/EffectManager.h"
@@ -31,7 +31,7 @@ void GamePause::SubPostInit(void)
 	nowSelect = SELECT::YES;
 	SoundManager::GetIns().Pause();
 	Snd::GetIns().Play("SystemButton");
-	Key::GetIns().SetMouseFixed(false);
+	Input::GetIns().SetMouseFixed(false);
 }
 
 void GamePause::SubPostUpdate(void)
@@ -39,14 +39,14 @@ void GamePause::SubPostUpdate(void)
 	// 自分がポーズ画面を開いたとき
 	if (isOperator) {
 
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PopGamePause);
 
 			Snd::GetIns().PausePlay();
 			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().PopScene();
-			Key::GetIns().SetMouseFixed(true);
+			Input::GetIns().SetMouseFixed(true);
 			EffectManager::GetIns()->PlayEffect();
 			return;
 		}
@@ -54,7 +54,7 @@ void GamePause::SubPostUpdate(void)
 		switch (nowSelect) {
 
 		case GamePause::SELECT::YES:
-			if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch);
 
@@ -62,7 +62,7 @@ void GamePause::SubPostUpdate(void)
 				Snd::GetIns().Play("SystemSelect");
 			}
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect);
 
@@ -77,7 +77,7 @@ void GamePause::SubPostUpdate(void)
 
 		case GamePause::SELECT::NO:
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch);
 
@@ -85,14 +85,14 @@ void GamePause::SubPostUpdate(void)
 				Snd::GetIns().Play("SystemSelect");
 			}
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PopGamePause);
 
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
-				Key::GetIns().SetMouseFixed(true);
+				Input::GetIns().SetMouseFixed(true);
 				EffectManager::GetIns()->PlayEffect();
 				return;
 			}
@@ -119,7 +119,7 @@ void GamePause::SubPostUpdate(void)
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
-				Key::GetIns().SetMouseFixed(true);
+				Input::GetIns().SetMouseFixed(true);
 				EffectManager::GetIns()->PlayEffect();
 				break;
 			}

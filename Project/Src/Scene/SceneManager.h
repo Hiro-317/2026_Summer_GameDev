@@ -12,6 +12,8 @@
 
 #include "../Object/Common/CharaTypeDefine.h"
 
+#include "../Manager/Net/SenderID_Define.h"
+
 class SceneBase;
 
 class FadeSceneBase;
@@ -273,7 +275,6 @@ private:
 	float clearTime;
 
 #pragma endregion
-
 };
 
 using SCENE_ID = SceneManager::SCENE_ID;

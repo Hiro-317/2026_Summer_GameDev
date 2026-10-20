@@ -1008,20 +1008,20 @@ struct MsgDataBossTrans
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
     Vector3 pos;
-    Vector3 angle;
+    Quaternion rotation;
     Vector3 scale;
 
-    MsgDataBossTrans(const Vector3& pos, const Vector3& angle, const Vector3& scale) :
+    MsgDataBossTrans(const Vector3& pos, const Quaternion& rotation, const Vector3& scale) :
         header(DATA_TYPE),
         pos(pos),
-        angle(angle),
+        rotation(rotation),
         scale(scale)
     {
     }
     MsgDataBossTrans(void) :
         header(DATA_TYPE),
         pos(),
-        angle(),
+        rotation(),
         scale()
     {
     }

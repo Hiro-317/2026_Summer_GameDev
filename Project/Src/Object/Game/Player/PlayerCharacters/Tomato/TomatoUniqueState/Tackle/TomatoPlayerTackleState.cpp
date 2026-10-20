@@ -1,6 +1,6 @@
 #include "TomatoPlayerTackleState.h"
 
-#include "../../../../../../../Manager/Input/KeyManager.h"
+#include "../../../../../../../Manager/Input/InputManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../../../../Manager/Effect/EffectManager.h"
@@ -8,10 +8,10 @@
 TomatoPlayerTackleState::TomatoPlayerTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	TomatoPlayerTackleCollOperator& collOperator,
+	PlayerSimpleAttackCollOperator& collOperator,
 	int COOL_TIME,
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Vector3& angle,
+	Vector3& pos, Quaternion& rotation,
 	const std::function<void(void)> ChargeAttackBuff,
 	const std::function<void(void)> ChargeAttackBuffDelete,
 	const std::function<void(void)> DefaultChangeState
@@ -21,7 +21,7 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
 	COOL_TIME(COOL_TIME),
 	MOVE_SPEED(MOVE_SPEED),
 	ROTATION_POW(ROTATION_POW),
-	pos(pos), angle(angle),
+	pos(pos), rotation(rotation),
 	ChargeAttackBuff(ChargeAttackBuff),
 	ChargeAttackBuffDelete(ChargeAttackBuffDelete),
 	DefaultChangeState(DefaultChangeState),
@@ -38,7 +38,7 @@ void TomatoPlayerTackleState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).down) {
 		OwnChangeState();
 	}
 }
@@ -49,12 +49,12 @@ void TomatoPlayerTackleState::Enter(void)
 	collOperator.ResetIsHit();
 
 	// 突進方向の取得
-	moveDir.x = sinf(angle.y);
-	moveDir.z = cosf(angle.y);
+	moveDir.x = sinf(rotation.ToEulerXZY().y);
+	moveDir.z = cosf(rotation.ToEulerXZY().y);
 	moveDir.Normalize();
 
 	// X軸の角度をゼロに初期化(回転量で突進の開始を判断しているから、初期化しておく)
-	angle.x = 0.0f;
+	rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
 
 	// カウンターの初期化
 	timeCounter = COUNT_MAX;
@@ -67,7 +67,7 @@ void TomatoPlayerTackleState::Update(void)
 {
 	coolTimeCounter = chargeCounter;
 	trans.pos = pos;
-	trans.angle.y = angle.y;
+	trans.rotation = rotation;
 
 	// カウンターがゼロになったら終了
 	if (timeCounter <= 0) {
@@ -81,25 +81,25 @@ void TomatoPlayerTackleState::Update(void)
 	}
 
 	// ボタンを押し続けている場合攻撃をチャージする
-	if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).now) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_2).now) {
 		// これはスキルのUIをチャージ用に動かすための特殊処理処理
 		Charge(chargeCounter, COOL_TIME, CHARGE_TIME);
 
 		// 回転スタート
-		angle.x += ROTATION_POW;
+		rotation.AddAngle(Vector3(ROTATION_POW, 0.0f, 0.0f));
 
 		// チャージの効果音を再生
 		SoundManager::GetIns().Play("TackleCharge");
 
 		// コントローラーの入力を取得
-		moveDir = Key::GetIns().GetLeftStickVec().ToVector3XZ();
+		moveDir = Input::GetIns().GetLeftStickVec().ToVector3XZ();
 
 		// 入力がなければ次にキーボードの入力を取得
 		if (moveDir == 0.0f) {
-			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).now) { moveDir.x++; }
-			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).now) { moveDir.x--; }
-			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).now) { moveDir.z++; }
-			if (Key::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { moveDir.z--; }
+			if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_RIGHT).now) { moveDir.x++; }
+			if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_LEFT).now) { moveDir.x--; }
+			if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_FRONT).now) { moveDir.z++; }
+			if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_MOVE_BACK).now) { moveDir.z--; }
 		}
 
 		// 正規化
@@ -109,10 +109,10 @@ void TomatoPlayerTackleState::Update(void)
 		moveDir.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 		// 角度を入力方向に向ける
-		if (moveDir != 0.0f) { angle.y = atan2f(moveDir.x, moveDir.z); }
+		if (moveDir != 0.0f) { rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z)); }
 
-		moveDir.x = sinf(angle.y);
-		moveDir.z = cosf(angle.y);
+		moveDir.x = sinf(rotation.ToEulerXZY().y);
+		moveDir.z = cosf(rotation.ToEulerXZY().y);
 		moveDir.Normalize();
 	}
 	else if(chargeCounter < COOL_TIME) {
@@ -155,7 +155,7 @@ void TomatoPlayerTackleState::Tackle(void)
 	EffectManager::GetIns()->StopEffect(EFFECT_NAME::TACKLE_CHARGE);
 
 	// 突進中も回転を続ける
-	angle.x += ROTATION_POW;
+	rotation.AddAngle(Vector3(ROTATION_POW, 0.0f, 0.0f));
 	// カウントを開始
 	timeCounter--;
 	// 前方に向かって突進

@@ -36,7 +36,7 @@ public:
 	GrapeBossStampState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle, const bool& isGround,
+		Vector3& pos, Quaternion& rotation, const bool& isGround,
 		BombType* bombType,
 		const std::vector<const Vector3*> playerPos,
 		GrapeStampCollOperator* collOperator,
@@ -92,7 +92,7 @@ private:
 	Vector3& pos;
 
 	// äpìxÇÃéQè∆
-	Vector3& angle;
+	Quaternion& rotation;
 	
 	const bool& isGround;
 

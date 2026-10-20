@@ -6,7 +6,7 @@
 
 #include "../../../Manager/Net/SenderID_Define.h"
 
-#include "../../Common/CharaTypeDefine.h"
+#include "../../Common/Common/CharaTypeDefine.h"
 
 #include "CommonPlayerState/TripleAttack/PlayerTripleAttackStDefine.h"
 

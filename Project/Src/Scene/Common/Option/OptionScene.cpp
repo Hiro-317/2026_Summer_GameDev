@@ -1,9 +1,11 @@
 #include "OptionScene.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../pch.h"
+
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 OptionScene::OptionScene() :
 	SceneBase(),
@@ -76,7 +78,7 @@ void OptionScene::SubPostUpdate(void)
 
 #pragma region ‘€ì
 	// ƒQ[ƒ€I—¹ˆ—```````````````````````````````````
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// Œø‰Ê‰¹
 		Snd::GetIns().Play("SystemSelect");
@@ -90,7 +92,7 @@ void OptionScene::SubPostUpdate(void)
 	// ```````````````````````````````````ƒQ[ƒ€I—¹ˆ—
 
 	// ‘€ì‚É‚æ‚Á‘I‘ğˆ‚ğ•Ï‚¦‚é``````````````````````````````
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 
 		// 1‚Â‘O‚Ìƒ^ƒCƒv‚Ö
 		nowSelect = (SELECT)((int)nowSelect - 1);
@@ -98,7 +100,7 @@ void OptionScene::SubPostUpdate(void)
 		// ”ÍˆÍŠO‚¾‚Á‚½‚ç‹t‚Ì’[‚Ö
 		if (nowSelect <= SELECT::None) { nowSelect = (SELECT)((int)SELECT::Max - 1); }
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 
 		// 1‚ÂŸ‚Ìƒ^ƒCƒv‚Ö
 		nowSelect = (SELECT)((int)nowSelect + 1);
@@ -113,31 +115,31 @@ void OptionScene::SubPostUpdate(void)
 
 	case OptionScene::SELECT::MasterVolume: {
 		// ƒ}ƒXƒ^[ƒ{ƒŠƒ…[ƒ€Œ¸Z
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).now) { Snd::GetIns().AddMasterVolume(-2); isPushMinusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).now) { Snd::GetIns().AddMasterVolume(-2); isPushMinusButton = true; }
 		// ƒ}ƒXƒ^[ƒ{ƒŠƒ…[ƒ€‰ÁZ
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).now) { Snd::GetIns().AddMasterVolume(2); isPushPlusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).now) { Snd::GetIns().AddMasterVolume(2); isPushPlusButton = true; }
 		break;
 	}
 
 	case OptionScene::SELECT::BgmVolume: {
 		// BGMƒ{ƒŠƒ…[ƒ€Œ¸Z
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).now) { Snd::GetIns().AddBgmVolume(-0.01f); isPushMinusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).now) { Snd::GetIns().AddBgmVolume(-0.01f); isPushMinusButton = true; }
 		// BGMƒ{ƒŠƒ…[ƒ€‰ÁZ
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).now) { Snd::GetIns().AddBgmVolume(0.01f); isPushPlusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).now) { Snd::GetIns().AddBgmVolume(0.01f); isPushPlusButton = true; }
 		break;
 	}
 
 	case OptionScene::SELECT::SeVolume: {
 		// SEƒ{ƒŠƒ…[ƒ€Œ¸Z
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).now) { Snd::GetIns().AddSeVolume(-0.01f); isPushMinusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).now) { Snd::GetIns().AddSeVolume(-0.01f); isPushMinusButton = true; }
 		// SEƒ{ƒŠƒ…[ƒ€‰ÁZ
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).now) { Snd::GetIns().AddSeVolume(0.01f); isPushPlusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).now) { Snd::GetIns().AddSeVolume(0.01f); isPushPlusButton = true; }
 		break;
 	}
 
 	case OptionScene::SELECT::Exit: {
 		// I—¹
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 			// Œø‰Ê‰¹
 			Snd::GetIns().Play("SystemSelect");
 

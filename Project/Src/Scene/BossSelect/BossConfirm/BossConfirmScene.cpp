@@ -2,7 +2,7 @@
 
 #include "../../../pch.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
@@ -10,7 +10,7 @@
 
 #include "../../../Manager/Font/FontManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 BossConfirmScene::BossConfirmScene() :
 	SceneBase(),
@@ -127,7 +127,7 @@ void BossConfirmScene::SubPostInit(void)
 void BossConfirmScene::SubPostUpdate(void)
 {
 	// ¶
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
 
 		// Œø‰Ê‰¹
 		Snd::GetIns().Play("SystemSelect");
@@ -141,7 +141,7 @@ void BossConfirmScene::SubPostUpdate(void)
 		ButtonSelectionStateReload();
 	}
 	// ‰E
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
 
 		// Œø‰Ê‰¹
 		Snd::GetIns().Play("SystemSelect");
@@ -156,7 +156,7 @@ void BossConfirmScene::SubPostUpdate(void)
 	}
 
 	// Œˆ’è
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// Œø‰Ê‰¹
 		if (choice > CHOICE::None && choice < CHOICE::Max &&
@@ -269,7 +269,7 @@ void BossConfirmScene::SubPostDraw(void)
 		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)buttonSelectionState[i]], true);
 	}
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, arrowEasingRate, 0, arrowImage, true);
-	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Input::GetIns().LastInputKinds()], true);
 }
 
 void BossConfirmScene::SubPreRelease(void)

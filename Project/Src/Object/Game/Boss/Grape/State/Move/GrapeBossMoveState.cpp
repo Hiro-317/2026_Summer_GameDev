@@ -6,14 +6,14 @@ GrapeBossMoveState::GrapeBossMoveState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED,
-	Vector3& pos, Vector3& angle, const std::vector<const Vector3*> playerPos,
+	Vector3& pos, Quaternion& rotation, const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayRunAnime,
 	const std::function<void(void)> KickDownChangeState
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED),
-	pos(pos), angle(angle), playerPos(playerPos),
+	pos(pos), rotation(rotation), playerPos(playerPos),
 	GetTarget(GetTarget),
 	PlayRunAnime(PlayRunAnime),
 	KickDownChangeState(KickDownChangeState)
@@ -31,7 +31,7 @@ void GrapeBossMoveState::Update(void)
 {
 	// 回転の更新
 	moveDir = (*playerPos.at(target) - pos).Normalized();
-	angle.y = atan2f(moveDir.x, moveDir.z);
+	rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
 
 	// 位置の更新
 	pos += moveDir * MOVE_SPEED;

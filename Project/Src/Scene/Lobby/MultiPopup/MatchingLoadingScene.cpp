@@ -2,10 +2,10 @@
 
 #include "../../../Application/Application.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 MatchingLoadingScene::MatchingLoadingScene():
 	SceneBase(),
@@ -22,7 +22,7 @@ void MatchingLoadingScene::SubPostInit(void)
 
 void MatchingLoadingScene::SubPostUpdate(void)
 {
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 		// Ú‘±ó‹µ‚ğƒŠƒZƒbƒg‚·‚é
 		Net::GetIns().Disconnection();
 

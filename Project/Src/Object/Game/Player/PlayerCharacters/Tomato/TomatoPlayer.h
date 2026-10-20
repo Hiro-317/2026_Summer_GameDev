@@ -4,6 +4,8 @@
 
 #include "../../../../../Common/Vector2.h"
 
+class PlayerSimpleAttackCollOperator;
+
 class TomatoPlayer : public PlayerBase
 {
 public:

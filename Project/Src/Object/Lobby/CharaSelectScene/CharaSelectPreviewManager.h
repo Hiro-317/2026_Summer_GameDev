@@ -4,7 +4,7 @@
 
 #include "../../../Manager/Net/NetWorkDefine.h"
 
-#include "../../Common/CharaTypeDefine.h"
+#include "../../Common/Common/CharaTypeDefine.h"
 
 class CharaSelectPreviewBase;
 

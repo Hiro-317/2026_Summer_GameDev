@@ -27,7 +27,7 @@ public:
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE * scale, 1.0f, SCALE * scale); }
 
 	void SetBanameranPos(const Vector3& pos) { banadrill.pos = pos; }
-	void SetBanameranRot(const Vector3& rot) { banadrill.angle = rot; }
+	void SetBanameranRot(const Quaternion& rot) { banadrill.rotation = rot; }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
 	void SetDrawArea(bool flg) { isDrawArea = flg; }

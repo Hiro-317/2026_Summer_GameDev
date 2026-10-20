@@ -2,20 +2,20 @@
 
 #include "../../pch.h"
 
-#include "../../Manager/Input/KeyManager.h"
+#include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
 #include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 
-#include "../../Scene/SceneManager/SceneManager.h"
+#include "../../Scene/../Scene/SceneManager.h"
 
-#include "../ObjectUseDefine.h"
+#include "../ActorUseDefine.h"
 
 #include "CharaSelect/LobbyCharaSelectScene.h"
 
-#include "../../Object/SkyDome/SkyDome.h"
+#include "../../Object/Common/.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
 
@@ -103,7 +103,7 @@ void MultiLobbyScene::SubPostInit(void)
 void MultiLobbyScene::SubPostUpdate(void)
 {
 	// タイトル画面に戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemButton");
@@ -117,7 +117,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 	}
 
 	// 左
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -131,7 +131,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 		ButtonSelectionStateReload();
 	}
 	// 右
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -146,7 +146,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 	}
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 効果音
 		if (choice > CHOICE::None && choice < CHOICE::Max &&
@@ -246,7 +246,7 @@ void MultiLobbyScene::SubPostDraw(void)
 		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)buttonSelectionState[i]], true);
 	}
 	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
-	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Input::GetIns().LastInputKinds()], true);
 }
 
 void MultiLobbyScene::SubPreRelease(void)

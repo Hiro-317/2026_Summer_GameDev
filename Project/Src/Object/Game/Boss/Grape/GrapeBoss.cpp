@@ -75,7 +75,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// 自分の座標、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos,
+			trans.pos, trans.rotation, playerPos,
 			// クールタイム
 			[&]() { return coolTime; },
 			// ターゲット番号の取得
@@ -110,7 +110,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 移動量
 			MOVE_SPEED,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.angle, playerPos,
+			trans.pos, trans.rotation, playerPos,
 			// ターゲット番号の取得
 			[&]() { return targetNum; },
 			// 走りアニメーションの再生
@@ -128,7 +128,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// 自分の座標と角度とローカル角度
-			trans.pos, trans.angle, MODEL_LOCAL_ROT,
+			trans.pos, trans.rotation, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
 			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
 			// モデルの拡大率
@@ -159,7 +159,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// 自分の座標と角度
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			// 攻撃の種類の情報
 			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
 			// プレイヤーの座標
@@ -186,7 +186,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 自分の座標と角度
-			trans.pos, trans.angle, isGround,
+			trans.pos, trans.rotation, isGround,
 			// 攻撃の種類の情報
 			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
 			// プレイヤーの座標

@@ -6,7 +6,7 @@
 
 #include "../../Application/Application.h"
 
-#include "../../Common/Vector2.h"
+#include "../../Common/Vector2I.h"
 
 class TitleScene : public SceneBase
 {

@@ -53,8 +53,8 @@ void TomatoTackleCollOperator::Load(void)
 	collBack.centerDiff = CENTER;
 	collFront.centerDiff = CENTER + Vector3::Yonly(1.0f);
 
-	collBack.localAngle = ANGLE;
-	collFront.localAngle = ANGLE;
+	collBack.localRotation = Quaternion::FromEulerXZY(ANGLE);
+	collFront.localRotation = Quaternion::FromEulerXZY(ANGLE);
 
 	isDrawArea = false;
 }

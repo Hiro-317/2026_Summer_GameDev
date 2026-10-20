@@ -20,7 +20,7 @@ public:
 	TomatoPlayerTackleCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		const short ATTACK_RATE_PERCENT,
-		const Vector3& playerPos, const Vector3& playerAngle,
+		const Vector3& playerPos, const Quaternion& playerAngle,
 		MSG_SENDER_ID operatorSenderId,
 		const CharacterStats& playerStats
 	);
@@ -73,7 +73,7 @@ private:
 	// プレイヤーの座標
 	const Vector3& playerPos;
 	// プレイヤーの向き
-	const Vector3& playerAngle;
+	const Quaternion& playerAngle;
 
 	const MSG_SENDER_ID operatorSenderId;
 

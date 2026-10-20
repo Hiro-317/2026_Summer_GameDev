@@ -31,7 +31,7 @@ public:
 	GrapeBossKickDownState(
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle, const Vector3 LOCAL_ROT,
+		Vector3& pos, Quaternion& rotation, const Vector3 LOCAL_ROT,
 		BombType* bombType,
 		const Vector3& MODEL_SCALE,
 		const std::vector<const Vector3*> playerPos,
@@ -84,7 +84,7 @@ private:
 	Vector3& pos;
 
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 	
 	// ボムの参照
 	BombType* bombType;

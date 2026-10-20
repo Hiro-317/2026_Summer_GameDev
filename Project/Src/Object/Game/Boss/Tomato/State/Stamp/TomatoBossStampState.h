@@ -29,7 +29,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
-		Vector3& pos, Vector3& angle, const bool& isGround,
+		Vector3& pos, Quaternion& rotation, const bool& isGround,
 		const std::vector<const Vector3*>playerPos,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DefaultChangeState,
@@ -71,7 +71,7 @@ private:
 	Vector3& pos;
 
 	// äpìxÇÃéQè∆
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// ê›íuîªíËÇÃì«Ç›éÊÇË
 	const bool& isGround;

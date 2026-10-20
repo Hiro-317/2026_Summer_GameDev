@@ -7,7 +7,7 @@
 
 #include "../../../Application/Application.h"
 
-#include "../../../Object/CharaTypeDefine.h"
+#include "../../../Object/Common/CharaTypeDefine.h"
 
 #include "../../../Manager/Net/NetWorkDefine.h"
 

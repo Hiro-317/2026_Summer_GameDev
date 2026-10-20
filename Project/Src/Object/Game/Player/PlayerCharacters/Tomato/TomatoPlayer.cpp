@@ -7,9 +7,9 @@
 #include "TomatoUniqueState/Damage/TomatoPlayerDamageState.h"
 #include "TomatoUniqueState/Death/TomatoPlayerDeathState.h"
 
-#include "TomatoUniqueState/Tackle/TomatoPlayerTackleCollOperator.h"
+#include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 #include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
-#include "TomatoUniqueState/Stamp/TomatoPlayerStampCollOperator.h"
+
 
 #include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
 #include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
@@ -41,33 +41,23 @@ void TomatoPlayer::PlayerLoad(void)
 		new TomatoPlayerHeadButtCollOperator(
 			COLLIDER_TAG::PLAYER_ATTACK,
 			SKILL1_DAMAGE_RATE,
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			operatorSenderId,
 			characterStats
 		)
 	);
 
 	// 突進攻撃の当たり判定を生成
-	subObjArray.emplace_back(
-		new TomatoPlayerTackleCollOperator(
-			COLLIDER_TAG::PLAYER_ATTACK,
-			SKILL2_DAMAGE_RATE,
-			trans.pos, trans.angle,
-			operatorSenderId,
-			characterStats
-		)
-	);
+	tackleAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PLAYER_ATTACK, 100.0f, Vector3(),
+		SKILL2_DAMAGE_RATE, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle,
+		trans, operatorSenderId, characterStats);
+	subObjArray.emplace_back(tackleAttack);
 
 	// スタンプ攻撃の当たり判定を生成
-	subObjArray.emplace_back(
-		new TomatoPlayerStampCollOperator(
-			COLLIDER_TAG::PLAYER_ATTACK,
-			SKILL3_DAMAGE_RATE,
-			trans.pos, trans.angle,
-			operatorSenderId,
-			characterStats
-		)
-	);
+	stampAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PLAYER_ATTACK, 300.0f, Vector3(),
+		SKILL3_DAMAGE_RATE, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp,
+		trans, operatorSenderId, characterStats);
+	subObjArray.emplace_back(stampAttack);
 
 #pragma endregion 
 
@@ -84,7 +74,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
 			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
 			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX, trans.angle, characterStats
+			accelSum, ACCEL_MAX, trans.rotation, characterStats
 		)
 	);
 	
@@ -103,7 +93,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// 頭突き中の時間 / 頭突きの速度
 			HEAD_BUTT_ATTACK_TIME, HEAD_BUTT_SPEED,
 			// 座標 / 角度
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -118,13 +108,13 @@ void TomatoPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
 			// 突進攻撃の当たり判定発生管理用クラス
-			*SubObjSerch<TomatoPlayerTackleCollOperator>(),
+			*tackleAttack,
 			// クールタイム
 			SKILL2_COOL_TIME,
 			// 移動速度 / 回転速度
 			TACKLE_SPEED, ROTATION_POW,
 			// 座標 / 角度
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			// チャージ後の突進の攻撃力を増やす関数のポインタ.
 			[&]() { 
 				characterStats.attackPower.AddModifier(
@@ -145,13 +135,13 @@ void TomatoPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
 			// スタンプ攻撃の当たり判定発生管理用クラス
-			*SubObjSerch<TomatoPlayerStampCollOperator>(),
+			*stampAttack,
 			// クールタイム
 			SKILL3_COOL_TIME,
 			// 移動速度 
 			STAMP_JUMP_POWER, STAMP_FALL_SPEED,
 			// 座標 / 角度
-			trans.pos, trans.angle, accelSum,
+			trans.pos, trans.rotation, accelSum,
 			[&]() { GetGravityFlg() ? SetGravityFlg(false) : SetGravityFlg(true); },
 			[&]() { return  isGround; },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
@@ -167,7 +157,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::DAMAGE; },
 			// 座標
-			trans.angle,
+			trans.rotation,
 			// 無敵時間のセット関数
 			[&]() { SetInviCounter(60); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
@@ -181,7 +171,7 @@ void TomatoPlayer::PlayerLoad(void)
 		new TomatoPlayerDeathState(
 			[&]() { ChangeState((int)STATE::DEATH); },
 			[&]() { return state == (int)STATE::DEATH; },
-			trans.pos, trans.angle,
+			trans.pos, trans.rotation,
 			[&]() { PlayerDeathSetting(); },
 			[&]() { SetIsDeath(true); },
 			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
@@ -317,11 +307,11 @@ void TomatoPlayer::ReceptionUpdate(void)
 			break;
 		}
 		case PlayerBase::STATE::SKILL_2: {
-			SubObjSerch<TomatoPlayerTackleCollOperator>()->ResetIsHit();
+			tackleAttack->ResetIsHit();
 			break;
 		}
 		case PlayerBase::STATE::SKILL_3: {
-			SubObjSerch<TomatoPlayerStampCollOperator>()->ResetIsHit();
+			stampAttack->ResetIsHit();
 			break;
 		}
 		case PlayerBase::STATE::DEATH: {
@@ -348,15 +338,15 @@ void TomatoPlayer::ReceptionUpdate(void)
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle: {
 			// タックル
-			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOn(); }
-			else { SubObjSerch<TomatoPlayerTackleCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { tackleAttack->CollOn(false); }
+			else { tackleAttack->CollOff(false); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp: {
 			// スタンプ
-			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOn(); }
-			else { SubObjSerch<TomatoPlayerStampCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { stampAttack->CollOn(false); }
+			else { stampAttack->CollOff(false); }
 
 			break;
 		}

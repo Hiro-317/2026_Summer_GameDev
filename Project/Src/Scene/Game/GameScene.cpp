@@ -11,7 +11,6 @@
 #include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
-#include "../../Manager/Effect/EffectManager.h"
 
 #include "../SceneManager.h"
 

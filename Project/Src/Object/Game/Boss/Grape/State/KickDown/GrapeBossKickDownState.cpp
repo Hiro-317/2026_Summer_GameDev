@@ -8,7 +8,7 @@
 GrapeBossKickDownState::GrapeBossKickDownState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
-	Vector3& pos, Vector3& angle, const Vector3 LOCAL_ROT,
+	Vector3& pos, Quaternion& rotation, const Vector3 LOCAL_ROT,
 	BombType* bombType,
 	const Vector3& MODEL_SCALE,
 	const std::vector<const Vector3*> playerPos,
@@ -21,7 +21,7 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	const std::function<void(void)> SetCoolTime
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), angle(angle), LOCAL_ROT(LOCAL_ROT),
+	pos(pos), rotation(rotation), LOCAL_ROT(LOCAL_ROT),
 	bombType(bombType),
 	MODEL_SCALE(MODEL_SCALE),
 	playerPos(playerPos),
@@ -43,7 +43,7 @@ void GrapeBossKickDownState::Enter(void)
 	cnt = 0;
 	SetCoolTime();
 	target = GetTarget();
-	angle.y = atan2f(playerPos.at(target)->x - pos.x, playerPos.at(target)->z - pos.z);
+	rotation = Quaternion::FromRotationY(atan2f(playerPos.at(target)->x - pos.x, playerPos.at(target)->z - pos.z));
 	attackPos = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
 	collOperator->SetPos(attackPos);
 	collOperator->SetDrawArea(true);

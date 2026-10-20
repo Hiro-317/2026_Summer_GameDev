@@ -5,7 +5,7 @@
 BananaBossIdleState::BananaBossIdleState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, Vector3& angle,
+	Vector3& pos, Quaternion& rotation,
 	const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
@@ -18,7 +18,7 @@ BananaBossIdleState::BananaBossIdleState(
 	const std::function<void(void)> RandomChangeState*/
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), angle(angle),
+	pos(pos), rotation(rotation),
 	playerPos(playerPos),
 	CoolTime(CoolTime),
 	GetTarget(GetTarget),

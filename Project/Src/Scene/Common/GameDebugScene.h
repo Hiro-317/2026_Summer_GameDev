@@ -10,7 +10,7 @@
 
 #include "../../Manager/Camera/MultifuncCamera/MultifuncCamera.h"
 
-#include"../../Manager/Input/KeyManager.h"
+#include"../../Manager/Input/InputManager.h"
 #include"../../Manager/Sound/SoundManager.h"
 
 class GameDebugScene : public SceneBase
@@ -37,14 +37,14 @@ private:
 	// çXêV
 	void SubPostUpdate(void)override {
 
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_TOPUPDATE).now) { TopUpdate(); Snd::GetIns().PausePlay(); }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_TOPUPDATE).now) { TopUpdate(); Snd::GetIns().PausePlay(); }
 		else { Snd::GetIns().AllStop(); }
 
 		camera.Update();
 
 		if (
-			Key::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_SWITCH).down ||
-			Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down
+			Input::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_SWITCH).down ||
+			Input::GetIns().GetInfo(KEY_TYPE::Pause).down
 			) {
 			SceneManager::GetIns().PopScene();
 		}

@@ -27,7 +27,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Vector3& angle, const Transform* trans,
+		Vector3& pos, Quaternion& rotation, const Transform* trans,
 		const std::vector<const Vector3*> playerPos,
 		TomatoTackleCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
@@ -73,7 +73,7 @@ private:
 	Vector3& pos;
 
 	// ボスの角度
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// ボスの情報の読み取り
 	const Transform* trans;

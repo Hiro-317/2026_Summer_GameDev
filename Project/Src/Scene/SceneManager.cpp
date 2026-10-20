@@ -11,8 +11,8 @@
 
 #include "Title/TitleScene.h"
 #include "Game/GameScene.h"
-#include "GameClear/GameClearScene.h"
-#include "GameOver/GameOverScene.h"
+#include "Clear/ClearScene.h"
+#include "GameOver/GameOver.h"
 
 #include "Common/Fade/Default/DefaultFadeScene.h"
 
@@ -532,9 +532,9 @@ std::unique_ptr<SceneBase> SceneManager::CreateScene(SCENE_ID scene)const
 
 	case SCENE_ID::Game: { return std::make_unique<GameScene>(); }
 
-	case SCENE_ID::GameClear: { return std::make_unique<GameClearScene>(); }
+	case SCENE_ID::Clear: { return std::make_unique<ClearScene>(); }
 
-	case SCENE_ID::GameOver: { return std::make_unique<GameOverScene>(); }
+	case SCENE_ID::GameOver: { return std::make_unique<GameOver>(); }
 
 	default: { return nullptr; }
 	}

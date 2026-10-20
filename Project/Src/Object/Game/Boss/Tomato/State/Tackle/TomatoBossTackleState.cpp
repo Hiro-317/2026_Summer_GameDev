@@ -8,7 +8,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Vector3& angle, const Transform* trans,
+	Vector3& pos, Quaternion& rotation, const Transform* trans,
 	const std::vector<const Vector3*> playerPos,
 	TomatoTackleCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
@@ -20,7 +20,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 ) 
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
-	pos(pos), angle(angle), trans(trans),
+	pos(pos), rotation(rotation), trans(trans),
 	playerPos(playerPos),
 	collOperator(collOperator),
 	GetTarget(GetTarget),
@@ -50,7 +50,7 @@ void TomatoBossTackleState::Enter(void)
 
 void TomatoBossTackleState::Update(void)
 {
-	angle.x += rotPow;
+	rotation.AddAngle(Vector3(rotPow, 0.0f, 0.0f));
 
 	// ˆê•b‚Ì—­‚ß
 	if (time < CHARGE_POW) {
@@ -59,12 +59,12 @@ void TomatoBossTackleState::Update(void)
 
 		// ‰ñ“]‚ÌXV
 		moveDir = (*playerPos.at(target) - pos).Normalized();
-		angle.y = atan2f(moveDir.x, moveDir.z);
+		rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
 		rotPow += ROTATION_POW;
 
 		// —\‘ªü‚ÌXV
 		auto p = Vector3::XZonly(pos.x, pos.z);
-		auto a = angle.y;
+		auto a = rotation.ToEulerXZY().y;
 		auto s = ((float)time - 180.0f) / 180.0f + 1.0f;
 
 		collOperator->SetViewPos(p);
@@ -96,7 +96,7 @@ void TomatoBossTackleState::Update(void)
 			return;
 		}
 	}
-	angle.x += rotPow;
+	rotation.AddAngle(Vector3(rotPow, 0.0f, 0.0f));
 	collOperator->SetPos(Vector3::XZonly(trans->pos.x, trans->pos.z));
 }
 

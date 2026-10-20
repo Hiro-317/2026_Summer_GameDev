@@ -3,7 +3,7 @@
 #include<vector>
 #include<string>
 
-#include "../../Object/CharaTypeDefine.h"
+#include "../../Object/Common/CharaTypeDefine.h"
 
 class Ranking
 {

@@ -7,7 +7,7 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
 	const float MOVE_SPEED, const float ATTACK_TIME,
-	Vector3& pos, Vector3& angle, const std::vector<const Vector3*> playerPos,
+	Vector3& pos, Quaternion& rotation, const std::vector<const Vector3*> playerPos,
 	TomatoHeadbuttCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> DeleteColl,
@@ -17,7 +17,7 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
 	MOVE_SPEED(MOVE_SPEED), ATTACK_TIME(ATTACK_TIME),
-	pos(pos), angle(angle), playerPos(playerPos),
+	pos(pos), rotation(rotation), playerPos(playerPos),
 	collOperator(collOperator),
 	GetTarget(GetTarget),
 	DeleteColl(DeleteColl),
@@ -45,13 +45,13 @@ void TomatoBossHeadbuttState::Update(void)
 	// 前隙中は予測線の更新
 	if (time < 0) {
 
-		angle.y = atan2f(moveDir.x, moveDir.z);
+		rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
 		float s = (((float)time + START_CNT) / START_CNT);
 
 		collOperator->SetScale(s);
 		collOperator->SetViewPos(pos);
-		collOperator->SetAngle(angle.y);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, angle.y));
+		collOperator->SetAngle(rotation.ToEulerXZY().y);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, rotation.ToEulerXZY().y));
 		return;
 	}
 	// 初めなら音と当たり判定を出す

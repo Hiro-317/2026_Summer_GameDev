@@ -28,7 +28,7 @@ public:
 		const std::function<void(void)>& ownChangeState,
 		const std::function<bool(void)>& isOwnState,
 		const float MOVE_SPEED, const float ATTACK_TIME,
-		Vector3& pos, Vector3& angle,
+		Vector3& pos, Quaternion& rotation,
 		const std::vector<const Vector3*> playerPos,
 		TomatoHeadbuttCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
@@ -67,7 +67,7 @@ private:
 	Vector3& pos;
 
 	// 角度の参照
-	Vector3& angle;
+	Quaternion& rotation;
 
 	// プレイヤーの座標の読み取り
 	const std::vector<const Vector3*> playerPos;

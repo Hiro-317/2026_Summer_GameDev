@@ -148,22 +148,22 @@ void PlayerSimpleAttackCollOperator::TargetSerch(void)
 	findCollRef->SetJudgeFlg(true);
 }
 
-void PlayerSimpleAttackCollOperator::CollOn(void)
+void PlayerSimpleAttackCollOperator::CollOn(bool sendNetwork)
 {
 	if (!isHit) { attackCollRef->SetJudgeFlg(true); }
 
-	if (!Net::GetIns().IsHost()) {
+	if (sendNetwork && !Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataPlayerCollOperator(true, SEND_COLLIDER_TYPE));
 	}
 }
 
 // UŒ‚‚Ì”»’è‚ðÁ‚·
-void PlayerSimpleAttackCollOperator::CollOff(void) 
+void PlayerSimpleAttackCollOperator::CollOff(bool sendNetwork) 
 {
 	findCollRef->SetJudgeFlg(false);
 	attackCollRef->SetJudgeFlg(false);
 
-	if (!Net::GetIns().IsHost()) {
+	if (sendNetwork && !Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataPlayerCollOperator(false, SEND_COLLIDER_TYPE));
 	}
 }
