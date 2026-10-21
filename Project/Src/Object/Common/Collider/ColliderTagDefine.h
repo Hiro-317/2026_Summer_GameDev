@@ -16,29 +16,29 @@ enum class COLLIDER_SHAPE
 // コライダータグ列挙型定義
 enum class COLLIDER_TAG
 {
-	NON = -1,
+	None = -1,
 
-	PLAYER,
+	Player,
 
-	PLAYER_COMMON,
+	PlayerCommon,
 
-	PLAYER_ATTACK,
+	PlayerAttack,
 
-	PLAYER_HEAL,
-	PLAYER_BUFF,
-	PLAYER_DEBUFF,
+	PlayerHeal,
+	PlayerBuff,
+	PlayerDebuff,
 
-	BOSS,
+	Boss,
 
-	BOSS_ATTACK_AREA,
+	BossAttackArea,
 
-	BOSS_ATTACK,
+	BossAttack,
 
-	ENEMY,
+	Enemy,
 
-	BOSS_DISTANCE,
+	BossDistance,
 
-	STAGE,
+	Stage,
 
-	DEBUG_OBJECT,
+	DebugObject,
 };

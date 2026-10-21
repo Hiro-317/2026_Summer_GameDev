@@ -12,7 +12,7 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
 	// 当たり判定を生成する（XZコライダー）
 	AddCollider(
 		new XZCircleCollider(
-			COLLIDER_TAG::BOSS_ATTACK,
+			COLLIDER_TAG::BossAttack,
 			ATTACK_RANGE,
 			1000.0f
 		)
@@ -21,23 +21,23 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
 	// 当たり判定を生成する（球体コライダー）
 	AddCollider(
 		new SphereCollider(
-			COLLIDER_TAG::BOSS_ATTACK_AREA,
+			COLLIDER_TAG::BossAttackArea,
 			MODEL_RADIUS * ATTACK_SIZE
 		)
 	);
 
 	trans.scale = Vector3(ATTACK_SIZE);
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetPushFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
 	SetGravityFlg(true);
 	count = 0;
 }
 
-void GrapeBossStampBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
+void GrapeBossStampBomb::Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats)
 {
-	CreateAttackSkill(operatorSenderId, 75, &stats);
+	CreateAttackSkill(controlSenderId, 75, &stats);
 
 	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
 	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
@@ -46,7 +46,7 @@ void GrapeBossStampBomb::Load(const MSG_SENDER_ID operatorSenderId, const Charac
 
 void GrapeBossStampBomb::SubUpdate(void)
 {
-	bool i = ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->GetJudge();
+	bool i = ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->GetJudge();
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
@@ -72,11 +72,11 @@ void GrapeBossStampBomb::SubUpdate(void)
 		}
 		// 攻撃判定オン
 		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
-			ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
 		}
 		//攻撃判定オフ、終わり
 		else {
-			ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(false);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
 			end = true;
 			now = false;
 			count = 0;

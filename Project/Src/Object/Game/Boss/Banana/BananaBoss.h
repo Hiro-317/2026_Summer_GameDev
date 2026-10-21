@@ -8,20 +8,6 @@ public:
 	BananaBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive);
 	~BananaBoss()override = default;
 
-	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	std::vector<ColliderBase*> GetCollider(void)const override {
-		std::vector<ColliderBase*> ret = {};
-		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
-
-		// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚Ì•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ActorBase* const& subObj : subObjArray) {
-			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
-		}
-		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
-		return ret;
-	}
-
 	virtual void ReceptionUpdate(void)override;
 
 protected:

@@ -209,6 +209,7 @@ public:
 					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
 					case MSG_DATA_TYPE::BossIsDeath: { delete static_cast<MsgDataBossIsDeath*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::BossChangeState: { delete static_cast<MsgDataBossChangeState*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
 					case MSG_DATA_TYPE::EffectCreate: { delete static_cast<MsgDataEffectCreate*>(ptr); break; }
@@ -452,6 +453,7 @@ private:
 		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossIsDeath: { MsgDataRecv<MsgDataBossIsDeath>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossChangeState: { MsgDataRecv<MsgDataBossChangeState>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAnimeType: { MsgDataRecv<MsgDataBossAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossBombInform: { MsgDataRecv<MsgDataBossBombInform>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::EffectCreate: { MsgDataRecv<MsgDataEffectCreate>(event, headerData->senderId); break; }
@@ -561,6 +563,7 @@ private:
 					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
 					case MSG_DATA_TYPE::BossIsDeath: { delete static_cast<MsgDataBossIsDeath*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::BossChangeState: { delete static_cast<MsgDataBossChangeState*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
 					case MSG_DATA_TYPE::EffectCreate: { delete static_cast<MsgDataEffectCreate*>(ptr); break; }

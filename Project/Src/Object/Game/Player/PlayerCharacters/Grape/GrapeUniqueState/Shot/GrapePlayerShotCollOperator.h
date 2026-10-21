@@ -14,13 +14,13 @@ public:
 	/// <param name="ATTACK_RATE_PERCENT">ショットのダメージ倍率</param>
 	/// <param name="playerPos">プレイヤーの座標</param>
 	/// <param name="playerAngle">プレイヤーの角度</param>
-	/// <param name="operatorSenderId">送信ID</param>
+	/// <param name="controlSenderId">送信ID</param>
 	/// <param name="playerStats">プレイヤーのステータス</param>
 	GrapePlayerShotCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		const short ATTACK_RATE_PERCENT,
 		const Vector3& playerPos, const Vector3& playerAngle,
-		MSG_SENDER_ID operatorSenderId,
+		MSG_SENDER_ID controlSenderId,
 		const CharacterStats& playerStats
 	);
 
@@ -69,7 +69,7 @@ private:
 	const Vector3& playerAngle;
 
 	// 送信ID
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	// プレイヤーのステータス
 	const CharacterStats& playerStats;

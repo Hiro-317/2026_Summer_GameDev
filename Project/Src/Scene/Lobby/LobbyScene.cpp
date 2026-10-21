@@ -2,6 +2,8 @@
 
 #include "../../pch.h"
 
+#include "../../Utility/Utility.h"
+
 #include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
 #include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
@@ -11,12 +13,11 @@
 
 #include "../../Scene/../Scene/SceneManager.h"
 
-#include "../ObjectUseDefine.h"
+#include "../ActorUseDefine.h"
 
 #include "CharaSelect/LobbyCharaSelectScene.h"
 #include "MultiPopup/MultiPopupScene.h"
 
-#include "../../Object/SkyDome/SkyDome.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
 
@@ -45,9 +46,8 @@ void LobbyScene::SubPostLoad(void)
 	}
 
 	// オブジェクト生成
-	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
-	ObjAdd(new LobbyCharaPreviewManager());
+	AddActor(new LobbyStage());
+	AddActor(new LobbyCharaPreviewManager());
 
 #pragma region 各画像の読み込み
 
@@ -96,14 +96,14 @@ void LobbyScene::SubPostUpdate(void)
 	}
 
 	// 左
-	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		Snd::GetIns().Play("SystemSelect");
 
 		choice = (CHOICE)((int)choice - 1);
 		if (choice <= CHOICE::None) { choice = (CHOICE)((int)CHOICE::None + 1); }
 	}
 	// 右
-	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		Snd::GetIns().Play("SystemSelect");
 
 		choice = (CHOICE)((int)choice + 1);
@@ -145,7 +145,7 @@ void LobbyScene::SubPostUpdate(void)
 			SceneManager::GetIns().PushScene(
 				std::make_unique<LobbyCharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(); }
+					[&]() { ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(); }
 				)
 			);
 

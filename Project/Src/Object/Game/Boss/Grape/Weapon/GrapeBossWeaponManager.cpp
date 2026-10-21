@@ -8,8 +8,8 @@
 
 GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
 
-GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
-	: operatorSenderId(operatorSenderId), stats(stats)
+GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& controlSenderId, const CharacterStats& stats)
+	: controlSenderId(controlSenderId), stats(stats)
 {
 	// •¡»ƒnƒ“ƒhƒ‹
 	bombModel = MV1LoadModel("Data/Model/Character/Grape/Bomb.mv1");
@@ -37,7 +37,7 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 void GrapeBossWeaponManager::Load(void)
 {
 	// •Ší‚Ì‰Šú‰»
-	for (auto& i : weapons) i.weaponIns->Load(operatorSenderId, stats);
+	for (auto& i : weapons) i.weaponIns->Load(controlSenderId, stats);
 }
 
 void GrapeBossWeaponManager::SubUpdate()

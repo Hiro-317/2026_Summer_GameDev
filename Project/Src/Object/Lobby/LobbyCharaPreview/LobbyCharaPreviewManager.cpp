@@ -11,7 +11,7 @@
 
 LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
 	charaPreview{ nullptr, nullptr, nullptr, nullptr },
-	ownOperatorImage(-1)
+	ownControlImage(-1)
 {
 }
 
@@ -23,7 +23,7 @@ void LobbyCharaPreviewManager::Load(void)
 	if (Net::GetIns().GetState() == Net::NetState::None) { ReloadChara(); }
 	else {
 		ReloadChara(MSG_SENDER_ID::P1);
-		ownOperatorImage = LoadGraph(OWN_OPERATOR_IMAGE[(int)Net::GetIns().GetSenderId()].c_str());
+		ownControlImage = LoadGraph(OWN_OPERATOR_IMAGE[(int)Net::GetIns().GetSenderId()].c_str());
 	}
 }
 
@@ -43,14 +43,14 @@ void LobbyCharaPreviewManager::Draw(void)
 		if (preview == nullptr) { continue; }
 		preview->Draw();
 	}
-	if (ownOperatorImage != -1) {
-		charaPreview[(int)Net::GetIns().GetSenderId()]->OwnOperatorDraw(ownOperatorImage);
+	if (ownControlImage != -1) {
+		charaPreview[(int)Net::GetIns().GetSenderId()]->OwnOperatorDraw(ownControlImage);
 	}
 }
 
 void LobbyCharaPreviewManager::Release(void)
 {
-	if (ownOperatorImage != -1) { DeleteGraph(ownOperatorImage); }
+	if (ownControlImage != -1) { DeleteGraph(ownControlImage); }
 
 	// キャラプレビューの解放
 	for (LobbyCharaPreviewBase*& preview : charaPreview) {

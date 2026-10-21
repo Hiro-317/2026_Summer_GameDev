@@ -139,8 +139,8 @@ bool CameraBase::RotationInput(Vector3& out)
 	// マウスが動いてなかったらボタンでの入力を検出してボタンごとに回転方向を 加算/減算 していく
 	if (Input::GetIns().GetInfo(KEY_TYPE::CameraRotLeft).now) { out.y--; }
 	if (Input::GetIns().GetInfo(KEY_TYPE::CameraRotRight).now) { out.y++; }
-	if (Input::GetIns().GetInfo(KEY_TYPE::CameraRotUp).now) { out.x--; }
-	if (Input::GetIns().GetInfo(KEY_TYPE::CameraRotDown).now) { out.x++; }
+	if (Input::GetIns().GetInfo(KEY_TYPE::CameraRotFront).now) { out.x--; }
+	if (Input::GetIns().GetInfo(KEY_TYPE::CameraRotBack).now) { out.x++; }
 	// 入力があれば正規化して終了
 	if (out != 0.0f) { out.Normalize(); return true; }
 

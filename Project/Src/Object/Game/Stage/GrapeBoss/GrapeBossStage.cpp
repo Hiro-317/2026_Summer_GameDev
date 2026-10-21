@@ -51,11 +51,11 @@ void GrapeBossStage::SubRelease(void)
 void GrapeBossStage::ColliderLoad()
 {
 	// 地面の当たり判定
-	AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, GROUND_COLLISION_SIZE));
+	AddCollider(new BoxCollider(COLLIDER_TAG::Stage, GROUND_COLLISION_SIZE));
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, info.size, info.pos, Vector3::Yonly(info.yAngle)));
+		AddCollider(new BoxCollider(COLLIDER_TAG::Stage, info.size, info.pos, Vector3::Yonly(info.yAngle)));
 	}
 }
 

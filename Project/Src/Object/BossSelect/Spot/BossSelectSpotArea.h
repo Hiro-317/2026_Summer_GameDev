@@ -20,7 +20,7 @@ public:
 private:
 
 	// 飛行船が使用するコライダーのタグ
-	static constexpr COLLIDER_TAG SKY_SHIP_COLL_TAG = COLLIDER_TAG::PLAYER;
+	static constexpr COLLIDER_TAG SKY_SHIP_COLL_TAG = COLLIDER_TAG::Player;
 
 	// 押し出しを行うコライダーの半径に対して、選択判定を行う半径の差分
 	static constexpr float COLLIDER_RADIUS_EXTRA = 50.0f;

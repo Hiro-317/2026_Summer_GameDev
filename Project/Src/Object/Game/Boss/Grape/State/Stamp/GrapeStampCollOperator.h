@@ -14,7 +14,7 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	GrapeStampCollOperator(
-		const MSG_SENDER_ID operatorSenderId,
+		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats
 	);
 	~GrapeStampCollOperator()override = default;
@@ -26,8 +26,8 @@ public:
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 
 	// 攻撃範囲の描画設定
-	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
-	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
+	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true); }
+	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true); }
 	void Off(void) { SetJudgeFlg(false); isDrawArea = false; }
 
 private:
@@ -43,7 +43,7 @@ private:
 
 #pragma region 受け取る参照変数
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

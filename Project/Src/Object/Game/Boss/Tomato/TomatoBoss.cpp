@@ -46,28 +46,28 @@ void TomatoBoss::PlayerLoad(void)
 	// 当たり判定を生成する（カプセルコライダー）
 	AddCollider(
 		new CapsuleCollider(
-			COLLIDER_TAG::BOSS,
+			COLLIDER_TAG::Boss,
 			CAPSULE_COLLIDER_START_POS_X, CAPSULE_COLLIDER_END_POS_X,
 			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 	AddCollider(
 		new CapsuleCollider(
-			COLLIDER_TAG::BOSS,
+			COLLIDER_TAG::Boss,
 			CAPSULE_COLLIDER_START_POS_XZ, CAPSULE_COLLIDER_END_POS_XZ,
 			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 	AddCollider(
 		new CapsuleCollider(
-			COLLIDER_TAG::BOSS,
+			COLLIDER_TAG::Boss,
 			CAPSULE_COLLIDER_START_POS_Z, CAPSULE_COLLIDER_END_POS_Z,
 			CAPSULE_COLLIDER_RADIUS
 		)
 	);
 	AddCollider(
 		new CapsuleCollider(
-			COLLIDER_TAG::BOSS,
+			COLLIDER_TAG::Boss,
 			CAPSULE_COLLIDER_START_POS_ZX, CAPSULE_COLLIDER_END_POS_ZX,
 			CAPSULE_COLLIDER_RADIUS
 		)
@@ -78,9 +78,9 @@ void TomatoBoss::PlayerLoad(void)
 
 #pragma region トマトが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), operatorSenderId, characterStats, *collParam));
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, operatorSenderId, characterStats, *collParam));
-	subObjArray.push_back(new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), operatorSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, controlSenderId, characterStats, *collParam));
+	subObjArray.push_back(new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam));
 
 #pragma endregion
 
@@ -145,11 +145,11 @@ void TomatoBoss::PlayerLoad(void)
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, playerPos,
 			// コリジョンオペレーターの参照渡し
-			SubObjSerch<TomatoHeadbuttCollOperator>(),
+			SubActorSerch<TomatoHeadbuttCollOperator>(),
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// XZコライダを消す
-			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
 			[&]() { SetJudgeFlg(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -166,7 +166,7 @@ void TomatoBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// コリジョンオペレーターの参照私
-			SubObjSerch<TomatoStampCollOperator>(),
+			SubActorSerch<TomatoStampCollOperator>(),
 			// 自分の座標の読み取り、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, isGround, playerPos,
 			// 現在のターゲット番号
@@ -193,13 +193,13 @@ void TomatoBoss::PlayerLoad(void)
 			// 自分の座標と角度、情報の読み取り,プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, &trans, playerPos,
 			// コリジョンオペレーターの参照渡し
-			SubObjSerch<TomatoTackleCollOperator>(),
+			SubActorSerch<TomatoTackleCollOperator>(),
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.rotation = Quaternion::FromRotationY(trans.rotation.ToEulerXZY().y); },
 			// XZコライダを消す
-			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
 			[&]() { SetJudgeFlg(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -253,8 +253,8 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 	BossBase::OnCollision(ownTag, other, collisionPoint);
 
 	// ボスとステージの岩と当たったか
-	if (ownTag == COLLIDER_TAG::BOSS) {
-		if (other.GetTag() == COLLIDER_TAG::STAGE) {
+	if (ownTag == COLLIDER_TAG::Boss) {
+		if (other.GetTag() == COLLIDER_TAG::Stage) {
 			if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
 
 				rockHit = true;
@@ -268,29 +268,29 @@ void TomatoBoss::ReceptionUpdate(void)
 	BossBase::ReceptionUpdate();
 
 	// エリアの同期
-	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(operatorSenderId)) {
+	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(controlSenderId)) {
 
 		// 受け取ったステートの描画
 		switch (dataPtr->inform)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubObjSerch<TomatoHeadbuttCollOperator>()->SetViewPos(dataPtr->pos);
-			SubObjSerch<TomatoHeadbuttCollOperator>()->SetAngle(dataPtr->angle);
-			SubObjSerch<TomatoHeadbuttCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<TomatoHeadbuttCollOperator>()->SetViewPos(dataPtr->pos);
+			SubActorSerch<TomatoHeadbuttCollOperator>()->SetAngle(dataPtr->angle);
+			SubActorSerch<TomatoHeadbuttCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
 		{
-			SubObjSerch<TomatoStampCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<TomatoStampCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<TomatoStampCollOperator>()->SetPos(dataPtr->pos);
+			SubActorSerch<TomatoStampCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubObjSerch<TomatoTackleCollOperator>()->SetViewPos(dataPtr->pos);
-			SubObjSerch<TomatoTackleCollOperator>()->SetAngle(dataPtr->angle);
-			SubObjSerch<TomatoTackleCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<TomatoTackleCollOperator>()->SetViewPos(dataPtr->pos);
+			SubActorSerch<TomatoTackleCollOperator>()->SetAngle(dataPtr->angle);
+			SubActorSerch<TomatoTackleCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		default:
@@ -299,29 +299,29 @@ void TomatoBoss::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
-	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(operatorSenderId)) {
+	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(controlSenderId)) {
 
 		// 受け取ったステートの描画
 		switch (dataPtr->inform)
 		{
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
-			SubObjSerch<TomatoHeadbuttCollOperator>()->SetDrawArea(dataPtr->flg);
+			SubActorSerch<TomatoHeadbuttCollOperator>()->SetDrawArea(dataPtr->flg);
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
 		{
 			if (dataPtr->flg) {
-				SubObjSerch<TomatoStampCollOperator>()->DrawAreaOn();
+				SubActorSerch<TomatoStampCollOperator>()->DrawAreaOn();
 			}
 			else {
-				SubObjSerch<TomatoStampCollOperator>()->Off();
+				SubActorSerch<TomatoStampCollOperator>()->Off();
 			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
-			SubObjSerch<TomatoTackleCollOperator>()->SetDrawArea(dataPtr->flg);
+			SubActorSerch<TomatoTackleCollOperator>()->SetDrawArea(dataPtr->flg);
 			break;
 		}
 		default:

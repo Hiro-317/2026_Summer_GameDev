@@ -8,7 +8,7 @@ class GrapePlayer : public PlayerBase
 public:
 
 	// コンストラクタ
-	GrapePlayer(MSG_SENDER_ID operatorSenderId);
+	GrapePlayer(MSG_SENDER_ID controlSenderId);
 	~GrapePlayer()override = default;
 
 	// ロード

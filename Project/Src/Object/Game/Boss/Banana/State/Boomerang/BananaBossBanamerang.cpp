@@ -2,10 +2,10 @@
 
 
 BananaBossBanamerang::BananaBossBanamerang(
-	const MSG_SENDER_ID operatorSenderId,
+	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats
 ) :
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	stats(stats)
 {
 	banamerang.Load("Character/Banana/Banamerang");
@@ -16,14 +16,14 @@ void BananaBossBanamerang::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	AddCollider(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS, 120.0f)
+		new XZCircleCollider(COLLIDER_TAG::BossAttack, RADIUS, 120.0f)
 	);
 
-	CreateAttackSkill(operatorSenderId, 85, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(controlSenderId, 85, &stats, COLLIDER_TAG::BossAttack);
 	SetPushFlg(false);
 	SetJudgeFlg(false);
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPtr(&banamerang);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetTransformPtr(&banamerang);
 
 	collBack.Load("Range/CircleHalfRangeBack");
 	collFront.Load("Range/CircleHalfRangeFront");

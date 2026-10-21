@@ -7,7 +7,7 @@
 class GamePause : public SceneBase
 {
 public:
-	GamePause(MSG_SENDER_ID operatorSenderId = MSG_SENDER_ID::None);
+	GamePause(MSG_SENDER_ID controlSenderId = MSG_SENDER_ID::None);
 	~GamePause()override = default;
 
 private:
@@ -40,6 +40,6 @@ private:
 	SELECT nowSelect;
 	int img[(int)SELECT::MAX];
 
-	MSG_SENDER_ID operatorSenderId;
+	MSG_SENDER_ID controlSenderId;
 	bool isOperator;
 };

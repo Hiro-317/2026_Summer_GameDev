@@ -2,10 +2,10 @@
 
 
 BananaFireCollOperator::BananaFireCollOperator(
-	const MSG_SENDER_ID operatorSenderId,
+	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats
 ) :
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	stats(stats)
 {
 }
@@ -14,14 +14,14 @@ void BananaFireCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（球体コライダー）
 	AddCollider(
-		new SphereCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS)
+		new SphereCollider(COLLIDER_TAG::BossAttack, RADIUS)
 	);
 
-	CreateAttackSkill(operatorSenderId, 100, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(controlSenderId, 100, &stats, COLLIDER_TAG::BossAttack);
 	SetPushFlg(false);
 	SetJudgeFlg(false);
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPos(POS);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(POS);
 
 	collBack.Load("Range/CircleRangeBack");
 	collFront.Load("Range/CircleRangeFront");

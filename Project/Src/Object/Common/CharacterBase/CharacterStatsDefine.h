@@ -54,12 +54,12 @@ public:
 		modifier.emplace_back(add);
 	}
 
-	void DeleteModifier(MSG_SENDER_ID operatorSenderId, ModifierType modifierType) {
+	void DeleteModifier(MSG_SENDER_ID controlSenderId, ModifierType modifierType) {
 		auto it = std::find_if(
 			modifier.begin(),
 			modifier.end(),
-			[modifierType, operatorSenderId](const ModifierData& mod) {
-				return mod.id == ModifierTypeConversionId(operatorSenderId, modifierType);
+			[modifierType, controlSenderId](const ModifierData& mod) {
+				return mod.id == ModifierTypeConversionId(controlSenderId, modifierType);
 			}
 		);
 		if (it != modifier.end()) { modifier.erase(it); }
@@ -183,18 +183,18 @@ struct CharacterStats
 	}
 
 	// バフ/デバフ を削除する
-	void DeleteModifier(MSG_SENDER_ID operatorSenderId, ModifierType type) {
+	void DeleteModifier(MSG_SENDER_ID controlSenderId, ModifierType type) {
 
 		switch (MODIFIER_TARGET_TABLE[(int)type]) {
 
 		case ModifierTarget::None: { break; }	// バフ/デバフ の対象が未設定の場合は何もしない
 
-		case ModifierTarget::Hp: { hpMax.DeleteModifier(operatorSenderId, type); break; }						// ヒットポイント
-		case ModifierTarget::Attack: { attackPower.DeleteModifier(operatorSenderId, type); break; }				// 攻撃力
-		case ModifierTarget::Defense: { defensePower.DeleteModifier(operatorSenderId, type); break; }			// 防御力
-		case ModifierTarget::Speed: { speedPower.DeleteModifier(operatorSenderId, type); break; }				// 速力
-		case ModifierTarget::CriticalRate: { critical.rate.DeleteModifier(operatorSenderId, type); break; }		// 会心率
-		case ModifierTarget::CriticalDamage: { critical.damage.DeleteModifier(operatorSenderId, type); break; }	// 会心ダメージ
+		case ModifierTarget::Hp: { hpMax.DeleteModifier(controlSenderId, type); break; }						// ヒットポイント
+		case ModifierTarget::Attack: { attackPower.DeleteModifier(controlSenderId, type); break; }				// 攻撃力
+		case ModifierTarget::Defense: { defensePower.DeleteModifier(controlSenderId, type); break; }			// 防御力
+		case ModifierTarget::Speed: { speedPower.DeleteModifier(controlSenderId, type); break; }				// 速力
+		case ModifierTarget::CriticalRate: { critical.rate.DeleteModifier(controlSenderId, type); break; }		// 会心率
+		case ModifierTarget::CriticalDamage: { critical.damage.DeleteModifier(controlSenderId, type); break; }	// 会心ダメージ
 
 		}
 	}

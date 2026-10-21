@@ -58,11 +58,11 @@ void TomatoBossStage::SubRelease(void)
 void TomatoBossStage::ColliderLoad()
 {
 	// 地面の当たり判定
-	AddCollider(new BoxCollider(COLLIDER_TAG::STAGE, GROUND_COLLISION_SIZE));
+	AddCollider(new BoxCollider(COLLIDER_TAG::Stage, GROUND_COLLISION_SIZE));
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		AddCollider(new XZCircleCollider(COLLIDER_TAG::STAGE, info.radius, 1000.0f, info.pos));
+		AddCollider(new XZCircleCollider(COLLIDER_TAG::Stage, info.radius, 1000.0f, info.pos));
 	}
 }
 

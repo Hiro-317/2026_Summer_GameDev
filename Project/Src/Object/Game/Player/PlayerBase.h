@@ -58,7 +58,7 @@ public:
 	// 自身以外のプレイヤー座標を取得
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
-	bool GetIsDeath(void)const { return false; }
+	const bool& GetIsDeath(void)const { return false; }
 
 private:
 
@@ -152,7 +152,7 @@ protected:
 	static const inline Vector2I ICON_IMAGE_SIZE = Vector2I(70, 73);
 
 	// HPバー（アイコン付き）の描画位置テーブル
-	const Vector2I HP_UI_DRAW_POS[(int)MSG_SENDER_ID::Max] = {
+	static const inline Vector2I HP_UI_DRAW_POS[(int)MSG_SENDER_ID::Max] = {
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF),
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 1)),
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 2)),

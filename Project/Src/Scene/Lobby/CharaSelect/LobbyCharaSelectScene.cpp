@@ -6,7 +6,7 @@
 
 #include "../../../Scene/SceneManager.h"
 
-#include "../../ObjectUseDefine.h"
+#include "../../ActorUseDefine.h"
 
 #include "../../../Object/Lobby/CharaSelectScene/CharaSelectPreviewManager.h"
 
@@ -28,7 +28,7 @@ void LobbyCharaSelectScene::SubPostLoad(void)
 	selectCharaType = SceneManager::GetIns().GetSelectCharaType(sederId == MSG_SENDER_ID::None ? MSG_SENDER_ID::P1 : sederId);
 	if (selectCharaType <= CHARA_TYPE::None || CHARA_TYPE::Max <= selectCharaType) { selectCharaType = (CHARA_TYPE)((int)CHARA_TYPE::None + 1); }
 
-	ObjAdd(new CharaSelectPreviewManager(selectCharaType));
+	AddActor(new CharaSelectPreviewManager(selectCharaType));
 }
 
 void LobbyCharaSelectScene::SubPostUpdate(void)
@@ -46,7 +46,7 @@ void LobbyCharaSelectScene::SubPostUpdate(void)
 	bool changeCharacter = false;;
 
 	// 操作権者による操作によって選択キャラを変える
-	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 		// 1つ前のタイプへ
 		selectCharaType = (CHARA_TYPE)((int)selectCharaType - 1);
 		// 範囲外だったら逆の端へ
@@ -54,7 +54,7 @@ void LobbyCharaSelectScene::SubPostUpdate(void)
 		// キャラを変更したことを記録
 		changeCharacter = true;
 	}
-	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 		// 1つ次のタイプへ
 		selectCharaType = (CHARA_TYPE)((int)selectCharaType + 1);
 		// 範囲外だったら逆の端へ
@@ -63,7 +63,7 @@ void LobbyCharaSelectScene::SubPostUpdate(void)
 		changeCharacter = true;
 	}
 	// プレビューを変更
-	if (changeCharacter) { ObjSerch<CharaSelectPreviewManager>(objects)->ChangeCharacter(selectCharaType); }
+	if (changeCharacter) { ActorSerch<CharaSelectPreviewManager>(actors)->ChangeCharacter(selectCharaType); }
 
 	// キャラ確定
 	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {

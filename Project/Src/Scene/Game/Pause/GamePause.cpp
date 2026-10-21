@@ -8,14 +8,14 @@
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 
-GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
+GamePause::GamePause(MSG_SENDER_ID controlSenderId) :
 	SceneBase(),
 
 	img(),
 	nowSelect(SELECT::YES),
 
-	operatorSenderId(operatorSenderId),
-	isOperator(operatorSenderId == MSG_SENDER_ID::None ? true : operatorSenderId == Net::GetIns().GetSenderId())
+	controlSenderId(controlSenderId),
+	isOperator(controlSenderId == MSG_SENDER_ID::None ? true : controlSenderId == Net::GetIns().GetSenderId())
 {
 }
 

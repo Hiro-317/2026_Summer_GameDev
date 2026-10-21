@@ -44,12 +44,12 @@ TomatoTackleCollOperator::TomatoTackleCollOperator(
 void TomatoTackleCollOperator::Load(void)
 {
 	// 当たり判定を生成する（XZコライダー）
-	attackCollRef = new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, TO_PLAYER_DISTANCE, 1000.0f);
+	attackCollRef = new XZCircleCollider(COLLIDER_TAG::BossAttack, TO_PLAYER_DISTANCE, 1000.0f);
 	attackCollRef->SetSkillStats(new SkillStats(150, &stats));
 	AddCollider(attackCollRef);
 
 	// ステージ当たり判定を生成する（XZコライダー）
-	stagePushCollRef = new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, TO_PLAYER_DISTANCE, 1000.0f);
+	stagePushCollRef = new XZCircleCollider(COLLIDER_TAG::BossAttackArea, TO_PLAYER_DISTANCE, 1000.0f);
 	AddCollider(stagePushCollRef);
 
 	stagePushCollRef->SetJudgeFlg(true);
@@ -85,7 +85,7 @@ void TomatoTackleCollOperator::Load(void)
 void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
 	// ステージに当たったか
-	if (other.GetTag() == COLLIDER_TAG::STAGE && other.GetShape() == COLLIDER_SHAPE::XzCircle) {
+	if (other.GetTag() == COLLIDER_TAG::Stage && other.GetShape() == COLLIDER_SHAPE::XzCircle) {
 
 		stageHit = true;
 	}

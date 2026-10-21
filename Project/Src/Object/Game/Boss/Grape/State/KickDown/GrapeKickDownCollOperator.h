@@ -12,7 +12,7 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	GrapeKickDownCollOperator(
-		const MSG_SENDER_ID operatorSenderId,
+		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats
 	);
 	~GrapeKickDownCollOperator()override = default;
@@ -40,7 +40,7 @@ private:
 
 #pragma region 受け取る参照変数
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

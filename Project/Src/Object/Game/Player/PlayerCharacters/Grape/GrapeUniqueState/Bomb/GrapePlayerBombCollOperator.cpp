@@ -8,7 +8,7 @@ GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	float ATTACK_COUNT_TIME,
 	float ATTACK_START_TIME,
 	const Vector3& playerPos, const Vector3& playerAngle,
-	MSG_SENDER_ID operatorSenderId,
+	MSG_SENDER_ID controlSenderId,
 	const CharacterStats& playerStats
 ) :
 	ActorBase(),
@@ -17,7 +17,7 @@ GrapePlayerBombCollOperator::GrapePlayerBombCollOperator(
 	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
 	ATTACK_START_TIME(ATTACK_START_TIME),
 	playerPos(playerPos), playerAngle(playerAngle),
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	playerStats(playerStats),
 	isBlast(false),
 	isAttackTargetFind(false),
@@ -43,7 +43,7 @@ void GrapePlayerBombCollOperator::Load(void)
 
 	// コライダー生成
 	AddCollider(new SphereCollider(COLL_TAG, 300.0f));
-	AddCollider(new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, 100.0f));
+	AddCollider(new SphereCollider(COLLIDER_TAG::PlayerCommon, 100.0f));
 
 	// 初期化処理
 	SetJudgeFlg(false);
@@ -55,7 +55,7 @@ void GrapePlayerBombCollOperator::Load(void)
 	SetIsDraw(false);
 
 	// スキルのダメージ量の設定
-	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
+	CreateAttackSkill(controlSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
 	trans.LoadModel("Character/Grape/Bomb");
 	trans.scale = 0.2f;
@@ -93,15 +93,15 @@ void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 {
 	if (!Net::GetIns().IsHost()) { return; }
 
-	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
+	if (ownTag == COLLIDER_TAG::PlayerCommon) {
 		// 攻撃の当たり判定
 		switch (other.GetTag())
 		{
-		case COLLIDER_TAG::BOSS:
-		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::BOSS_DISTANCE:
+		case COLLIDER_TAG::Boss:
+		case COLLIDER_TAG::Enemy:
+		case COLLIDER_TAG::BossDistance:
 			isAttackTargetFind = true;
-			ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(false);
+			ColliderSerch(GetCollider(), COLLIDER_TAG::PlayerCommon).back()->SetJudgeFlg(false);
 			break;
 		default:break;
 		}
@@ -110,9 +110,9 @@ void GrapePlayerBombCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 		// 攻撃の当たり判定
 		switch (other.GetTag())
 		{
-		case COLLIDER_TAG::BOSS:
-		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::BOSS_DISTANCE:
+		case COLLIDER_TAG::Boss:
+		case COLLIDER_TAG::Enemy:
+		case COLLIDER_TAG::BossDistance:
 			isBlast = true;
 			LocalBombSetEnd();
 			break;

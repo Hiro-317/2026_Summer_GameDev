@@ -6,14 +6,14 @@ TomatoPlayerTackleCollOperator::TomatoPlayerTackleCollOperator(
 	COLLIDER_TAG COLL_TAG,
 	const short ATTACK_RATE_PERCENT,
 	const Vector3& playerPos, const Quaternion& playerAngle,
-	MSG_SENDER_ID operatorSenderId,
+	MSG_SENDER_ID controlSenderId,
 	const CharacterStats& playerStats
 ) :
 	ActorBase(),
 	COLL_TAG(COLL_TAG),
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
 	playerPos(playerPos), playerAngle(playerAngle),
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	playerStats(playerStats),
 	isHit(false)
 {
@@ -42,7 +42,7 @@ void TomatoPlayerTackleCollOperator::Load(void)
 	isHit = false;
 
 	// スキルのダメージ量の設定
-	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
+	CreateAttackSkill(controlSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
 	playerStats;
 }
@@ -64,9 +64,9 @@ void TomatoPlayerTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 {
 	switch (other.GetTag())
 	{
-	case COLLIDER_TAG::BOSS:
-	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::BOSS_DISTANCE:
+	case COLLIDER_TAG::Boss:
+	case COLLIDER_TAG::Enemy:
+	case COLLIDER_TAG::BossDistance:
 		isHit = true;
 		break;
 	default:break;

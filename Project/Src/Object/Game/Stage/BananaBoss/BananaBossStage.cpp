@@ -55,7 +55,7 @@ void BananaBossStage::Load(void)
 		// コライダー生成
 		AddCollider(
 			new BoxCollider(
-				COLLIDER_TAG::STAGE,
+				COLLIDER_TAG::Stage,
 				GetParameterToVector3("Collider", CollNumName(COLLIDER_SIZE_PARAMETER_NAME)) * trans.scale,
 				GetParameterToVector3("Collider", CollNumName(COLLIDER_POS_PARAMETER_NAME)) * trans.scale,
 				GetParameterToVector3("Collider", CollNumName(COLLIDER_ANGLE_PARAMETER_NAME)) * trans.scale

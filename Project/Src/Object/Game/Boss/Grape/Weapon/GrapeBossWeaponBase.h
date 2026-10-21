@@ -57,7 +57,7 @@ public:
 	// 規定用のLoad
 	virtual void Load(void) override {};
 	// 行うロード
-	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) = 0;
+	virtual void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) = 0;
 
 	// 初期設定用関数
 	void SetStartPos(Vector3 pos) { trans.pos = pos; }

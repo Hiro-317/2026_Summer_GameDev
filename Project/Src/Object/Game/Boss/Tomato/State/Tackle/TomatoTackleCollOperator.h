@@ -28,7 +28,7 @@ public:
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
-	void CollSet(bool flg) { ColliderSerch(GetColliders(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(flg); }
+	void CollSet(bool flg) { ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(flg); }
 
 	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); }
 	void SetViewPos(const Vector3& pos) { collBack.pos = Vector3(pos.x, HEIGHT, pos.z); collFront.pos = Vector3(pos.x, HEIGHT, pos.z); }

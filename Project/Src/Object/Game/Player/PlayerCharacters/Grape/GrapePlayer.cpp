@@ -16,8 +16,8 @@
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../../UI/HitUI/HitUI.h"
 
-GrapePlayer::GrapePlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(operatorSenderId,
+GrapePlayer::GrapePlayer(MSG_SENDER_ID controlSenderId) :
+	PlayerBase(controlSenderId,
 
 		"GrapeParameter",
 		"PlayerHP",
@@ -44,10 +44,10 @@ void GrapePlayer::PlayerLoad(void)
 	// 巨砲の生成
 	subObjArray.emplace_back(
 		new GrapePlayerShotCollOperator(
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			SKILL1_ATTACK_RATE,
 			trans.pos, trans.rotation,
-			operatorSenderId,
+			controlSenderId,
 			characterStats
 		)
 	);
@@ -55,10 +55,10 @@ void GrapePlayer::PlayerLoad(void)
 	// BUDOOOON!の生成
 	subObjArray.emplace_back(
 		new GrapePlayerThrowCollOperator(
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			SKILL2_ATTACK_RATE,
 			trans.pos, trans.rotation,
-			operatorSenderId,
+			controlSenderId,
 			characterStats
 		)
 	);
@@ -66,14 +66,14 @@ void GrapePlayer::PlayerLoad(void)
 	// ポリフェノールインパクトの生成
 	subObjArray.emplace_back(
 		new GrapePlayerBombCollOperator(
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			SKILL3_ATTACK_RATE,
 			// 爆発するまでの時間
 			ATTACK_COUNT_TIME,
 			// 爆弾の待機時間
 			ATTACK_START_TIME,
 			trans.pos, trans.rotation,
-			operatorSenderId,
+			controlSenderId,
 			characterStats
 		)
 	);
@@ -87,7 +87,7 @@ void GrapePlayer::PlayerLoad(void)
 		new GrapePlayerShotState(
 			[&]() { ChangeState((int)STATE::SKILL_1); },
 			[&]() { return state == (int)STATE::SKILL_1; },
-			*SubObjSerch<GrapePlayerShotCollOperator>(),
+			*SubActorSerch<GrapePlayerShotCollOperator>(),
 			SKILL1_COOL_TIME,
 			trans.pos, trans.rotation,
 			bossPos,
@@ -107,7 +107,7 @@ void GrapePlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_2; },
 			// 当たり判定管理クラスのポインタ
-			*SubObjSerch<GrapePlayerThrowCollOperator>(),
+			*SubActorSerch<GrapePlayerThrowCollOperator>(),
 			// クールタイム
 			SKILL2_COOL_TIME,
 			// 座標 / 角度
@@ -134,7 +134,7 @@ void GrapePlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_3; },
 			// 設置爆弾の
-			*SubObjSerch<GrapePlayerBombCollOperator>(),
+			*SubActorSerch<GrapePlayerBombCollOperator>(),
 			// クールタイム
 			SKILL3_COOL_TIME,
 			// プレイヤーの座標
@@ -230,7 +230,7 @@ void GrapePlayer::PlayerLoad(void)
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
 			number++;
-			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+			if (controlSenderId == (MSG_SENDER_ID)id) { break; }
 		}
 	}
 
@@ -243,8 +243,8 @@ void GrapePlayer::PlayerLoad(void)
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
 			"GrapeIcon",
-			"P" + std::to_string((int)operatorSenderId + 1) + "Frame",
-			"P" + std::to_string((int)operatorSenderId + 1) + "Back",
+			"P" + std::to_string((int)controlSenderId + 1) + "Frame",
+			"P" + std::to_string((int)controlSenderId + 1) + "Back",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS[number],
@@ -312,29 +312,29 @@ void GrapePlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
 
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(controlSenderId)) {
 
 		switch (dataPtr->collKinds) {
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb: {
 			// 通常攻撃
-			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerBombCollOperator>()->CollOn(); }
-			else { SubObjSerch<GrapePlayerBombCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { SubActorSerch<GrapePlayerBombCollOperator>()->CollOn(); }
+			else { SubActorSerch<GrapePlayerBombCollOperator>()->CollOff(); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerThrow: {
 			// スタンプ
-			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerThrowCollOperator>()->CollOn(); }
-			else { SubObjSerch<GrapePlayerThrowCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { SubActorSerch<GrapePlayerThrowCollOperator>()->CollOn(); }
+			else { SubActorSerch<GrapePlayerThrowCollOperator>()->CollOff(); }
 
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot: {
 			// 回復
-			if (dataPtr->isCollider) { SubObjSerch<GrapePlayerShotCollOperator>()->CollOn(); }
-			else { SubObjSerch<GrapePlayerShotCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { SubActorSerch<GrapePlayerShotCollOperator>()->CollOn(); }
+			else { SubActorSerch<GrapePlayerShotCollOperator>()->CollOff(); }
 			break;
 		}
 
@@ -344,7 +344,7 @@ void GrapePlayer::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(controlSenderId)) {
 		state = dataPtr->state;
 
 		switch ((STATE)state) {
@@ -359,50 +359,50 @@ void GrapePlayer::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(operatorSenderId)) {
+	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(controlSenderId)) {
 		
 		// グレープショットの発射の瞬間で行う処理
-		SubObjSerch<GrapePlayerShotCollOperator>()->RemoteShotStart(dataPtr->pos, dataPtr->vec);
+		SubActorSerch<GrapePlayerShotCollOperator>()->RemoteShotStart(dataPtr->pos, dataPtr->vec);
 		
 		delete dataPtr;
 	}
 
-	while (MsgDataPlayerShotEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotEnd>(operatorSenderId)) {
+	while (MsgDataPlayerShotEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotEnd>(controlSenderId)) {
 
 		// グレープショットの発射終了の瞬間で行う処理
-		SubObjSerch<GrapePlayerShotCollOperator>()->RemoteShotEnd(dataPtr->pos);
+		SubActorSerch<GrapePlayerShotCollOperator>()->RemoteShotEnd(dataPtr->pos);
 
 		delete dataPtr;
 	}
 
-	while (MsgDataGrapePlayerBombStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombStart>(operatorSenderId)) {
+	while (MsgDataGrapePlayerBombStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombStart>(controlSenderId)) {
 
 		// グレープショットの発射の瞬間で行う処理
-		SubObjSerch<GrapePlayerBombCollOperator>()->RemoteBombSetStart(dataPtr->pos);
+		SubActorSerch<GrapePlayerBombCollOperator>()->RemoteBombSetStart(dataPtr->pos);
 
 		delete dataPtr;
 	}
 
-	while (MsgDataGrapePlayerBombEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombEnd>(operatorSenderId)) {
+	while (MsgDataGrapePlayerBombEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombEnd>(controlSenderId)) {
 
 		// グレープショットの発射終了の瞬間で行う処理
-		SubObjSerch<GrapePlayerBombCollOperator>()->RemoteBombSetEnd();
+		SubActorSerch<GrapePlayerBombCollOperator>()->RemoteBombSetEnd();
 
 		delete dataPtr;
 	}
 
-	while (MsgDataGrapePlayerBombThrowStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowStart>(operatorSenderId)) {
+	while (MsgDataGrapePlayerBombThrowStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowStart>(controlSenderId)) {
 
 		// グレープショットの発射終了の瞬間で行う処理
-		SubObjSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombStart(dataPtr->pos, dataPtr->vec);
+		SubActorSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombStart(dataPtr->pos, dataPtr->vec);
 
 		delete dataPtr;
 	}
 
-	while (MsgDataGrapePlayerBombThrowEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowEnd>(operatorSenderId)) {
+	while (MsgDataGrapePlayerBombThrowEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowEnd>(controlSenderId)) {
 
 		// グレープショットの発射終了の瞬間で行う処理
-		SubObjSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombEnd();
+		SubActorSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombEnd();
 
 		delete dataPtr;
 	}

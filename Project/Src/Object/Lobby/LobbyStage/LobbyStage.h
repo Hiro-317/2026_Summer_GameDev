@@ -2,6 +2,8 @@
 
 #include "../../Common/ActorBase/ActorBase.h"
 
+#include "../../../Utility/Utility.h"
+
 class LobbyStage : public ActorBase
 {
 public:

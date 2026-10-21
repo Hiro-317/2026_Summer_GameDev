@@ -36,7 +36,7 @@ void BossSelectSkyShip::Load(void)
 
 	trans.pos = Vector3(0, 300, -7000);
 
-	AddCollider(new SphereCollider(COLLIDER_TAG::PLAYER, 50.0f * trans.scale.MinElementF()));
+	AddCollider(new SphereCollider(COLLIDER_TAG::Player, 50.0f * trans.scale.MinElementF()));
 	
 	AddState(
 		STATE::Start,
@@ -82,7 +82,7 @@ void BossSelectSkyShip::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& oth
 {
 	if (!IsOwnControl()) { return; }
 
-	if (other.GetTag() == COLLIDER_TAG::BOSS) {
+	if (other.GetTag() == COLLIDER_TAG::Boss) {
 		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 			Net::GetIns().Send(MsgDataBossSelect((int)SceneManager::GetIns().GetSelectBossType()), Net::GetIns().GetSenderId());

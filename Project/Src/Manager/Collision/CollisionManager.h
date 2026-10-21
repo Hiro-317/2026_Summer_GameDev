@@ -73,27 +73,27 @@ private:
 	const std::map<COLLIDER_TAG, COLLIDER_GROUP>TAG_TO_GROUP_LIST = {
 
 		// プレイヤー系
-		{ COLLIDER_TAG::PLAYER,			COLLIDER_GROUP::Player },
-		{ COLLIDER_TAG::PLAYER_ATTACK,	COLLIDER_GROUP::Player },
-		{ COLLIDER_TAG::PLAYER_COMMON,	COLLIDER_GROUP::Player },
+		{ COLLIDER_TAG::Player,			COLLIDER_GROUP::Player },
+		{ COLLIDER_TAG::PlayerAttack,	COLLIDER_GROUP::Player },
+		{ COLLIDER_TAG::PlayerCommon,	COLLIDER_GROUP::Player },
 
 		// エネミー系
-		{ COLLIDER_TAG::BOSS,	COLLIDER_GROUP::Enemy },
-		{ COLLIDER_TAG::ENEMY,	COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::Boss,	COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::Enemy,	COLLIDER_GROUP::Enemy },
 
 		// ステージ系
-		{ COLLIDER_TAG::STAGE,	COLLIDER_GROUP::Stage },
+		{ COLLIDER_TAG::Stage,	COLLIDER_GROUP::Stage },
 
 		// プレイヤー系にだけ当たるコライダー
-		{ COLLIDER_TAG::BOSS_DISTANCE,	COLLIDER_GROUP::PlayerOnly },
-		{ COLLIDER_TAG::BOSS_ATTACK,			COLLIDER_GROUP::PlayerOnly },
-		{ COLLIDER_TAG::PLAYER_HEAL,			COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::BossDistance,	COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::BossAttack,			COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::PlayerHeal,			COLLIDER_GROUP::PlayerOnly },
 
 		// エネミー系にだけ当たるコライダー
 
 
 		// ステージ系にだけ当たるコライダー
-		{ COLLIDER_TAG::BOSS_ATTACK_AREA,	COLLIDER_GROUP::StageOnly },
+		{ COLLIDER_TAG::BossAttackArea,	COLLIDER_GROUP::StageOnly },
 	};
 
 

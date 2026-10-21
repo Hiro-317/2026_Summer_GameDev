@@ -12,7 +12,7 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	BananaScratchCollOperator(
-		const MSG_SENDER_ID operatorSenderId,
+		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats,
 		const Vector3& pos,
 		const Vector3& StartPos,
@@ -29,7 +29,7 @@ public:
 
 	// 攻撃フレームの更新
 	void SetColliderFrame(void) { 
-		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back());
+		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back());
 		coll->SetStartPos(StartPos); coll->SetEndPos(EndPos);
 	}
 
@@ -52,7 +52,7 @@ private:
 
 #pragma region 受け取る参照変数
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

@@ -10,7 +10,7 @@ public:
 	~GrapeBossKickBomb() = default;
 
 	// ロード
-	void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
+	void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
 
 	// 爆発までのカウント
 	const float BOMBER_COUNT = GetParameter("KickBomb", "BomberCnt");

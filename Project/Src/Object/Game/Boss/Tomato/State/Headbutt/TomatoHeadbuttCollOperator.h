@@ -13,7 +13,7 @@ public:
 	/// <param name="stats">ステータス</param>
 	TomatoHeadbuttCollOperator(
 		const float TO_PLAYER_DISTANCE,
-		const MSG_SENDER_ID operatorSenderId,
+		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats,
 		const ParameterLoad& collParam
 	);
@@ -50,7 +50,7 @@ private:
 
 #pragma region 受け取る参照変数
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

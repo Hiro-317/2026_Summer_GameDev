@@ -22,7 +22,6 @@ enum class VERTEX_SHADER_TYPE
 	// 水面
     Water,
 
-
     // スカイボックス
     SkyBox,
 };
@@ -61,6 +60,9 @@ enum class PIXEL_SHADER_TYPE
 
     // ダメージフラッシュポストエフェクト
     DamageFlash,
+
+    // 画面揺れ
+    ScreenShake,
 
 #pragma endregion
 

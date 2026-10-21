@@ -8,14 +8,14 @@ GrapePlayerShotCollOperator::GrapePlayerShotCollOperator(
 	COLLIDER_TAG COLL_TAG,
 	const short ATTACK_RATE_PERCENT,
 	const Vector3& playerPos, const Vector3& playerAngle,
-	MSG_SENDER_ID operatorSenderId,
+	MSG_SENDER_ID controlSenderId,
 	const CharacterStats& playerStats
 ) :
 	ActorBase(),
 	COLL_TAG(COLL_TAG),
 	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
 	playerPos(playerPos), playerAngle(playerAngle),
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	playerStats(playerStats),
 	moveVec(Vector3()),
 	lifeCounter(0),
@@ -48,7 +48,7 @@ void GrapePlayerShotCollOperator::Load(void)
 	SetIsDraw(false);
 
 	// スキルのダメージ量の設定
-	CreateAttackSkill(operatorSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
+	CreateAttackSkill(controlSenderId, ATTACK_RATE_PERCENT, &playerStats, COLL_TAG);
 
 	// 弾のモデルをロード、スケールの設定
 	trans.LoadModel("Character/Grape/Bomb");
@@ -90,8 +90,8 @@ void GrapePlayerShotCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collide
 	// 攻撃の当たり判定
 	switch (other.GetTag()) {
 
-	case COLLIDER_TAG::ENEMY:
-	case COLLIDER_TAG::BOSS_DISTANCE:
+	case COLLIDER_TAG::Enemy:
+	case COLLIDER_TAG::BossDistance:
 		LocalShotEnd();
 		break;
 	default:break;
@@ -132,12 +132,12 @@ void GrapePlayerShotCollOperator::LocalShotStart(const Vector3& pos, const Vecto
 {
 	RemoteShotStart(pos, vec);
 
-	Net::GetIns().Send(MsgDataPlayerShotStart(pos, vec), operatorSenderId);
+	Net::GetIns().Send(MsgDataPlayerShotStart(pos, vec), controlSenderId);
 }
 
 void GrapePlayerShotCollOperator::LocalShotEnd()
 {
 	RemoteShotEnd(trans.pos);
 
-	Net::GetIns().Send(MsgDataPlayerShotEnd(trans.pos), operatorSenderId);
+	Net::GetIns().Send(MsgDataPlayerShotEnd(trans.pos), controlSenderId);
 }

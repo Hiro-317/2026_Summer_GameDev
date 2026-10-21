@@ -88,12 +88,12 @@ void PlayerBase::Load(void)
 #pragma region 当たり判定情報設定
 
 	// 当たり判定を生成する（線分コライダー）
-	AddCollider(new LineCollider(COLLIDER_TAG::PLAYER, Vector3(), -Vector3::Yonly(MODEL_SIZE.y * 0.5f)));
+	AddCollider(new LineCollider(COLLIDER_TAG::Player, Vector3(), -Vector3::Yonly(MODEL_SIZE.y * 0.5f)));
 
 	// 当たり判定を生成する（カプセルコライダー）
 	AddCollider(
 		new CapsuleCollider(
-			COLLIDER_TAG::PLAYER,
+			COLLIDER_TAG::Player,
 			Vector3::Yonly(
 				(MODEL_SIZE.y * 0.5f) * GetParameter("Collider", "ModelToColliderRate") -
 				(MODEL_SIZE.x * 0.5f) * GetParameter("Collider", "ModelToColliderRate")
@@ -156,7 +156,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 #pragma region プラス効果の判定（無敵判定を無視して発動）
 
 	switch (otherColliderTag) {
-	case COLLIDER_TAG::PLAYER_HEAL: {	// 回復
+	case COLLIDER_TAG::PlayerHeal: {	// 回復
 
 		// 回復量を取得
 		short heal = other.GetSkillStats()->Power();
@@ -171,7 +171,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0, &trans);
 		return;
 	}
-	case COLLIDER_TAG::PLAYER_BUFF: {	// バフ
+	case COLLIDER_TAG::PlayerBuff: {	// バフ
 
 		// バフデータ構造体を取得
 		const ModifierData& modifier = other.GetSkillStats()->ModifierPower();
@@ -196,7 +196,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 #pragma region マイナス効果の判定
 
 	switch (otherColliderTag) {
-	case COLLIDER_TAG::BOSS_ATTACK: {	// 被ダメージ
+	case COLLIDER_TAG::BossAttack: {	// 被ダメージ
 
 		// ダメージ状態に遷移
 		ChangeState(STATE::DAMAGE);

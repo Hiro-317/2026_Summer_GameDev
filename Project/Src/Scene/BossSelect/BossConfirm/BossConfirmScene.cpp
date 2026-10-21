@@ -127,7 +127,7 @@ void BossConfirmScene::SubPostInit(void)
 void BossConfirmScene::SubPostUpdate(void)
 {
 	// ç∂
-	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 
 		// å¯â âπ
 		Snd::GetIns().Play("SystemSelect");
@@ -141,7 +141,7 @@ void BossConfirmScene::SubPostUpdate(void)
 		ButtonSelectionStateReload();
 	}
 	// âE
-	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 
 		// å¯â âπ
 		Snd::GetIns().Play("SystemSelect");

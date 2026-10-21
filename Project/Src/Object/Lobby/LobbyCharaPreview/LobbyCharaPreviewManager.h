@@ -18,7 +18,6 @@ public:
 	void Init(void)override {}
 	void Update(void)override;
 	void Draw(void)override;
-	void AlphaDraw(void)override {}
 	void Release(void)override;
 
 	// SceneManagerの持つ情報をもとにキャラプレビューを更新する（ソロ用）
@@ -49,5 +48,5 @@ private:
 	};
 
 	// 自分のキャラを示すイメージ
-	int ownOperatorImage;
+	int ownControlImage;
 };

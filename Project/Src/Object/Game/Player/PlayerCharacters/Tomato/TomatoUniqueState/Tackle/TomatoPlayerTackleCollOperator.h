@@ -15,13 +15,13 @@ public:
 	/// <param name="SKILL_2_ATTACK_RATE_PERCENT">攻撃倍率</param>
 	/// <param name="playerPos">プレイヤー座標</param>
 	/// <param name="playerAngle">プレイヤーアングルram>
-	/// <param name="operatorSenderId"></param>
+	/// <param name="controlSenderId"></param>
 	/// <param name="playerStats">プレイヤーのステータス情報</param>
 	TomatoPlayerTackleCollOperator(
 		COLLIDER_TAG COLL_TAG,
 		const short ATTACK_RATE_PERCENT,
 		const Vector3& playerPos, const Quaternion& playerAngle,
-		MSG_SENDER_ID operatorSenderId,
+		MSG_SENDER_ID controlSenderId,
 		const CharacterStats& playerStats
 	);
 	~TomatoPlayerTackleCollOperator()override = default;
@@ -75,7 +75,7 @@ private:
 	// プレイヤーの向き
 	const Quaternion& playerAngle;
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	// プレイヤーのステータス
 	const CharacterStats& playerStats;

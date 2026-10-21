@@ -4,11 +4,11 @@
 
 TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
 	const float TO_PLAYER_DISTANCE,
-	const MSG_SENDER_ID operatorSenderId,
+	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats,
 	const ParameterLoad& collParam
 ) :
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	stats(stats),
 	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
 	HEIGHT(collParam.GetParameter("Wahoo", "Height")),
@@ -24,10 +24,10 @@ void TomatoHeadbuttCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	AddCollider(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, TO_PLAYER_DISTANCE, 1000.0f)
+		new XZCircleCollider(COLLIDER_TAG::BossAttack, TO_PLAYER_DISTANCE, 1000.0f)
 	);
 
-	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(controlSenderId, 75, &stats, COLLIDER_TAG::BossAttack);
 
 	SetJudgeFlg(false);
 

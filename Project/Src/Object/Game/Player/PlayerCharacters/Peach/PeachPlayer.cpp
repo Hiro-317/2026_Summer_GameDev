@@ -23,8 +23,8 @@
 #include "../../PlayerUI/PlayerSkillUI.h"
 #include "../../PlayerUI/PlayerStaminaUI.h"
 
-PeachPlayer::PeachPlayer(MSG_SENDER_ID operatorSenderId) :
-	PlayerBase(operatorSenderId,
+PeachPlayer::PeachPlayer(MSG_SENDER_ID controlSenderId) :
+	PlayerBase(controlSenderId,
 
 		"PeachParameter",
 		"PlayerHP",
@@ -58,7 +58,7 @@ void PeachPlayer::PlayerLoad(void)
 	punchCollOperatorRef =
 		new PlayerSimpleAttackCollOperator(
 			GetParameter("SimpleAttack", "TargetSerchRange"),
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			GetParameter("SimpleAttack", "CollSize"),
 			GetParameterToVector3("SimpleAttack", "CollLocalPos"),
 			GetParameterToInt("SimpleAttack", "AttackRatePercent"),
@@ -73,7 +73,7 @@ void PeachPlayer::PlayerLoad(void)
 	// 回復用の当たり判定管理クラスを生成
 	healCollOperatorRef =
 		new PlayerSingleModifierCollOperator(
-			COLLIDER_TAG::PLAYER_HEAL,
+			COLLIDER_TAG::PlayerHeal,
 			controlSenderId,
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal,
 			targetPlayerPos,
@@ -85,7 +85,7 @@ void PeachPlayer::PlayerLoad(void)
 	// バフ用の当たり判定管理クラスを生成
 	buffCollOperatorRef =
 		new PlayerSingleModifierCollOperator(
-			COLLIDER_TAG::PLAYER_BUFF,
+			COLLIDER_TAG::PlayerBuff,
 			controlSenderId,
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff,
 			targetPlayerPos,

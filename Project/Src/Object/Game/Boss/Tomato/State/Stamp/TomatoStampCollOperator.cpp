@@ -6,13 +6,13 @@ TomatoStampCollOperator::TomatoStampCollOperator
 (
 	float ATTACK_RADIUS,
 	const bool& isGround,
-	const MSG_SENDER_ID operatorSenderId,
+	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats,
 	const ParameterLoad& collParam
 )	: 
 	ATTACK_RADIUS(ATTACK_RADIUS),
 	ground(isGround),
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	stats(stats),
 	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
 	HEIGHT(collParam.GetParameter("Stamp","Height")),
@@ -38,16 +38,16 @@ void TomatoStampCollOperator::Load(void)
 #pragma endregion
 
 	// “–‚½‚è”»’èî•ñ‚ð¶¬‚·‚é
-	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, ATTACK_RADIUS, 1000.0f));
-	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, ATTACK_RADIUS, 1000.0f));
+	AddCollider(new XZCircleCollider(COLLIDER_TAG::BossAttackArea, ATTACK_RADIUS, 1000.0f));
+	AddCollider(new XZCircleCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS, 1000.0f));
 	SetJudgeFlg(false);
 
 	// UŒ‚”ÍˆÍ‚Ì“–‚½‚è”»’è
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetDynamicFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetPushFlg(true);
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
 
-	CreateAttackSkill(operatorSenderId, 100, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(controlSenderId, 100, &stats, COLLIDER_TAG::BossAttack);
 
 	collBack.Load("Range/CircleRangeBack");
 	collFront.Load("Range/CircleRangeFront");
@@ -62,8 +62,8 @@ void TomatoStampCollOperator::Load(void)
 void TomatoStampCollOperator::SubUpdate(void)
 {
 	// ‰Ÿ‚µ–ß‚³‚ê‚½êŠ‚É‚·‚×‚ÄˆÚ“®‚³‚¹‚é
-	auto pos = ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->GetPos();
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetTransformPos(pos);
+	auto pos = ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->GetPos();
+	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(pos);
 	collBack.pos = pos;
 	collFront.pos = pos;
 	trans.pos.y = HEIGHT;

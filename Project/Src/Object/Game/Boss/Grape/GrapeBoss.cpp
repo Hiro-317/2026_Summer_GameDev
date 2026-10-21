@@ -58,9 +58,9 @@ void GrapeBoss::PlayerLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new GrapeBossWeaponManager(operatorSenderId, characterStats));
-	subObjArray.push_back(new GrapeKickDownCollOperator(operatorSenderId, characterStats));
-	subObjArray.push_back(new GrapeStampCollOperator(operatorSenderId, characterStats));
+	subObjArray.push_back(new GrapeBossWeaponManager(controlSenderId, characterStats));
+	subObjArray.push_back(new GrapeKickDownCollOperator(controlSenderId, characterStats));
+	subObjArray.push_back(new GrapeStampCollOperator(controlSenderId, characterStats));
 
 #pragma endregion
 
@@ -130,13 +130,13 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の座標と角度とローカル角度
 			trans.pos, trans.rotation, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
+			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
 			// モデルの拡大率
 			MODEL_SCALE,
 			// プレイヤーの座標の読み取り
 			playerPos,
 			// 当たり判定オペレータの参照
-			SubObjSerch<GrapeKickDownCollOperator>(),
+			SubActorSerch<GrapeKickDownCollOperator>(),
 			// アニメーションの再生関数のポインタ
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
@@ -161,7 +161,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の座標と角度
 			trans.pos, trans.rotation,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
+			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
 			// プレイヤーの座標
 			playerPos,
 			// プレイヤーのターゲット番号
@@ -188,10 +188,10 @@ void GrapeBoss::PlayerLoad(void)
 			// 自分の座標と角度
 			trans.pos, trans.rotation, isGround,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
+			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
 			// プレイヤーの座標
 			playerPos,
-			SubObjSerch<GrapeStampCollOperator>(),
+			SubActorSerch<GrapeStampCollOperator>(),
 			// ジャンプ始めアニメーションのタイプ
 			(int)ANIME_TYPE::JUMP_START,
 			(int)ANIME_TYPE::STAMP,
@@ -227,7 +227,7 @@ void GrapeBoss::PlayerLoad(void)
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb),
+			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb),
 			// プレイヤーのターゲット番号
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
@@ -252,7 +252,7 @@ void GrapeBoss::PlayerLoad(void)
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb),
+			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb),
 			// プレイヤーのターゲット番号
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
@@ -277,7 +277,7 @@ void GrapeBoss::PlayerLoad(void)
 			// 座標の参照
 			trans.pos,
 			// 攻撃の種類の情報
-			SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
+			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
@@ -340,21 +340,21 @@ void GrapeBoss::ReceptionUpdate(void)
 	BossBase::ReceptionUpdate();
 
 	// エリアの同期
-	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(operatorSenderId)) {
+	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(controlSenderId)) {
 
 		// 受け取ったステートの描画
 		switch (dataPtr->inform)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubObjSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
+			SubActorSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubObjSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
-			SubObjSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
+			SubActorSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		default:
@@ -363,23 +363,23 @@ void GrapeBoss::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
-	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(operatorSenderId)) {
+	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(controlSenderId)) {
 
 		// 受け取ったステートの描画
 		switch (dataPtr->inform)
 		{
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
-			SubObjSerch<GrapeKickDownCollOperator>()->SetDrawArea(dataPtr->flg);
+			SubActorSerch<GrapeKickDownCollOperator>()->SetDrawArea(dataPtr->flg);
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
 			if (dataPtr->flg) {
-				SubObjSerch<GrapeStampCollOperator>()->DrawAreaOn();
+				SubActorSerch<GrapeStampCollOperator>()->DrawAreaOn();
 			}
 			else {
-				SubObjSerch<GrapeStampCollOperator>()->Off();
+				SubActorSerch<GrapeStampCollOperator>()->Off();
 			}
 			break;
 		}
@@ -389,14 +389,14 @@ void GrapeBoss::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
-	while (MsgDataBossBombInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossBombInform>(operatorSenderId)) {
+	while (MsgDataBossBombInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossBombInform>(controlSenderId)) {
 
 		// 受け取ったボムの起動
 		switch (dataPtr->inform)
 		{
 		case MsgDataBossBombInform::INFORM_TYPE::Straight:
 		{
-			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight)[dataPtr->index];
+			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			dynamic_cast<GrapeBossStraight*>(weapon.weaponIns)->SetStartDir(dataPtr->moveDir);
 			weapon.live = true;
@@ -404,7 +404,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::KickBomb:
 		{
-			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb)[dataPtr->index];
+			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true;
@@ -412,7 +412,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::StampBomb:
 		{
-			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb)[dataPtr->index];
+			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true;
@@ -420,7 +420,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::SingleBomb:
 		{
-			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb)[dataPtr->index];
+			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true; 
@@ -428,7 +428,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::StalkerBomb:
 		{
-			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb)[dataPtr->index];
+			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true; 
@@ -436,7 +436,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb:
 		{
-			auto& weapon = SubObjSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb)[dataPtr->index];
+			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true;

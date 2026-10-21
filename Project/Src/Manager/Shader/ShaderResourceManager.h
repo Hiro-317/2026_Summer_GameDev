@@ -200,6 +200,12 @@ private:
 			"DamageFlashPS"
 		},
 
+		// 画面揺れポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::ScreenShake,
+			"ScreenShakePS"
+		},
+
 	#pragma endregion
 
 		// スカイボックス

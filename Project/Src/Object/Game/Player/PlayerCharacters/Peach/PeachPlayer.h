@@ -12,7 +12,7 @@ class PeachPlayer : public PlayerBase
 public:
 
 	// コンストラクタ
-	PeachPlayer(MSG_SENDER_ID operatorSenderId);
+	PeachPlayer(MSG_SENDER_ID controlSenderId);
 	~PeachPlayer()override = default;
 
 	// ロード

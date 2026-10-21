@@ -82,7 +82,7 @@ void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const Co
 {
 	switch (other.GetTag())
 	{
-	case COLLIDER_TAG::PLAYER:
+	case COLLIDER_TAG::Player:
 		isHit = true;
 		break;
 	default:break;

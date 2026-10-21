@@ -69,7 +69,7 @@ void PlayerSimpleAttackCollOperator::Load(void)
 #pragma region 当たり判定情報を生成する
 
 	// 探索用のコライダーを生成
-	findCollRef = new SphereCollider(COLLIDER_TAG::PLAYER_COMMON, FIND_ATTACK_TARGET_RANGE);
+	findCollRef = new SphereCollider(COLLIDER_TAG::PlayerCommon, FIND_ATTACK_TARGET_RANGE);
 	// 探索用のコライダーをアクターに追加
 	AddCollider(findCollRef);
 
@@ -88,12 +88,12 @@ void PlayerSimpleAttackCollOperator::Load(void)
 
 void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (ownTag == COLLIDER_TAG::PLAYER_COMMON) {
+	if (ownTag == COLLIDER_TAG::PlayerCommon) {
 		switch (other.GetTag())
 		{
-		case COLLIDER_TAG::BOSS:
-		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::BOSS_DISTANCE:
+		case COLLIDER_TAG::Boss:
+		case COLLIDER_TAG::Enemy:
+		case COLLIDER_TAG::BossDistance:
 
 			// 探索結果を保存
 			isFindAttackTarget = true;
@@ -111,9 +111,9 @@ void PlayerSimpleAttackCollOperator::OnCollision(COLLIDER_TAG ownTag, const Coll
 	else if(ownTag == COLL_TAG) {
 		switch (other.GetTag())
 		{
-		case COLLIDER_TAG::BOSS:
-		case COLLIDER_TAG::ENEMY:
-		case COLLIDER_TAG::BOSS_DISTANCE:
+		case COLLIDER_TAG::Boss:
+		case COLLIDER_TAG::Enemy:
+		case COLLIDER_TAG::BossDistance:
 
 			// 多段ヒットを防ぐ為のヒットフラグを立てる
 			isHit = true;

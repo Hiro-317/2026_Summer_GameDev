@@ -100,17 +100,32 @@ public:
 
 #pragma endregion
 
+	// シーンを取得
+	SceneBase* GetScene(int index = -1) {
+		// スタックが空の場合はnullptrを返す
+		if (scenes.empty()) { return nullptr; }
+
+		// indexが指定なし(-1)の場合は末尾のシーンを返す
+		if (index == -1) { index = static_cast<int>(scenes.size()) - 1; }
+
+		// indexが範囲外の場合はnullptrを返す
+		if (index < 0 || static_cast<std::size_t>(index) >= scenes.size()) { return nullptr; }
+
+		// 指定されたindexのシーンを返す
+		return scenes[index].get();
+	}
+
 #pragma region シーンをまたいでの保持が必要な情報の操作
 
 	// 選択キャラを保存
-	void SetSelectCharaType(MSG_SENDER_ID operatorSenderId, CHARA_TYPE selectCharaType) {
-		if (operatorSenderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= operatorSenderId) { return; }
-		this->selectCharaType[(int)operatorSenderId] = selectCharaType;
+	void SetSelectCharaType(MSG_SENDER_ID controlSenderId, CHARA_TYPE selectCharaType) {
+		if (controlSenderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= controlSenderId) { return; }
+		this->selectCharaType[(int)controlSenderId] = selectCharaType;
 	}
 	// 保存した選択キャラを取得
-	CHARA_TYPE GetSelectCharaType(MSG_SENDER_ID operatorSenderId) {
-		if (operatorSenderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= operatorSenderId) { return CHARA_TYPE::None; }
-		return selectCharaType[(int)operatorSenderId];
+	CHARA_TYPE GetSelectCharaType(MSG_SENDER_ID controlSenderId) {
+		if (controlSenderId <= MSG_SENDER_ID::None || MSG_SENDER_ID::Max <= controlSenderId) { return CHARA_TYPE::None; }
+		return selectCharaType[(int)controlSenderId];
 	}
 	// 選択キャラリセット
 	void ResetSelectCharaType(void) { for (CHARA_TYPE& type : selectCharaType) { type = CHARA_TYPE::None; } }

@@ -51,7 +51,7 @@ void BossSelectSpotBase::Load(void)
 	trans.scale = MODEL_SCALE.at(false);
 
 	// 押し出しを行うコライダー
-	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS, COLLIDER_RADIUS, 10000.0f));
+	AddCollider(new XZCircleCollider(COLLIDER_TAG::Boss, COLLIDER_RADIUS, 10000.0f));
 }
 
 void BossSelectSpotBase::SubUpdate(void)

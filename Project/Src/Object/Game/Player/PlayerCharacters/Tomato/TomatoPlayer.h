@@ -10,7 +10,7 @@ class TomatoPlayer : public PlayerBase
 {
 public:
 
-	TomatoPlayer(MSG_SENDER_ID operatorSenderId);
+	TomatoPlayer(MSG_SENDER_ID controlSenderId);
 	~TomatoPlayer()override = default;
 
 	void PlayerLoad(void)override;

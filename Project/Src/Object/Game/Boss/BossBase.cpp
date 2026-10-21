@@ -2,16 +2,23 @@
 
 #include "../../../Manager/Font/FontManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
-#include "../../../Scene/Game/GameScene.h"
+#include "../../../Manager/TimeScale/TimeScale.h"
 
-#include "../../UI/HitUI/HitUI.h"
+#include "../../../Scene/SceneManager.h"
+#include "../../../Scene/SceneBase.h"
+
+#include "../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
+
+#include "../../Common/DataLoad/ParameterLoad.h"
+
+#include "../UI/HitUI.h"
 
 #include "../../Common/Collider/XZCircleCollider.h"
 #include "../../Common/Collider/LineCollider.h"
 
+#include "../../Common/CharacterBase/CharacterStatsDefine.h"
 
 BossBase::BossBase(
-
 	const std::string& parameterPath,
 
 	std::string modelPath,
@@ -32,8 +39,8 @@ BossBase::BossBase(
 {
 	trans.LoadModel(("Character/" + modelPath).c_str());
 
-	this->operatorSenderId = Net::HOST_SENDER_ID;
-	isOwnOperator = operatorSenderId == Net::GetIns().GetSenderId();
+	this->controlSenderId = Net::HOST_SENDER_ID;
+
 	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
 
 	// 攻撃対象探し用の総ダメ保存
@@ -51,11 +58,11 @@ BossBase::BossBase(
 	mostDamaged = 0;
 }
 
-void BossBase::CharacterLoad(void)
+void BossBase::Load(void)
 {
 #pragma region モデル
 	// モデルを読み込む
-	PlayerLoad();
+	BossLoad();
 
 	// モデルのスケールを設定
 	trans.scale = MODEL_SCALE;
@@ -82,9 +89,6 @@ void BossBase::CharacterLoad(void)
 	// 押し出す力の大きさを設定する
 	SetPushWeight(COLLISION_PUSH_WEIGHT);
 
-	// 無敵中に赤点滅を表示しない
-	SetInviEffectFlg(false);
-
 #pragma endregion
 
 #pragma region 当たり判定情報設定
@@ -93,7 +97,7 @@ void BossBase::CharacterLoad(void)
 	if (IsParameterExist("Collider", "ToPlayerDistanceRadius") && IsParameterExist("Collider", "ToPlayerDistanceHeight")) {
 		AddCollider(
 			new XZCircleCollider(
-				COLLIDER_TAG::BOSS_DISTANCE,
+				COLLIDER_TAG::BossDistance,
 				GetParameter("Collider", "ToPlayerDistanceRadius"),
 				GetParameter("Collider", "ToPlayerDistanceHeight")
 			)
@@ -104,7 +108,7 @@ void BossBase::CharacterLoad(void)
 	if (IsParameterExist("Collider", "LineColliderStartPos") && IsParameterExist("Collider", "LineColliderEndPos")) {
 		AddCollider(
 			new LineCollider(
-				COLLIDER_TAG::BOSS,
+				COLLIDER_TAG::Boss,
 				GetParameterToVector3("Collider", "LineColliderStartPos") * MODEL_SCALE,
 				GetParameterToVector3("Collider", "LineColliderEndPos") * MODEL_SCALE
 			)
@@ -112,12 +116,9 @@ void BossBase::CharacterLoad(void)
 	}
 
 #pragma endregion
-
-	// まとめて読み込み処理
-	for (ActorBase*& c : subObjArray) { c->Load(); }
 }
 
-void BossBase::CharacterInit(void)
+void BossBase::SubInit(void)
 {
 	// 位置を初期位置にする
 	trans.pos = INIT_POS;
@@ -125,227 +126,184 @@ void BossBase::CharacterInit(void)
 
 	// 初期状態を移動状態にする
 	ChangeState(static_cast<int>(STATE::IDLE));
-
-	for (ActorBase*& c : subObjArray) { c->Init(); }
 }
 
-void BossBase::CharacterUpdate(void)
+void BossBase::SubUpdate(void)
 {
-	for (ActorBase*& c : subObjArray) { c->Update(); }
+#pragma region ターゲット更新
 
-	// プレイヤーの生存判定をする
-	for (int i = 0; i < playerDeath.size(); i++) {
-		// 今死んだ場合
-		if (*playerDeath.at(i) && !nowDeath.at(i)) {
-			// 死んでる判定にする
-			nowDeath[i] = true;
+	// ターゲットの生存確認
+	if (!*playerDeath[targetNum]) { targetNum = -1; }
 
-			// 最大ダメージの再判定
-			mostDamaged = -1;
-			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-				// センダーIDと死んだ奴が同じならスキップ
-				if (!nowDeath.at(id)) {
-					// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
-					if (mostDamaged < damaged.at(id)) {
-						mostDamaged = damaged.at(id);
-						targetNum = id;
-						Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
-					}
-				}
-			}
+	// 与ダメの最大値を探す
+	for (int id = 0; id < Net::GetIns().GetConnectStatus().EntryCount(); id++) {
+
+		// 生存確認
+		if (!*playerDeath[id]) { continue; }
+
+		// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
+		if (targetNum == -1 || damaged[targetNum] < damaged[id]) {
+
+			// 新しいターゲットを保持
+			targetNum = id;
+
+			// ターゲット変更を送信
+			Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
 		}
 	}
+
+#pragma endregion
+
 
 #ifdef _DEBUG		// クールタイム用
 	if (CheckHitKey(KEY_INPUT_0)) {
 		short damage = 10;
 		characterStats.hp -= damage;
 		// プレイヤーが受けるダメージ値を、クライアント側に送信
-		Net::GetIns().Send(MsgDataPlayerDamage(damage), operatorSenderId);
+		Net::GetIns().Send(MsgDataPlayerDamage(damage), controlSenderId);
 	}
 #endif // _DEBUG
 }
 
-void BossBase::CharacterRemoteUpdate()
+void BossBase::SubRelease(void)
 {
-	for (ActorBase*& c : subObjArray) { c->Update(); }
+	collParam->Release();
+	delete collParam;
+	collParam = nullptr;
 }
 
-void BossBase::CharacterDraw(void)
+void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	for (ActorBase*& c : subObjArray) { c->Draw(); }
-}
-
-void BossBase::CharacterAlphaDraw(void)
-{
-	for (ActorBase*& c : subObjArray) { c->AlphaDraw(); }
-}
-
-void BossBase::CharacterUiDraw(void)
-{
-	if (App::GetIns().IsDrawDebug()) {
-
-		// 1行ずつ描画するためのラムダ式（デバッグ用）
-		int yPos = 300; const int FONT_SIZE = 20;
-		auto debugDrwStr = [&](std::string str)->void {
-			DrawStringToHandle(0, yPos, str.c_str(), 0xffffff, Font::GetIns().GetFont(FontKinds::DEFAULT_20));
-			yPos += FONT_SIZE;
-			};
-
-		// 加速度をデバッグ表示
-		debugDrwStr("ボス～～～～～～～～～");
-		debugDrwStr("座標" + std::to_string(trans.pos.x) + ", " + std::to_string(trans.pos.y) + ", " + std::to_string(trans.pos.z));
-		debugDrwStr("加速度:" + std::to_string(accelSum.Length()));
-		debugDrwStr("地面か:" + std::to_string(isGround));
-		debugDrwStr("～～～～～～～(|3[___]");
-	}
-}
-
-void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
-{
-	if (!Net::GetIns().IsHost() || state == (int)STATE::DEATH) return;
+	if (!Net::GetIns().IsHost() || GetState() == (int)STATE::DEATH) return;
 
 	// ボスとプレイヤーの攻撃との当たり判定
-	if (ownTag == COLLIDER_TAG::BOSS_DISTANCE) {
-		switch (other.GetTag()) {
-		case COLLIDER_TAG::PLAYER_ATTACK: {
-			bool isClitical = false;
-			short damage = CalculateDamage(other.GetSkillStats().Power(&isClitical), characterStats.defensePower.Value());
+	if (ownTag == COLLIDER_TAG::BossDistance) {
 
-			// ホストならそのままUI描画
-			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
-				SubUiSerch<HitUI>()->DamageSetting(collisionPoint, damage, isClitical);
-			}
+		if (other.GetTag() == COLLIDER_TAG::PlayerAttack) {
+
+			// クリティカルフラグ取得
+			bool isClitical = false;
+
+			// 防御力も含めたダメージを取得
+			short damage = CalculateDamage(other.GetSkillStats()->Power(&isClitical), characterStats.defensePower.Value());
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
+
+			// ダメージ情報を送信する
+			Net::GetIns().Send(MsgDataBossHit(damage, isClitical, other.GetActor()->GetControlSenderId(), result.point));
+
 			// アイドルだとアニメーションの再生
-			if (state == (int)STATE::IDLE) {
-				PlayDamage();
-			}
-			// ダメージとクリティカル情報を送信する
-			Net::GetIns().Send(MsgDataBossHit(collisionPoint, damage, isClitical), other.GetSkillStats().operatorSenderId);
+			if (GetState() == (int)STATE::IDLE) { PlayDamage(); }
 
-			// HPがゼロ以下になったら死亡状態に遷移
-			if (characterStats.hp <= 0 && state != (int)STATE::DEATH) {
-				ChangeState((int)STATE::DEATH);
-				return;
-			}
+			// このPCの操作権プレイヤーによるダメージなら演出
+			if (other.GetActor()->GetControlSenderId() == Net::GetIns().GetSenderId()) {
 
-			// 与ダメを足す
-			damaged[static_cast<int>(other.GetSkillStats().operatorSenderId)] += damage;
+				// ダメージ数値のUIを描画する
+				hitUiRef->DamageSetting(result.point, damage, isClitical);
 
-			// 与ダメの最大値を探す
-			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-				if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-				// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
-				if (mostDamaged < damaged.at(id)) {
-					mostDamaged = damaged.at(id);
-					targetNum = id;
-					Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
-				}
-			}
-
-			// ホスト時の演出
-			if (other.GetSkillStats().operatorSenderId == Net::GetIns().GetSenderId()) {
 				// クリティカルなら揺らしクリティカル音を出す
 				if (isClitical) {
-					GameScene::Shake(ShakeKinds::HIG, ShakeSize::SMALL, 10);
+					SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
 					Snd::GetIns().Play("CriticalDamaged");
 				}
 				// 違うなら普通にダメージ音
 				else {
 					Snd::GetIns().Play("Damaged");
 				}
+
+				// ヒットストップ
+				TimeScale::GetIns().HitStop(4);
 			}
-			GameScene::HitStop(4);
-			SetInviCounter(150);
 
-			break;
-		}
+			// HPがゼロ以下になったら死亡状態に遷移
+			if (characterStats.hp <= 0 && GetState() != (int)STATE::DEATH) {
+				ChangeState(STATE::DEATH);
+				return;
+			}
+
+			// 与ダメを足す
+			damaged[static_cast<int>(other.GetActor()->GetControlSenderId())] += damage;
 		}
 	}
 }
 
-void BossBase::CharacterRelease(void)
-{
-	for (ActorBase*& c : subObjArray) {
-		if (c) {
-			c->Release();
-			delete c;
-			c = nullptr;
-		}
-	}
-	subObjArray.clear();
-	collParam->Release();
-	delete collParam;
-	collParam = nullptr;
-}
-
-void BossBase::AnimePlay(int type, bool loop)
+void BossBase::ChangeState(int nextState)
 {
 	// ホストだったら操作者PC以外に伝達する
-	if (Net::GetIns().IsHost()) {
+	if (IsOwnControl()) {
+		// 情報を送る
+		Net::GetIns().Send(MsgDataBossChangeState(nextState));
+	}
 
-		// すべてのIDを精査する
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			// そのIDが未参加だったらスキップ(それ以降もないため「break」)
-			if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
+	CharacterBase::ChangeState(nextState);
+}
 
-			// 情報を送る
-			Net::GetIns().Send(MsgDataBossAnimeType(type, loop));
-		}
+void BossBase::AnimePlay(int type, signed char loop)
+{
+	// ホストだったら操作者PC以外に伝達する
+	if (IsOwnControl()) {
+		// 情報を送る
+		Net::GetIns().Send(MsgDataBossAnimeType(type, loop));
 	}
 
 	CharacterBase::AnimePlay(type, loop);
 }
+
 void BossBase::ReceptionUpdate(void)
 {
 	// 座標/角度の同期
-	while (MsgDataBossTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTrans>(operatorSenderId)) {
+	while (MsgDataBossTrans* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTrans>()) {
 
-		// 座標/角度を同期
+		// 座標/回転/スケーリング/を同期
 		trans.pos = dataPtr->pos;
 		trans.rotation = dataPtr->rotation;
 		trans.scale = dataPtr->scale;
+
 		delete dataPtr;
 	}
 
 	// アニメーション
-	while (MsgDataBossAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAnimeType>(operatorSenderId)) {
-		AnimePlay(dataPtr->animeType, dataPtr->loop);
-		delete dataPtr;
-	}
+	while (MsgDataBossAnimeType* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAnimeType>()) {
 
-	// 死亡判定
-	while (MsgDataBossIsDeath* dataPtr = Net::GetIns().GetMsgData<MsgDataBossIsDeath>(operatorSenderId)) {
-		SetIsDeath(dataPtr->flg);
+		// 再生
+		AnimePlay(dataPtr->animeType, dataPtr->loop);
+
 		delete dataPtr;
 	}
 
 	// ダメージ受信
 	while (MsgDataBossHit* dataPtr = Net::GetIns().GetMsgData<MsgDataBossHit>()) {
 
+		// HPを減らす
 		characterStats.hp -= dataPtr->damage;
 
-		if (dataPtr->header.senderId == Net::GetIns().GetSenderId()) {
-			SubUiSerch<HitUI>()->DamageSetting(dataPtr->collisionPoint, dataPtr->damage, dataPtr->clitical);
-			// クリティカルなら揺らしクリティカル音
+		// このPCの操作権プレイヤーによるダメージなら演出
+		if (dataPtr->controlSenderId == Net::GetIns().GetSenderId()) {
+
+			// ダメージ数値のUIを描画する
+			hitUiRef->DamageSetting(dataPtr->collisionPoint, dataPtr->damage, dataPtr->clitical);
+
+			// クリティカルなら揺らしクリティカル音を出す
 			if (dataPtr->clitical) {
-				GameScene::Shake(ShakeKinds::DIAG, ShakeSize::SMALL, 10);
+				SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
 				Snd::GetIns().Play("CriticalDamaged");
 			}
 			// 違うなら普通にダメージ音
 			else {
 				Snd::GetIns().Play("Damaged");
 			}
-			GameScene::HitStop(4);
-			SetInviCounter(150);
+
+			// ヒットストップ
+			TimeScale::GetIns().HitStop(4);
 		}
+
+		// 与ダメを足す
+		damaged[static_cast<int>(dataPtr->controlSenderId)] += dataPtr->damage;
 
 		delete dataPtr;
 	}
+
 	// 標的の受信
 	while (MsgDataBossTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTarget>()) {
 
@@ -357,7 +315,7 @@ void BossBase::ReceptionUpdate(void)
 
 void BossBase::SendUpdate(void)
 {
-	if (Net::GetIns().IsHost()) {
+	if (IsOwnControl()) {
 		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.rotation, trans.scale));
 	}
 }

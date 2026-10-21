@@ -2,6 +2,8 @@
 
 #include "../../pch.h"
 
+#include "../../Utility/Utility.h"
+
 #include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
 #include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
@@ -15,7 +17,6 @@
 
 #include "CharaSelect/LobbyCharaSelectScene.h"
 
-#include "../../Object/Common/.h"
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
 
@@ -40,9 +41,8 @@ MultiLobbyScene::MultiLobbyScene() :
 void MultiLobbyScene::SubPostLoad(void)
 {
 	// オブジェクト生成
-	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
-	ObjAdd(new LobbyCharaPreviewManager());
+	AddActor(new LobbyStage());
+	AddActor(new LobbyCharaPreviewManager());
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
 	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
@@ -97,7 +97,7 @@ void MultiLobbyScene::SubPostInit(void)
 	Net::GetIns().Send(MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId())));
 
 	// キャラプレビューの初期化
-	ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(Net::GetIns().GetSenderId());
+	ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(Net::GetIns().GetSenderId());
 }
 
 void MultiLobbyScene::SubPostUpdate(void)
@@ -117,7 +117,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 	}
 
 	// 左
-	if (Input::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -131,7 +131,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 		ButtonSelectionStateReload();
 	}
 	// 右
-	if (Input::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -185,7 +185,7 @@ void MultiLobbyScene::SubPostUpdate(void)
 			SceneManager::GetIns().PushScene(
 				std::make_unique<LobbyCharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(Net::GetIns().GetSenderId()); },
+					[&]() { ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(Net::GetIns().GetSenderId()); },
 					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
 				)
 			);
@@ -367,7 +367,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 
 			// キャラプレビューを更新する
 			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max; id++) {
-				ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara((MSG_SENDER_ID)id);
+				ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara((MSG_SENDER_ID)id);
 			}
 
 			// 最新状態の選択キャラを送りなおす
@@ -397,7 +397,7 @@ void MultiLobbyScene::ReceptionUpdate(void)
 		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
 
 		// キャラプレビューを更新する
-		ObjSerch<LobbyCharaPreviewManager>(objects)->ReloadChara(dataPtr->header.senderId);
+		ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(dataPtr->header.senderId);
 
 		delete dataPtr;
 	}

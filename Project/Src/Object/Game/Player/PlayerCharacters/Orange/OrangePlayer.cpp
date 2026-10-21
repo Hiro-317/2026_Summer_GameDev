@@ -77,7 +77,7 @@ void OrangePlayer::PlayerLoad(void)
 			// 探索範囲
 			GetParameter("TripleAttack", "TargetSerchRange"),
 			// コライダータグ
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			// 攻撃判定の大きさ（球状の半径）
 			GetParameter("TripleAttack", "CollSize1"),
 			// 攻撃判定発生座標（プレイヤーからの相対座標）
@@ -111,7 +111,7 @@ void OrangePlayer::PlayerLoad(void)
 			// 探索範囲
 			GetParameter("SimpleAttack", "TargetSerchRange"),
 			// コライダータグ
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			// 攻撃判定の大きさ（球状の半径）
 			GetParameter("SimpleAttack", "CollSize"),
 			// 攻撃判定発生座標（プレイヤーからの相対座標）
@@ -395,7 +395,7 @@ void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, c
 	// 回避時の特殊無敵判定
 	if (isInvincible) {
 		// ダメージが発生するコライダーを検出
-		if (other.GetTag() == COLLIDER_TAG::BOSS_ATTACK) {
+		if (other.GetTag() == COLLIDER_TAG::BossAttack) {
 
 			// 回避成功のエフェクトを発生
 			hitUiRef->MissSetting(result.point);

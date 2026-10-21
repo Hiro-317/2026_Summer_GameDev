@@ -18,7 +18,7 @@ public:
 	/// <param name="SKILL_2_ATTACK_RATE_PERCENT">攻撃倍率</param>
 	/// <param name="playerPos">プレイヤー座標</param>
 	/// <param name="playerAngle">プレイヤーアングルram>
-	/// <param name="operatorSenderId"></param>
+	/// <param name="controlSenderId"></param>
 	/// <param name="playerStats">プレイヤーのステータス情報</param>
 	GrapePlayerBombCollOperator(
 		COLLIDER_TAG COLL_TAG,
@@ -26,7 +26,7 @@ public:
 		float ATTACK_COUNT_TIME,
 		float ATTACK_START_TIME,
 		const Vector3& playerPos, const Vector3& playerAngle,
-		MSG_SENDER_ID operatorSenderId,
+		MSG_SENDER_ID controlSenderId,
 		const CharacterStats& playerStats
 	);
 	~GrapePlayerBombCollOperator()override = default;
@@ -59,7 +59,7 @@ public:
 	// 敵を探す
 	void SetIsEnemySerch(bool isJudge) {
 		if (isBlast) { return; }
-		ColliderSerch(GetCollider(), COLLIDER_TAG::PLAYER_COMMON).back()->SetJudgeFlg(isJudge);
+		ColliderSerch(GetCollider(), COLLIDER_TAG::PlayerCommon).back()->SetJudgeFlg(isJudge);
 	}
 
 	void PlayEffect(void) { EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_BIG, trans.pos); }
@@ -92,14 +92,14 @@ public:
 
 		RemoteBombSetStart(pos);
 
-		Net::GetIns().Send(MsgDataGrapePlayerBombStart(pos), operatorSenderId);
+		Net::GetIns().Send(MsgDataGrapePlayerBombStart(pos), controlSenderId);
 	}
 
 	void LocalBombSetEnd(void) {
 
 		RemoteBombSetEnd();
 
-		Net::GetIns().Send(MsgDataGrapePlayerBombEnd(), operatorSenderId);
+		Net::GetIns().Send(MsgDataGrapePlayerBombEnd(), controlSenderId);
 	}
 private:
 
@@ -126,7 +126,7 @@ private:
 	// プレイヤーの向き
 	const Vector3& playerAngle;
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	// プレイヤーのステータス
 	const CharacterStats& playerStats;

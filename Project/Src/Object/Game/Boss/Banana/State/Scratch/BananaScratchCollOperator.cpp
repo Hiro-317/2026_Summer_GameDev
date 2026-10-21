@@ -2,13 +2,13 @@
 
 
 BananaScratchCollOperator::BananaScratchCollOperator(
-	const MSG_SENDER_ID operatorSenderId,
+	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats,
 	const Vector3& pos,
 	const Vector3& StartPos,
 	const Vector3& EndPos
 ) :
-	operatorSenderId(operatorSenderId),
+	controlSenderId(controlSenderId),
 	stats(stats),
 	pos(pos),
 	StartPos(StartPos), EndPos(EndPos),
@@ -20,10 +20,10 @@ void BananaScratchCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
 	AddCollider(
-		new CapsuleCollider(COLLIDER_TAG::BOSS_ATTACK, StartPos, EndPos, RADIUS)
+		new CapsuleCollider(COLLIDER_TAG::BossAttack, StartPos, EndPos, RADIUS)
 	);
 
-	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	CreateAttackSkill(controlSenderId, 75, &stats, COLLIDER_TAG::BossAttack);
 	SetPushFlg(false);
 	SetJudgeFlg(false);
 

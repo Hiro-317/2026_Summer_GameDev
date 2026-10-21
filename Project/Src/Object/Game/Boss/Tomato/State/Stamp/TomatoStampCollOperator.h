@@ -18,7 +18,7 @@ public:
 	TomatoStampCollOperator(
 		float ATTACK_RADIUS,
 		const bool& isGournd,
-		const MSG_SENDER_ID operatorSenderId,
+		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats,
 		const ParameterLoad& collParam
 	);
@@ -32,8 +32,8 @@ public:
 	void SetScale(float scale) { collFront.scale = SCALE * scale; }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æÝ’è
-	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true); }
-	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK).back()->SetJudgeFlg(true); }
+	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true); }
+	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true); }
 	void Off(void) { SetJudgeFlg(false); isDrawArea = false; }
 	void SetPos(const Vector3& pos){ trans.pos = pos; }
 
@@ -56,7 +56,7 @@ private:
 
 	const bool& ground;
 
-	const MSG_SENDER_ID operatorSenderId;
+	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

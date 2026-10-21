@@ -54,9 +54,9 @@ void BananaBoss::PlayerLoad(void)
 	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
 	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
-	subObjArray.push_back(new BananaScratchCollOperator(operatorSenderId, characterStats, INIT_POS, StartFrame, EndFrame));
-	subObjArray.push_back(new BananaFireCollOperator(operatorSenderId, characterStats));
-	subObjArray.push_back(new BananaBossBanamerang(operatorSenderId, characterStats));
+	subObjArray.push_back(new BananaScratchCollOperator(controlSenderId, characterStats, INIT_POS, StartFrame, EndFrame));
+	subObjArray.push_back(new BananaFireCollOperator(controlSenderId, characterStats));
+	subObjArray.push_back(new BananaBossBanamerang(controlSenderId, characterStats));
 
 	AddState(
 		static_cast<int>(STATE::IDLE),
@@ -96,7 +96,7 @@ void BananaBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// コライダへのポインタ
-			SubObjSerch<BananaScratchCollOperator>(),
+			SubActorSerch<BananaScratchCollOperator>(),
 			// フレーム座標の更新
 			[&]() {
 				StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
@@ -122,7 +122,7 @@ void BananaBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// コライダへのポインタ
-			SubObjSerch<BananaFireCollOperator>(),
+			SubActorSerch<BananaFireCollOperator>(),
 			// 攻撃アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::BREATH, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
@@ -143,7 +143,7 @@ void BananaBoss::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// コライダへのポインタ
-			SubObjSerch<BananaBossBanamerang>(),
+			SubActorSerch<BananaBossBanamerang>(),
 			// 手の座標
 			[&]() { return Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R"))); },
 			// 溜めアニメーションの再生
@@ -211,26 +211,26 @@ void BananaBoss::ReceptionUpdate(void)
 	BossBase::ReceptionUpdate();
 
 	// エリアの同期
-	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(operatorSenderId)) {
+	while (MsgDataBossAttackDraw* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDraw>(controlSenderId)) {
 
 		// 受け取ったステートの描画
 		switch (dataPtr->inform)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubObjSerch<BananaScratchCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<BananaScratchCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
 		{
-			SubObjSerch<BananaFireCollOperator>()->SetScale(dataPtr->scale);
+			SubActorSerch<BananaFireCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubObjSerch<BananaBossBanamerang>()->SetScale(dataPtr->scale);
-			SubObjSerch<BananaBossBanamerang>()->SetBanameranPos(dataPtr->pos);
-			SubObjSerch<BananaBossBanamerang>()->SetBanameranRot(Quaternion::FromRotationY(dataPtr->angle));
+			SubActorSerch<BananaBossBanamerang>()->SetScale(dataPtr->scale);
+			SubActorSerch<BananaBossBanamerang>()->SetBanameranPos(dataPtr->pos);
+			SubActorSerch<BananaBossBanamerang>()->SetBanameranRot(Quaternion::FromRotationY(dataPtr->angle));
 			break;
 		}
 		default:
@@ -239,7 +239,7 @@ void BananaBoss::ReceptionUpdate(void)
 
 		delete dataPtr;
 	}
-	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(operatorSenderId)) {
+	while (MsgDataBossAttackDrawFlg* dataPtr = Net::GetIns().GetMsgData<MsgDataBossAttackDrawFlg>(controlSenderId)) {
 
 		// 受け取ったステートの描画
 		switch (dataPtr->inform)
@@ -247,30 +247,30 @@ void BananaBoss::ReceptionUpdate(void)
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
 			if (dataPtr->flg) {
-				SubObjSerch<BananaScratchCollOperator>()->SetDrawArea(dataPtr->flg);
+				SubActorSerch<BananaScratchCollOperator>()->SetDrawArea(dataPtr->flg);
 			}
 			else {
-				SubObjSerch<BananaScratchCollOperator>()->Off();
+				SubActorSerch<BananaScratchCollOperator>()->Off();
 			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
 		{
 			if (dataPtr->flg) {
-				SubObjSerch<BananaFireCollOperator>()->SetDrawArea(dataPtr->flg);
+				SubActorSerch<BananaFireCollOperator>()->SetDrawArea(dataPtr->flg);
 			}
 			else {
-				SubObjSerch<BananaFireCollOperator>()->Off();
+				SubActorSerch<BananaFireCollOperator>()->Off();
 			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
 			if (dataPtr->flg) {
-				SubObjSerch<BananaBossBanamerang>()->SetDrawArea(dataPtr->flg);
+				SubActorSerch<BananaBossBanamerang>()->SetDrawArea(dataPtr->flg);
 			}
 			else {
-				SubObjSerch<BananaBossBanamerang>()->Off();
+				SubActorSerch<BananaBossBanamerang>()->Off();
 			}			
 			break;
 		}

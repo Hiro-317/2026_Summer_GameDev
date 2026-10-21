@@ -20,7 +20,7 @@ struct BombType {
 class GrapeBossWeaponManager : public ActorBase{
 public:
 
-	GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats);
+	GrapeBossWeaponManager(const MSG_SENDER_ID& controlSenderId, const CharacterStats& stats);
 	~GrapeBossWeaponManager() = default;
 
 	// ほしいボムタイプの配列で返す
@@ -69,7 +69,7 @@ private:
 
 #pragma region 参照値
 
-	const MSG_SENDER_ID& operatorSenderId;
+	const MSG_SENDER_ID& controlSenderId;
 	const CharacterStats& stats;
 
 #pragma endregion

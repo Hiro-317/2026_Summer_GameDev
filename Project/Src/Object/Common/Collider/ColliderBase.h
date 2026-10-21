@@ -202,7 +202,7 @@ std::vector<T*> ColliderSerch(std::vector<ColliderBase*> collider, COLLIDER_TAG 
 		if (!c) { continue; }
 
 		if (auto* ptr = dynamic_cast<T*>(c)) {
-			if (c->GetTag() == tag || tag == COLLIDER_TAG::NON) { out.push_back(ptr); }
+			if (c->GetTag() == tag || tag == COLLIDER_TAG::None) { out.push_back(ptr); }
 		}
 	}
 

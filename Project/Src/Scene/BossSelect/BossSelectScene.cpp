@@ -29,10 +29,10 @@ BossSelectScene::BossSelectScene() :
 
 void BossSelectScene::SubPostLoad(void)
 {
-	ObjAdd(new SkyDome(200.0f));
-	ObjAdd(new BossSelectStage());
-	ObjAdd(new BossSelectSpotManager());
-	ObjAdd(new BossSelectSkyShip());
+	AddActor(new SkyDome(200.0f));
+	AddActor(new BossSelectStage());
+	AddActor(new BossSelectSpotManager());
+	AddActor(new BossSelectSkyShip());
 
 	boardImage = LoadGraph("Data/Image/BossSelect/StageSelectBoard.png");
 
@@ -150,11 +150,11 @@ void BossSelectScene::CreateCamera(void)
 {
 	// í«è]ÉJÉÅÉâê∂ê¨
 	camera = new FollowRemoteCamera(
-		&ObjSerch<BossSelectSkyShip>(objects)->GetTrans().pos,
+		&ActorSerch<BossSelectSkyShip>(actors)->GetTrans().pos,
 		Vector3::YZonly(500.0f, -500.0f),
 		Vector3::Zonly(500.0f),
 		0.0f
 	);
 
-	camera->StartEvent(new LookAtCameraEvent(ObjSerch<BossSelectSkyShip>(objects)->GetTrans().pos, Vector3::Zonly(500.0f), INT_MAX));
+	camera->StartEvent(new LookAtCameraEvent(ActorSerch<BossSelectSkyShip>(actors)->GetTrans().pos, Vector3::Zonly(500.0f), INT_MAX));
 }

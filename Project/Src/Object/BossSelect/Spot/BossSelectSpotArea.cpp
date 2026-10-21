@@ -23,7 +23,7 @@ void BossSelectSpotArea::Load(void)
 	SetPushFlg(false);
 
 	// 選択判定（飛行船が近くにいるか）を行うコライダー
-	AddCollider(new XZCircleCollider(COLLIDER_TAG::BOSS, COLLIDER_RADIUS, 10000.0f));
+	AddCollider(new XZCircleCollider(COLLIDER_TAG::Boss, COLLIDER_RADIUS, 10000.0f));
 }
 
 void BossSelectSpotArea::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)

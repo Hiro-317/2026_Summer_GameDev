@@ -29,7 +29,7 @@ private:
 #pragma region 主要関数再定義
 	// 初期化
 	void SubPostInit(void)override { 
-		camera.ChangeModeFree(Deg2Rad(2.0f), 10.0f, camera.GetPos(), camera.GetAngle()); 
+		camera.ChangeModeFree(Deg2Rad(2.0f), 10.0f, camera.GetPos(), camera.GetRotation().ToEulerXZY());
 
 		Snd::GetIns().AllStop();
 	}
@@ -37,13 +37,13 @@ private:
 	// 更新
 	void SubPostUpdate(void)override {
 
-		if (Input::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_TOPUPDATE).now) { TopUpdate(); Snd::GetIns().PausePlay(); }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugModeTopUpdate).now) { TopUpdate(); Snd::GetIns().PausePlay(); }
 		else { Snd::GetIns().AllStop(); }
 
 		camera.Update();
 
 		if (
-			Input::GetIns().GetInfo(KEY_TYPE::DEBUG_MODE_SWITCH).down ||
+			Input::GetIns().GetInfo(KEY_TYPE::DebugModeSwitch).down ||
 			Input::GetIns().GetInfo(KEY_TYPE::Pause).down
 			) {
 			SceneManager::GetIns().PopScene();

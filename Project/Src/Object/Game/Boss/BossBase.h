@@ -1,16 +1,18 @@
 #pragma once
 
+#include "../../../Application/Application.h"
+
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../CharacterBase.h"
+#include "../../Common/CharacterBase/CharacterBase.h"
 
+class HitUI;
 
 class BossBase : public CharacterBase
 {
 public:
 
 	BossBase(
-
 		const std::string& parameterPath,
 
 		std::string modelPath,
@@ -21,46 +23,35 @@ public:
 
 	~BossBase()override = default;
 
+	void Load(void)override;
 
-	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	std::vector<ColliderBase*> GetCollider(void)const override {
-		std::vector<ColliderBase*> ret = {};
-		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
-
-		// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚Ì•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ActorBase* const& subObj : subObjArray) {
-			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
-		}
-		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
-		return ret;
-	}
-
-	virtual void PlayerLoad(void) = 0;
-
-	const MSG_SENDER_ID& GetOperatorSenderId(void) const { return operatorSenderId; }
-
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
 
+	const bool& GetIsDeath(void)const { return false; }
+
 private:
 
 	// ƒƒCƒ“ˆ—``````````````
-	void CharacterLoad(void)override;
-	void CharacterInit(void)override;
-	void CharacterUpdate(void)override;
-	void CharacterRemoteUpdate()override;
-	void CharacterDraw(void)override;
-	void CharacterAlphaDraw(void)override;
-	void CharacterUiDraw(void)override;
-	void CharacterRelease(void)override;
+	void SubInit(void)override;
+	void SubUpdate(void)override;
+	void SubRelease(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
 protected:
 
-	void AnimePlay(int type, bool loop = true)override;
+	virtual void BossLoad(void) = 0;
+
+	// ƒXƒe[ƒg‘JˆÚŠÖ”
+	void ChangeState(int nextState)override;
+	using CharacterBase::ChangeState;
+
+	// ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒvƒŒƒCŠÖ”
+	void AnimePlay(int type, signed char loop = -1)override;
+	using CharacterBase::AnimePlay;
+
 	virtual void PlayDamage(void){}
 
 #pragma region ’è”’è‹`
@@ -127,17 +118,6 @@ protected:
 		MAX
 	};
 
-	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ
-	std::vector<ActorBase*> subObjArray;
-	// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚ğŠi”[‚·‚é”z—ñ‚Ì’†‚©‚ç“Á’è‚ÌƒIƒuƒWƒFƒNƒg‚ğ’T‚·
-	template<typename SubClass = ActorBase>
-	SubClass* SubObjSerch(void) {
-		for (ActorBase* obj : subObjArray) {
-			if (dynamic_cast<SubClass*>(obj)) { return dynamic_cast<SubClass*>(obj); }
-		}
-		return nullptr;
-	}
-
 	// ƒXƒLƒ‹UI‚ÌÀ•W@````````````````````````````````
 	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 600, Application::SCREEN_SIZE_Y_HALF + 300);
 	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 120, SKILL1_UI_DRAW_POS.y - 100);
@@ -146,21 +126,21 @@ protected:
 #pragma endregion ’è”’è‹`
 
 	// ƒvƒŒƒCƒ„[‚ÌÀ•W‚ÌQÆ(“Ç‚İæ‚èê—p)
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* playerPos[(int)MSG_SENDER_ID::Max];
 
 	// ƒvƒŒƒCƒ„[‚Ì¶‘¶”»’è‚ÌQÆ(“Ç‚İæ‚èê—p)
-	const std::vector<const bool*> playerDeath;
+	const bool* playerDeath[(int)MSG_SENDER_ID::Max];
 
-	// ƒvƒŒƒCƒ„[‚ÌŒ»İ‚Ì¶‘¶”»’è•Û
-	std::vector<bool> nowDeath;
+	// ƒvƒŒƒCƒ„[‚Ì—^ƒ_ƒƒJƒEƒ“ƒg
+	int damaged[(int)MSG_SENDER_ID::Max];
+
+	// Œ»İ‚Ìƒ^[ƒQƒbƒgƒvƒŒƒCƒ„[”Ô†
+	int targetNum;
+
 
 	// ƒRƒ‰ƒCƒ_[‚Ì“–‚½‚è”»’è•`‰æ‚Ìƒpƒ‰ƒ[ƒ^[
 	ParameterLoad* collParam;
 
-	// ƒvƒŒƒCƒ„[‚Ì—^ƒ_ƒƒJƒEƒ“ƒg
-	std::vector<int> damaged;
-
-	// ƒvƒŒƒCƒ„[‚ÌÅ—^ƒ_ƒ/‚»‚Ì”Ô†
-	int mostDamaged;
-	int targetNum;
+	// ƒ_ƒ[ƒWUIŠÇ—ƒNƒ‰ƒX
+	HitUI* hitUiRef;
 };

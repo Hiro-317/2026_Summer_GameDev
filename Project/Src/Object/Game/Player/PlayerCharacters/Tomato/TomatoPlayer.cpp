@@ -16,9 +16,9 @@
 #include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
 #include "../../../../UI/HitUI/HitUI.h"
 
-TomatoPlayer::TomatoPlayer(MSG_SENDER_ID operatorSenderId) :
+TomatoPlayer::TomatoPlayer(MSG_SENDER_ID controlSenderId) :
 	PlayerBase(
-		operatorSenderId,
+		controlSenderId,
 
 		"TomatoParameter",
 		"PlayerHP",
@@ -39,24 +39,24 @@ void TomatoPlayer::PlayerLoad(void)
 	// 頭突き攻撃の当たり判定を生成
 	subObjArray.emplace_back(
 		new TomatoPlayerHeadButtCollOperator(
-			COLLIDER_TAG::PLAYER_ATTACK,
+			COLLIDER_TAG::PlayerAttack,
 			SKILL1_DAMAGE_RATE,
 			trans.pos, trans.rotation,
-			operatorSenderId,
+			controlSenderId,
 			characterStats
 		)
 	);
 
 	// 突進攻撃の当たり判定を生成
-	tackleAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PLAYER_ATTACK, 100.0f, Vector3(),
+	tackleAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PlayerAttack, 100.0f, Vector3(),
 		SKILL2_DAMAGE_RATE, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle,
-		trans, operatorSenderId, characterStats);
+		trans, controlSenderId, characterStats);
 	subObjArray.emplace_back(tackleAttack);
 
 	// スタンプ攻撃の当たり判定を生成
-	stampAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PLAYER_ATTACK, 300.0f, Vector3(),
+	stampAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PlayerAttack, 300.0f, Vector3(),
 		SKILL3_DAMAGE_RATE, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp,
-		trans, operatorSenderId, characterStats);
+		trans, controlSenderId, characterStats);
 	subObjArray.emplace_back(stampAttack);
 
 #pragma endregion 
@@ -87,7 +87,7 @@ void TomatoPlayer::PlayerLoad(void)
 			// 自分の状態かどうかを返す関数
 			[&]() { return state == (int)STATE::SKILL_1; },
 			// 頭突き攻撃の当たり判定発生管理用クラス
-			*SubObjSerch<TomatoPlayerHeadButtCollOperator>(),
+			*SubActorSerch<TomatoPlayerHeadButtCollOperator>(),
 			// クールタイム
 			SKILL1_COOL_TIME,
 			// 頭突き中の時間 / 頭突きの速度
@@ -118,10 +118,10 @@ void TomatoPlayer::PlayerLoad(void)
 			// チャージ後の突進の攻撃力を増やす関数のポインタ.
 			[&]() { 
 				characterStats.attackPower.AddModifier(
-					ModifierData(ModifierTypeConversionId(operatorSenderId, ModifierType::TackleChargeMaxBuff), 30, 60)
+					ModifierData(ModifierTypeConversionId(controlSenderId, ModifierType::TackleChargeMaxBuff), 30, 60)
 				); 
 			},
-			[&]() { characterStats.attackPower.DeleteModifier(operatorSenderId, ModifierType::TackleChargeMaxBuff); },
+			[&]() { characterStats.attackPower.DeleteModifier(controlSenderId, ModifierType::TackleChargeMaxBuff); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -202,7 +202,7 @@ void TomatoPlayer::PlayerLoad(void)
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
 			number++;
-			if (operatorSenderId == (MSG_SENDER_ID)id) { break; }
+			if (controlSenderId == (MSG_SENDER_ID)id) { break; }
 		}
 	}
 
@@ -215,8 +215,8 @@ void TomatoPlayer::PlayerLoad(void)
 			HP_IMAGE_NAME,
 			HP_LOST_IMAGE_NAME,
 			"TomatoIcon",
-			"P" + std::to_string((int)operatorSenderId + 1) + "Frame",
-			"P" + std::to_string((int)operatorSenderId + 1) + "Back",
+			"P" + std::to_string((int)controlSenderId + 1) + "Frame",
+			"P" + std::to_string((int)controlSenderId + 1) + "Back",
 			HP_IMAGE_SIZE,
 			HP_GAUGE_OFFSET,
 			HP_UI_POS[number],
@@ -298,12 +298,12 @@ void TomatoPlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
 
-	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(operatorSenderId)) {
+	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(controlSenderId)) {
 		state = dataPtr->state;
 
 		switch ((STATE)state) {
 		case PlayerBase::STATE::SKILL_1: {
-			SubObjSerch<TomatoPlayerHeadButtCollOperator>()->ResetIsHit();
+			SubActorSerch<TomatoPlayerHeadButtCollOperator>()->ResetIsHit();
 			break;
 		}
 		case PlayerBase::STATE::SKILL_2: {
@@ -325,14 +325,14 @@ void TomatoPlayer::ReceptionUpdate(void)
 		delete dataPtr;
 	}
 
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(operatorSenderId)) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(controlSenderId)) {
 
 		switch (dataPtr->collKinds) {
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt: {
 			// 三段攻撃
-			if (dataPtr->isCollider) { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
-			else { SubObjSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
+			if (dataPtr->isCollider) { SubActorSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
+			else { SubActorSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
 			break;
 		}
 

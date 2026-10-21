@@ -44,12 +44,12 @@ static constexpr ModifierTarget MODIFIER_TARGET_TABLE[(int)ModifierType::Max] =
 };
 
 // バフ/デバフ タイプを識別番号へ変換する関数
-static unsigned char ModifierTypeConversionId(MSG_SENDER_ID operatorSenderId, ModifierType modifierType) {
+static unsigned char ModifierTypeConversionId(MSG_SENDER_ID controlSenderId, ModifierType modifierType) {
 
 	unsigned char ret = 0;
 
 	// 左2ビットを操作者IDの領域とする
-	ret = (int)operatorSenderId << 6;
+	ret = (int)controlSenderId << 6;
 
 	// 左2ビットはそのままでそれ以降のビットをModifierTypeの領域とする
 	ret += (int)modifierType;
@@ -59,7 +59,7 @@ static unsigned char ModifierTypeConversionId(MSG_SENDER_ID operatorSenderId, Mo
 }
 
 // ModifierTypeの識別番号を操作者IDへ変換する関数
-static MSG_SENDER_ID IdConversionOperatorSenderId(unsigned char modifierTypeId) {
+static MSG_SENDER_ID IdConversioncontrolSenderId(unsigned char modifierTypeId) {
 	return (MSG_SENDER_ID)(modifierTypeId >> 6);
 }
 

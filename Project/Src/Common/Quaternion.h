@@ -177,4 +177,7 @@ struct Quaternion
 	/// </summary>
 	/// <returns>Y軸回転角度（ラジアン）</returns>
 	float GetYaw(void) const;
+
+
+	Vector3 ToEulerXZY() const;
 };

@@ -9,7 +9,7 @@ public:
 	~GrapeBossSingleBomb() = default;
 
 	// ロード
-	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
+	virtual void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
 
 	// 爆発までのカウント
 	const float BOMBER_COUNT = GetParameter("SingleBomb", "BomberCnt");

@@ -90,6 +90,8 @@ enum class MSG_DATA_TYPE
     BossIsDeath,
     // <ホスト>ボスのターゲット情報
     BossTarget,
+    // <ホスト>ボス : ステート遷移
+    BossChangeState,
     // <ホスト>ボス : アニメーションの種類
     BossAnimeType,
     // <ホスト>ボス : ボムの種類
@@ -1139,22 +1141,40 @@ struct MsgDataBossHit
 
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
-    Vector3 collisionPoint;
+
+    // ダメージ量
     short damage;
+
+    // クリティカル
     bool clitical;
 
-    MsgDataBossHit(const Vector3& collisionPoint, short damage, bool clitical) :
+    // 攻撃者
+    MSG_SENDER_ID controlSenderId;
+
+    // 衝突点
+    Vector3 collisionPoint;
+
+    MsgDataBossHit(short damage, bool clitical, MSG_SENDER_ID controlSenderId, const Vector3& collisionPoint) :
         header(DATA_TYPE),
-        collisionPoint(collisionPoint),
+
         damage(damage),
-        clitical(clitical)
+        clitical(clitical),
+
+        controlSenderId(controlSenderId),
+
+        collisionPoint(collisionPoint)
     {
     }
+
     MsgDataBossHit(void) :
         header(DATA_TYPE),
-        collisionPoint(),
+
         damage(),
-        clitical()
+        clitical(),
+
+        controlSenderId(MSG_SENDER_ID::None),
+
+        collisionPoint()
     {
     }
 };
@@ -1212,21 +1232,47 @@ struct MsgDataBossTarget
 };
 
 // <ホスト>ボスアニメーション情報送信構造体
+struct MsgDataBossChangeState
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossChangeState;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー
+    MsgDataHeader header;
+
+    int state;
+
+    MsgDataBossChangeState(int state) :
+        header(DATA_TYPE),
+        state(state)
+    {
+    }
+    MsgDataBossChangeState() :
+        header(DATA_TYPE),
+        state(state)
+    {
+    }
+};
+
+// <ホスト>ボスアニメーション情報送信構造体
 struct MsgDataBossAnimeType
 {
     // 列挙型定義との紐づけ
     static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::BossAnimeType;
 
     // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
 
     // ヘッダー
     MsgDataHeader header;
 
     int animeType;
-    bool loop;
+    signed char loop;
 
-    MsgDataBossAnimeType(int animeType, bool loop) :
+    MsgDataBossAnimeType(int animeType, signed char loop) :
         header(DATA_TYPE),
         animeType(animeType),
         loop(loop)

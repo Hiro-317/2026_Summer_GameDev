@@ -11,6 +11,7 @@
 #include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
+#include "../../Manager/TimeScale/TimeScale.h"
 
 #include "../SceneManager.h"
 
@@ -21,6 +22,7 @@
 #include "../Common/GameDebugScene.h"
 
 #include "../../Object/Game/Player/PlayerManager/PlayerManager.h"
+#include "../../Object/Game/Player/PlayerBase.h"
 
 #include "../../Object/Game/Boss/Tomato/TomatoBoss.h"
 #include "../../Object/Game/Boss/Grape/GrapeBoss.h"
@@ -153,7 +155,6 @@ void GameScene::SubPostUpdate(void)
 	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PushGamePause);
-		EffectManager::GetIns()->PauseEffect();
 		SceneManager::GetIns().PushScene(std::make_unique<GamePause>(Net::GetIns().GetSenderId()));
 		return;
 	}
@@ -164,10 +165,6 @@ void GameScene::SubPostUpdate(void)
 		// 同期
 		if (Net::GetIns().GetState() != Net::NetState::None && Net::GetIns().IsHost()) { Net::GetIns().Send(MsgDataGameTime(time)); }
 		SceneManager::GetIns().SetClearTime(time);
-
-
-		// シーン切り替え時に前シーンのエフェクトを残さない
-		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
 
 		switch (SceneManager::GetIns().GetSelectBossType())
 		{
@@ -189,9 +186,6 @@ void GameScene::SubPostUpdate(void)
 	// ゲームオーバー判定
 	if (ActorSerch<PlayerManager>(actors)->IsPlayerAllDeath()) {
 
-		// シーン切り替え時に前シーンのエフェクトを残さない
-		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
-
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver, FADE_TYPE::Default, 90, 0xffffff, 0x000000);
 		return;
 	}
@@ -201,23 +195,16 @@ void GameScene::SubPostUpdate(void)
 	if (Input::GetIns().GetInfo(KEY_TYPE::DebugReload).down) {
 		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
 
-		// シーン切り替え時に前シーンのエフェクトを残さない
-		if (EffectManager::GetIns() != nullptr) { EffectManager::GetIns()->StopEffectAll(); }
-
 		return;
 	}
 #endif // _DEBUG
-
-	EffectManager::GetIns()->UpdateEffect();
-	EffectManager::GetIns()->ReceptionUpdate();
-	UpdateEffekseer3D();
 
 #pragma endregion
 
 #pragma region 時間計測
 
 	// 時間更新
-	time += FRAME_TIME;
+	time += FRAME_TIME * TimeScale::Get();
 
 	// 同期
 	if (Net::GetIns().GetState() != Net::NetState::None&&Net::GetIns().IsHost()) {
