@@ -1,7 +1,7 @@
 #include "PlayerBase.h"
 
 #include "../../../Manager/Font/FontManager.h"
-
+#include "../../../Manager/TimeScale/TimeScale.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
@@ -33,7 +33,14 @@ PlayerBase::PlayerBase(
 		parameterPath
 	),
 	otherPlayerTrans(),
-	bossPos(nullptr)
+	bossPos(nullptr),
+
+	targetPlayerIndex(),
+	targetPlayerPos(),
+
+	invincibleCounter(),
+
+	isDeath()
 {
 	trans.LoadModel(("Character/" + modelPath).c_str());
 
@@ -130,6 +137,12 @@ void PlayerBase::SubUpdate(void)
 	if (characterStats.hp <= 0 && GetState() != (int)STATE::DEATH) {
 		ChangeState(STATE::DEATH);
 	}
+
+	// 無敵時間更新
+	if (invincibleCounter > 0.0f) {
+		invincibleCounter -= TimeScale::Get();
+		if (invincibleCounter < 0.0f) { invincibleCounter = 0.0f; }
+	}
 }
 
 void PlayerBase::ChangeState(int nextState)
@@ -184,7 +197,7 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 #pragma endregion
 
 	// 無敵時間の判定
-	if (invincibleCounter > 0) { return; }
+	if (invincibleCounter > 0.0f) { return; }
 
 #pragma region マイナス効果の判定
 
@@ -202,6 +215,9 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 
 		// ダメージ値分HPを減らす
 		characterStats.hp -= damage;
+
+		// HPがなくなったら死亡状態に遷移させる
+		if (characterStats.hp <= 0) { ChangeState(STATE::DEATH); }
 
 		return;
 	}
@@ -324,18 +340,6 @@ void PlayerBase::ReceptionUpdate(void)
 			}
 		}
 
-		delete dataPtr;
-	}
-
-	// 回避した時の「ミス！」表示
-	while (MsgDataPlayerMissNotice* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(controlSenderId)) 
-	{
-		if (!Net::GetIns().IsHost()) {
-			if (dataPtr->playerNo == Net::GetIns().GetSenderId()) {
-				//SubUiSerch<HitUI>()->MissSetting();
-			}
-		}
-		
 		delete dataPtr;
 	}
 

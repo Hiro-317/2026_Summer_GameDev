@@ -681,17 +681,17 @@ struct MsgDataPlayerMissNotice
     // ヘッダー（全ての構造体の先頭に配置する）
     MsgDataHeader header;
 
-    // ミスを描画する
-    MSG_SENDER_ID playerNo;
+    // 回避地点
+    Vector3 point;
 
-    MsgDataPlayerMissNotice(MSG_SENDER_ID playerNo) :
+    MsgDataPlayerMissNotice(Vector3 point) :
         header(DATA_TYPE),
-        playerNo(playerNo)
+        point(point)
     {
     }
     MsgDataPlayerMissNotice(void) :
         header(DATA_TYPE),
-        playerNo()
+        point()
     {
     }
 };

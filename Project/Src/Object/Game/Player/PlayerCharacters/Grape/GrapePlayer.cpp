@@ -166,11 +166,7 @@ void GrapePlayer::PlayerLoad(void)
 			// アニメーションの終了フラグを取得する関数
 			std::bind(GrapePlayer::IsAnimeEnd, this),
 			// 死亡演出終了後の処理
-			[&]() {
-				if (Net::GetIns().GetConnectStatus().EntryCount() > 1) {
-					ChangeState((int)STATE::OTHER_WATCH);
-				}
-			}
+			[&]() {isDeath = true; }
 		)
 	);
 

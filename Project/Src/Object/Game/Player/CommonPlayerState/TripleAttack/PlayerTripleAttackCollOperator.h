@@ -65,10 +65,10 @@ public:
 	const Vector3& GetTargetPos(void)const { return *targetPos; }
 
 	// 指定の段の攻撃の判定を発生させる
-	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage);
+	void CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage, bool sendNetwork = true);
 
 	// 指定の段の攻撃の判定を消す（指定がない場合は全ての段の判定を消す）
-	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::None);
+	void CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage = PLAYER_TRIPLE_ATTACK_STAGE::None, bool sendNetwork = true);
 
 	// 攻撃対象をリセットする
 	void ResetTarget(void) { isFindAttackTarget = false; targetPos = nullptr; }

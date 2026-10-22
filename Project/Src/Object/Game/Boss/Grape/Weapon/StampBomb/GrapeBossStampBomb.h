@@ -42,4 +42,7 @@ private:
 	SphereCollider* objectCollRef;
 	// プレイヤーに対する攻撃判定を行うためのコライダーの参照
 	SphereCollider* attackCollRef;
+
+	// 爆発
+	void Blast(bool send);
 };

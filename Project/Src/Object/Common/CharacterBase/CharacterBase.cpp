@@ -73,15 +73,11 @@ CharacterBase::CharacterBase(
 void CharacterBase::BaseUpdate(void)
 {
 	// ステートの更新
-	if (!stateMap.empty()) {
+	if (IsOwnControl() && !stateMap.empty()) {
 		stateMap.at(state)->OtherStateConditionsUpdate();
 		stateMap.at(state)->Update();
 		for (std::pair<const int, CharacterStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
 	}
-
-	// 無敵時間更新
-	if (invincibleCounter > 0) { invincibleCounter--; }
-	else { invincibleCounter = 0; }
 
 	// アニメーション更新
 	if (anime) { anime->Update(); }
@@ -125,13 +121,13 @@ void CharacterBase::RegisterStateTransition(int beforeState, int afterState)
 void CharacterBase::ChangeState(int nextState)
 {
 	// 遷移前のステートの終了処理を呼び出す
-	if (stateMap.contains(state)) { stateMap.at(state)->Exit(); }
+	if (IsOwnControl() && stateMap.contains(state)) { stateMap.at(state)->Exit(); }
 
 	// 遷移
 	state = nextState;
 
 	// 遷移後のステートの初期化処理を呼び出す
-	if (stateMap.contains(state)) { stateMap.at(state)->Enter(); }
+	if (IsOwnControl() && stateMap.contains(state)) { stateMap.at(state)->Enter(); }
 }
 
 CharacterStateBase& CharacterBase::GetStateIns(int state)

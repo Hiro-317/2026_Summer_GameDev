@@ -277,11 +277,7 @@ void OrangePlayer::PlayerLoad(void)
 			// アニメーションの終了フラグを取得する関数
 			std::bind(OrangePlayer::IsAnimeEnd, this),
 			// 死亡演出終了後の処理
-			[&]() {
-				if (Net::GetIns().GetConnectStatus().EntryCount() > 1) {
-					ChangeState((int)STATE::OTHER_WATCH);
-				}
-			}
+			[&]() { isDeath = true; }
 		)
 	);
 
@@ -392,6 +388,9 @@ void OrangePlayer::PlayerLoad(void)
 
 void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
+	// 判定そのものはホストがすべて請け負う
+	if (!Net::GetIns().IsHost()) { return; }
+
 	// 回避時の特殊無敵判定
 	if (isInvincible) {
 		// ダメージが発生するコライダーを検出
@@ -399,6 +398,9 @@ void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, c
 
 			// 回避成功のエフェクトを発生
 			hitUiRef->MissSetting(result.point);
+
+			// 回避成功を通知
+			Net::GetIns().Send(MsgDataPlayerMissNotice(result.point), controlSenderId, controlSenderId);
 
 			// 通常の無敵判定を発生させる
 			invincibleCounter = 30;
@@ -452,6 +454,14 @@ void OrangePlayer::ReceptionUpdate(void)
 
 		default: { break; }	// 例外
 		}
+
+		delete dataPtr;
+	}
+
+	// 回避した時の「ミス！」表示
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerMissNotice>(controlSenderId)) {
+
+		hitUiRef->MissSetting(dataPtr->point);
 
 		delete dataPtr;
 	}

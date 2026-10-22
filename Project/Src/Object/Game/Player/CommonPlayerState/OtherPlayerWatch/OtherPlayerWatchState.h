@@ -15,8 +15,9 @@ public:
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
 
+	// 
+
 private:
-	//const int PLAYER_MAX = Net::GetIns().GetConnectStatus().EntryCount();
 
 	// 座標の参照
 	const std::vector<const Transform*>& playerTrans;

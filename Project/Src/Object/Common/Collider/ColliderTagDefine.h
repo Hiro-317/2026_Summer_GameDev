@@ -30,6 +30,8 @@ enum class COLLIDER_TAG
 
 	Boss,
 
+	BossCommon,
+
 	BossAttackArea,
 
 	BossAttack,

@@ -146,7 +146,7 @@ void PlayerTripleAttackCollOperator::TargetSerch(void)
 	findCollRef->SetJudgeFlg(true);
 }
 
-void PlayerTripleAttackCollOperator::CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage)
+void PlayerTripleAttackCollOperator::CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage, bool sendNetwork)
 {
 	if (!isHit) { attackCollRef[(int)stage]->SetJudgeFlg(true); }
 
@@ -155,7 +155,7 @@ void PlayerTripleAttackCollOperator::CollOn(PLAYER_TRIPLE_ATTACK_STAGE stage)
 	}
 }
 
-void PlayerTripleAttackCollOperator::CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage)
+void PlayerTripleAttackCollOperator::CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage, bool sendNetwork)
 {
 	// 探索用の判定を消す
 	findCollRef->SetJudgeFlg(false);
@@ -169,7 +169,7 @@ void PlayerTripleAttackCollOperator::CollOff(PLAYER_TRIPLE_ATTACK_STAGE stage)
 
 	// コライダー消去通知を送信
 	if (!Net::GetIns().IsHost()) {
-		Net::GetIns().Send(MsgDataPlayerCollOperator(false, SEND_COLLIDER_TYPE[(int)stage]));
+		Net::GetIns().Send(MsgDataPlayerCollOperator(false, SEND_COLLIDER_TYPE[(int)stage]), controlSenderId, Net::HOST_SENDER_ID);
 	}
 }
 

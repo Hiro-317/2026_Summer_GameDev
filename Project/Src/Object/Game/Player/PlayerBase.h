@@ -58,7 +58,7 @@ public:
 	// 自身以外のプレイヤー座標を取得
 	void SetOtherPlayerTrans(const Transform* pos) { otherPlayerTrans.emplace_back(pos); }
 
-	const bool& GetIsDeath(void)const { return false; }
+	const bool& GetIsDeath(void)const { return isDeath; }
 
 private:
 
@@ -101,6 +101,9 @@ protected:
 
 		MAX
 	};
+
+	// 被ダメージによる無敵時間
+	static constexpr short DAMAGE_INVINCIBLE_TIME = 150;
 
 #pragma region UI
 
@@ -182,4 +185,10 @@ protected:
 	// モデルアニメーションプレイ関数
 	void AnimePlay(int type, signed char loop = -1)override;
 	using CharacterBase::AnimePlay;
+
+	// 無敵時間
+	float invincibleCounter;
+
+	// 死亡判定
+	bool isDeath;
 };

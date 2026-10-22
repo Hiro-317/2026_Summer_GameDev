@@ -150,14 +150,10 @@ void TomatoPlayer::PlayerLoad(void)
 			isGround,
 			// スタンプ攻撃の当たり判定発生管理用クラス
 			*stampCollOperatorRef,
-
 			std::bind(&TomatoPlayer::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
-
 			velocity,
-
-			[&]() { GetGravityFlg() ? SetGravityFlg(false) : SetGravityFlg(true); },
-			[&]() { return  isGround; },
+			std::bind(&TomatoPlayer::SetGravityFlg,this,std::placeholders::_1),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -166,14 +162,10 @@ void TomatoPlayer::PlayerLoad(void)
 	AddState(
 		STATE::DAMAGE,
 		new TomatoPlayerDamageState(
-			// 自分の状態に関する関数
-			[&]() { ChangeState((int)STATE::DAMAGE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::DAMAGE; },
 			// 座標
 			trans.rotation,
 			// 無敵時間のセット関数
-			[&]() { SetInviCounter(60); },
+			[&]() {},
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -183,12 +175,8 @@ void TomatoPlayer::PlayerLoad(void)
 	AddState(
 		STATE::DEATH,
 		new TomatoPlayerDeathState(
-			[&]() { ChangeState((int)STATE::DEATH); },
-			[&]() { return state == (int)STATE::DEATH; },
-			trans.pos, trans.rotation,
-			[&]() { PlayerDeathSetting(); },
-			[&]() { SetIsDeath(true); },
-			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+			trans,
+			[&]() {isDeath = true; }
 		)
 	);
 
@@ -274,120 +262,24 @@ void TomatoPlayer::PlayerLoad(void)
 				GetParameterToInt("SimpleAttack", "CoolTime"),
 				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns(STATE::SKILL_2))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Red,
-				"SkillSlotSimpleAttack"
+				"SkillSlotTomatoTackle"
 			)
 		);
 
 		// スキル3UIの登録
 		AddChildActor(
 			new PlayerSkillUI(
-				SKILL2_UI_DRAW_POS,
+				SKILL3_UI_DRAW_POS,
 				GetParameterToInt("Dodge", "CoolTime"),
 				dynamic_cast<TomatoPlayerStampState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Red,
-				"SkillSlotDodge"
-			)
-		);
-
-	}
-
-#pragma endregion 
-
-	// HPUIの座標設定
-	int number = 0;
-	if (isOwnOperator) {
-		number = 0;
-	}
-	else {
-		// 操作者だけ一番上に表示、それ以外の人のHPは下に描画
-		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
-			number++;
-			if (controlSenderId == (MSG_SENDER_ID)id) { break; }
-		}
-	}
-
-	// HPの登録
-	ui_ArrayIns.emplace_back(
-		new CharacterHpUI(
-			characterStats.hp,
-			characterStats.hpMax.Value(),
-			HP_FRAME_IMAGE_NAME,
-			HP_IMAGE_NAME,
-			HP_LOST_IMAGE_NAME,
-			"TomatoIcon",
-			"P" + std::to_string((int)controlSenderId + 1) + "Frame",
-			"P" + std::to_string((int)controlSenderId + 1) + "Back",
-			HP_IMAGE_SIZE,
-			HP_GAUGE_OFFSET,
-			HP_UI_POS[number],
-			FILE_PATH_TYPE::PLAYER_HP,
-			"TomatoPlayer"
-		)
-	);
-
-	// このプレイヤーの操作者だけ通す
-	if (isOwnOperator)
-	{
-		// スタミナのUI登録
-		ui_ArrayIns.emplace_back(
-			new PlayerStaminaUI(
-				dynamic_cast<TomatoPlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
-				DASH_STAMINA_MAX
-			)
-		);
-		
-		// スキル1UIの登録
-		ui_ArrayIns.emplace_back(
-			new PlayerSkillUI(
-				// 描画座標
-				SKILL1_UI_DRAW_POS,
-				// クールタイム変数
-				dynamic_cast<TomatoPlayerHeadButtState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-				// クールタイムの最大値
-				SKILL1_COOL_TIME,
-				// UIの色指定
-				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
-				// 描画する画像
-				"SkillSlotSimpleAttack"
-			)
-		);
-
-		// スキル2UIの登録
-		ui_ArrayIns.emplace_back(
-			new PlayerSkillUI(
-				// 描画座標
-				SKILL2_UI_DRAW_POS,
-				// クールタイム変数
-				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-				// クールタイムの最大値
-				SKILL2_COOL_TIME,
-				// UIの色指定
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
-				// 描画する画像
-				"SkillSlotTomatoTackle",
-				true
-			)
-		);
-
-		// スキル3UIの登録
-		ui_ArrayIns.emplace_back(
-			new PlayerSkillUI(
-				// 描画座標
-				SKILL3_UI_DRAW_POS,
-				// クールタイム変数
-				dynamic_cast<TomatoPlayerStampState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-				// クールタイムの最大値
-				SKILL3_COOL_TIME,
-				// UIの色指定
-				PlayerSkillUI::SKILL_UI_COLOR::RED,
-				// 描画する画像
 				"SkillSlotTomatoStamp"
 			)
 		);
+
 	}
 
-	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+#pragma endregion
 }
 
 void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -400,28 +292,8 @@ void TomatoPlayer::ReceptionUpdate(void)
 	PlayerBase::ReceptionUpdate();
 
 	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(controlSenderId)) {
-		state = dataPtr->state;
 
-		switch ((STATE)state) {
-		case PlayerBase::STATE::SKILL_1: {
-			SubActorSerch<TomatoPlayerHeadButtCollOperator>()->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::SKILL_2: {
-			tackleAttack->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::SKILL_3: {
-			stampAttack->ResetIsHit();
-			break;
-		}
-		case PlayerBase::STATE::DEATH: {
-			PlayerDeathSetting();
-			break;
-		}
-
-		default: { break; }
-		}
+		ChangeState(dataPtr->state);
 
 		delete dataPtr;
 	}
@@ -431,23 +303,24 @@ void TomatoPlayer::ReceptionUpdate(void)
 		switch (dataPtr->collKinds) {
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt: {
-			// 三段攻撃
-			if (dataPtr->isCollider) { SubActorSerch<TomatoPlayerHeadButtCollOperator>()->CollOn(); }
-			else { SubActorSerch<TomatoPlayerHeadButtCollOperator>()->CollOff(); }
+			// 通常攻撃
+			if (dataPtr->isCollider) { headButtCollOperatorRef->CollOn(false); }
+			else { headButtCollOperatorRef->CollOff(false); }
+			
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle: {
 			// タックル
-			if (dataPtr->isCollider) { tackleAttack->CollOn(false); }
-			else { tackleAttack->CollOff(false); }
+			if (dataPtr->isCollider) { tackleCollOperatorRef->CollOn(false); }
+			else { tackleCollOperatorRef->CollOff(false); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp: {
 			// スタンプ
-			if (dataPtr->isCollider) { stampAttack->CollOn(false); }
-			else { stampAttack->CollOff(false); }
+			if (dataPtr->isCollider) { stampCollOperatorRef->CollOn(false); }
+			else { stampCollOperatorRef->CollOff(false); }
 
 			break;
 		}

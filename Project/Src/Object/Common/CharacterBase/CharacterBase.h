@@ -154,7 +154,4 @@ protected:
 	void SetAnimeStep(float step);
 	
 #pragma endregion
-
-	// –³“GŽžŠÔ
-	unsigned short invincibleCounter;
 };

@@ -1,5 +1,7 @@
 #include "PeachPlayer.h"
 
+#include "../../../../../Manager/Net/NetWorkManager.h"
+
 #include "../../../../../Scene/SceneManager.h"
 
 #include "../../CommonPlayerState/Idle/PlayerIdleState.h"
@@ -217,11 +219,7 @@ void PeachPlayer::PlayerLoad(void)
 			// アニメーションの終了フラグを取得する関数
 			std::bind(PeachPlayer::IsAnimeEnd, this),
 			// 死亡演出終了後の処理
-			[&]() {
-				if (Net::GetIns().GetConnectStatus().EntryCount() > 1) {
-					ChangeState((int)STATE::OTHER_WATCH);
-				}
-			}
+			[&]() {isDeath = true; }
 		)
 	);
 

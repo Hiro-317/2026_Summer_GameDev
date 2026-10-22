@@ -44,6 +44,7 @@ public:
 		return  coolTimeCounter += COOL_TIME / CHARGE_TIME;
 	}
 
+	const float& GetCoolTimeCounter(void)const { return coolTimeCounter; }
 private:
 
 #pragma region ’è”’è‹`
