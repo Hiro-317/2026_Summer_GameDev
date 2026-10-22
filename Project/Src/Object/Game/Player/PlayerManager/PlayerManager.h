@@ -17,9 +17,6 @@ public:
 
 	void Load(void)override;
 
-	void ReceptionUpdate(void)override;
-	void SendUpdate(void)override;
-
 	const PlayerBase* GetPlayerIns(const MSG_SENDER_ID id)const { return playerInfoRef[(int)id].instance; }
 
 	bool IsPlayerAllDeath(void)const;

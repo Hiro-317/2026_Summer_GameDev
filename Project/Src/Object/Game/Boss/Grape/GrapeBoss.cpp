@@ -26,25 +26,21 @@
 
 #include "../../../../Scene/Game/GameScene.h"
 
-#include "../../../../Manager/Effect/EffectManager.h"
-
-#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../UI/HitUI/HitUI.h"
+#include "../../UI/HpBarUI.h"
+#include "../../UI/HitUI.h"
 
 
-GrapeBoss::GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath) :
+GrapeBoss::GrapeBoss() :
 	BossBase(
 		"Data/Parameter/Character/Boss/Grape/",
-		"Grape/GrapeModel",
-
-		playerPos, playerDeath)
+		"Grape/GrapeModel"
+	)
 {
-
 	coolTime = 120;
 	Snd::GetIns().AddScene("GrapeBoss");
 }
 
-void GrapeBoss::PlayerLoad(void)
+void GrapeBoss::BossLoad(void)
 {
 	// ƒAƒjƒ[ƒVƒ‡ƒ“````````````````````````````
 
@@ -68,12 +64,8 @@ void GrapeBoss::PlayerLoad(void)
 #pragma region ó‘Ôİ’è
 
 	AddState(
-		static_cast<int>(STATE::IDLE),
+		STATE::IDLE,
 		new GrapeBossIdleState(
-			// ©•ª‚Ìó‘Ô‚É‘JˆÚ‚·‚éŠÖ”
-			[&]() { state = static_cast<int>(STATE::IDLE); },
-			// ©•ª‚Ìó‘Ô‚©‚Ç‚¤‚©‚ğ•Ô‚·ŠÖ”
-			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// ©•ª‚ÌÀ•WAƒvƒŒƒCƒ„[‚ÌÀ•W‚Ì“Ç‚İæ‚è
 			trans.pos, trans.rotation, playerPos,
 			// ƒN[ƒ‹ƒ^ƒCƒ€
@@ -311,27 +303,29 @@ void GrapeBoss::PlayerLoad(void)
 
 #pragma endregion
 
+#pragma region UI‚Ì“o˜^‚Æİ’è
 
-#pragma region UI¶¬
-	// HPƒo[¶¬
-	ui_ArrayIns.emplace_back(
-		new CharacterHpUI(
-			characterStats.hp,
-			characterStats.hpMax.Value(),
-			HP_FRAME_IMAGE_NAME,
-			HP_IMAGE_NAME,
-			HP_LOST_IMAGE_NAME,
-			"","","",
-			HP_IMAGE_SIZE,
-			HP_GAUGE_OFFSET,
+	// HPƒo[UI‚Ì“o˜^
+	AddChildActor(
+		new HpBarUI(
+			"Data/Image/Game/UI/Boss/HP/" + HP_FRAME_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_LOST_IMAGE_NAME,
+			
+			Vector2I(667,50),
+			Vector2I(629,50),
+
 			HP_UI_POS,
-			FILE_PATH_TYPE::BOSS_HP,
-			""
+
+			characterStats
 		)
 	);
 
-	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
-#pragma endregion
+	// ƒqƒbƒgUI‚Ì¶¬ / “o˜^
+	hitUiRef = new HitUI();
+	AddChildActor(hitUiRef);
+
+#pragma endregion 
 
 }
 

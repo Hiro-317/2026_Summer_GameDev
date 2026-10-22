@@ -56,10 +56,30 @@ enum class MSG_DATA_TYPE
     PlayerHeal,
     // <ホスト>プレイヤー：バフ・デバフ
     PlayerModifier,
-    // <ホスト/クライアント>プレイヤー：ショットの発射
-    PlayerShotStart,
-    // <ホスト/クライアント>プレイヤー：ショットの終了
-    PlayerShotEnd,
+
+
+    // <ホスト/クライアント>ぶどうプレイヤー：ショットの座標同期
+    GrapePlayerShotPos,
+    // <ホスト/クライアント>ぶどうプレイヤー：ショットの発射
+    GrapePlayerShot,
+    // <ホスト/クライアント>ぶどうプレイヤー：ショット爆発
+    GrapePlayerShotBlast,
+
+
+    // <ホスト/クライアント>ぶどうプレイヤー：ボムスローの座標同期
+    GrapePlayerThrowPos,
+    // <ホスト/クライアント>ぶどうプレイヤー：ボムスローの発射
+    GrapePlayerThrow,
+    // <ホスト/クライアント>ぶどうプレイヤー：ボムスロー爆発
+    GrapePlayerThrowBlast,
+
+
+    // <ホスト/クライアント>ぶどうプレイヤー：ボム設置
+    GrapePlayerBomb,
+    // <ホスト/クライアント>ぶどうプレイヤー：設置ボム爆発
+    GrapePlayerBombBlast,
+
+
     // <クライアント>プレイヤー：味方ターゲット
     PlayerToPlayerTarget,
     // <ホスト>プレイヤー：ミスUIパケット
@@ -68,15 +88,6 @@ enum class MSG_DATA_TYPE
     PlayerState,
     // <クライアント>当たり判定情報送信構造体
     PlayerCollOperator,
-
-    // <ホスト/クライアント>グレーププレイヤー：設置爆弾開始
-    GrapePlayerBombStart,
-    // <ホスト/クライアント>グレーププレイヤー：設置爆弾終了
-    GrapePlayerBombEnd,
-    // <ホスト/クライアント>グレーププレイヤー：爆弾投げ開始
-    GrapePlayerBombThrowStart,
-    // <ホスト/クライアント>グレーププレイヤー：爆弾投げ終了
-    GrapePlayerBombThrowEnd,
 
     // <ホスト>ボス : 自分の座標/角度
     BossTrans,
@@ -762,11 +773,37 @@ struct MsgDataPlayerModifier
     }
 };
 
-// <ホスト/クライアント>ショットの発射
-struct MsgDataPlayerShotStart
+// <ホスト/クライアント>ショットの座標同期
+struct MsgDataGrapePlayerShotPos
 {
     // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerShotStart;
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerShotPos;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerShotPos(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerShotPos(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+// <ホスト/クライアント>ショットの発射
+struct MsgDataGrapePlayerShot
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerShot;
 
     // データの送信チャンネル
     static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
@@ -778,13 +815,13 @@ struct MsgDataPlayerShotStart
 
     Vector3 vec;
 
-    MsgDataPlayerShotStart(const Vector3& pos, const Vector3& vec) :
+    MsgDataGrapePlayerShot(const Vector3& pos, const Vector3& vec) :
         header(DATA_TYPE),
         pos(pos),
         vec(vec)
     {
     }
-    MsgDataPlayerShotStart(void) :
+    MsgDataGrapePlayerShot(void) :
         header(DATA_TYPE),
         pos(),
         vec()
@@ -793,10 +830,10 @@ struct MsgDataPlayerShotStart
 };
 
 // <ホスト/クライアント>ショットの終了
-struct MsgDataPlayerShotEnd
+struct MsgDataGrapePlayerShotBlast
 {
     // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::PlayerShotEnd;
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerShotBlast;
 
     // データの送信チャンネル
     static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
@@ -806,12 +843,142 @@ struct MsgDataPlayerShotEnd
 
     Vector3 pos;
 
-    MsgDataPlayerShotEnd(const Vector3& pos) :
+    MsgDataGrapePlayerShotBlast(const Vector3& pos) :
         header(DATA_TYPE),
         pos(pos)
     {
     }
-    MsgDataPlayerShotEnd(void) :
+    MsgDataGrapePlayerShotBlast(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+// <ホスト/クライアント>ボムスローの座標同期
+struct MsgDataGrapePlayerThrowPos
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerThrowPos;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerThrowPos(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerThrowPos(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+// <ホスト/クライアント>ボムスローの発射
+struct MsgDataGrapePlayerThrow
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerThrow;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerThrow(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerThrow(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+// <ホスト/クライアント>ボムスローの終了
+struct MsgDataGrapePlayerBomb
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBomb;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerBomb(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerBomb(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+// <ホスト/クライアント>ボムスローの終了
+struct MsgDataGrapePlayerBombBlast
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombBlast;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerBombBlast(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerBombBlast(void) :
+        header(DATA_TYPE),
+        pos()
+    {
+    }
+};
+
+// <ホスト/クライアント>ボムスローの終了
+struct MsgDataGrapePlayerThrowBlast
+{
+    // 列挙型定義との紐づけ
+    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerThrowBlast;
+
+    // データの送信チャンネル
+    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Reliable;
+
+    // ヘッダー（全ての構造体の先頭に配置する）
+    MsgDataHeader header;
+
+    Vector3 pos;
+
+    MsgDataGrapePlayerThrowBlast(const Vector3& pos) :
+        header(DATA_TYPE),
+        pos(pos)
+    {
+    }
+    MsgDataGrapePlayerThrowBlast(void) :
         header(DATA_TYPE),
         pos()
     {
@@ -900,100 +1067,6 @@ struct MsgDataPlayerCollOperator
         header(DATA_TYPE),
         isCollider(),
         collKinds()
-    {
-    }
-};
-
-struct MsgDataGrapePlayerBombStart
-{
-    // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombStart;
-
-    // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
-
-    // ヘッダー（全ての構造体の先頭に配置する）
-    MsgDataHeader header;
-
-    Vector3 pos;
-
-    MsgDataGrapePlayerBombStart(const Vector3& pos) :
-        header(DATA_TYPE),
-        pos(pos)
-    {
-    }
-    MsgDataGrapePlayerBombStart(void) :
-        header(DATA_TYPE),
-        pos()
-    {
-    }
-};
-
-struct MsgDataGrapePlayerBombEnd
-{
-    // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombEnd;
-
-    // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
-
-    // ヘッダー（全ての構造体の先頭に配置する）
-    MsgDataHeader header;
-
-    Vector3 pos;
-
-    MsgDataGrapePlayerBombEnd(const Vector3& pos) :
-        header(DATA_TYPE),
-        pos(pos)
-    {
-    }
-    MsgDataGrapePlayerBombEnd(void) :
-        header(DATA_TYPE)
-    {
-    }
-};
-
-struct MsgDataGrapePlayerBombThrowStart
-{
-    // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombThrowStart;
-
-    // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
-
-    // ヘッダー（全ての構造体の先頭に配置する）
-    MsgDataHeader header;
-
-    Vector3 pos;
-    Vector3 vec;
-
-    MsgDataGrapePlayerBombThrowStart(const Vector3& pos, const Vector3& vec) :
-        header(DATA_TYPE),
-        pos(pos),
-        vec(vec)
-    {
-    }
-    MsgDataGrapePlayerBombThrowStart(void) :
-        header(DATA_TYPE),
-        pos(),
-        vec()
-    {
-    }
-};
-
-struct MsgDataGrapePlayerBombThrowEnd
-{
-    // 列挙型定義との紐づけ
-    static constexpr MSG_DATA_TYPE DATA_TYPE = MSG_DATA_TYPE::GrapePlayerBombThrowEnd;
-
-    // データの送信チャンネル
-    static constexpr MSG_DATA_CHANNEL DATA_CHANNEL = MSG_DATA_CHANNEL::Unreliable;
-
-    // ヘッダー（全ての構造体の先頭に配置する）
-    MsgDataHeader header;
-
-    MsgDataGrapePlayerBombThrowEnd(void) :
-        header(DATA_TYPE)
     {
     }
 };
@@ -1252,7 +1325,7 @@ struct MsgDataBossChangeState
     }
     MsgDataBossChangeState() :
         header(DATA_TYPE),
-        state(state)
+        state()
     {
     }
 };

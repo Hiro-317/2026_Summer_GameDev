@@ -2,7 +2,9 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "GrapePlayerShotCollOperator.h"
+class GrapePlayerWeaponShot;
+
+struct Transform;
 
 class GrapePlayerShotState : public CharacterStateBase
 {
@@ -10,16 +12,17 @@ public:
 
 	// コンストラクタ
 	GrapePlayerShotState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		GrapePlayerShotCollOperator& collOperator,
 		const int COOL_TIME,
-		Vector3& pos, Quaternion& rotation,
+
+		GrapePlayerWeaponShot& shotWeapon,
+
+		Transform& playerTrans,
+
 		const Vector3*& bossPos,
-		const std::function<void(void)> PlayAnime,
-		const std::function<bool(void)> IsAnimeEnd,
-		const std::function<float(void)> AnimeRatio,
-		const std::function<void(void)> DefaultChangeState
+
+		const std::function<void(void)> playAnime,
+		const std::function<float(void)> getAnimeRatio,
+		const std::function<void(void)> defaultChangeState
 	);
 
 	// デストラクタ
@@ -36,6 +39,9 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
+	// クールタイムを参照
+	const float& GetCoolTimeCounter(void)const { return coolTimeCounter; }
+
 private:
 #pragma region 定数定義
 
@@ -46,28 +52,28 @@ private:
 
 #pragma region 変数定義
 
-	// 座標の参照
-	Vector3& pos;
+	GrapePlayerWeaponShot& shotWeapon;
 
-	Quaternion& rotation;
+	// モデル制御情報の参照
+	Transform& playerTrans;
 
 	const Vector3*& bossPos;
 
-	GrapePlayerShotCollOperator& collOperator;
-
 	// 終了までのカウント用
-	short timeCounter;
+	float timeCounter;
 
-	const std::function<void(void)> PlayAnime;
-	const std::function<bool(void)> IsAnimeEnd;
-	const std::function<float(void)> AnimeRatio;
+	const std::function<void(void)> playAnime;
+	const std::function<float(void)> getAnimeRatio;
 
 	// 攻撃終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
 
 #pragma endregion 
 
 	Vector3 moveDir;
 
 	bool isShot;
+
+	float coolTimeCounter;
+
 };

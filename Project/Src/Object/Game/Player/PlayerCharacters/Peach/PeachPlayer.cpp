@@ -18,7 +18,6 @@
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
 
 #include "../../../UI/HpBarUI.h"
-#include "../../../UI/HitUI.h"
 
 #include "../../PlayerUI/PlayerSkillUI.h"
 #include "../../PlayerUI/PlayerStaminaUI.h"
@@ -121,9 +120,9 @@ void PeachPlayer::PlayerLoad(void)
 			// 横軸加速度の最大値の参照
 			ACCEL_MAX,
 			// 歩きアニメーション再生
-			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
+			[&]() { AnimePlay(ANIME_TYPE::WALK); },
 			// 走りアニメーション再生
-			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
+			[&]() { AnimePlay(ANIME_TYPE::RUN); }
 		)
 	);
 

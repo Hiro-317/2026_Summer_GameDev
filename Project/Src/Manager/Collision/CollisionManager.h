@@ -78,16 +78,16 @@ private:
 		{ COLLIDER_TAG::PlayerCommon,	COLLIDER_GROUP::Player },
 
 		// エネミー系
-		{ COLLIDER_TAG::Boss,	COLLIDER_GROUP::Enemy },
-		{ COLLIDER_TAG::Enemy,	COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::Boss,		COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::BossAttack,	COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::Enemy,		COLLIDER_GROUP::Enemy },
 
 		// ステージ系
 		{ COLLIDER_TAG::Stage,	COLLIDER_GROUP::Stage },
 
 		// プレイヤー系にだけ当たるコライダー
 		{ COLLIDER_TAG::BossDistance,	COLLIDER_GROUP::PlayerOnly },
-		{ COLLIDER_TAG::BossAttack,			COLLIDER_GROUP::PlayerOnly },
-		{ COLLIDER_TAG::PlayerHeal,			COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::PlayerHeal,		COLLIDER_GROUP::PlayerOnly },
 
 		// エネミー系にだけ当たるコライダー
 

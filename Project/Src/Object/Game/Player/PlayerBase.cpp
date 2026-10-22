@@ -1,7 +1,6 @@
 #include "PlayerBase.h"
 
 #include "../../../Manager/Font/FontManager.h"
-#include "../../../Manager/Effect/EffectManager.h"
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
@@ -166,9 +165,6 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 
 		// 回復させる
 		characterStats.HpHeal(heal);
-		
-		// エフェクト発生
-		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0, &trans);
 		return;
 	}
 	case COLLIDER_TAG::PlayerBuff: {	// バフ
@@ -181,9 +177,6 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		
 		// バフをかける
 		characterStats.AddModifier(modifier);
-
-		// エフェクト発生
-		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0, &trans);
 		return;
 	}
 	}
@@ -244,8 +237,6 @@ void PlayerBase::TargetPlayerNext(void)
 			targetPlayerPos = &otherPlayerTrans.at(targetPlayerIndex - 1)->pos;
 		}
 	}
-
-	targetIconPos = HP_UI_POS[targetPlayerIndex] + ICON_LOCAL_POS;
 
 	if (!Net::GetIns().IsHost()) {
 		Net::GetIns().Send(MsgDataPlayerToPlayerTarget((unsigned char)targetPlayerIndex), controlSenderId);
@@ -310,14 +301,12 @@ void PlayerBase::ReceptionUpdate(void)
 	// 回復
 	while (MsgDataPlayerHeal* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerHeal>(controlSenderId)) {
 		characterStats.HpHeal(dataPtr->heal);
-		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::HEAL, 0.0f, &trans);
 		delete dataPtr;
 	}
 
 	// バフ
 	while (MsgDataPlayerModifier* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerModifier>(controlSenderId)) {
 		characterStats.AddModifier(dataPtr->modifier);
-		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BUFF, 0.0f, &trans);
 		delete dataPtr;
 	}
 
@@ -349,6 +338,8 @@ void PlayerBase::ReceptionUpdate(void)
 		
 		delete dataPtr;
 	}
+
+	ActorBase::ReceptionUpdate();
 }
 
 void PlayerBase::SendUpdate(void)
@@ -357,4 +348,6 @@ void PlayerBase::SendUpdate(void)
 		// 自身の座標と角度を
 		Net::GetIns().Send(MsgDataPlayerTrans(trans.pos, trans.rotation), controlSenderId);
 	} 
+
+	ActorBase::SendUpdate();
 }

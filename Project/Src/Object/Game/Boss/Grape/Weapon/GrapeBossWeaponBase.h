@@ -2,6 +2,8 @@
 
 #include "../../../../Common/ActorBase/ActorBase.h"
 
+struct CharacterStats;
+
 // 種類の列挙型定義
 enum class WeaponType {
 	None = -1,
@@ -50,7 +52,7 @@ static constexpr int WeponDuplicateNum[(int)WeaponType::Max] = {
 class GrapeBossWeaponBase : public ActorBase
 {
 public:
-
+		
 	GrapeBossWeaponBase(int model, int front, int back);
 	~GrapeBossWeaponBase() = default;
 
@@ -59,22 +61,33 @@ public:
 	// 行うロード
 	virtual void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) = 0;
 
-	// 初期設定用関数
-	void SetStartPos(Vector3 pos) { trans.pos = pos; }
-	void ResetCount(void) { count = 0.0f; }
-
-	// コライダーのオン/オフ
-	void SetColliderFlg(bool flg) { SetJudgeFlg(flg); }
-	void ResetEnd(void) { end = false; }
-
 	// 攻撃が終わったか
-	bool IsEnd(void) { return end; }
+	virtual bool IsEnd(void)const { return state == STATE::None; }
 
 	// 予測線の設定(円形)
-	void SetViewScaleCircle(float scale) { collFront.scale = Vector3(scale); };
-	void SetViewPosCircle(void) { collBack.pos = trans.pos; collFront.pos = trans.pos; collBack.pos.y = VIEW_HEIGHT; collFront.pos.y = VIEW_HEIGHT; };
+	void SetViewScaleCircle(float scale) { collFront.scale = scale; };
+
+	void SetViewPosCircle(void) {
+
+		collBack.pos = trans.pos;
+		collBack.pos.y = VIEW_HEIGHT;
+
+		collFront.pos = trans.pos;
+		collFront.pos.y = VIEW_HEIGHT;
+	};
+
 
 protected:
+
+	enum class STATE {
+		None,
+
+		Fall,
+
+		Ground,
+
+		Blast,
+	};
 
 	// 基本
 	void SubDraw(void) override;
@@ -83,14 +96,10 @@ protected:
 	Transform collBack;
 	Transform collFront;
 
+	STATE state;
+
 	// 行動カウント
 	float count;
-
-	// 終了フラグ
-	bool end;
-
-	// 今開始されたか
-	bool now;
 
 private:
 #pragma region 定数定義

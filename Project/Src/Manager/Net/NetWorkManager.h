@@ -192,16 +192,22 @@ public:
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHeal: { delete static_cast<MsgDataPlayerHeal*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerModifier: { delete static_cast<MsgDataPlayerModifier*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerShotStart: { delete static_cast<MsgDataPlayerShotStart*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerShotEnd: { delete static_cast<MsgDataPlayerShotEnd*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerShotPos: { delete static_cast<MsgDataGrapePlayerShotPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShot: { delete static_cast<MsgDataGrapePlayerShot*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShotBlast: { delete static_cast<MsgDataGrapePlayerShotBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerThrowPos: { delete static_cast<MsgDataGrapePlayerThrowPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrow: { delete static_cast<MsgDataGrapePlayerThrow*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrowBlast: { delete static_cast<MsgDataGrapePlayerThrowBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerBomb: { delete static_cast<MsgDataGrapePlayerBomb*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombBlast: { delete static_cast<MsgDataGrapePlayerBombBlast*>(ptr); break; }
+
 					case MSG_DATA_TYPE::PlayerToPlayerTarget: { delete static_cast<MsgDataPlayerToPlayerTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombStart: { delete static_cast<MsgDataGrapePlayerBombStart*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombEnd: { delete static_cast<MsgDataGrapePlayerBombEnd*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombThrowStart: { delete static_cast<MsgDataGrapePlayerBombThrowStart*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombThrowEnd: { delete static_cast<MsgDataGrapePlayerBombThrowEnd*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTrans: { delete static_cast<MsgDataBossTrans*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
@@ -436,16 +442,22 @@ private:
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerHeal: { MsgDataRecv<MsgDataPlayerHeal>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerModifier: { MsgDataRecv<MsgDataPlayerModifier>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::PlayerShotStart: { MsgDataRecv<MsgDataPlayerShotStart>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::PlayerShotEnd: { MsgDataRecv<MsgDataPlayerShotEnd>(event, headerData->senderId); break; }
+
+		case MSG_DATA_TYPE::GrapePlayerShotPos: { MsgDataRecv<MsgDataGrapePlayerShotPos>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerShot: { MsgDataRecv<MsgDataGrapePlayerShot>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerShotBlast: { MsgDataRecv<MsgDataGrapePlayerShotBlast>(event, headerData->senderId); break; }
+
+		case MSG_DATA_TYPE::GrapePlayerThrowPos: { MsgDataRecv<MsgDataGrapePlayerThrowPos>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerThrow: { MsgDataRecv<MsgDataGrapePlayerThrow>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerThrowBlast: { MsgDataRecv<MsgDataGrapePlayerThrowBlast>(event, headerData->senderId); break; }
+
+		case MSG_DATA_TYPE::GrapePlayerBomb: { MsgDataRecv<MsgDataGrapePlayerBomb>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerBombBlast: { MsgDataRecv<MsgDataGrapePlayerBombBlast>(event, headerData->senderId); break; }
+
 		case MSG_DATA_TYPE::PlayerToPlayerTarget: { MsgDataRecv<MsgDataPlayerToPlayerTarget>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerMissNotice: { MsgDataRecv<MsgDataPlayerMissNotice>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerState: { MsgDataRecv<MsgDataPlayerState>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerCollOperator: { MsgDataRecv<MsgDataPlayerCollOperator>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombStart: { MsgDataRecv<MsgDataGrapePlayerBombStart>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombEnd: { MsgDataRecv<MsgDataGrapePlayerBombEnd>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombThrowStart: { MsgDataRecv<MsgDataGrapePlayerBombThrowStart>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombThrowEnd: { MsgDataRecv<MsgDataGrapePlayerBombThrowEnd>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTrans: { MsgDataRecv<MsgDataBossTrans>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAttackDrawFlg: { MsgDataRecv<MsgDataBossAttackDrawFlg>(event, headerData->senderId); break; }
@@ -546,16 +558,22 @@ private:
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHeal: { delete static_cast<MsgDataPlayerHeal*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerModifier: { delete static_cast<MsgDataPlayerModifier*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerShotStart: { delete static_cast<MsgDataPlayerShotStart*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerShotEnd: { delete static_cast<MsgDataPlayerShotEnd*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerShotPos: { delete static_cast<MsgDataGrapePlayerShotPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShot: { delete static_cast<MsgDataGrapePlayerShot*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShotBlast: { delete static_cast<MsgDataGrapePlayerShotBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerThrowPos: { delete static_cast<MsgDataGrapePlayerThrowPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrow: { delete static_cast<MsgDataGrapePlayerThrow*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrowBlast: { delete static_cast<MsgDataGrapePlayerThrowBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerBomb: { delete static_cast<MsgDataGrapePlayerBomb*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombBlast: { delete static_cast<MsgDataGrapePlayerBombBlast*>(ptr); break; }
+
 					case MSG_DATA_TYPE::PlayerToPlayerTarget: { delete static_cast<MsgDataPlayerToPlayerTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombStart: { delete static_cast<MsgDataGrapePlayerBombStart*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombEnd: { delete static_cast<MsgDataGrapePlayerBombEnd*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombThrowStart: { delete static_cast<MsgDataGrapePlayerBombThrowStart*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombThrowEnd: { delete static_cast<MsgDataGrapePlayerBombThrowEnd*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTrans: { delete static_cast<MsgDataBossTrans*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
