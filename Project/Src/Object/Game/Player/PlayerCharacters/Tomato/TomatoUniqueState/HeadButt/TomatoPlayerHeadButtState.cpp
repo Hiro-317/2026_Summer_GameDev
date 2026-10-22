@@ -126,6 +126,6 @@ void TomatoPlayerHeadButtState::AlwaysUpdate(void)
 	// 自身の状態でないときは、攻撃のクールタイムを減らす
 	if (!IsOwnState()) {
 		// 攻撃のクールタイムを減らす
-		if (coolTimeCounter > 0) { coolTimeCounter--; }
+		if (coolTimeCounter > 0) { coolTimeCounter -= TimeScale::Get(); }
 	}
 }

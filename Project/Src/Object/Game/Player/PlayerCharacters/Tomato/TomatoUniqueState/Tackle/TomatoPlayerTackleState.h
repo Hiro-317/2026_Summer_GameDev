@@ -2,7 +2,10 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
+class PlayerSimpleAttackCollOperator;
+
+struct Transform;
+struct Vector3;
 
 class TomatoPlayerTackleState : public CharacterStateBase
 {
@@ -10,15 +13,14 @@ public:
 
 	// コンストラクタ
 	TomatoPlayerTackleState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
+
 		PlayerSimpleAttackCollOperator& collOperator,
-		int COOL_TIME,
-		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Quaternion& rotation,
-		const std::function<void(void)> ChargeAttackBuff,
-		const std::function<void(void)> ChargeAttackBuffDelete,
-		const std::function<void(void)> DefaultChangeState
+
+		Transform& playerTrans,
+
+		const std::function<void(void)> chargeAttackBuff,
+		const std::function<void(void)> chargeAttackBuffDelete,
+		const std::function<void(void)> defaultChangeState
 	);
 
 	// デストラクタ
@@ -44,19 +46,21 @@ public:
 
 private:
 
-	// タックル処理
-	void Tackle(void);
-
 #pragma region 定数定義
 
+	enum class STEP {
+		Charge,
+		Tackle
+	};
+
 	// 移動量
-	const float MOVE_SPEED;
+	const float MOVE_SPEED = 20.0f;
 
 	// 回転量
-	const float ROTATION_POW;
+	const float ROTATION_POW = 0.1f;
 
 	// クールタイム
-	const int COOL_TIME;
+	const int COOL_TIME = 200;
 
 	// このスタート角度まで回転したら、突進をスタートする
 	static constexpr float TACKLE_START_ANGLE = 20.0f;
@@ -72,10 +76,7 @@ private:
 #pragma region 変数定義
 
 	// 座標の参照
-	Vector3& pos;
-
-	// 角度の参照
-	Quaternion& rotation;
+	Transform& playerTrans;
 
 	PlayerSimpleAttackCollOperator& collOperator;
 
@@ -89,14 +90,22 @@ private:
 	int chargeCounter;
 
 	// チャージした時、ダメージを増やすための関数のポインタ
-	const std::function<void(void)> ChargeAttackBuff;
-	const std::function<void(void)> ChargeAttackBuffDelete;
+	const std::function<void(void)> chargeAttackBuff;
+	const std::function<void(void)> chargeAttackBuffDelete;
 
 	// 攻撃終了後の状態遷移関数のポインタ
-	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> defaultChangeState;
 
 #pragma endregion 
 
-	Transform trans;
+	STEP step;
 
+	float coolTimeCounter;
+
+
+	// タックル処理
+	void Tackle(void);
+
+	// 移動方向入力取得
+	Vector3 InputVec(void)const;
 };

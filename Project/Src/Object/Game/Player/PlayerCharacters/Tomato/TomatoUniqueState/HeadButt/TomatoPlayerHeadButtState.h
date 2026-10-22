@@ -48,6 +48,9 @@ public:
 		return  coolTimeCounter += COOL_TIME / CHARGE_TIME;
 	}
 
+	// クールタイムを参照
+	const float& GetCoolTimeCounter(void)const { return coolTimeCounter; }
+
 private:
 #pragma region 定数定義
 

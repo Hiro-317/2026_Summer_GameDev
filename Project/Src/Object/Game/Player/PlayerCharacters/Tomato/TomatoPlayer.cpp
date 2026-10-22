@@ -1,5 +1,9 @@
 #include "TomatoPlayer.h"
 
+#include "../../../../../Manager/Net/NetWorkManager.h"
+
+#include "../../../../../Scene/SceneManager.h"
+
 #include "TomatoUniqueState/Move/TomatoPlayerMoveState.h"
 #include "TomatoUniqueState/Tackle/TomatoPlayerTackleState.h"
 #include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtState.h"
@@ -8,13 +12,12 @@
 #include "TomatoUniqueState/Death/TomatoPlayerDeathState.h"
 
 #include "../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
-#include "TomatoUniqueState/HeadButt/TomatoPlayerHeadButtCollOperator.h"
 
+#include "../../../UI/HpBarUI.h"
+#include "../../../UI/HitUI.h"
 
-#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
-#include "../../../../UI/HitUI/HitUI.h"
+#include "../../PlayerUI/PlayerSkillUI.h"
+#include "../../PlayerUI/PlayerStaminaUI.h"
 
 TomatoPlayer::TomatoPlayer(MSG_SENDER_ID controlSenderId) :
 	PlayerBase(
@@ -37,27 +40,54 @@ void TomatoPlayer::PlayerLoad(void)
 #pragma region 下位オブジェクトの生成
 
 	// 頭突き攻撃の当たり判定を生成
-	subObjArray.emplace_back(
-		new TomatoPlayerHeadButtCollOperator(
+	headButtCollOperatorRef =
+		new PlayerSimpleAttackCollOperator(
+			100.0f,
 			COLLIDER_TAG::PlayerAttack,
+			100.0f,
+			Vector3::Zonly(100.0f),
 			SKILL1_DAMAGE_RATE,
-			trans.pos, trans.rotation,
+			MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerHeadButt,
+			trans,
 			controlSenderId,
 			characterStats
-		)
-	);
+		);
+	// 追加
+	AddChildActor(headButtCollOperatorRef);
+
 
 	// 突進攻撃の当たり判定を生成
-	tackleAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PlayerAttack, 100.0f, Vector3(),
-		SKILL2_DAMAGE_RATE, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle,
-		trans, controlSenderId, characterStats);
-	subObjArray.emplace_back(tackleAttack);
+	tackleCollOperatorRef =
+		new PlayerSimpleAttackCollOperator(
+			0.0f,
+			COLLIDER_TAG::PlayerAttack,
+			100.0f,
+			Vector3(),
+			SKILL2_DAMAGE_RATE,
+			MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle,
+			trans,
+			controlSenderId,
+			characterStats
+		);
+	// 追加
+	AddChildActor(tackleCollOperatorRef);
+
 
 	// スタンプ攻撃の当たり判定を生成
-	stampAttack = new PlayerSimpleAttackCollOperator(0.0f, COLLIDER_TAG::PlayerAttack, 300.0f, Vector3(),
-		SKILL3_DAMAGE_RATE, MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp,
-		trans, controlSenderId, characterStats);
-	subObjArray.emplace_back(stampAttack);
+	stampCollOperatorRef =
+		new PlayerSimpleAttackCollOperator(
+			0.0f,
+			COLLIDER_TAG::PlayerAttack,
+			300.0f,
+			Vector3(),
+			SKILL3_DAMAGE_RATE,
+			MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerStamp,
+			trans,
+			controlSenderId,
+			characterStats
+		);
+	// 追加
+	AddChildActor(stampCollOperatorRef);
 
 #pragma endregion 
 
@@ -65,35 +95,30 @@ void TomatoPlayer::PlayerLoad(void)
 
 	// 移動状態を追加する
 	AddState(
-		(int)STATE::MOVE,
+		STATE::MOVE,
 		new TomatoPlayerMoveState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::MOVE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::MOVE; },
-			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
-			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
-			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX, trans.rotation, characterStats
+			characterStats,
+			1.5f,
+			100,
+			std::bind(&TomatoPlayer::MoveAccel, this, std::placeholders::_1),
+			ACCEL_MAX,
+			trans,
+			100.0f
 		)
 	);
 	
 	// スキル1
 	AddState(
-		(int)STATE::SKILL_1,
+		STATE::SKILL_1,
 		new TomatoPlayerHeadButtState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_1); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_1; },
-			// 頭突き攻撃の当たり判定発生管理用クラス
-			*SubActorSerch<TomatoPlayerHeadButtCollOperator>(),
 			// クールタイム
 			SKILL1_COOL_TIME,
-			// 頭突き中の時間 / 頭突きの速度
-			HEAD_BUTT_ATTACK_TIME, HEAD_BUTT_SPEED,
-			// 座標 / 角度
-			trans.pos, trans.rotation,
+			// 攻撃判定の発生時間
+			10.0f, 100.0f,
+			HEAD_BUTT_ATTACK_TIME,
+			// 頭突き攻撃の当たり判定発生管理用クラス
+			*headButtCollOperatorRef,
+			trans,
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -101,20 +126,12 @@ void TomatoPlayer::PlayerLoad(void)
 
 	// スキル2
 	AddState(
-		(int)STATE::SKILL_2,
+		STATE::SKILL_2,
 		new TomatoPlayerTackleState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_2); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_2; },
 			// 突進攻撃の当たり判定発生管理用クラス
-			*tackleAttack,
-			// クールタイム
-			SKILL2_COOL_TIME,
-			// 移動速度 / 回転速度
-			TACKLE_SPEED, ROTATION_POW,
+			*tackleCollOperatorRef,
 			// 座標 / 角度
-			trans.pos, trans.rotation,
+			trans,
 			// チャージ後の突進の攻撃力を増やす関数のポインタ.
 			[&]() { 
 				characterStats.attackPower.AddModifier(
@@ -128,20 +145,17 @@ void TomatoPlayer::PlayerLoad(void)
 	);
 
 	AddState(
-		(int)STATE::SKILL_3,
+		STATE::SKILL_3,
 		new TomatoPlayerStampState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_3); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_3; },
+			isGround,
 			// スタンプ攻撃の当たり判定発生管理用クラス
-			*stampAttack,
-			// クールタイム
-			SKILL3_COOL_TIME,
-			// 移動速度 
-			STAMP_JUMP_POWER, STAMP_FALL_SPEED,
-			// 座標 / 角度
-			trans.pos, trans.rotation, accelSum,
+			*stampCollOperatorRef,
+
+			std::bind(&TomatoPlayer::MoveAccel, this, std::placeholders::_1),
+			ACCEL_MAX,
+
+			velocity,
+
 			[&]() { GetGravityFlg() ? SetGravityFlg(false) : SetGravityFlg(true); },
 			[&]() { return  isGround; },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
@@ -150,7 +164,7 @@ void TomatoPlayer::PlayerLoad(void)
 	);
 
 	AddState(
-		(int)STATE::DAMAGE,
+		STATE::DAMAGE,
 		new TomatoPlayerDamageState(
 			// 自分の状態に関する関数
 			[&]() { ChangeState((int)STATE::DAMAGE); },
@@ -167,7 +181,7 @@ void TomatoPlayer::PlayerLoad(void)
 
 	// 死亡状態を追加する
 	AddState(
-		(int)STATE::DEATH,
+		STATE::DEATH,
 		new TomatoPlayerDeathState(
 			[&]() { ChangeState((int)STATE::DEATH); },
 			[&]() { return state == (int)STATE::DEATH; },
@@ -178,17 +192,104 @@ void TomatoPlayer::PlayerLoad(void)
 		)
 	);
 
-	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
-	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
-		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
-		};
+	// 待機状態/移動状態 -> スキル1 の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_1);
 
-	// 移動状態 -> スキル1 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
-	// 移動状態 -> スキル2 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
-	// 移動状態 -> スキル3 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+	// 待機状態/移動状態 -> スキル2 の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_2);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_2);
+
+	// 待機状態/移動中 -> スキル3の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_3);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_3);
+
+#pragma endregion 
+
+#pragma region UIの登録と設定
+
+	// HPUIの座標設定
+	int number = 0;
+	if (IsOwnControl()) {
+		number = 0;
+	}
+	else {
+		// 操作者だけ一番上に表示、それ以外の人のHPは下に描画
+		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
+			number++;
+			if (controlSenderId == (MSG_SENDER_ID)id) { break; }
+		}
+	}
+
+	// HPバーUIの登録
+	AddChildActor(
+		new HpBarUI(
+			PLAYER_UI_IMAGE_FILE_PATH + HP_FRAME_IMAGE_NAME,
+			PLAYER_UI_IMAGE_FILE_PATH + HP_IMAGE_NAME,
+			PLAYER_UI_IMAGE_FILE_PATH + HP_LOST_IMAGE_NAME,
+
+			HP_FRAME_IMAGE_SIZE,
+			HP_BAR_IMAGE_SIZE,
+
+			HP_UI_DRAW_POS[number],
+
+			characterStats,
+
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_BACK_IMAGE_NAME[number],
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_CHARA_IMAGE_NAME[(int)SceneManager::GetIns().GetSelectCharaType(controlSenderId)],
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_FRAME_IMAGE_NAME[number],
+
+			ICON_IMAGE_SIZE
+		)
+	);
+
+	// 自分が操作者かどうか
+	if (IsOwnControl()) {
+
+		// スタミナUIの登録
+		AddChildActor(
+			new PlayerStaminaUI(
+				GetParameter("Move", "DashStaminaMax"),
+				dynamic_cast<TomatoPlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
+				trans.pos
+			)
+		);
+
+		// スキル1UIの登録
+		AddChildActor(
+			new PlayerSkillUI(
+				SKILL1_UI_DRAW_POS,
+				GetParameterToInt("TripleAttack", "CoolTime"),
+				dynamic_cast<TomatoPlayerHeadButtState*>(&GetStateIns(STATE::SKILL_1))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Yellow,
+				"SkillSlotSimpleAttack"
+			)
+		);
+
+		// スキル2UIの登録
+		AddChildActor(
+			new PlayerSkillUI(
+				SKILL2_UI_DRAW_POS,
+				GetParameterToInt("SimpleAttack", "CoolTime"),
+				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns(STATE::SKILL_2))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Red,
+				"SkillSlotSimpleAttack"
+			)
+		);
+
+		// スキル3UIの登録
+		AddChildActor(
+			new PlayerSkillUI(
+				SKILL2_UI_DRAW_POS,
+				GetParameterToInt("Dodge", "CoolTime"),
+				dynamic_cast<TomatoPlayerStampState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Red,
+				"SkillSlotDodge"
+			)
+		);
+
+	}
 
 #pragma endregion 
 
@@ -289,9 +390,9 @@ void TomatoPlayer::PlayerLoad(void)
 	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
 }
 
-void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	PlayerBase::OnCollision(ownTag, other, collisionPoint);
+	PlayerBase::OnCollision(ownTag, other, result);
 }
 
 void TomatoPlayer::ReceptionUpdate(void)

@@ -16,7 +16,7 @@ public:
 	void PlayerLoad(void)override;
 
 	// 当たり判定処理
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	void ReceptionUpdate(void)override;
 	void SendUpdate(void)override;
@@ -64,4 +64,13 @@ private:
 	const float STAMP_FALL_SPEED = GetParameter("Stamp", "FallSpeed");
 
 #pragma endregion 
+
+	// 頭突き攻撃の当たり判定管理クラスの参照
+	PlayerSimpleAttackCollOperator* headButtCollOperatorRef;
+
+	// 突進攻撃の当たり判定管理クラスの参照
+	PlayerSimpleAttackCollOperator* tackleCollOperatorRef;
+
+	// スタンプ攻撃の当たり判定管理クラスの参照
+	PlayerSimpleAttackCollOperator* stampCollOperatorRef;
 };
