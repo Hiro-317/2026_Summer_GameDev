@@ -1,5 +1,6 @@
 #include "BossBase.h"
 
+#include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Font/FontManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/TimeScale/TimeScale.h"
@@ -18,24 +19,18 @@
 
 #include "../../Common/CharacterBase/CharacterStatsDefine.h"
 
-BossBase::BossBase(
-	const std::string& parameterPath,
-
-	std::string modelPath,
-
-	const std::vector<const Vector3*> playerPos,
-	const std::vector<const bool*> playerDeath
-) :
+BossBase::BossBase(const std::string& parameterPath, std::string modelPath) :
 	CharacterBase(
 		"Parameter",
-		"HP_" + std::to_string(playerDeath.size()),
+		"HP_" + std::to_string(Net::GetIns().GetConnectStatus().EntryCount()),
 		"AttackPower",
 		"DefensePower",
 		"MoveSpeed",
-		parameterPath),
-	
-	playerPos(playerPos),
-	playerDeath(playerDeath)
+		parameterPath
+	),
+
+	playerPos(),
+	playerIsDeath()
 {
 	trans.LoadModel(("Character/" + modelPath).c_str());
 
@@ -43,19 +38,7 @@ BossBase::BossBase(
 
 	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
 
-	// 攻撃対象探し用の総ダメ保存
 	targetNum = 0;
-	Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
-
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		damaged.emplace_back(0);
-	}
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		nowDeath.emplace_back(false);
-	}
-	mostDamaged = 0;
 }
 
 void BossBase::Load(void)
@@ -133,13 +116,13 @@ void BossBase::SubUpdate(void)
 #pragma region ターゲット更新
 
 	// ターゲットの生存確認
-	if (!*playerDeath[targetNum]) { targetNum = -1; }
+	if (!*playerIsDeath[targetNum]) { targetNum = -1; }
 
 	// 与ダメの最大値を探す
 	for (int id = 0; id < Net::GetIns().GetConnectStatus().EntryCount(); id++) {
 
 		// 生存確認
-		if (!*playerDeath[id]) { continue; }
+		if (!*playerIsDeath[id]) { continue; }
 
 		// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
 		if (targetNum == -1 || damaged[targetNum] < damaged[id]) {
@@ -155,7 +138,7 @@ void BossBase::SubUpdate(void)
 #pragma endregion
 
 
-#ifdef _DEBUG		// クールタイム用
+#ifdef _DEBUG
 	if (CheckHitKey(KEY_INPUT_0)) {
 		short damage = 10;
 		characterStats.hp -= damage;

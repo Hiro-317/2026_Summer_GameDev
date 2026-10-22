@@ -93,9 +93,13 @@ public:
 	bool IsOwnControl(void)const;
 
 	// 受信処理（通信）
-	virtual void ReceptionUpdate(void) {}
+	virtual void ReceptionUpdate(void) {
+		for (ActorBase* child : childActors) { child->ReceptionUpdate(); }
+	}
 	// 送信処理（通信）
-	virtual void SendUpdate(void) {}
+	virtual void SendUpdate(void) {
+		for (ActorBase* child : childActors) { child->SendUpdate(); }
+	}
 
 	// 座標セット
 	void SetPos(const Vector3& pos) { trans.pos = pos; }

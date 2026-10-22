@@ -1,10 +1,10 @@
 #include "GrapeBossWeaponManager.h"
 
 #include "../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../Manager/Effect/EffectManager.h"
 
 #include "GrapeBossWeaponFactory.h"
 
+#include "GrapeBossWeaponBase.h"
 
 GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
 
@@ -60,15 +60,6 @@ void GrapeBossWeaponManager::SubUpdate()
 				i.live = false;
 				i.weaponIns->ResetEnd();
 			}
-		}
-	}
-}
-
-void GrapeBossWeaponManager::SubAlphaDraw()
-{
-	for (auto& i : weapons) {
-		if (i.live) {
-			i.weaponIns->Draw();
 		}
 	}
 }

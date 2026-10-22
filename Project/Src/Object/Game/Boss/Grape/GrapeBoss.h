@@ -1,26 +1,14 @@
 #pragma once
+
 #include "../BossBase.h"
 
+class HitUI;
 
 class GrapeBoss : public BossBase
 {
 public:
-	GrapeBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath);
+	GrapeBoss();
 	~GrapeBoss()override = default;
-
-	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	std::vector<ColliderBase*> GetCollider(void)const override {
-		std::vector<ColliderBase*> ret = {};
-		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
-
-		// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚Ì•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ActorBase* const& subObj : subObjArray) {
-			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
-		}
-		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
-		return ret;
-	}
 
 	virtual void ReceptionUpdate(void)override;
 
@@ -119,10 +107,10 @@ private:
 #pragma endregion ’è”’è‹`
 
 	// ƒƒCƒ“ˆ—``````````````
-	void PlayerLoad(void)override;
+	void BossLoad(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
-	// ƒgƒ}ƒg‚ÌŒü‚¢‚Ä‚¢‚éŒü‚«
+	// Œü‚¢‚Ä‚¢‚éŒü‚«
 	Vector3 moveDir;
 
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
@@ -131,5 +119,6 @@ private:
 	// ƒQ[ƒ€ƒNƒŠƒA‚ÌƒJƒEƒ“ƒgƒ_ƒEƒ“
 	int gameOverCnt;
 
-	
+	// ƒ_ƒ[ƒW‚Ég‚¤ƒqƒbƒgUIƒNƒ‰ƒX‚ÌQÆ
+	HitUI* hitUiRef;
 };

@@ -12,14 +12,7 @@ class BossBase : public CharacterBase
 {
 public:
 
-	BossBase(
-		const std::string& parameterPath,
-
-		std::string modelPath,
-
-		const std::vector<const Vector3*> playerPos,
-		const std::vector<const bool*> playerlive
-	);
+	BossBase(const std::string& parameterPath, std::string modelPath);
 
 	~BossBase()override = default;
 
@@ -31,6 +24,9 @@ public:
 	virtual void SendUpdate(void)override;
 
 	const bool& GetIsDeath(void)const { return false; }
+
+	void SetPlayerPos(MSG_SENDER_ID id, const Vector3* pos) { playerPos[(int)id] = pos; }
+	void SetPlayerIsDeath(MSG_SENDER_ID id, const bool* isDeath) { playerIsDeath[(int)id] = isDeath; }
 
 private:
 
@@ -129,7 +125,7 @@ protected:
 	const Vector3* playerPos[(int)MSG_SENDER_ID::Max];
 
 	// プレイヤーの生存判定の参照(読み取り専用)
-	const bool* playerDeath[(int)MSG_SENDER_ID::Max];
+	const bool* playerIsDeath[(int)MSG_SENDER_ID::Max];
 
 	// プレイヤーの与ダメカウント
 	int damaged[(int)MSG_SENDER_ID::Max];

@@ -1,45 +1,30 @@
 #include "GrapeBossStalkerBomb.h"
 
+#include "../../../../../../Manager/TimeScale/TimeScale.h"
+
 #include "../../../../../Common/Collider/SphereCollider.h"
-#include "../../../../../Common/Collider/XZCircleCollider.h"
 
-#include "../../../../../../Manager/Effect/EffectManager.h"
-
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
 GrapeBossStalkerBomb::GrapeBossStalkerBomb(int model, int front, int back)
 	: GrapeBossWeaponBase(model, front, back)
 {
-	// 当たり判定を生成する（XZコライダー）
-	AddCollider(
-		new XZCircleCollider(
-			COLLIDER_TAG::BossAttack,
-			ATTACK_RANGE,
-			1000.0f
-		)
-	);
-
 	// 当たり判定を生成する（球体コライダー）
-	AddCollider(
-		new SphereCollider(
-			COLLIDER_TAG::BossAttackArea,
-			MODEL_RADIUS * ATTACK_SIZE
-		)
-	);
-	trans.scale = Vector3(ATTACK_SIZE);
+	AddCollider(new SphereCollider(COLLIDER_TAG::BossAttack, RADIUS));
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
+	trans.scale = Vector3(MODEL_SCALE);
+
 	SetGravityFlg(true);
+	SetPushFlg(true);
 	count = 0;
 }
 
 void GrapeBossStalkerBomb::Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats)
 {
-	CreateAttackSkill(controlSenderId, 75, &stats);
+	GetColliders().back()->SetSkillStats(new SkillStats(75, &stats));
 
-	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
-	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
+	const float ATTACK_RADIUS_SCALE = ATTACK_RADIUS / MODEL_RADIUS;
+	collBack.scale = Vector3::XZonly(ATTACK_RADIUS_SCALE, ATTACK_RADIUS_SCALE);
 	collFront.scale = Vector3(0.0f);
 }
 

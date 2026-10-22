@@ -1,5 +1,10 @@
 #include "GrapePlayer.h"
 
+#include "../../../../../Manager/Net/NetWorkManager.h"
+
+#include "../../../../../Scene/SceneManager.h"
+
+#include "../../CommonPlayerState/Idle/PlayerIdleState.h"
 #include "../../CommonPlayerState/Move/PlayerMoveState.h"
 #include "../../CommonPlayerState/Damage/PlayerDamageState.h"
 #include "../../CommonPlayerState/Death/PlayerDeathState.h"
@@ -7,14 +12,14 @@
 #include "GrapeUniqueState/Shot/GrapePlayerShotState.h"
 #include "GrapeUniqueState/Throw/GrapePlayerThrowState.h"
 
-#include "GrapeUniqueState/Bomb/GrapePlayerBombCollOperator.h"
-#include "GrapeUniqueState/Shot/GrapePlayerShotCollOperator.h"
-#include "GrapeUniqueState/Throw/GrapePlayerThrowCollOperator.h"
+#include "GrapeUniqueState/Bomb/GrapePlayerWeaponBomb.h"
+#include "GrapeUniqueState/Shot/GrapePlayerWeaponShot.h"
+#include "GrapeUniqueState/Throw/GrapePlayerWeaponThrow.h"
 
-#include "../../../../UI/PlayerStaminaUI/PlayerStaminaUI.h"
-#include "../../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../../UI/PlayerSkillUI/PlayerSkillUI.h"
-#include "../../../../UI/HitUI/HitUI.h"
+#include "../../../UI/HpBarUI.h"
+
+#include "../../PlayerUI/PlayerSkillUI.h"
+#include "../../PlayerUI/PlayerStaminaUI.h"
 
 GrapePlayer::GrapePlayer(MSG_SENDER_ID controlSenderId) :
 	PlayerBase(controlSenderId,
@@ -33,196 +38,162 @@ GrapePlayer::GrapePlayer(MSG_SENDER_ID controlSenderId) :
 
 void GrapePlayer::PlayerLoad(void)
 {
-#pragma region 下位オブジェクトの生成
-
 	// アニメーションコントローラーを生成する
 	CreateAnimationController();
 
 	// アニメーションの読み込み
 	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED);
 
-	// 巨砲の生成
-	subObjArray.emplace_back(
-		new GrapePlayerShotCollOperator(
-			COLLIDER_TAG::PlayerAttack,
-			SKILL1_ATTACK_RATE,
-			trans.pos, trans.rotation,
-			controlSenderId,
-			characterStats
-		)
-	);
+#pragma region 下位オブジェクトの生成
 
-	// BUDOOOON!の生成
-	subObjArray.emplace_back(
-		new GrapePlayerThrowCollOperator(
-			COLLIDER_TAG::PlayerAttack,
-			SKILL2_ATTACK_RATE,
-			trans.pos, trans.rotation,
-			controlSenderId,
-			characterStats
-		)
+	weaponShotRef = new GrapePlayerWeaponShot(
+		GetParameter("GrapeShot", "AttackRate"),
+		characterStats,
+		trans,
+		controlSenderId
 	);
+	AddChildActor(weaponShotRef);
 
-	// ポリフェノールインパクトの生成
-	subObjArray.emplace_back(
-		new GrapePlayerBombCollOperator(
-			COLLIDER_TAG::PlayerAttack,
-			SKILL3_ATTACK_RATE,
-			// 爆発するまでの時間
-			ATTACK_COUNT_TIME,
-			// 爆弾の待機時間
-			ATTACK_START_TIME,
-			trans.pos, trans.rotation,
-			controlSenderId,
-			characterStats
-		)
+	weaponThrowRef = new GrapePlayerWeaponThrow(
+		GetParameter("GrapeThrowBomb", "AttackRate"),
+		characterStats,
+		trans,
+		controlSenderId
 	);
+	AddChildActor(weaponThrowRef);
+
+	weaponBombRef = new GrapePlayerWeaponBomb(
+		GetParameter("GrapeBomb", "AttackRate"),
+		characterStats,
+		GetParameter("GrapeBomb", "CountTime"),
+		trans,
+		controlSenderId
+	);
+	AddChildActor(weaponBombRef);
+
 
 #pragma endregion 
 
 #pragma region 状態設定
 
+	// 待機状態を追加する
 	AddState(
-		(int)STATE::SKILL_1,
-		new GrapePlayerShotState(
-			[&]() { ChangeState((int)STATE::SKILL_1); },
-			[&]() { return state == (int)STATE::SKILL_1; },
-			*SubActorSerch<GrapePlayerShotCollOperator>(),
-			SKILL1_COOL_TIME,
-			trans.pos, trans.rotation,
-			bossPos,
-			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
-			[&]() { return IsAnimeEnd(); },
-			[&]() { return GetAnimeRatio(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+		STATE::IDLE,
+		new PlayerIdleState([&]() { AnimePlay(ANIME_TYPE::IDLE); })
+	);
+
+	// 移動状態を追加する
+	AddState(
+		STATE::MOVE,
+		new PlayerMoveState(
+			// ステータスの参照
+			characterStats,
+			// ダッシュの移動量倍率
+			GetParameter("Move", "DashSpeedRate"),
+			// スタミナ量
+			(short)GetParameterToInt("Move", "DashStaminaMax"),
+			// 移動用の関数
+			std::bind(&GrapePlayer::MoveAccel, this, std::placeholders::_1),
+			// 横軸加速度の最大値の参照
+			ACCEL_MAX,
+			// 歩きアニメーション再生
+			[&]() { AnimePlay(ANIME_TYPE::WALK); },
+			// 走りアニメーション再生
+			[&]() { AnimePlay(ANIME_TYPE::RUN); }
 		)
 	);
 
 	AddState(
-		(int)STATE::SKILL_2,
-		new GrapePlayerThrowState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_2); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_2; },
-			// 当たり判定管理クラスのポインタ
-			*SubActorSerch<GrapePlayerThrowCollOperator>(),
-			// クールタイム
-			SKILL2_COOL_TIME,
-			// 座標 / 角度
-			trans.pos, trans.rotation,
-			// ボスの座標
+		STATE::SKILL_1,
+		new GrapePlayerShotState(
+			GetParameter("GrapeShot", "CoolTime"),
+			*weaponShotRef,
+			trans,
 			bossPos,
-			// アニメーション再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::THROW, false); },
-			// アニメーション終了管理フラグのポインタ
-			[&]() { return IsAnimeEnd(); },
-			// アニメーション再生割合ゲット関数のポインタ
+			[&]() { AnimePlay(ANIME_TYPE::THROW); },
 			[&]() { return GetAnimeRatio(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+			[&]() { ChangeState(STATE::IDLE); }
+		)
+	);
+
+	AddState(
+		STATE::SKILL_2,
+		new GrapePlayerThrowState(
+			GetParameter("GrapeThrowBomb", "CoolTime"),
+			*weaponThrowRef,
+			trans,
+			bossPos,
+			[&]() { AnimePlay(ANIME_TYPE::THROW); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
 	// 設置型爆弾
 	AddState(
-		(int)STATE::SKILL_3,
+		STATE::SKILL_3,
 		new GrapePlayerBombState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::SKILL_3); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::SKILL_3; },
-			// 設置爆弾の
-			*SubActorSerch<GrapePlayerBombCollOperator>(),
-			// クールタイム
-			SKILL3_COOL_TIME,
-			// プレイヤーの座標
-			trans.pos,
-			// アニメーション再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::KICK_DOWN, false); },
-			// アニメーション終了フラグゲット関数のポインタ
-			[&]() { return IsAnimeEnd(); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+			GetParameter("GrapeBomb", "CoolTime"),
+			*weaponBombRef,
+			trans,
+			[&]() { AnimePlay(ANIME_TYPE::TOSS); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
-	// 移動状態を追加する
-	AddState(
-		(int)STATE::MOVE,
-		new PlayerMoveState(
-			// 自分の状態に遷移する関数
-			[&]() { ChangeState((int)STATE::MOVE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::MOVE; },
-			// 定数（加算移動量 / 移動量の最大値 / ダッシュの移動量倍率 / スタミナ量 / 加速減衰量）
-			DASH_SPEED_RATE, DASH_STAMINA_MAX, ATTENUATION,
-			// 参照（移動量 / 横軸加速度の最大値 / 角度）
-			accelSum, ACCEL_MAX, trans.rotation, characterStats,
-			// アニメーションの再生関数のポインタ（待機 / 歩き / 走り）
-			[&]() { AnimePlay((int)ANIME_TYPE::IDLE); },
-			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
-			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
-		)
-	);
 
 	AddState(
-		(int)STATE::DAMAGE,
+		STATE::DAMAGE,
 		new PlayerDamageState(
-			// 自分の状態に関する関数
-			[&]() { ChangeState((int)STATE::DAMAGE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::DAMAGE; },
-			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::DAMAGE, false); },
-			// アニメーションの終了フラグを取得する関数のポインタ
-			[&]() { return IsAnimeEnd(); },
+			// アニメーションの再生
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			// アニメーションの終了フラグを取得する関数
+			std::bind(GrapePlayer::IsAnimeEnd, this),
 			// 無敵時間のセット関数
-			[&]() { SetInviCounter(DODGE_INVI_TIME); },
-			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
-			[&]() { ChangeState((int)STATE::MOVE); }
+			[&]() { invincibleCounter = 30; },
+			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
+			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
 	// 死亡状態を追加する
 	AddState(
-		(int)STATE::DEATH,
+		STATE::DEATH,
 		new PlayerDeathState(
-			// 自分の状態に関する関数
-			[&]() { ChangeState((int)STATE::DEATH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == (int)STATE::DEATH; },
-			// 座標 / 角度
-			trans.pos, trans.rotation,
-			// アニメーション終了判定ゲット関数のポインタ
-			[&]() { return IsAnimeEnd(); },
-			// 死亡アニメーション再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
-			// 死亡後の設定関数のポインタ
-			[&]() { PlayerDeathSetting(); },
-			// 攻撃終了後の状態遷移関数のポインタ
-			[&]() { Net::GetIns().GetConnectStatus().EntryCount() > 1 ? ChangeState((int)STATE::OTHER_WATCH) : ChangeState((int)STATE::MOVE);  }
+			// アニメーションの再生
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			// アニメーションの終了フラグを取得する関数
+			std::bind(GrapePlayer::IsAnimeEnd, this),
+			// 死亡演出終了後の処理
+			[&]() {
+				if (Net::GetIns().GetConnectStatus().EntryCount() > 1) {
+					ChangeState((int)STATE::OTHER_WATCH);
+				}
+			}
 		)
 	);
 
-	// 遷移条件の登録（before = 遷移元)(after = 遷移後）
-	auto AddChangeStateCondition = [&](STATE before, STATE after)->void {
-		GetStateIns((int)before).AddOtherStateCondition([this, after](void) { GetStateIns((int)after).OwnStateConditionUpdate(); });
-		};
+	// 待機状態/移動状態 -> スキル1 の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_1);
 
-	//// 移動状態 -> スキル1 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_1);
-	//// 移動状態 -> スキル2 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_2);
-	//// 移動状態 -> スキル3 の遷移を登録
-	AddChangeStateCondition(STATE::MOVE, STATE::SKILL_3);
+	// 待機状態/移動状態 -> スキル2 の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_2);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_2);
 
-#pragma endregion 
+	// 待機状態/移動中 -> スキル3の遷移を登録
+	RegisterStateTransition(STATE::IDLE, STATE::SKILL_3);
+	RegisterStateTransition(STATE::MOVE, STATE::SKILL_3);
+
+#pragma endregion
+
+
+#pragma region UIの登録と設定
 
 	// HPUIの座標設定
 	int number = 0;
-	if (isOwnOperator) {
+	if (IsOwnControl()) {
 		number = 0;
 	}
 	else {
@@ -234,175 +205,91 @@ void GrapePlayer::PlayerLoad(void)
 		}
 	}
 
-	// HPの登録
-	ui_ArrayIns.emplace_back(
-		new CharacterHpUI(
-			characterStats.hp,
-			characterStats.hpMax.Value(),
-			HP_FRAME_IMAGE_NAME,
-			HP_IMAGE_NAME,
-			HP_LOST_IMAGE_NAME,
-			"GrapeIcon",
-			"P" + std::to_string((int)controlSenderId + 1) + "Frame",
-			"P" + std::to_string((int)controlSenderId + 1) + "Back",
-			HP_IMAGE_SIZE,
-			HP_GAUGE_OFFSET,
-			HP_UI_POS[number],
-			FILE_PATH_TYPE::PLAYER_HP,
-			""
+	// HPバーUIの登録
+	AddChildActor(
+		new HpBarUI(
+			PLAYER_UI_IMAGE_FILE_PATH + HP_FRAME_IMAGE_NAME,
+			PLAYER_UI_IMAGE_FILE_PATH + HP_IMAGE_NAME,
+			PLAYER_UI_IMAGE_FILE_PATH + HP_LOST_IMAGE_NAME,
+
+			HP_FRAME_IMAGE_SIZE,
+			HP_BAR_IMAGE_SIZE,
+
+			HP_UI_DRAW_POS[number],
+
+			characterStats,
+
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_BACK_IMAGE_NAME[number],
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_CHARA_IMAGE_NAME[(int)SceneManager::GetIns().GetSelectCharaType(controlSenderId)],
+			PLAYER_UI_IMAGE_FILE_PATH + ICON_FRAME_IMAGE_NAME[number],
+
+			ICON_IMAGE_SIZE
 		)
 	);
 
-	// このプレイヤーの操作者だけ通す
-	if (isOwnOperator)
-	{
-		// スタミナのUI登録
-		ui_ArrayIns.emplace_back(
+	// 自分が操作者かどうか
+	if (IsOwnControl()) {
+
+		// スタミナUIの登録
+		AddChildActor(
 			new PlayerStaminaUI(
-				dynamic_cast<PlayerMoveState*>(&GetStateIns((int)STATE::MOVE))->GetDashStamina(),
-				DASH_STAMINA_MAX
+				GetParameter("Move", "DashStaminaMax"),
+				dynamic_cast<PlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
+				trans.pos
 			)
 		);
 
-		// スキル1のUI
-		ui_ArrayIns.emplace_back(
+		// スキル1UIの登録
+		AddChildActor(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
-				dynamic_cast<GrapePlayerShotState*>(&GetStateIns((int)STATE::SKILL_1))->GetCoolTimeCounter(),
-				SKILL1_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::YELLOW,
+				GetParameter("GrapeShot", "CoolTime"),
+				dynamic_cast<GrapePlayerShotState*>(&GetStateIns(STATE::SKILL_1))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Yellow,
 				"SkillSlotShot"
 			)
 		);
 
-		// スキル2のUI
-		ui_ArrayIns.emplace_back(
+		// スキル2UIの登録
+		AddChildActor(
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
-				dynamic_cast<GrapePlayerThrowState*>(&GetStateIns((int)STATE::SKILL_2))->GetCoolTimeCounter(),
-				SKILL2_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
+				GetParameter("GrapeThrowBomb", "CoolTime"),
+				dynamic_cast<GrapePlayerThrowState*>(&GetStateIns(STATE::SKILL_2))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Purple,
 				"SkillSlotGrapeBombThrow"
 			)
 		);
 
-		// スキル3のUI
-		ui_ArrayIns.emplace_back(
+		// スキル3UIの登録
+		AddChildActor(
 			new PlayerSkillUI(
-				SKILL3_UI_DRAW_POS,
-				dynamic_cast<GrapePlayerBombState*>(&GetStateIns((int)STATE::SKILL_3))->GetCoolTimeCounter(),
-				SKILL3_COOL_TIME,
-				PlayerSkillUI::SKILL_UI_COLOR::PURPLE,
+				SKILL2_UI_DRAW_POS,
+				GetParameter("GrapeBomb", "CoolTime"),
+				dynamic_cast<GrapePlayerBombState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
+				PlayerSkillUI::SKILL_UI_COLOR::Purple,
 				"SkillSlotGrapeBombPut"
 			)
 		);
+
 	}
 
-	// ミスUIの生成
-	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+#pragma endregion
 }
 
-void GrapePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void GrapePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
 	// 敵の攻撃を受けた時のダメージ処理
-	PlayerBase::OnCollision(ownTag, other, collisionPoint);
+	PlayerBase::OnCollision(ownTag, other, result);
 }
 
 void GrapePlayer::ReceptionUpdate(void)
 {
 	PlayerBase::ReceptionUpdate();
 
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerCollOperator>(controlSenderId)) {
-
-		switch (dataPtr->collKinds) {
-
-		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerBomb: {
-			// 通常攻撃
-			if (dataPtr->isCollider) { SubActorSerch<GrapePlayerBombCollOperator>()->CollOn(); }
-			else { SubActorSerch<GrapePlayerBombCollOperator>()->CollOff(); }
-			break;
-		}
-
-		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerThrow: {
-			// スタンプ
-			if (dataPtr->isCollider) { SubActorSerch<GrapePlayerThrowCollOperator>()->CollOn(); }
-			else { SubActorSerch<GrapePlayerThrowCollOperator>()->CollOff(); }
-
-			break;
-		}
-
-		case MsgDataPlayerCollOperator::COLLIDER_TYPE::GrapePlayerShot: {
-			// 回復
-			if (dataPtr->isCollider) { SubActorSerch<GrapePlayerShotCollOperator>()->CollOn(); }
-			else { SubActorSerch<GrapePlayerShotCollOperator>()->CollOff(); }
-			break;
-		}
-
-		default: { break; }	// 例外
-		}
-
-		delete dataPtr;
-	}
-
 	while (MsgDataPlayerState* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerState>(controlSenderId)) {
-		state = dataPtr->state;
 
-		switch ((STATE)state) {
-		case PlayerBase::STATE::DEATH: {
-			PlayerDeathSetting();
-			break;
-		}
-
-		default: { break; }
-		}
-
-		delete dataPtr;
-	}
-
-	while (MsgDataPlayerShotStart* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotStart>(controlSenderId)) {
-		
-		// グレープショットの発射の瞬間で行う処理
-		SubActorSerch<GrapePlayerShotCollOperator>()->RemoteShotStart(dataPtr->pos, dataPtr->vec);
-		
-		delete dataPtr;
-	}
-
-	while (MsgDataPlayerShotEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataPlayerShotEnd>(controlSenderId)) {
-
-		// グレープショットの発射終了の瞬間で行う処理
-		SubActorSerch<GrapePlayerShotCollOperator>()->RemoteShotEnd(dataPtr->pos);
-
-		delete dataPtr;
-	}
-
-	while (MsgDataGrapePlayerBombStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombStart>(controlSenderId)) {
-
-		// グレープショットの発射の瞬間で行う処理
-		SubActorSerch<GrapePlayerBombCollOperator>()->RemoteBombSetStart(dataPtr->pos);
-
-		delete dataPtr;
-	}
-
-	while (MsgDataGrapePlayerBombEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombEnd>(controlSenderId)) {
-
-		// グレープショットの発射終了の瞬間で行う処理
-		SubActorSerch<GrapePlayerBombCollOperator>()->RemoteBombSetEnd();
-
-		delete dataPtr;
-	}
-
-	while (MsgDataGrapePlayerBombThrowStart* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowStart>(controlSenderId)) {
-
-		// グレープショットの発射終了の瞬間で行う処理
-		SubActorSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombStart(dataPtr->pos, dataPtr->vec);
-
-		delete dataPtr;
-	}
-
-	while (MsgDataGrapePlayerBombThrowEnd* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombThrowEnd>(controlSenderId)) {
-
-		// グレープショットの発射終了の瞬間で行う処理
-		SubActorSerch<GrapePlayerThrowCollOperator>()->RemoteThrowBombEnd();
+		ChangeState(dataPtr->state);
 
 		delete dataPtr;
 	}

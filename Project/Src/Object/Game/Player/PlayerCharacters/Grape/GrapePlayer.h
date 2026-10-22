@@ -3,6 +3,10 @@
 
 #include "../../../../../Common/Vector2.h"
 
+class GrapePlayerWeaponShot;
+class GrapePlayerWeaponThrow;
+class GrapePlayerWeaponBomb;
+
 class GrapePlayer : public PlayerBase
 {
 public:
@@ -15,7 +19,7 @@ public:
 	void PlayerLoad(void)override;
 
 	// 当たり判定処理
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	// 同期処理
 	void ReceptionUpdate(void)override;
@@ -62,28 +66,31 @@ private:
 
 #pragma region スキル1の定数定義
 
-	const short SKILL1_ATTACK_RATE = GetParameter("GrapeShot", "AttackRate");
+	const short SKILL1_ATTACK_RATE = ;
 
-	const int SKILL1_COOL_TIME = GetParameter("GrapeShot", "CoolTime");
+	const int SKILL1_COOL_TIME = ;
 
 #pragma endregion 
 
 #pragma region スキル2の定数定義
 
-	const short SKILL2_ATTACK_RATE = GetParameter("GrapeThrowBomb", "AttackRate");
+	const short SKILL2_ATTACK_RATE = ;
 
-	const int SKILL2_COOL_TIME = GetParameter("GrapeThrowBomb", "CoolTime");
+	const int SKILL2_COOL_TIME = ;
 
 #pragma endregion 
 
 #pragma region スキル3の定数定義
 
-	const short SKILL3_ATTACK_RATE = GetParameter("GrapeBomb", "AttackRate");
-	const int SKILL3_COOL_TIME = GetParameter("GrapeBomb", "CoolTime");
+	const short SKILL3_ATTACK_RATE = ;
+	const int SKILL3_COOL_TIME = ;
 
-	const int ATTACK_COUNT_TIME = GetParameter("GrapeBomb", "CountTime");
+	const int ATTACK_COUNT_TIME = ;
 	const int ATTACK_START_TIME = GetParameter("GrapeBomb", "StartTime");
 
 #pragma endregion
 
+	GrapePlayerWeaponShot* weaponShotRef;
+	GrapePlayerWeaponThrow* weaponThrowRef;
+	GrapePlayerWeaponBomb* weaponBombRef;
 };

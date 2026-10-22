@@ -2,23 +2,28 @@
 
 #include "../../../../../../../Manager/Input/InputManager.h"
 
+#include "GrapePlayerWeaponBomb.h"
+
 GrapePlayerBombState::GrapePlayerBombState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	GrapePlayerBombCollOperator& collOperator,
 	const int COOL_TIME,
-	Vector3& pos,
-	const std::function<void(void)> PlayAnime,
-	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> DefaultChangeState
+
+	GrapePlayerWeaponBomb& bombWeapon,
+
+	Transform& playerTrans,
+
+	const std::function<void(void)> playAnime,
+	const std::function<float(void)> getAnimeRatio,
+	const std::function<void(void)> defaultChangeState
 ) :
-	CharacterStateBase(ownChangeState, isOwnState),
-	collOperator(collOperator),
 	COOL_TIME(COOL_TIME),
-	pos(pos),
-	PlayAnime(PlayAnime),
-	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState)
+	bombWeapon(bombWeapon),
+	playerTrans(playerTrans),
+	playAnime(playAnime),
+	getAnimeRatio(getAnimeRatio),
+	defaultChangeState(defaultChangeState),
+
+	isShot(),
+	coolTimeCounter()
 {
 }
 
@@ -28,7 +33,7 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 	if (coolTimeCounter > 0) { return; }
 
 	// ステート遷移処理
-	if (Input::GetIns().GetInfo(KEY_TYPE::PLAYER_SKILL_3).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill3).down) {
 		OwnChangeState();
 	}
 }
@@ -39,18 +44,22 @@ void GrapePlayerBombState::Enter(void)
 	coolTimeCounter = COOL_TIME;
 
 	// アニメーションを再生
-	PlayAnime();
-
-	// 爆弾設置処理
-	collOperator.LocalBombSetStart(pos);
+	playAnime();
 }
 
 void GrapePlayerBombState::Update(void)
 {
-	// アニメーションが終了したら、爆弾設置ステート終了
-	if (IsAnimeEnd()) {
-		DefaultChangeState();
+	const float animeRatio = getAnimeRatio();
+
+	if (animeRatio > 0.3f) {
+		if (!isShot) {
+			// 発射
+			bombWeapon.Put(playerTrans.pos);
+			isShot = true;
+		}
 	}
+
+	if (animeRatio >= 1.0f) { defaultChangeState(); }
 }
 
 void GrapePlayerBombState::AlwaysUpdate(void)
@@ -58,6 +67,9 @@ void GrapePlayerBombState::AlwaysUpdate(void)
 	// 自身の状態でないときは、攻撃のクールタイムを減らす
 	if (!IsOwnState()) {
 		// 攻撃のクールタイムを減らす
-		if (coolTimeCounter > 0) { coolTimeCounter--; }
+		if (coolTimeCounter > 0.0f) {
+			coolTimeCounter -= TimeScale::Get();
+			if (coolTimeCounter < 0.0f) { coolTimeCounter = 0.0f; }
+		}
 	}
 }

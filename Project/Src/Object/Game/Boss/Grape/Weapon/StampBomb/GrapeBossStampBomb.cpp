@@ -1,52 +1,83 @@
 #include "GrapeBossStampBomb.h"
 
+#include "../../../../../../Manager/TimeScale/TimeScale.h"
+
 #include "../../../../../Common/Collider/SphereCollider.h"
-#include "../../../../../Common/Collider/XZCircleCollider.h"
 
-#include "../../../../../../Manager/Effect/EffectManager.h"
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
+GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back) :
+	GrapeBossWeaponBase(model, front, back),
 
-GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
-	: GrapeBossWeaponBase(model, front, back)
+	state(STATE::None),
+
+	objectCollRef(nullptr),
+	attackCollRef(nullptr)
+
 {
-	// 当たり判定を生成する（XZコライダー）
-	AddCollider(
-		new XZCircleCollider(
-			COLLIDER_TAG::BossAttack,
-			ATTACK_RANGE,
-			1000.0f
-		)
-	);
-
 	// 当たり判定を生成する（球体コライダー）
-	AddCollider(
-		new SphereCollider(
-			COLLIDER_TAG::BossAttackArea,
-			MODEL_RADIUS * ATTACK_SIZE
-		)
-	);
+	AddCollider(new SphereCollider(COLLIDER_TAG::BossAttack, RADIUS));
 
-	trans.scale = Vector3(ATTACK_SIZE);
+	trans.scale = Vector3(MODEL_SCALE);
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
 	SetGravityFlg(true);
+	SetPushFlg(true);
+	
 	count = 0;
 }
 
 void GrapeBossStampBomb::Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats)
 {
-	CreateAttackSkill(controlSenderId, 75, &stats);
+	GetColliders().back()->SetSkillStats(new SkillStats(75, &stats));
 
-	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
-	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
+	const float ATTACK_RADIUS_SCALE = ATTACK_RADIUS / MODEL_RADIUS;
+	collBack.scale = Vector3::XZonly(ATTACK_RADIUS_SCALE, ATTACK_RADIUS_SCALE);
 	collFront.scale = Vector3(0.0f);
 }
 
 void GrapeBossStampBomb::SubUpdate(void)
 {
-	bool i = ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->GetJudge();
+	switch (state) {
+
+	case GrapeBossStampBomb::STATE::None: { return; }
+
+	case GrapeBossStampBomb::STATE::Fall: {
+
+		// 接地判定
+		if (isGround) { state = STATE::Ground; }
+
+		break;
+	}
+
+	case GrapeBossStampBomb::STATE::Ground: {
+
+
+		count += TimeScale::Get();
+
+		// まだ爆発しない
+		if (count < BOMBER_COUNT) {
+			// カウントに応じて攻撃範囲の演出
+			SetViewScaleCircle((ATTACK_RADIUS / MODEL_RADIUS) * (count / BOMBER_COUNT));
+		}
+		// 爆発
+		else {
+			state = STATE::Blast;
+		}
+
+		break;
+	}
+
+	case GrapeBossStampBomb::STATE::Blast: {
+
+
+
+		state = STATE::None;
+
+		break;
+	}
+
+	}
+
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
@@ -64,27 +95,17 @@ void GrapeBossStampBomb::SubUpdate(void)
 			trans.pos.y -= 8.0f;
 			return;
 		}
-		count++;
-		// カウントに応じて状態を変える
-		if (BOMBER_COUNT >= count) {
-
-			SetViewScaleCircle((ATTACK_RANGE / MODEL_RADIUS) * (count / BOMBER_COUNT));
-		}
 		// 攻撃判定オン
 		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
-			ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
+			GetColliders().back()->SetJudgeFlg(true);
 		}
 		//攻撃判定オフ、終わり
 		else {
-			ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+			GetColliders().back()->SetJudgeFlg(false);
 			end = true;
 			now = false;
 			count = 0;
 			SetViewScaleCircle(0.0f);
-			// ホストのみエフェクト再生
-			if (Net::GetIns().IsHost()) {
-				EffectManager::GetIns()->CreateEffect(EFFECT_NAME::BOMB_SMALL, trans.pos);
-			}
 		}
 	}
 }

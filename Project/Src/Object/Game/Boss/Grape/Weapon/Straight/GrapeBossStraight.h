@@ -8,13 +8,13 @@ public:
 	GrapeBossStraight(int model, int front, int back);
 	~GrapeBossStraight() = default;
 
-	// ‰Šúİ’è—pŠÖ”
-	void SetStartDir(Vector3 dir) { moveDir = dir; }
-
 	virtual void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
 
 	// ÚG”»’è
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
+
+	// ‘Å‚¿o‚·
+	void Shot(const Vector3& pos, const Vector3& vec);
 
 protected:
 
@@ -32,5 +32,5 @@ private:
 #pragma endregion
 
 	// ˆÚ“®•ûŒü
-	Vector3 moveDir;
+	Vector3 moveVec;
 };

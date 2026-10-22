@@ -1,6 +1,7 @@
 #pragma once
-#include "GrapeBossWeaponBase.h"
-#include "../../../../ActorBase.h"
+#include "../../../../Common/ActorBase/ActorBase.h"
+
+class GrapeBossWeaponBase;
 
 struct CharacterStats;
 
@@ -17,7 +18,8 @@ struct BombType {
 	bool live = false;
 };
 
-class GrapeBossWeaponManager : public ActorBase{
+class GrapeBossWeaponManager : public ActorBase
+{
 public:
 
 	GrapeBossWeaponManager(const MSG_SENDER_ID& controlSenderId, const CharacterStats& stats);
@@ -40,24 +42,9 @@ public:
 
 	void Load(void) override;
 
-	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	std::vector<ColliderBase*> GetCollider(void)const override {
-		std::vector<ColliderBase*> ret = {};
-		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
-
-		// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚Ì•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (auto& subObj : weapons) {
-			for (ColliderBase*& coll : subObj.weaponIns->GetCollider()) { ret.emplace_back(coll); }
-		}
-		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
-		return ret;
-	}
-
 protected:
 
 	void SubUpdate(void) override;
-	void SubAlphaDraw(void) override;
 	void SubRelease(void) override;
 
 private:

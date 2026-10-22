@@ -155,9 +155,9 @@ void OrangePlayer::PlayerLoad(void)
 			// 横軸加速度の最大値の参照
 			ACCEL_MAX,
 			// 歩きアニメーション再生
-			[&]() { AnimePlay((int)ANIME_TYPE::WALK); },
+			[&]() { AnimePlay(ANIME_TYPE::WALK); },
 			// 走りアニメーション再生
-			[&]() { AnimePlay((int)ANIME_TYPE::RUN); }
+			[&]() { AnimePlay(ANIME_TYPE::RUN); }
 		)
 	);
 
@@ -190,9 +190,9 @@ void OrangePlayer::PlayerLoad(void)
 			// 各段のアニメーション再生
 			std::bind(&OrangePlayer::MoveAccel, this, std::placeholders::_1),
 			{
-				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH1); },
-				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH2); },
-				[&]() { AnimePlay((int)ANIME_TYPE::PUNCH3); }
+				[&]() { AnimePlay(ANIME_TYPE::PUNCH1); },
+				[&]() { AnimePlay(ANIME_TYPE::PUNCH2); },
+				[&]() { AnimePlay(ANIME_TYPE::PUNCH3); }
 			},
 			// アニメーションの再生割合を取得する関数
 			std::bind(&OrangePlayer::GetAnimeRatio, this),
