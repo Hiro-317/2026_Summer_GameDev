@@ -2,43 +2,48 @@
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
+#include "../../../../../Common/Transform/Transform.h"
+
 GrapeBossMoveState::GrapeBossMoveState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED,
-	Vector3& pos, Quaternion& rotation, const std::vector<const Vector3*> playerPos,
-	const std::function<int(void)> GetTarget,
-	const std::function<void(void)> PlayRunAnime,
-	const std::function<void(void)> KickDownChangeState
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
+
+	const Vector3& bossPos,
+
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
+	const int& targetNum,
+
+	const std::function<void(const Vector3&)>& moveAccel,
+
+	const std::function<void(void)>& playRunAnime,
+	const std::function<void(void)>& kickDownChangeState
+) :
 	MOVE_SPEED(MOVE_SPEED),
-	pos(pos), rotation(rotation), playerPos(playerPos),
-	GetTarget(GetTarget),
-	PlayRunAnime(PlayRunAnime),
-	KickDownChangeState(KickDownChangeState)
+
+	bossPos(bossPos),
+
+	playerPos(playerPos),
+	targetNum(targetNum),
+
+	moveAccel(moveAccel),
+
+	playRunAnime(playRunAnime),
+	kickDownChangeState(kickDownChangeState)
 {
 	
 }
 
 void GrapeBossMoveState::Enter(void)
 {
-	target = GetTarget();
-	PlayRunAnime();
+	playRunAnime();
 }
 
 void GrapeBossMoveState::Update(void)
 {
-	// 回転の更新
-	moveDir = (*playerPos.at(target) - pos).Normalized();
-	rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
+	Vector3 vec = *playerPos[targetNum] - bossPos;
 
-	// 位置の更新
-	pos += moveDir * MOVE_SPEED;
+	if (vec.Length() <= 450.0f) { kickDownChangeState(); }
 
-	if ((*playerPos.at(target) - pos).Length() <= 450.0f) {
-		KickDownChangeState();
-	}
+	moveAccel(vec.Normalized());
 }
 
 void GrapeBossMoveState::Exit(void)

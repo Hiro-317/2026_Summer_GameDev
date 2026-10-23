@@ -54,9 +54,9 @@ void GrapeBoss::BossLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	subObjArray.push_back(new GrapeBossWeaponManager(controlSenderId, characterStats));
-	subObjArray.push_back(new GrapeKickDownCollOperator(controlSenderId, characterStats));
-	subObjArray.push_back(new GrapeStampCollOperator(controlSenderId, characterStats));
+	AddChildActor(new GrapeBossWeaponManager(controlSenderId, characterStats));
+	AddChildActor(new GrapeKickDownCollOperator(controlSenderId, characterStats));
+	AddChildActor(new GrapeStampCollOperator(controlSenderId, characterStats));
 
 #pragma endregion
 
@@ -66,59 +66,59 @@ void GrapeBoss::BossLoad(void)
 	AddState(
 		STATE::IDLE,
 		new GrapeBossIdleState(
-			// 自分の座標、プレイヤーの座標の読み取り
-			trans.pos, trans.rotation, playerPos,
+			// 自分の座標
+			trans,
+			// プレイヤーの座標の読み取り
+			playerPos,
+
 			// クールタイム
-			[&]() { return coolTime; },
+			coolTime,
 			// ターゲット番号の取得
-			[&]() { return targetNum; },
+			targetNum,
+
 			// アイドルアニメーションの再生
-			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
+			[&]() { AnimePlay(ANIME_TYPE::IDLE); },
 			// 歩きアニメーションの再生
-			[&]() { AnimePlay((int)ANIME_TYPE::WALK, true); },
+			[&]() { AnimePlay(ANIME_TYPE::WALK); },
+
 			// 移動への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::MOVE); },
+			[&]() { ChangeState(STATE::MOVE); },
 			// 踏みつけへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_A); },
+			[&]() { ChangeState(STATE::ATTACK_A); },
 			// 投擲への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_B); },
+			[&]() { ChangeState(STATE::ATTACK_B); },
 			// スタンプへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_C); },
+			[&]() { ChangeState(STATE::ATTACK_C); },
 			// ひとつ追従への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_D); },
+			[&]() { ChangeState(STATE::ATTACK_D); },
 			// たくさん追従への状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_E); },
+			[&]() { ChangeState(STATE::ATTACK_E); },
 			// たくさんランダムへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_F); }
-		)
-	);
-	AddState(
-		static_cast<int>(STATE::MOVE),
-		new GrapeBossMoveState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::MOVE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::MOVE); },
-			// 移動量
-			MOVE_SPEED,
-			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.rotation, playerPos,
-			// ターゲット番号の取得
-			[&]() { return targetNum; },
-			// 走りアニメーションの再生
-			[&]() { AnimePlay((int)ANIME_TYPE::RUN, true); },
-			// 移動後攻撃に状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_A); }
+			[&]() { ChangeState(STATE::ATTACK_F); }
 		)
 	);
 
 	AddState(
-		static_cast<int>(STATE::ATTACK_A),
+		STATE::MOVE,
+		new GrapeBossMoveState(
+			// 移動量
+			MOVE_SPEED,
+			// 自分の座標と角度、プレイヤーの座標の読み取り
+			trans.pos,
+			playerPos,
+			// ターゲット番号の取得
+			targetNum,
+			std::bind(GrapeBoss::MoveAccel, this, std::placeholders::_1),
+			// 走りアニメーションの再生
+			[&]() { AnimePlay(ANIME_TYPE::RUN); },
+			// 移動後攻撃に状態遷移関数のポインタ
+			[&]() { ChangeState(STATE::ATTACK_A); }
+		)
+	);
+
+	AddState(
+		STATE::ATTACK_A,
 		new GrapeBossKickDownState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// 自分の座標と角度とローカル角度
 			trans.pos, trans.rotation, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
@@ -327,6 +327,14 @@ void GrapeBoss::BossLoad(void)
 
 #pragma endregion 
 
+}
+
+void GrapeBoss::BossUpdate(void)
+{
+	if (coolTime > 0.0f) {
+		coolTime -= TimeScale::Get();
+		if (coolTime < 0.0f) { coolTime = 0.0f; }
+	}
 }
 
 void GrapeBoss::ReceptionUpdate(void)

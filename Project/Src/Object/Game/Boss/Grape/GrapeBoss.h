@@ -12,12 +12,10 @@ public:
 
 	virtual void ReceptionUpdate(void)override;
 
-protected:
+private:
 
 	// ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
 	void PlayDamage(void) override;
-
-private:
 
 #pragma region ’è”’è‹`
 
@@ -108,13 +106,14 @@ private:
 
 	// ƒƒCƒ“ˆ—``````````````
 	void BossLoad(void)override;
+	void BossUpdate(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
 	// Œü‚¢‚Ä‚¢‚éŒü‚«
 	Vector3 moveDir;
 
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	int coolTime;
+	float coolTime;
 
 	// ƒQ[ƒ€ƒNƒŠƒA‚ÌƒJƒEƒ“ƒgƒ_ƒEƒ“
 	int gameOverCnt;
