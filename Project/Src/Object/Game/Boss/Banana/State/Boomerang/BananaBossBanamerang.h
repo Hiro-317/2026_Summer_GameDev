@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../../../../../ActorBase.h"
+#include "../../../../../Common/ActorBase/ActorBase.h"
 
 #include "../../../../../Common/Collider/XZCircleCollider.h"
+
+struct CharacterStats;
 
 
 class BananaBossBanamerang : public ActorBase
@@ -53,7 +55,7 @@ private:
 
 #pragma endregion
 
-	void SubAlphaDraw(void) override;
+	void SubDraw(void) override;
 
 	Transform collBack;
 	Transform collFront;
@@ -62,4 +64,6 @@ private:
 
 	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
 	bool isDrawArea;
+
+	XZCircleCollider* collRef;
 };

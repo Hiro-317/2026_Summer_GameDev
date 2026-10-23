@@ -3,10 +3,8 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 BananaBossIdleState::BananaBossIdleState(
-	const std::function<void(void)>& ownChangeState, 
-	const std::function<bool(void)>& isOwnState, 
 	Vector3& pos, Quaternion& rotation,
-	const std::vector<const Vector3*> playerPos,
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayIdleAnim,
@@ -17,7 +15,7 @@ BananaBossIdleState::BananaBossIdleState(
 	const std::function<void(void)> StalkerChangeState,
 	const std::function<void(void)> RandomChangeState*/
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	pos(pos), rotation(rotation),
 	playerPos(playerPos),
 	CoolTime(CoolTime),
@@ -50,7 +48,7 @@ void BananaBossIdleState::Update(void)
 		return;
 	}
 	// ãóó£Ç∆ämó¶ÇèoÇ∑
-	float distance = (*playerPos.at(target) - pos).Length();
+	float distance = (*playerPos[target] - pos).Length();
 	int luck = GetRand(RANDOM);
 
 	if (luck <= KICKDOWN_LUCK) {

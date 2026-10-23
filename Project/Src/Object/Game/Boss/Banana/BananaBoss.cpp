@@ -11,27 +11,20 @@
 
 #include "State/Idle/BananaBossIdleState.h"
 #include "State/Scratch/BananaBossScratchState.h"
-#include "State/Scratch/BananaScratchCollOperator.h"
 #include "State/Fire/BananaBossFireState.h"
-#include "State/Fire/BananaFireCollOperator.h"
 #include "State/Boomerang/BananaBossBoomerangState.h"
-#include "State/Boomerang/BananaBossBanamerang.h"
 #include "State/Death/BananaBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
 
-#include "../../../../Manager/Effect/EffectManager.h"
-
-#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../UI/HitUI/HitUI.h"
+#include "../../UI/HpBarUI.h"
+#include "../../UI/HitUI.h"
 
 
-BananaBoss::BananaBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive) :
+BananaBoss::BananaBoss() :
 	BossBase(
 		"Data/Parameter/Character/Boss/Banagon/",
-		"Banana/Banagon",
-
-		playerPos, playerLive)
+		"Banana/Banagon")
 {
 
 	coolTime = 120;
@@ -54,17 +47,16 @@ void BananaBoss::BossLoad(void)
 	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
 	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
-	subObjArray.push_back(new BananaScratchCollOperator(controlSenderId, characterStats, INIT_POS, StartFrame, EndFrame));
-	subObjArray.push_back(new BananaFireCollOperator(controlSenderId, characterStats));
-	subObjArray.push_back(new BananaBossBanamerang(controlSenderId, characterStats));
+	scratchRef = new BananaScratchCollOperator(controlSenderId, characterStats, INIT_POS, StartFrame, EndFrame);
+	AddChildActor(scratchRef);
+	fireRef = new BananaFireCollOperator(controlSenderId, characterStats);
+	AddChildActor(fireRef);
+	banamerangRef = new BananaBossBanamerang(controlSenderId, characterStats);
+	AddChildActor(banamerangRef);
 
 	AddState(
-		static_cast<int>(STATE::IDLE),
+		STATE::IDLE,
 		new BananaBossIdleState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::IDLE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, playerPos,
 			// クールタイム
@@ -89,14 +81,10 @@ void BananaBoss::BossLoad(void)
 	);
 
 	AddState(
-		static_cast<int>(STATE::ATTACK_A),
+		STATE::ATTACK_A,
 		new BananaBossScratchState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// コライダへのポインタ
-			SubActorSerch<BananaScratchCollOperator>(),
+			scratchRef,
 			// フレーム座標の更新
 			[&]() {
 				StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
@@ -115,14 +103,10 @@ void BananaBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_B),
+		STATE::ATTACK_B,
 		new BananaBossFireState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_B); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// コライダへのポインタ
-			SubActorSerch<BananaFireCollOperator>(),
+			fireRef,
 			// 攻撃アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::BREATH, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
@@ -136,14 +120,10 @@ void BananaBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_C),
+		STATE::ATTACK_C,
 		new BananaBossBoomerangState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// コライダへのポインタ
-			SubActorSerch<BananaBossBanamerang>(),
+			banamerangRef,
 			// 手の座標
 			[&]() { return Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R"))); },
 			// 溜めアニメーションの再生
@@ -163,15 +143,12 @@ void BananaBoss::BossLoad(void)
 	);
 
 	AddState(
-		static_cast<int>(STATE::DEATH),
+		STATE::DEATH,
 		new BananaBossDeathState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::DEATH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::DEATH); },
+			// 志望アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH_FALL, false); },
 			// 死んだフラグ3を立てる
-			[&]() {	SetIsDeath(true); }
+			[&]() {	isDeath = true; }
 		)
 	);
 
@@ -185,23 +162,22 @@ void BananaBoss::BossLoad(void)
 
 #pragma region UI生成
 	// HPバー生成
-	ui_ArrayIns.emplace_back(
-		new CharacterHpUI(
-			characterStats.hp,
-			characterStats.hpMax.Value(),
-			HP_FRAME_IMAGE_NAME,
-			HP_IMAGE_NAME,
-			HP_LOST_IMAGE_NAME,
-			"", "", "",
-			HP_IMAGE_SIZE,
-			HP_GAUGE_OFFSET,
+	AddChildActor(
+		new HpBarUI(
+			"Data/Image/Game/UI/Boss/HP/" + HP_FRAME_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_LOST_IMAGE_NAME,
+
+			Vector2I(667, 50),
+			Vector2I(629, 50),
+
 			HP_UI_POS,
-			FILE_PATH_TYPE::BOSS_HP,
-			""
+
+			characterStats
 		)
 	);
 
-	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+	AddChildActor(new HitUI());
 #pragma endregion
 
 }
@@ -218,19 +194,19 @@ void BananaBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubActorSerch<BananaScratchCollOperator>()->SetScale(dataPtr->scale);
+			scratchRef->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
 		{
-			SubActorSerch<BananaFireCollOperator>()->SetScale(dataPtr->scale);
+			fireRef->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubActorSerch<BananaBossBanamerang>()->SetScale(dataPtr->scale);
-			SubActorSerch<BananaBossBanamerang>()->SetBanameranPos(dataPtr->pos);
-			SubActorSerch<BananaBossBanamerang>()->SetBanameranRot(Quaternion::FromRotationY(dataPtr->angle));
+			banamerangRef->SetScale(dataPtr->scale);
+			banamerangRef->SetBanameranPos(dataPtr->pos);
+			banamerangRef->SetBanameranRot(Quaternion::FromRotationY(dataPtr->angle));
 			break;
 		}
 		default:
@@ -247,30 +223,30 @@ void BananaBoss::ReceptionUpdate(void)
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
 			if (dataPtr->flg) {
-				SubActorSerch<BananaScratchCollOperator>()->SetDrawArea(dataPtr->flg);
+				scratchRef->SetDrawArea(dataPtr->flg);
 			}
 			else {
-				SubActorSerch<BananaScratchCollOperator>()->Off();
+				scratchRef->Off();
 			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
 		{
 			if (dataPtr->flg) {
-				SubActorSerch<BananaFireCollOperator>()->SetDrawArea(dataPtr->flg);
+				fireRef->SetDrawArea(dataPtr->flg);
 			}
 			else {
-				SubActorSerch<BananaFireCollOperator>()->Off();
+				fireRef->Off();
 			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
 			if (dataPtr->flg) {
-				SubActorSerch<BananaBossBanamerang>()->SetDrawArea(dataPtr->flg);
+				banamerangRef->SetDrawArea(dataPtr->flg);
 			}
 			else {
-				SubActorSerch<BananaBossBanamerang>()->Off();
+				banamerangRef->Off();
 			}			
 			break;
 		}
@@ -294,7 +270,7 @@ void BananaBoss::BossInit(void)
 	// 初期状態を移動状態にする
 	ChangeState(static_cast<int>(STATE::IDLE));
 
-	for (ActorBase*& c : subObjArray) { c->Init(); }
+	for (ActorBase* c : GetChildActors()) { c->Init(); }
 }
 
 void BananaBoss::PlayDamage(void)

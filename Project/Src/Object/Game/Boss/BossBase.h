@@ -23,7 +23,7 @@ public:
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
 
-	const bool& GetIsDeath(void)const { return false; }
+	const bool& GetIsDeath(void)const { return isDeath; }
 
 	void SetPlayerPos(MSG_SENDER_ID id, const Vector3* pos) { playerPos[(int)id] = pos; }
 	void SetPlayerIsDeath(MSG_SENDER_ID id, const bool* isDeath) { playerIsDeath[(int)id] = isDeath; }
@@ -140,4 +140,6 @@ protected:
 
 	// ダメージUI管理クラス
 	HitUI* hitUiRef;
+
+	bool isDeath;
 };

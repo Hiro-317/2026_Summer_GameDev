@@ -5,14 +5,17 @@
 #include "../../../../../../Common/Vector3.h"
 #include "../../../../../../Common/Quaternion.h"
 
+#include "../../../../../../Utility/Utility.h"
+
+#include "../../../../../../Manager/Net/SenderID_Define.h"
+
+
 class BananaBossIdleState : public CharacterStateBase
 {
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
@@ -28,10 +31,8 @@ public:
 	/// <param name="StalkerChangeState">追従攻撃へのステート</param>
 	/// <param name="RandomChangeState">ランダム攻撃へのステート</param>
 	BananaBossIdleState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Quaternion& rotation, 
-		const std::vector<const Vector3*>playerPos,
+		Vector3& pos, Quaternion& rotation,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		const std::function<int(void)> CoolTime,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayIdleAnim,
@@ -64,7 +65,7 @@ private:
 	Quaternion& rotation;
 
 	// プレイヤーの座標の読み取り
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	const std::function<int(void)> GetTarget;
 	// クールタイムの参照

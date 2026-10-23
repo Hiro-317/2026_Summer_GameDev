@@ -51,11 +51,13 @@ private:
 
 #pragma endregion
 
-	void SubAlphaDraw(void) override;
+	void SubDraw(void) override;
 
 	Transform collBack;
 	Transform collFront;
 
 	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
 	bool isDrawArea;
+
+	SphereCollider* collRef;
 };

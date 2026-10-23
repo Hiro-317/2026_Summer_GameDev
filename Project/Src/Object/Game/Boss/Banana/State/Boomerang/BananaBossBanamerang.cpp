@@ -1,6 +1,8 @@
 #include "BananaBossBanamerang.h"
 
 
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+
 BananaBossBanamerang::BananaBossBanamerang(
 	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats
@@ -8,25 +10,24 @@ BananaBossBanamerang::BananaBossBanamerang(
 	controlSenderId(controlSenderId),
 	stats(stats)
 {
-	banamerang.Load("Character/Banana/Banamerang");
+	banamerang.LoadModel("Character/Banana/Banamerang");
 	banamerang.scale = SIZE;
 }
 
 void BananaBossBanamerang::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
-	AddCollider(
-		new XZCircleCollider(COLLIDER_TAG::BossAttack, RADIUS, 120.0f)
-	);
+	collRef = new XZCircleCollider(COLLIDER_TAG::BossAttack, RADIUS, 120.0f);
+	AddCollider(collRef);
 
-	CreateAttackSkill(controlSenderId, 85, &stats, COLLIDER_TAG::BossAttack);
+	collRef->SetSkillStats(new SkillStats(85, &stats));
 	SetPushFlg(false);
 	SetJudgeFlg(false);
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetTransformPtr(&banamerang);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(banamerang.pos);
 
-	collBack.Load("Range/CircleHalfRangeBack");
-	collFront.Load("Range/CircleHalfRangeFront");
+	collBack.LoadModel("Range/CircleHalfRangeBack");
+	collFront.LoadModel("Range/CircleHalfRangeFront");
 
 	collBack.pos = POS;
 	collFront.pos = POS;
@@ -38,9 +39,10 @@ void BananaBossBanamerang::Load(void)
 	collFront.localRotation = Quaternion::FromRotationY(Deg2Rad(180.0f));
 
 	isDrawArea = false;
+	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 }
 
-void BananaBossBanamerang::SubAlphaDraw(void)
+void BananaBossBanamerang::SubDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);

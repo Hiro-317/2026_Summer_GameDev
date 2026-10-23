@@ -11,8 +11,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="collOperator">攻撃オペレーターの参照</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
@@ -20,8 +18,6 @@ public:
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	BananaBossBoomerangState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		BananaBossBanamerang* collOperator,
 		const std::function<Vector3(void)> HandPos,
 		const std::function<void(void)> PlayStartAnim,

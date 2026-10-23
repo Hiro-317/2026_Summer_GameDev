@@ -4,6 +4,9 @@
 
 #include "../../../../../Common/Collider/CapsuleCollider.h"
 
+struct CharacterStats;
+
+
 class BananaScratchCollOperator : public ActorBase
 {
 public:
@@ -29,7 +32,7 @@ public:
 
 	// 攻撃フレームの更新
 	void SetColliderFrame(void) { 
-		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back());
+		auto coll = dynamic_cast<CapsuleCollider*>(ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back());
 		coll->SetStartPos(StartPos); coll->SetEndPos(EndPos);
 	}
 
@@ -64,11 +67,13 @@ private:
 
 #pragma endregion
 
-	void SubAlphaDraw(void) override;
+	void SubDraw(void) override;
 
 	Transform collBack;
 	Transform collFront;
 
 	// 攻撃範囲描画フラグ
 	bool isDrawArea;
+
+	CapsuleCollider* collRef;
 };

@@ -1,16 +1,17 @@
 #include "BananaBossDeathState.h"
 
-#include "../../../../../../Scene/Game/GameScene.h"
+#include "../../../../../../Scene/SceneManager.h"
+#include "../../../../../../Scene/SceneBase.h"
+#include "../../../../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
+
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
 BananaBossDeathState::BananaBossDeathState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	const std::function<void(void)>& PlayDeath,
 	const std::function<void(void)> IsDeath
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	PlayDeath(PlayDeath),
 	IsDeath(IsDeath)
 {
@@ -18,7 +19,7 @@ BananaBossDeathState::BananaBossDeathState(
 
 void BananaBossDeathState::Enter(void)
 {
-	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, CHANGE_COUNT);
+	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
 	PlayDeath();
 }
 

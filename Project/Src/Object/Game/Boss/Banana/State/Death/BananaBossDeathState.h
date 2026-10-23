@@ -8,15 +8,11 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="ROTATION_POW">回転量</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	BananaBossDeathState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		const std::function<void(void)>& PlayDeath,
 		const std::function<void(void)> IsDeath
 	);
