@@ -1,6 +1,9 @@
 #include "TomatoStampCollOperator.h"
 
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../Common/DataLoad/ParameterLoad.h"
 #include "../../../../../Common/Collider/XZCircleCollider.h"
+
 
 TomatoStampCollOperator::TomatoStampCollOperator
 (
@@ -39,37 +42,38 @@ void TomatoStampCollOperator::Load(void)
 
 	// “–‚½‚è”»’èî•ñ‚ð¶¬‚·‚é
 	AddCollider(new XZCircleCollider(COLLIDER_TAG::BossAttackArea, ATTACK_RADIUS, 1000.0f));
-	AddCollider(new XZCircleCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS, 1000.0f));
+	collRef = new XZCircleCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS, 1000.0f);
+	AddCollider(collRef);
 	SetJudgeFlg(false);
 
 	// UŒ‚”ÍˆÍ‚Ì“–‚½‚è”»’è
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetDynamicFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetPushFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
 
-	CreateAttackSkill(controlSenderId, 100, &stats, COLLIDER_TAG::BossAttack);
+	collRef->SetSkillStats(new SkillStats(100, &stats));
 
-	collBack.Load("Range/CircleRangeBack");
-	collFront.Load("Range/CircleRangeFront");
+	collBack.LoadModel("Range/CircleRangeBack");
+	collFront.LoadModel("Range/CircleRangeFront");
 
 	collBack.pos = Vector3::Yonly(HEIGHT);
 	collFront.pos = Vector3::Yonly(HEIGHT + 1.0f);
 
 	collBack.scale = SCALE;
 	collFront.scale = Vector3(0);
+
+	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 }
 
 void TomatoStampCollOperator::SubUpdate(void)
 {
 	// ‰Ÿ‚µ–ß‚³‚ê‚½êŠ‚É‚·‚×‚ÄˆÚ“®‚³‚¹‚é
-	auto pos = ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->GetPos();
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(pos);
+	auto pos = ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->GetPos();
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(pos);
 	collBack.pos = pos;
 	collFront.pos = pos;
 	trans.pos.y = HEIGHT;
 }
 
-void TomatoStampCollOperator::SubAlphaDraw(void)
+void TomatoStampCollOperator::SubDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);

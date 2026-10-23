@@ -1,9 +1,11 @@
 #pragma once
+#include "TomatoHeadbuttCollOperator.h"
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "TomatoHeadbuttCollOperator.h"
 #include "../../../../../../Common/Vector3.h"
+#include "../../../../../../Manager/Net/SenderID_Define.h"
+
 
 class TomatoBossHeadbuttState : public CharacterStateBase
 {
@@ -11,8 +13,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="MOVE_SPEED"></param>
 	/// <param name="ATTACK_TIME"></param>
 	/// <param name="pos">座標の参照</param>
@@ -25,11 +25,9 @@ public:
 	/// <param name="DefaultChangeState">攻撃後のステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	TomatoBossHeadbuttState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		const float MOVE_SPEED, const float ATTACK_TIME,
 		Vector3& pos, Quaternion& rotation,
-		const std::vector<const Vector3*> playerPos,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		TomatoHeadbuttCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DeleteColl,
@@ -70,7 +68,7 @@ private:
 	Quaternion& rotation;
 
 	// プレイヤーの座標の読み取り
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	// コリジョンオペレーターのポインタ
 	TomatoHeadbuttCollOperator* collOperator;

@@ -4,6 +4,8 @@
 
 #include "../../../../../Common/Collider/ColliderBase.h"
 
+struct XZCircleCollider;
+
 struct CharacterStats;
 
 class TomatoStampCollOperator : public ActorBase
@@ -32,8 +34,8 @@ public:
 	void SetScale(float scale) { collFront.scale = SCALE * scale; }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
-	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true); }
-	void CollOn(void) { ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true); }
+	void DrawAreaOn(void) { isDrawArea = true; ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true); }
+	void CollOn(void) { ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true); }
 	void Off(void) { SetJudgeFlg(false); isDrawArea = false; }
 	void SetPos(const Vector3& pos){ trans.pos = pos; }
 
@@ -75,6 +77,8 @@ private:
 	// XVˆ—
 	void SubUpdate(void)override;
 
-	void SubAlphaDraw(void)override;
+	void SubDraw(void)override;
 	void SubRelease(void) override;
+
+	XZCircleCollider* collRef;
 };

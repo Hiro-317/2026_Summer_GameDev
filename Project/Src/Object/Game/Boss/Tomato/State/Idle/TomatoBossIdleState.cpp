@@ -3,9 +3,7 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 TomatoBossIdleState::TomatoBossIdleState(
-	const std::function<void(void)>& ownChangeState, 
-	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, const std::vector<const Vector3*> playerPos,
+	Vector3& pos, const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> HeadbuttChangeState,
@@ -15,7 +13,7 @@ TomatoBossIdleState::TomatoBossIdleState(
 	const std::function<bool(void)> hitRock,
 	const std::function<void(void)> rockReset
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	pos(pos), playerPos(playerPos),
 	CoolTime(CoolTime),
 	GetTarget(GetTarget),
@@ -42,7 +40,7 @@ void TomatoBossIdleState::Update(void)
 		return;
 	}
 	// ãóó£Ç∆ämó¶ÇèoÇ∑
-	float distance = (*playerPos.at(target) - pos).Length();
+	float distance = (*playerPos[target] - pos).Length();
 	int luck = GetRand(RANDOM);
 
 	// ämó¶Ç≈ïœÇ¶ÇÈ

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
+#include "../../../../../../Manager/Net/SenderID_Define.h"
 
 #include "../../../../../../Common/Vector3.h"
+#include "../../../../../../Common/Quaternion.h"
 
 class TomatoBossMoveState : public CharacterStateBase
 {
@@ -10,8 +12,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="MOVE_SPEED">移動速度</param>
 	/// <param name="ROTATION_POW">回転量</param>
 	/// <param name="pos">座標の参照</param>
@@ -21,11 +21,9 @@ public:
 	/// <param name="ResetAngle">角度のリセット</param>
 	/// <param name="HeadbuttChangeState">頭突き攻撃へのステート</param>
 	TomatoBossMoveState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Quaternion& rotation, 
-		const std::vector<const Vector3*> playerPos,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max], 
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> ResetAngle,
 		const std::function<void(void)> HeadbuttChangeState
@@ -63,7 +61,7 @@ private:
 	Quaternion& rotation;
 
 	// プレイヤーの座標の読み取り
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	const std::function<int(void)> GetTarget;
 		// 角度を戻すポインタ

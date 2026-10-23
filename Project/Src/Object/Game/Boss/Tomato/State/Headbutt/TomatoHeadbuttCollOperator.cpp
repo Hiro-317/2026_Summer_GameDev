@@ -1,5 +1,7 @@
 #include "TomatoHeadbuttCollOperator.h"
 
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../Common/DataLoad/ParameterLoad.h"
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
 TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
@@ -23,16 +25,15 @@ TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
 void TomatoHeadbuttCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
-	AddCollider(
-		new XZCircleCollider(COLLIDER_TAG::BossAttack, TO_PLAYER_DISTANCE, 1000.0f)
-	);
+	collRef = new XZCircleCollider(COLLIDER_TAG::BossAttack, TO_PLAYER_DISTANCE, 1000.0f);
+	AddCollider(collRef);
 
-	CreateAttackSkill(controlSenderId, 75, &stats, COLLIDER_TAG::BossAttack);
+	collRef->SetSkillStats(new SkillStats(75, &stats));
 
 	SetJudgeFlg(false);
 
-	collBack.Load("Range/LineRangeBack");
-	collFront.Load("Range/LineRangeFront");
+	collBack.LoadModel("Range/LineRangeBack");
+	collFront.LoadModel("Range/LineRangeFront");
 
 	collBack.pos = Vector3::Yonly(HEIGHT);
 	collFront.pos = Vector3::Yonly(HEIGHT);
@@ -47,9 +48,10 @@ void TomatoHeadbuttCollOperator::Load(void)
 	collFront.localRotation = Quaternion::FromEulerXZY(ANGLE);
 
 	isDrawArea = false;
+	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 }
 
-void TomatoHeadbuttCollOperator::SubAlphaDraw(void)
+void TomatoHeadbuttCollOperator::SubDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);

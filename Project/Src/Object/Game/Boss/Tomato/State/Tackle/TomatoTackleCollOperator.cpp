@@ -80,6 +80,7 @@ void TomatoTackleCollOperator::Load(void)
 #pragma endregion
 
 	isDrawArea = false;
+	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 }
 
 void TomatoTackleCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)

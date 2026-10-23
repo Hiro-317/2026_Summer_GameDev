@@ -1,15 +1,13 @@
 #include "TomatoBossTackleState.h"
 
+#include "../../../../../Common/DataLoad/ParameterLoad.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../../Manager/Effect/EffectManager.h"
 
 TomatoBossTackleState::TomatoBossTackleState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	float MOVE_SPEED, float ROTATION_POW,
 	Vector3& pos, Quaternion& rotation, const Transform* trans,
-	const std::vector<const Vector3*> playerPos,
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	TomatoTackleCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> ResetAngle,
@@ -18,7 +16,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 ) 
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	pos(pos), rotation(rotation), trans(trans),
 	playerPos(playerPos),
@@ -58,7 +56,7 @@ void TomatoBossTackleState::Update(void)
 		time++;
 
 		// 回転の更新
-		moveDir = (*playerPos.at(target) - pos).Normalized();
+		moveDir = (*playerPos[target] - pos).Normalized();
 		rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
 		rotPow += ROTATION_POW;
 
@@ -77,7 +75,6 @@ void TomatoBossTackleState::Update(void)
 	else {
 		// エフェクトの再生
 		if (time == CHARGE_POW) {
-			EffectManager::GetIns()->CreateEffect(EFFECT_NAME::TACKLE_MOVE, Vector3(), trans, false);
 		}
 		// 位置の更新
 		pos += moveDir * MOVE_SPEED;
@@ -107,7 +104,6 @@ void TomatoBossTackleState::Exit(void)
 	collOperator->SetDrawArea(false);
 	collOperator->CollSet(false);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
-	EffectManager::GetIns()->StopEffect(EFFECT_NAME::TACKLE_MOVE);
 }
 
 void TomatoBossTackleState::AlwaysUpdate(void)

@@ -13,32 +13,26 @@
 
 #include "State/Idle/TomatoBossIdleState.h"
 #include "State/Headbutt/TomatoBossHeadbuttState.h"
-#include "State/Headbutt/TomatoHeadbuttCollOperator.h"
 #include "State/Move/TomatoBossMoveState.h"
 #include "State/Tackle/TomatoBossTackleState.h"
-#include "State/Tackle/TomatoTackleCollOperator.h"
 #include "State/Stamp/TomatoBossStampState.h"
-#include "State/Stamp/TomatoStampCollOperator.h"
 #include "State/Death/TomatoBossDeathState.h"
 
-#include "../../../../Manager/Effect/EffectManager.h"
+#include "../../UI/HpBarUI.h"
+#include "../../UI/HitUI.h"
 
-#include "../../../UI/CharacterHpUI/CharacterHpUI.h"
-#include "../../../UI/HitUI/HitUI.h"
-
-TomatoBoss::TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath) :
+TomatoBoss::TomatoBoss() :
 	BossBase(
 		"Data/Parameter/Character/Boss/Tomato/",
-		"Tomato/Tomato",
-
-		playerPos, playerDeath)
+		"Tomato/Tomato"
+	)
 {
 	coolTime = DEFAULT_COOLTIME;
 	rockHit = false;
 	Snd::GetIns().AddScene("TomatoBoss");
 }
 
-void TomatoBoss::PlayerLoad(void)
+void TomatoBoss::BossLoad(void)
 {
 
 #pragma region 当たり判定情報設定
@@ -78,9 +72,12 @@ void TomatoBoss::PlayerLoad(void)
 
 #pragma region トマトが抱える下位クラスを生成する
 
-	subObjArray.push_back(new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam));
-	subObjArray.push_back(new TomatoStampCollOperator(500.0f, isGround, controlSenderId, characterStats, *collParam));
-	subObjArray.push_back(new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam));
+	headbuttRef = new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam);
+	AddChildActor(headbuttRef);
+	stampRef = new TomatoStampCollOperator(500.0f, isGround, controlSenderId, characterStats, *collParam);
+	AddChildActor(stampRef);
+	tackleRef = new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam);
+	AddChildActor(tackleRef);
 
 #pragma endregion
 
@@ -88,12 +85,8 @@ void TomatoBoss::PlayerLoad(void)
 #pragma region 状態設定
 
 	AddState(
-		static_cast<int>(STATE::IDLE),
+		STATE::IDLE,
 		new TomatoBossIdleState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::IDLE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::IDLE); },
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, playerPos,
 			// クールタイム
@@ -115,12 +108,8 @@ void TomatoBoss::PlayerLoad(void)
 			)
 	);
 	AddState(
-		static_cast<int>(STATE::MOVE),
+		STATE::MOVE,
 		new TomatoBossMoveState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::MOVE); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::MOVE); },
 			// 移動量と回転量
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
@@ -134,22 +123,18 @@ void TomatoBoss::PlayerLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_A),
+		STATE::ATTACK_A,
 		new TomatoBossHeadbuttState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_A); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_A); },
 			// 移動量と攻撃時間
 			MOVE_SPEED, 20.0f,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, playerPos,
 			// コリジョンオペレーターの参照渡し
-			SubActorSerch<TomatoHeadbuttCollOperator>(),
+			headbuttRef,
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// XZコライダを消す
-			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			[&]() { for (auto& coll : ColliderSerch(GetColliders(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == COLLIDER_SHAPE::XzCircle) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
 			[&]() { SetJudgeFlg(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -159,14 +144,10 @@ void TomatoBoss::PlayerLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_B),
+		STATE::ATTACK_B,
 		new TomatoBossStampState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_B); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// コリジョンオペレーターの参照私
-			SubActorSerch<TomatoStampCollOperator>(),
+			stampRef,
 			// 自分の座標の読み取り、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, isGround, playerPos,
 			// 現在のターゲット番号
@@ -182,24 +163,20 @@ void TomatoBoss::PlayerLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_C),
+		STATE::ATTACK_C,
 		new TomatoBossTackleState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、情報の読み取り,プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, &trans, playerPos,
 			// コリジョンオペレーターの参照渡し
-			SubActorSerch<TomatoTackleCollOperator>(),
+			tackleRef,
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 角度を戻す
 			[&]() { trans.rotation = Quaternion::FromRotationY(trans.rotation.ToEulerXZY().y); },
 			// XZコライダを消す
-			[&]() { for (auto& coll : ColliderSerch(GetCollider(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == SHAPE::XZ_CIRCLE) { coll->SetJudgeFlg(false); } } },
+			[&]() { for (auto& coll : ColliderSerch(GetColliders(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == COLLIDER_SHAPE::XzCircle) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
 			[&]() { SetJudgeFlg(true); },
 			// 攻撃終了後の状態遷移関数のポインタ
@@ -209,16 +186,12 @@ void TomatoBoss::PlayerLoad(void)
 			)
 	);
 	AddState(
-		static_cast<int>(STATE::DEATH),
+		STATE::DEATH,
 		new TomatoBossDeathState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::DEATH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::DEATH); },
 			// ボスのサイズと角度
 			trans.scale, trans.rotation,
 			// 死んだフラグを立てる
-			[&]() {	SetIsDeath(true); }
+			[&]() {	isDeath = true; }
 			)
 	);
 
@@ -227,35 +200,34 @@ void TomatoBoss::PlayerLoad(void)
 
 #pragma region UI生成
 	// HPバー生成
-	ui_ArrayIns.emplace_back(
-		new CharacterHpUI(
-			characterStats.hp,
-			characterStats.hpMax.Value(),
-			HP_FRAME_IMAGE_NAME,
-			HP_IMAGE_NAME,
-			HP_LOST_IMAGE_NAME,
-			"", "", "",
-			HP_IMAGE_SIZE,
-			HP_GAUGE_OFFSET,
+	AddChildActor(
+		new HpBarUI(
+			"Data/Image/Game/UI/Boss/HP/" + HP_FRAME_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_LOST_IMAGE_NAME,
+
+			Vector2I(667, 50),
+			Vector2I(629, 50),
+
 			HP_UI_POS,
-			FILE_PATH_TYPE::BOSS_HP,
-			""
+
+			characterStats
 		)
 	);
 
-	ui_ArrayIns.emplace_back(new HitUI(trans.pos));
+	AddChildActor(new HitUI());
 #pragma endregion
 
 }
 
-void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)
+void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	BossBase::OnCollision(ownTag, other, collisionPoint);
+	BossBase::OnCollision(ownTag, other, result);
 
 	// ボスとステージの岩と当たったか
 	if (ownTag == COLLIDER_TAG::Boss) {
 		if (other.GetTag() == COLLIDER_TAG::Stage) {
-			if (other.GetShape() == ColliderBase::SHAPE::XZ_CIRCLE) {
+			if (other.GetShape() == COLLIDER_SHAPE::XzCircle) {
 
 				rockHit = true;
 			}
@@ -275,22 +247,22 @@ void TomatoBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubActorSerch<TomatoHeadbuttCollOperator>()->SetViewPos(dataPtr->pos);
-			SubActorSerch<TomatoHeadbuttCollOperator>()->SetAngle(dataPtr->angle);
-			SubActorSerch<TomatoHeadbuttCollOperator>()->SetScale(dataPtr->scale);
+			headbuttRef->SetViewPos(dataPtr->pos);
+			headbuttRef->SetAngle(dataPtr->angle);
+			headbuttRef->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackB:
 		{
-			SubActorSerch<TomatoStampCollOperator>()->SetPos(dataPtr->pos);
-			SubActorSerch<TomatoStampCollOperator>()->SetScale(dataPtr->scale);
+			stampRef->SetPos(dataPtr->pos);
+			stampRef->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubActorSerch<TomatoTackleCollOperator>()->SetViewPos(dataPtr->pos);
-			SubActorSerch<TomatoTackleCollOperator>()->SetAngle(dataPtr->angle);
-			SubActorSerch<TomatoTackleCollOperator>()->SetScale(dataPtr->scale);
+			tackleRef->SetViewPos(dataPtr->pos);
+			tackleRef->SetAngle(dataPtr->angle);
+			tackleRef->SetScale(dataPtr->scale);
 			break;
 		}
 		default:
@@ -306,22 +278,22 @@ void TomatoBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
-			SubActorSerch<TomatoHeadbuttCollOperator>()->SetDrawArea(dataPtr->flg);
+			headbuttRef->SetDrawArea(dataPtr->flg);
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB:
 		{
 			if (dataPtr->flg) {
-				SubActorSerch<TomatoStampCollOperator>()->DrawAreaOn();
+				stampRef->DrawAreaOn();
 			}
 			else {
-				SubActorSerch<TomatoStampCollOperator>()->Off();
+				stampRef->Off();
 			}
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
-			SubActorSerch<TomatoTackleCollOperator>()->SetDrawArea(dataPtr->flg);
+			tackleRef->SetDrawArea(dataPtr->flg);
 			break;
 		}
 		default:

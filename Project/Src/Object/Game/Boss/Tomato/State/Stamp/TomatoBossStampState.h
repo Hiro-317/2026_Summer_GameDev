@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
+#include "../../../../../../Manager/Net/SenderID_Define.h"
 
 #include "TomatoStampCollOperator.h"
 
@@ -13,8 +14,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="collOperator">当たり判定オペレーターの参照</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
@@ -26,11 +25,9 @@ public:
 	/// <param name="onCollider">ボス自体のコライダの再生</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	TomatoBossStampState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		TomatoStampCollOperator* collOperator,
 		Vector3& pos, Quaternion& rotation, const bool& isGround,
-		const std::vector<const Vector3*>playerPos,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> offCollider,
@@ -80,7 +77,7 @@ private:
 	TomatoStampCollOperator* collOperator;
 
 	// プレイヤーの座標の取得
-	const std::vector<const Vector3*>playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	// 攻撃対象のプレイヤー番号
 	const std::function<int(void)> GetTarget;
