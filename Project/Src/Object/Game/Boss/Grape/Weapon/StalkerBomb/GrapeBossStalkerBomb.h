@@ -1,48 +1,32 @@
 #pragma once
 #include "../GrapeBossWeaponBase.h"
 
+class SphereCollider;
+
 class GrapeBossStalkerBomb : public GrapeBossWeaponBase
 {
 public:
-	GrapeBossStalkerBomb(int model, int front, int back);
-	~GrapeBossStalkerBomb() = default;
+    GrapeBossStalkerBomb(int model, int front, int back);
+    ~GrapeBossStalkerBomb() = default;
 
-	// ロード
-	virtual void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
+    void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
 
-	// 爆発までのカウント
-	const float BOMBER_COUNT = GetParameter("StalkerBomb", "BomberCnt");
-	// 攻撃持続時間
-	const float ATTACK_DURATION = GetParameter("StalkerBomb", "Duration");
+    const float BOMBER_COUNT = GetParameter("StalkerBomb", "BomberCnt");
+    const float ATTACK_DURATION = GetParameter("StalkerBomb", "Duration");
+
+    void Shot(const Vector3& pos);
 
 protected:
-
-	// 派生先追加更新
-	virtual void SubUpdate(void) override;
+    void SubUpdate(void) override;
 
 private:
+    const float MODEL_RADIUS = GetParameter("StalkerBomb", "Radius");
+    const float MODEL_SCALE = GetParameter("StalkerBomb", "Size");
+    const float RADIUS = MODEL_RADIUS * MODEL_SCALE;
+    const float ATTACK_RADIUS = GetParameter("StalkerBomb", "Range");
 
-	enum class STATE {
-		None,
+    SphereCollider* objectCollRef;
+    SphereCollider* attackCollRef;
 
-		Fall,
-
-		Ground,
-
-		Blast,
-	};
-
-	// 表示倍率を含めないモデルの半径（この数値は攻撃範囲のモデルも同じとする）
-	const float MODEL_RADIUS = GetParameter("StampBomb", "Radius");
-
-	// モデル表示倍率
-	const float MODEL_SCALE = GetParameter("StampBomb", "Size");
-
-	// 表示倍率も適用した通常時の半径
-	const float RADIUS = MODEL_RADIUS * MODEL_SCALE;
-
-	// 攻撃時(爆発範囲)の半径
-	const float ATTACK_RADIUS = GetParameter("StampBomb", "Range");
-
-	STATE state;
+    void Blast();
 };

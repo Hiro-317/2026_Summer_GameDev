@@ -66,6 +66,8 @@ void GrapeBossStampBomb::SubUpdate(void)
 		}
 		// ”š”­
 		else {
+
+			Blast();
 			state = STATE::Blast;
 		}
 
@@ -82,7 +84,29 @@ void GrapeBossStampBomb::SubUpdate(void)
 	}
 }
 
-void GrapeBossStampBomb::Blast(bool send)
+void GrapeBossStampBomb::Shot(const Vector3& pos, const Vector3& vec)
+{
+	state = STATE::Fall;
+
+	trans.pos = pos;
+
+	velocity = vec;
+	velocity.y = 15.0f;
+
+	SetIsDraw(true);
+
+
+	SetViewScaleCircle(0.0f);
+
+	objectCollRef->SetJudgeFlg(true);
+
+	attackCollRef->SetJudgeFlg(false);
+
+	SetGravityFlg(true);
+	SetPushFlg(true);
+}
+
+void GrapeBossStampBomb::Blast()
 {
 	SetViewScaleCircle(0.0f);
 
@@ -92,5 +116,4 @@ void GrapeBossStampBomb::Blast(bool send)
 
 	SetGravityFlg(false);
 	SetPushFlg(false);
-
 }

@@ -17,6 +17,9 @@ public:
 	// 攻撃持続時間
 	const float ATTACK_DURATION = GetParameter("StampBomb", "Duration");
 
+	// スタート
+	void Shot(const Vector3& pos, const Vector3& vec);
+
 protected:
 
 	// 派生先追加更新
@@ -36,6 +39,7 @@ private:
 	// 攻撃時(爆発範囲)の半径
 	const float ATTACK_RADIUS = GetParameter("StampBomb", "Range");
 
+
 	STATE state;
 
 	// ステージとの当たり判定を行うためのコライダーの参照
@@ -44,5 +48,5 @@ private:
 	SphereCollider* attackCollRef;
 
 	// 爆発
-	void Blast(bool send);
+	void Blast();
 };

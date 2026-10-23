@@ -17,6 +17,8 @@ GrapeBossWeaponBase::GrapeBossWeaponBase(int model, int front, int back) :
 
 void GrapeBossWeaponBase::SubDraw(void)
 {
+	if (!isGround) { return; }
+
 	SetUseLighting(false);
 	collBack.Draw();
 	collFront.Draw();
