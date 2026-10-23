@@ -37,7 +37,7 @@ BananaBoss::BananaBoss(const std::vector<const Vector3*> playerPos, const std::v
 	coolTime = 120;
 }
 
-void BananaBoss::PlayerLoad(void)
+void BananaBoss::BossLoad(void)
 {
 	// ƒAƒjƒ[ƒVƒ‡ƒ“````````````````````````````
 
@@ -282,7 +282,7 @@ void BananaBoss::ReceptionUpdate(void)
 	}
 }
 
-void BananaBoss::CharacterInit(void)
+void BananaBoss::BossInit(void)
 {
 	// ˆÊ’u‚ğ‰ŠúˆÊ’u‚É‚·‚é
 	trans.pos = INIT_POS;

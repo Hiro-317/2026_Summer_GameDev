@@ -39,6 +39,7 @@ private:
 protected:
 
 	virtual void BossLoad(void) = 0;
+	virtual void BossInit(void) {};
 
 	// ステート遷移関数
 	void ChangeState(int nextState)override;

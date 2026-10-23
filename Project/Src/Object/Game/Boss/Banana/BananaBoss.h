@@ -10,14 +10,11 @@ public:
 
 	virtual void ReceptionUpdate(void)override;
 
-protected:
+private:
 
 	// ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
 	void PlayDamage(void) override;
-
-private:
-
-	void CharacterInit(void)override;
+	void BossInit(void)override;
 
 #pragma region ’è”’è‹`
 
@@ -140,7 +137,7 @@ private:
 #pragma endregion ’è”’è‹`
 
 	// ƒƒCƒ“ˆ—``````````````
-	void PlayerLoad(void)override;
+	void BossLoad(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
