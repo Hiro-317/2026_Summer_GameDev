@@ -5,6 +5,8 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
+#include "GrapeKickDownCollOperator.h"
+
 GrapeBossKickDownState::GrapeBossKickDownState(
 	const std::function<void(void)>& ownChangeState,
 	const std::function<bool(void)>& isOwnState,
@@ -54,7 +56,7 @@ void GrapeBossKickDownState::Enter(void)
 void GrapeBossKickDownState::Update(void)
 {
 	// アニメーションが終わっていたらステートを抜ける
-	if (IsAnimeEnd()) {
+	if (getAnimPlayRatio() > 1.0f) {
 		// アニメーションの再生割合で生成
 		if (first) {
 			// 生成数まで回す
@@ -88,7 +90,7 @@ void GrapeBossKickDownState::Update(void)
 				Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
 				bombType[i].weaponIns->SetStartPos(tmpPos);
 				bombType[i].weaponIns->SetViewPosCircle();
-				
+
 				// 起動を通知
 				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, tmpPos));
 

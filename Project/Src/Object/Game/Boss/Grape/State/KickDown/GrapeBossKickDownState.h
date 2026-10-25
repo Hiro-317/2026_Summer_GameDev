@@ -2,11 +2,12 @@
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "GrapeKickDownCollOperator.h"
 #include "../../Weapon/GrapeBossWeaponManager.h"
 
 struct Transform;
 #include "../../../../../../Common/Vector3.h"
+
+class GrapeKickDownCollOperator;
 
 class GrapeBossKickDownState : public CharacterStateBase
 {
@@ -29,16 +30,16 @@ public:
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossKickDownState(
 		Transform& bossTrans,
-		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 
-		const Vector3 LOCAL_ROT,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
+		const int& targetNum,
+
+		const Vector3& LOCAL_ROT,
 
 		const Vector3& MODEL_SCALE,
 
+		const GrapeKickDownCollOperator& collOperator,
 		BombType* bombType,
-		GrapeKickDownCollOperator* collOperator,
-
-		const int& targetNum,
 
 		const std::function<void(void)>& playAttackAnim,
 		const std::function<float(void)>& getAnimPlayRatio,
@@ -87,15 +88,14 @@ private:
 
 	// プレイヤーの座標の読み取り
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
-
-	// ボムの参照
-	BombType* bombType;
+	// ターゲット番号の取得
+	const int& targetNum;
 
 	// コライダーのオペレーターのポインター
 	GrapeKickDownCollOperator* collOperator;
 
-	// ターゲット番号の取得
-	const int& targetNum;
+	// ボムの参照
+	BombType* bombType;
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> playAttackAnim;
