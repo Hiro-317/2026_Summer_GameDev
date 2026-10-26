@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../../Common/ActorBase/ActorBase.h"
 
+#include "GrapeBossWeaponTypeDefine.h"
+
 class GrapeBossWeaponBase;
 
 struct CharacterStats;

@@ -122,7 +122,7 @@ void GrapeBoss::BossLoad(void)
 			// 自分の座標と角度とローカル角度
 			trans.pos, trans.rotation, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
-			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
+			GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
 			// モデルの拡大率
 			MODEL_SCALE,
 			// プレイヤーの座標の読み取り

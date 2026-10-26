@@ -1,8 +1,11 @@
 #include "GrapeBossDeathState.h"
 
-#include "../../../../../../Scene/Game/GameScene.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
+#include "../../../../../../Scene/SceneManager.h"
+#include "../../../../../../Scene/SceneBase.h"
+
+#include "../../../../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
 
 GrapeBossDeathState::GrapeBossDeathState(
 	const std::function<void(void)>& ownChangeState,
@@ -22,7 +25,7 @@ void GrapeBossDeathState::Enter(void)
 {
 	DeathAnim();
 	changeTime = ((int)AnimeTotalTime() + DEATH_LAST_TIME);
-	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, changeTime);
+	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
 	cnt = 0;
 }
 

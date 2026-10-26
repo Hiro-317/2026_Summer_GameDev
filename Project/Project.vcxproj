@@ -376,6 +376,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Game\Boss\Grape\State\Stamp\GrapeStampCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\State\Straight\GrapeBossStraightState.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\GrapeBossWeaponFactory.h" />
+    <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\GrapeBossWeaponTypeDefine.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\KickBomb\GrapeBossKickBomb.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\RandomBomb\GrapeBossRandomBomb.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\SingleBomb\GrapeBossSingleBomb.h" />

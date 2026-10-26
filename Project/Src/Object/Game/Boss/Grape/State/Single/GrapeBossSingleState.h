@@ -12,8 +12,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="bombType">攻撃種のクラス取得</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
@@ -23,8 +21,6 @@ public:
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossSingleState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		const std::vector<const Vector3*> playerPos,
 		BombType* bombType,
 		const std::function<int(void)> GetTarget,

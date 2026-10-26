@@ -78,6 +78,25 @@ public:
 	// 子クラスを取得する
 	const std::vector<ActorBase*>& GetChildActors(void)const { return childActors; }
 
+	// 子クラス探索（単体）
+	template<typename T = ActorBase>
+	T* ChildActorSerch(void) {
+		for (auto obj : GetChildActors()) {
+			if (T* cast = dynamic_cast<T*>(obj)) { return cast; }
+		}
+		return nullptr;
+	}
+
+	// 子クラス探索（複数）
+	template<typename T = ActorBase>
+	std::vector<T*> ChildActorArraySerch(void) {
+		std::vector<T*> objArray;
+		for (auto obj : GetChildActors()) {
+			if (T* cast = dynamic_cast<T*>(obj)) { objArray.emplace_back(cast); }
+		}
+		return objArray;
+	}
+
 	// 動的オブジェクトかどうか（true = 動的、false = 静的）
 	bool GetDynamicFlg(void)const { return dynamicFlg; }
 

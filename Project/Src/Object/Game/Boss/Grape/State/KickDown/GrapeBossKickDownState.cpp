@@ -1,52 +1,56 @@
 #include "GrapeBossKickDownState.h"
 
-#include "../../Weapon/GrapeBossWeaponManager.h"
-
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
 #include "GrapeKickDownCollOperator.h"
+#include "../../Weapon/KickBomb/GrapeBossKickBomb.h"
 
 GrapeBossKickDownState::GrapeBossKickDownState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	Vector3& pos, Quaternion& rotation, const Vector3 LOCAL_ROT,
-	BombType* bombType,
+	Transform& bossTrans,
+
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
+	const int& targetNum,
+
+	const Quaternion& LOCAL_ROT,
+
 	const Vector3& MODEL_SCALE,
-	const std::vector<const Vector3*> playerPos,
+
 	GrapeKickDownCollOperator* collOperator,
-	const std::function<int(void)> GetTarget,
-	const std::function<void(void)> PlayAttackAnim,
-	const std::function<float(void)> GetAnimPlayRatio,
-	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> DefaultChangeState,
-	const std::function<void(void)> SetCoolTime
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), rotation(rotation), LOCAL_ROT(LOCAL_ROT),
-	bombType(bombType),
-	MODEL_SCALE(MODEL_SCALE),
+	BombType* bombType,
+
+	const std::function<void(void)>& playAttackAnim,
+	const std::function<float(void)>& getAnimPlayRatio,
+	const std::function<void(void)>& defaultChangeState,
+	const std::function<void(void)>& setCoolTime
+) :
+	bossTrans(bossTrans),
 	playerPos(playerPos),
+	targetNum(targetNum),
+	LOCAL_ROT(LOCAL_ROT),
+	MODEL_SCALE(MODEL_SCALE),
 	collOperator(collOperator),
-	GetTarget(GetTarget),
-	PlayAttackAnim(PlayAttackAnim),
-	GetAnimPlayRatio(GetAnimPlayRatio),
-	IsAnimeEnd(IsAnimeEnd),
-	DefaultChangeState(DefaultChangeState),
-	SetCoolTime(SetCoolTime),
-	cnt(0), first(false), target(0)
+	bombType(bombType),
+	playAttackAnim(playAttackAnim),
+	getAnimPlayRatio(getAnimPlayRatio),
+	defaultChangeState(defaultChangeState),
+	setCoolTime(setCoolTime)
 {
 }
 
 void GrapeBossKickDownState::Enter(void)
 {
-	PlayAttackAnim();
+	playAttackAnim();
+
 	first = true;
 	cnt = 0;
-	SetCoolTime();
-	target = GetTarget();
-	rotation = Quaternion::FromRotationY(atan2f(playerPos.at(target)->x - pos.x, playerPos.at(target)->z - pos.z));
-	attackPos = Vector3::XZonly(pos.x, pos.z) + (FOOT_VIEW_POS * MODEL_SCALE).TransMat(MatrixAllMultZXY({ LOCAL_ROT, angle }));
+
+	setCoolTime();
+
+	bossTrans.rotation = Quaternion::FromRotationY(atan2f(playerPos[target]->x - bossTrans.pos.x, playerPos[target]->z - bossTrans.pos.z));
+
+	attackPos = Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z) + bossTrans.rotation.Rotate(LOCAL_ROT.Rotate(FOOT_VIEW_POS * MODEL_SCALE));
+	
 	collOperator->SetPos(attackPos);
 	collOperator->SetDrawArea(true);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
@@ -87,7 +91,7 @@ void GrapeBossKickDownState::Update(void)
 				}
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
+				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
 				bombType[i].weaponIns->SetStartPos(tmpPos);
 				bombType[i].weaponIns->SetViewPosCircle();
 
@@ -109,13 +113,13 @@ void GrapeBossKickDownState::Update(void)
 		// 攻撃持続時間の判定
 		if (cnt > ATTACK_DURATION) {
 
-			DefaultChangeState();
+			defaultChangeState();
 		}
 	}
 	else {
 		// 攻撃描画を更新
-		collOperator->SetScale(GetAnimPlayRatio());
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, attackPos, GetAnimPlayRatio()));
+		collOperator->SetScale(getAnimPlayRatio());
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, attackPos, getAnimPlayRatio()));
 	}
 }
 

@@ -65,9 +65,7 @@
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Move\TomatoPlayerMoveState.cpp" />
-    <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampState.cpp" />
-    <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleCollOperator.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.cpp" />
     <ClCompile Include="Src\Object\Game\Player\PlayerManager\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Lobby\CharaSelectScene\CharaSelectPreviewManager.cpp" />
@@ -236,9 +234,7 @@
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Death\TomatoPlayerDeathState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\HeadButt\TomatoPlayerHeadButtState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Move\TomatoPlayerMoveState.h" />
-    <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Stamp\TomatoPlayerStampState.h" />
-    <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleCollOperator.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerCharacters\Tomato\TomatoUniqueState\Tackle\TomatoPlayerTackleState.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerManager\PlayerFactory.h" />
     <ClInclude Include="Src\Object\Game\Player\PlayerManager\PlayerManager.h" />
@@ -381,6 +377,7 @@
     <ClInclude Include="Src\Scene\Common\PostEffect\PurpleFlamePostEffect\PurpleFlamePostEffect.h" />
     <ClInclude Include="Src\Scene\Common\PostEffect\DamageFlashPostEffect\DamageFlashPostEffect.h" />
     <ClInclude Include="Src\Scene\Common\PostEffect\ScreenShakePostEffect\ScreenShakePostEffect.h" />
+    <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\GrapeBossWeaponTypeDefine.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

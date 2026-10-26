@@ -6,6 +6,7 @@
 
 struct Transform;
 #include "../../../../../../Common/Vector3.h"
+#include "../../../../../../Common/Quaternion.h"
 
 class GrapeKickDownCollOperator;
 
@@ -34,11 +35,11 @@ public:
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		const int& targetNum,
 
-		const Vector3& LOCAL_ROT,
+		const Quaternion& LOCAL_ROT,
 
 		const Vector3& MODEL_SCALE,
 
-		const GrapeKickDownCollOperator& collOperator,
+		GrapeKickDownCollOperator* collOperator,
 		BombType* bombType,
 
 		const std::function<void(void)>& playAttackAnim,
@@ -74,7 +75,7 @@ private:
 	const Vector3 FOOT_VIEW_POS = Vector3(-23.16f, 0.0f, -85.34f);
 
 	// モデルのローカル回転
-	const Vector3 LOCAL_ROT;
+	const Quaternion LOCAL_ROT;
 
 	// モデルのスケール
 	const Vector3& MODEL_SCALE;
