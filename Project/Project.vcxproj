@@ -188,8 +188,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Idle\BananaBossIdleState.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Scratch\BananaBossScratchState.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Scratch\BananaScratchCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Game\Boss\BossAttackRangeIndicator\BossAttackRangeIndicator.cpp" />
-    <ClCompile Include="Src\Object\Game\Boss\BossAttackRangeIndicator\BossAttackRangeModelCache.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\BossBase.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Grape\State\Death\GrapeBossDeathState.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Grape\State\Idle\GrapeBossIdleState.cpp" />
@@ -365,8 +363,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Idle\BananaBossIdleState.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Scratch\BananaBossScratchState.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Scratch\BananaScratchCollOperator.h" />
-    <ClInclude Include="Src\Object\Game\Boss\BossAttackRangeIndicator\BossAttackRangeIndicator.h" />
-    <ClInclude Include="Src\Object\Game\Boss\BossAttackRangeIndicator\BossAttackRangeModelCache.h" />
     <ClInclude Include="Src\Object\Game\Boss\BossBase.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\State\Death\GrapeBossDeathState.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\State\Idle\GrapeBossIdleState.h" />

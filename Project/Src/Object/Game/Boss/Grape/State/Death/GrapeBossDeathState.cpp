@@ -7,15 +7,13 @@
 
 #include "../../../../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
 
+
 GrapeBossDeathState::GrapeBossDeathState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	const std::function<void(void)> DeathAnim,
 	const std::function<float(void)> AnimeTotalTime,
 	const std::function<bool(void)> IsAnimEnd,
 	const std::function<void(void)> IsDeath
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
+):
 	DeathAnim(DeathAnim), AnimeTotalTime(AnimeTotalTime),
 	IsAnimEnd(IsAnimEnd), IsDeath(IsDeath)
 {

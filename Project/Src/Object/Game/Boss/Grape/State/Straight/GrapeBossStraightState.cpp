@@ -9,7 +9,7 @@
 GrapeBossStraightState::GrapeBossStraightState(
 	const std::function<void(void)>& ownChangeState, 
 	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, Quaternion& rotation,
+	Vector3& pos, Vector3& angle,
 	BombType* bombType,
 	const std::vector<const Vector3*> playerPos,
 	const std::function<int(void)> GetTarget,
@@ -20,7 +20,7 @@ GrapeBossStraightState::GrapeBossStraightState(
 	const std::function<void(void)> SetCoolTime
 )
 	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), rotation(rotation),
+	pos(pos), angle(angle),
 	bombType(bombType),
 	playerPos(playerPos),
 	GetTarget(GetTarget),
@@ -46,8 +46,7 @@ void GrapeBossStraightState::Update(void)
 	if (first) {
 		if (GetAnimPlayRatio() >= RATIO) {
 			// ê≥ñ Ç©ÇÁ30ìxÇ∏ÇÁÇµÇΩàÍî≠ñ⁄
-			Vector3 forward = rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f));
-			float ang = atan2f(forward.x, forward.z) - Deg2Rad(30.0f);
+			float ang = angle.y - Deg2Rad(30.0f);
 
 			// ê∂ê¨êîÇ‹Ç≈âÒÇ∑
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::Straight]; i++) {

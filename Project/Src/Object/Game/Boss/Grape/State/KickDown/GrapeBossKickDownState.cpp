@@ -1,56 +1,54 @@
 #include "GrapeBossKickDownState.h"
 
+#include "../../Weapon/GrapeBossWeaponManager.h"
+
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
-#include "GrapeKickDownCollOperator.h"
-#include "../../Weapon/KickBomb/GrapeBossKickBomb.h"
+#include "../../../../../Common/Transform/Transform.h"
 
 GrapeBossKickDownState::GrapeBossKickDownState(
 	Transform& bossTrans,
-
-	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
-	const int& targetNum,
-
-	const Quaternion& LOCAL_ROT,
-
+	const Quaternion LOCAL_ROT,
+	BombType* bombType,
 	const Vector3& MODEL_SCALE,
-
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	GrapeKickDownCollOperator* collOperator,
-	GrapeBossKickBomb* bomb,
-
-	const std::function<void(void)>& playAttackAnim,
-	const std::function<float(void)>& getAnimPlayRatio,
-	const std::function<void(void)>& defaultChangeState,
-	const std::function<void(void)>& setCoolTime
-) :
-	bossTrans(bossTrans),
-	playerPos(playerPos),
-	targetNum(targetNum),
+	const std::function<int(void)> GetTarget,
+	const std::function<void(void)> PlayAttackAnim,
+	const std::function<float(void)> GetAnimPlayRatio,
+	const std::function<bool(void)> IsAnimeEnd,
+	const std::function<void(void)> DefaultChangeState,
+	const std::function<void(void)> SetCoolTime
+):
+	bossTrans(bossTrans), 
 	LOCAL_ROT(LOCAL_ROT),
+	bombType(bombType),
 	MODEL_SCALE(MODEL_SCALE),
+	playerPos(playerPos),
 	collOperator(collOperator),
-	bomb(bomb),
-	playAttackAnim(playAttackAnim),
-	getAnimPlayRatio(getAnimPlayRatio),
-	defaultChangeState(defaultChangeState),
-	setCoolTime(setCoolTime)
+	GetTarget(GetTarget),
+	PlayAttackAnim(PlayAttackAnim),
+	GetAnimPlayRatio(GetAnimPlayRatio),
+	IsAnimeEnd(IsAnimeEnd),
+	DefaultChangeState(DefaultChangeState),
+	SetCoolTime(SetCoolTime),
+	cnt(0), first(false), target(0)
 {
 }
 
 void GrapeBossKickDownState::Enter(void)
 {
-	playAttackAnim();
-
+	PlayAttackAnim();
 	first = true;
 	cnt = 0;
-
-	setCoolTime();
+	SetCoolTime();
+	target = GetTarget();
 
 	bossTrans.rotation = Quaternion::FromRotationY(atan2f(playerPos[target]->x - bossTrans.pos.x, playerPos[target]->z - bossTrans.pos.z));
 
 	attackPos = Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z) + bossTrans.rotation.Rotate(LOCAL_ROT.Rotate(FOOT_VIEW_POS * MODEL_SCALE));
-	
+
 	collOperator->SetPos(attackPos);
 	collOperator->SetDrawArea(true);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
@@ -60,7 +58,7 @@ void GrapeBossKickDownState::Enter(void)
 void GrapeBossKickDownState::Update(void)
 {
 	// アニメーションが終わっていたらステートを抜ける
-	if (getAnimPlayRatio() >= 1.0f) {
+	if (IsAnimeEnd()) {
 		// アニメーションの再生割合で生成
 		if (first) {
 			// 生成数まで回す
@@ -91,9 +89,15 @@ void GrapeBossKickDownState::Update(void)
 				}
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
-				bomb[i].SetPos(tmpPos);
-				bomb[i].SetViewPosCircle();
+				Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
+				bombType[i].weaponIns->SetStartPos(tmpPos);
+				bombType[i].weaponIns->SetViewPosCircle();
+				
+				// 起動を通知
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, tmpPos));
+
+				// 起動
+				bombType[i].live = true;
 			}
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
@@ -107,13 +111,13 @@ void GrapeBossKickDownState::Update(void)
 		// 攻撃持続時間の判定
 		if (cnt > ATTACK_DURATION) {
 
-			defaultChangeState();
+			DefaultChangeState();
 		}
 	}
 	else {
 		// 攻撃描画を更新
-		collOperator->SetScale(getAnimPlayRatio());
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, attackPos, getAnimPlayRatio()));
+		collOperator->SetScale(GetAnimPlayRatio());
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, attackPos, GetAnimPlayRatio()));
 	}
 }
 

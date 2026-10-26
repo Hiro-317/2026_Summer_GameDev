@@ -2,12 +2,12 @@
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-struct Transform;
+#include "GrapeKickDownCollOperator.h"
+#include "../../Weapon/GrapeBossWeaponManager.h"
+
 #include "../../../../../../Common/Vector3.h"
 #include "../../../../../../Common/Quaternion.h"
-
-class GrapeKickDownCollOperator;
-class GrapeBossKickBomb;
+struct Transform;
 
 class GrapeBossKickDownState : public CharacterStateBase
 {
@@ -15,6 +15,8 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
+	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
+	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="LOCAL_ROT">ローカル角度</param>
@@ -30,21 +32,17 @@ public:
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossKickDownState(
 		Transform& bossTrans,
-
-		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
-		const int& targetNum,
-
-		const Quaternion& LOCAL_ROT,
-
+		const Quaternion LOCAL_ROT,
+		BombType* bombType,
 		const Vector3& MODEL_SCALE,
-
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		GrapeKickDownCollOperator* collOperator,
-		GrapeBossKickBomb* bomb,
-
-		const std::function<void(void)>& playAttackAnim,
-		const std::function<float(void)>& getAnimPlayRatio,
-		const std::function<void(void)>& defaultChangeState,
-		const std::function<void(void)>& setCoolTime
+		const std::function<int(void)> GetTarget,
+		const std::function<void(void)> PlayAttackAnim,
+		const std::function<float(void)> GetAnimPlayRatio,
+		const std::function<bool(void)> IsAnimeEnd,
+		const std::function<void(void)> DefaultChangeState,
+		const std::function<void(void)> SetCoolTime
 	);
 	~GrapeBossKickDownState()override = default;
 
@@ -83,32 +81,32 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// モデル制御情報の参照
 	Transform& bossTrans;
+	
+	// ボムの参照
+	BombType* bombType;
 
 	// プレイヤーの座標の読み取り
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
-	// ターゲット番号の取得
-	const int& targetNum;
 
 	// コライダーのオペレーターのポインター
 	GrapeKickDownCollOperator* collOperator;
 
-	// ボムの参照
-	GrapeBossKickBomb* bomb;
+	// ターゲット番号の取得
+	const std::function<int(void)> GetTarget;
 
 	// アタックアニメーションの再生
-	const std::function<void(void)> playAttackAnim;
+	const std::function<void(void)> PlayAttackAnim;
 
 	// アニメーションの再生割合取得
-	const std::function<float(void)> getAnimPlayRatio;
+	const std::function<float(void)> GetAnimPlayRatio;
+	
+	// アニメーションが終わっているかどうか
+	const std::function<bool(void)> IsAnimeEnd;
 	
 	// ステートを抜けたあとのステート
-	const std::function<void(void)> defaultChangeState;
-
-	// クールタイムセット
-	const std::function<void(void)> setCoolTime;
-
+	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> SetCoolTime;
 #pragma endregion
 
 	// 一度だけ通すように

@@ -1,12 +1,8 @@
 #pragma once
 
-#include "../../../../../Common/CharacterBase/CharacterStateBase.h"
-
 #include "../../../../../../Utility/Utility.h"
 
-#include <array>
-
-#include "../../../../../../Manager/Net/SenderID_Define.h"
+#include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Transform;
 struct Vector3;
@@ -14,42 +10,41 @@ struct Vector3;
 class GrapeBossIdleState : public CharacterStateBase
 {
 public:
-	
 	/// <summary>
-	/// グレープボス待機状態
+	/// コンストラクタ
 	/// </summary>
-	/// <param name="bossTrans"></param>
-	/// <param name="playerPos"></param>
-	/// <param name="targetNum"></param>
-	/// <param name="coolTime"></param>
-	/// <param name="playIdleAnim"></param>
-	/// <param name="playWalkAnim"></param>
-	/// <param name="moveChangeState"></param>
-	/// <param name="kickDownChangeState"></param>
-	/// <param name="straightChangeState"></param>
-	/// <param name="stampChangeState"></param>
-	/// <param name="singleChangeState"></param>
-	/// <param name="stalkerChangeState"></param>
-	/// <param name="randomChangeState"></param>
+	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
+	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
+	/// <param name="pos">座標の参照</param>
+	/// <param name="angle">角度の参照</param>
+	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="CoolTime">クールタイムの取得</param>
+	/// <param name="GetTarget">ターゲット番号の取得</param>
+	/// <param name="PlayIdleAnim">アイドルアニメーションの再生</param>
+	/// <param name="PlayWalkAnim">歩きアニメーションの再生</param>
+	/// <param name="MoveChangeState">歩くへのステート</param>
+	/// <param name="KickDownChangeState">かかと落としへのステート</param>
+	/// <param name="StraightChangeState">直線投擲へのステート</param>
+	/// <param name="StampChangeState">スタンプ攻撃へのステート</param>
+	/// <param name="SingleChangeState">一発攻撃へのステート</param>
+	/// <param name="StalkerChangeState">追従攻撃へのステート</param>
+	/// <param name="RandomChangeState">ランダム攻撃へのステート</param>
 	GrapeBossIdleState(
 		Transform& bossTrans,
 
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 
-		const int& targetNum,
-
-		const float& coolTime,
-
-		const std::function<void(void)>& playIdleAnim,
-		const std::function<void(void)>& playWalkAnim,
-
-		const std::function<void(void)>& moveChangeState,
-		const std::function<void(void)>& kickDownChangeState,
-		const std::function<void(void)>& straightChangeState,
-		const std::function<void(void)>& stampChangeState,
-		const std::function<void(void)>& singleChangeState,
-		const std::function<void(void)>& stalkerChangeState,
-		const std::function<void(void)>& randomChangeState
+		const std::function<int(void)> CoolTime,
+		const std::function<int(void)> GetTarget,
+		const std::function<void(void)> PlayIdleAnim,
+		const std::function<void(void)> PlayWalkAnim,
+		const std::function<void(void)> MoveChangeState,
+		const std::function<void(void)> KickDownChangeState,
+		const std::function<void(void)> StraightChangeState,
+		const std::function<void(void)> StampChangeState,
+		const std::function<void(void)> SingleChangeState,
+		const std::function<void(void)> StalkerChangeState,
+		const std::function<void(void)> RandomChangeState
 	);
 	~GrapeBossIdleState()override = default;
 
@@ -67,37 +62,34 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// モデル制御情報の参照
 	Transform& bossTrans;
 
 	// プレイヤーの座標の読み取り
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
-	// ターゲット番号
-	const int& targetNum;
-
+	const std::function<int(void)> GetTarget;
 	// クールタイムの参照
-	const float& coolTime;
+	const std::function<int(void)> CoolTime;
 
 	// アイドルアニメーション
-	const std::function<void(void)> playIdleAnim;
+	const std::function<void(void)> PlayIdleAnim;
 	// 回転時アニメーション
-	const std::function<void(void)> playWalkAnim;
+	const std::function<void(void)> PlayWalkAnim;
 
 	// 移動へ
-	const std::function<void(void)> moveChangeState;
+	const std::function<void(void)> MoveChangeState;
 	// キックへ
-	const std::function<void(void)> kickDownChangeState;
+	const std::function<void(void)> KickDownChangeState;
 	// 投擲へ
-	const std::function<void(void)> straightChangeState;
+	const std::function<void(void)> StraightChangeState;
 	// スタンプへ
-	const std::function<void(void)> stampChangeState;
+	const std::function<void(void)> StampChangeState;
 	// 追従へ
-	const std::function<void(void)> singleChangeState;
+	const std::function<void(void)> SingleChangeState;
 	// たくさんの追従へ
-	const std::function<void(void)> stalkerChangeState;
+	const std::function<void(void)> StalkerChangeState;
 	// ランダムへ
-	const std::function<void(void)> randomChangeState;
+	const std::function<void(void)> RandomChangeState;
 
 #pragma endregion
 
@@ -123,6 +115,12 @@ private:
 	const float ROT_POW = Deg2Rad(2.0f);
 
 #pragma endregion
+
+	// カウント
+	float cnt;
+
+	// プレイヤーターゲット
+	int target;
 
 	// アングル合わせるフラグ
 	bool angleFlg;

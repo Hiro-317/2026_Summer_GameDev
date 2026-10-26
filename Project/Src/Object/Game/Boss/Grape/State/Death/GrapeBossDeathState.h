@@ -15,8 +15,6 @@ public:
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	GrapeBossDeathState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		const std::function<void(void)> DeathAnim,
 		const std::function<float(void)> AnimeTotalTime,
 		const std::function<bool(void)> IsAnimEnd,

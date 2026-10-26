@@ -5,6 +5,8 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 GrapeBossSingleState::GrapeBossSingleState(
+	const std::function<void(void)>& ownChangeState,
+	const std::function<bool(void)>& isOwnState,
 	const std::vector<const Vector3*> playerPos,
 	BombType* bombType,
 	const std::function<int(void)> GetTarget,

@@ -2,13 +2,11 @@
 
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
-#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
-
 GrapeKickDownCollOperator::GrapeKickDownCollOperator(
-	const MSG_SENDER_ID& controlSenderId,
+	const MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& stats
 )	:
-	controlSenderId(controlSenderId),
+	operatorSenderId(operatorSenderId),
 	stats(stats),
 	collBack(),
 	collFront()
@@ -18,14 +16,16 @@ GrapeKickDownCollOperator::GrapeKickDownCollOperator(
 void GrapeKickDownCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
-	AddCollider(new XZCircleCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS, 1000.0f));
+	ColliderCreate(
+		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS, 1000.0f)
+	);
 
-	GetColliders().back()->SetSkillStats(new SkillStats(75, &stats));
+	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
 
-	SetJudgeFlg(false);
+	SetJudge(false);
 
-	collBack.LoadModel("Range/CircleRangeBack");
-	collFront.LoadModel("Range/CircleRangeFront");
+	collBack.Load("Range/CircleRangeBack");
+	collFront.Load("Range/CircleRangeFront");
 
 	collBack.pos = Vector3::Yonly(HEIGHT);
 	collFront.pos = Vector3::Yonly(HEIGHT + 1.0f);
@@ -38,17 +38,11 @@ void GrapeKickDownCollOperator::Load(void)
 
 void GrapeKickDownCollOperator::SubUpdate(void)
 {
-	if (GetJudgeFlg()) {
-
-	}
-
-	if (isDrawArea) {
-		collBack.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
-		collFront.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
-	}
+	collBack.pos = Vector3(trans.pos.x ,HEIGHT, trans.pos.z);
+	collFront.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
 }
 
-void GrapeKickDownCollOperator::SubDraw(void)
+void GrapeKickDownCollOperator::SubAlphaDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);
