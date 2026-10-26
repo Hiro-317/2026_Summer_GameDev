@@ -4,34 +4,36 @@
 
 #include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
-GrapeBossStraight::GrapeBossStraight(int model, int front, int back) :
-	GrapeBossWeaponBase(model, front, back)
+GrapeBossStraight::GrapeBossStraight(int model, int front, int back)
+	: GrapeBossWeaponBase(model, front, back)
 {
 	// 当たり判定を生成する（球体コライダー）
 	AddCollider(
 		new SphereCollider(
 			COLLIDER_TAG::BossAttack,
 			GetParameter("Straight", "Radius") * ATTACK_SIZE
-		)
+			)
 	);
 	AddCollider(
 		new SphereCollider(
 			COLLIDER_TAG::BossAttackArea,
-			(GetParameter("Straight", "Radius") * ATTACK_SIZE) * 0.9f
-		)
+			GetParameter("Straight", "AreaRadius") * ATTACK_SIZE
+			)
 	);
 
-	trans.scale = ATTACK_SIZE;
+	trans.scale = Vector3(ATTACK_SIZE);
 
 	SetJudgeFlg(false);
 	SetPushFlg(false);
 	// 重力無視
 	SetGravityFlg(false);
+
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetPushFlg(false);
 }
 
-void GrapeBossStraight::Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats)
+void GrapeBossStraight::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
-	GetColliders().back()->SetSkillStats(new SkillStats(50, &stats));
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(50, &stats));
 
 	collBack.scale = Vector3::XZonly(ATTACK_SIZE, ATTACK_SIZE);
 	collFront.scale = Vector3::Zonly(ATTACK_SIZE);
@@ -39,8 +41,9 @@ void GrapeBossStraight::Load(const MSG_SENDER_ID controlSenderId, const Characte
 
 void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (other.GetTag() == COLLIDER_TAG::Stage) {
-		state = STATE::None;
+	if (ownTag == COLLIDER_TAG::BossAttackArea) {
+
+		end = true;
 		SetJudgeFlg(false);
 	}
 }
@@ -48,15 +51,5 @@ void GrapeBossStraight::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& oth
 void GrapeBossStraight::SubUpdate(void)
 {
 	// 進行方向に動かす
-	trans.pos += moveVec;
-}
-
-void GrapeBossStraight::Shot(const Vector3& pos, const Vector3& vec)
-{
-	trans.pos = pos;
-	moveVec = vec * MOVE_SPEED;
-
-	SetJudgeFlg(true);
-
-	SetIsDraw(true);
+	trans.pos += moveDir * MOVE_SPEED;
 }

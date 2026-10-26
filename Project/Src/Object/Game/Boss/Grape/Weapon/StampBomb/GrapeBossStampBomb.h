@@ -1,7 +1,8 @@
 #pragma once
+
 #include "../GrapeBossWeaponBase.h"
 
-class SphereCollider;
+struct CharacterStats;
 
 class GrapeBossStampBomb : public GrapeBossWeaponBase
 {
@@ -10,15 +11,12 @@ public:
 	~GrapeBossStampBomb() = default;
 
 	// ロード
-	virtual void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
+	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
 
 	// 爆発までのカウント
 	const float BOMBER_COUNT = GetParameter("StampBomb", "BomberCnt");
 	// 攻撃持続時間
 	const float ATTACK_DURATION = GetParameter("StampBomb", "Duration");
-
-	// スタート
-	void Shot(const Vector3& pos, const Vector3& vec);
 
 protected:
 
@@ -27,26 +25,12 @@ protected:
 
 private:
 
-	// 表示倍率を含めないモデルの半径（この数値は攻撃範囲のモデルも同じとする）
+	// 攻撃範囲の描画
+	const float ATTACK_RANGE = GetParameter("StampBomb", "Range");
+
+	// 攻撃サイズ倍率
+	const float ATTACK_SIZE = GetParameter("StampBomb", "Size");
+
+	// モデルのサイズ
 	const float MODEL_RADIUS = GetParameter("StampBomb", "Radius");
-
-	// モデル表示倍率
-	const float MODEL_SCALE = GetParameter("StampBomb", "Size");
-
-	// 表示倍率も適用した通常時の半径
-	const float RADIUS = MODEL_RADIUS * MODEL_SCALE;
-
-	// 攻撃時(爆発範囲)の半径
-	const float ATTACK_RADIUS = GetParameter("StampBomb", "Range");
-
-
-	STATE state;
-
-	// ステージとの当たり判定を行うためのコライダーの参照
-	SphereCollider* objectCollRef;
-	// プレイヤーに対する攻撃判定を行うためのコライダーの参照
-	SphereCollider* attackCollRef;
-
-	// 爆発
-	void Blast();
 };

@@ -1,9 +1,5 @@
 #pragma once
-#include "../../../../Common/ActorBase/ActorBase.h"
-
-#include "GrapeBossWeaponTypeDefine.h"
-
-class GrapeBossWeaponBase;
+#include "GrapeBossWeaponBase.h"
 
 struct CharacterStats;
 
@@ -13,32 +9,41 @@ static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {
 	return ret;
 }
 
-class GrapeBossWeaponManager : public ActorBase
-{
+struct BombType {
+
+	WeaponType type = WeaponType::None;
+	GrapeBossWeaponBase* weaponIns = nullptr;
+	bool live = false;
+};
+
+class GrapeBossWeaponManager : public ActorBase{
 public:
 
-	GrapeBossWeaponManager(const MSG_SENDER_ID& controlSenderId, const CharacterStats& stats);
+	GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats);
 	~GrapeBossWeaponManager() = default;
 
 	// ほしいボムタイプの配列で返す
-	template<typename T = GrapeBossWeaponBase>
-	T* GetWeapons(void) {
+	BombType* GetWeapons(WeaponType type) {
 
 		// 配列分出す
 		for (auto& weapon : weapons) {
 			// 配列内のタイプとほしいものが同じなら
-			if (dynamic_cast<T*>(weapon)) { return &weapon; }
+			if (weapon.type == type) {
+				// 格納
+				return &weapon;
+			}
 		}
 		// ないならぬるぽ
 		return nullptr;
 	}
 
 	void Load(void) override;
+	void Update(void) override;
+	void Draw(void) override;
+	void Release(void) override;
 
 protected:
 
-	void SubUpdate(void) override;
-	void SubRelease(void) override;
 
 private:
 
@@ -49,7 +54,7 @@ private:
 
 #pragma region 参照値
 
-	const MSG_SENDER_ID& controlSenderId;
+	const MSG_SENDER_ID& operatorSenderId;
 	const CharacterStats& stats;
 
 #pragma endregion
@@ -60,5 +65,5 @@ private:
 	int frontModel;
 
 	// 武器の配列
-	GrapeBossWeaponBase* weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];
+	BombType weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];
 };

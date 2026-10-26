@@ -1,24 +1,16 @@
 #include "GrapeBossWeaponBase.h"
 
-GrapeBossWeaponBase::GrapeBossWeaponBase(int model, int front, int back) :
-	ActorBase("Data/Parameter/Character/Boss/Grape/Weapons/"),
 
-	collBack(),
-	collFront(),
-
-	state(STATE::None),
-
-	count()
+GrapeBossWeaponBase::GrapeBossWeaponBase(int model, int front, int back)
+	: ActorBase("Data/Parameter/Character/Boss/Grape/Weapons/"), collBack(), collFront()
 {
-	trans.model = model;
+	trans.Duplicate(model);
 	collFront.model = front;
 	collBack.model = back;
 }
 
 void GrapeBossWeaponBase::SubDraw(void)
 {
-	if (!isGround) { return; }
-
 	SetUseLighting(false);
 	collBack.Draw();
 	collFront.Draw();

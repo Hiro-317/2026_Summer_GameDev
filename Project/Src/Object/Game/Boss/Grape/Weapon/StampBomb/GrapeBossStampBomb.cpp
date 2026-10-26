@@ -1,119 +1,84 @@
 #include "GrapeBossStampBomb.h"
 
-#include "../../../../../../Manager/TimeScale/TimeScale.h"
-
 #include "../../../../../Common/Collider/SphereCollider.h"
+#include "../../../../../Common/Collider/XZCircleCollider.h"
 
 #include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
-GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back) :
-	GrapeBossWeaponBase(model, front, back),
-
-	state(STATE::None),
-
-	objectCollRef(nullptr),
-	attackCollRef(nullptr)
-
+GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
+	: GrapeBossWeaponBase(model, front, back)
 {
-	// 地形との当たり判定用
-	objectCollRef = new SphereCollider(COLLIDER_TAG::BossCommon, RADIUS);
-	AddCollider(objectCollRef);
+	// 当たり判定を生成する（XZコライダー）
+	AddCollider(
+		new XZCircleCollider(
+			COLLIDER_TAG::BossAttack,
+			ATTACK_RANGE,
+			1000.0f
+		)
+	);
 
 	// 当たり判定を生成する（球体コライダー）
-	attackCollRef = new SphereCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS);
-	AddCollider(attackCollRef);
+	AddCollider(
+		new SphereCollider(
+			COLLIDER_TAG::BossAttackArea,
+			MODEL_RADIUS * ATTACK_SIZE
+		)
+	);
 
-	trans.scale = Vector3(MODEL_SCALE);
+	trans.scale = Vector3(ATTACK_SIZE);
 
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
 	SetGravityFlg(true);
-	SetPushFlg(false);
-	
 	count = 0;
 }
 
-void GrapeBossStampBomb::Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats)
+void GrapeBossStampBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
-	attackCollRef->SetSkillStats(new SkillStats(75, &stats));
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(75, &stats));
 
-	const float ATTACK_RADIUS_SCALE = ATTACK_RADIUS / MODEL_RADIUS;
-	collBack.scale = Vector3::XZonly(ATTACK_RADIUS_SCALE, ATTACK_RADIUS_SCALE);
+	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
+	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
 	collFront.scale = Vector3(0.0f);
 }
 
 void GrapeBossStampBomb::SubUpdate(void)
 {
-	switch (state) {
+	// 地面についてないなら加速して落ちる
+	if (!isGround) {
 
-	case GrapeBossStampBomb::STATE::None: { return; }
-
-	case GrapeBossStampBomb::STATE::Fall: {
-
-		// 接地判定
-		if (isGround) { state = STATE::Ground; }
-
-		break;
+		trans.pos.y -= 8.0f;
 	}
-
-	case GrapeBossStampBomb::STATE::Ground: {
-
-
-		count += TimeScale::Get();
-
-		// まだ爆発しない
-		if (count < BOMBER_COUNT) {
-			// カウントに応じて攻撃範囲の演出
-			SetViewScaleCircle((ATTACK_RADIUS / MODEL_RADIUS) * (count / BOMBER_COUNT));
+	// ついてるなら爆発カウントを進める
+	else {
+		// 前フレームの判定が残ってるので
+		// それ防止に
+		// 開始されたフレームの検知
+		if (!now) {
+			// 今開始されたらフラグを立てる
+			now = true;
+			// ほんとはついてないので落下
+			trans.pos.y -= 8.0f;
+			return;
 		}
-		// 爆発
+		count++;
+		// カウントに応じて状態を変える
+		if (BOMBER_COUNT >= count) {
+
+			SetViewScaleCircle((ATTACK_RANGE / MODEL_RADIUS) * (count / BOMBER_COUNT));
+		}
+		// 攻撃判定オン
+		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
+			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
+		}
+		//攻撃判定オフ、終わり
 		else {
-
-			Blast();
-			state = STATE::Blast;
+			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+			end = true;
+			now = false;
+			count = 0;
+			SetViewScaleCircle(0.0f);
 		}
-
-		break;
 	}
-
-	case GrapeBossStampBomb::STATE::Blast: {
-
-		state = STATE::None;
-
-		break;
-	}
-
-	}
-}
-
-void GrapeBossStampBomb::Shot(const Vector3& pos, const Vector3& vec)
-{
-	state = STATE::Fall;
-
-	trans.pos = pos;
-
-	velocity = vec;
-	velocity.y = 15.0f;
-
-	SetIsDraw(true);
-
-
-	SetViewScaleCircle(0.0f);
-
-	objectCollRef->SetJudgeFlg(true);
-
-	attackCollRef->SetJudgeFlg(false);
-
-	SetGravityFlg(true);
-	SetPushFlg(true);
-}
-
-void GrapeBossStampBomb::Blast()
-{
-	SetViewScaleCircle(0.0f);
-
-	objectCollRef->SetJudgeFlg(false);
-
-	attackCollRef->SetJudgeFlg(true);
-
-	SetGravityFlg(false);
-	SetPushFlg(false);
 }

@@ -113,6 +113,9 @@ public:
 	// 当たり判定フラグ
 	bool GetJudgeFlg(void) const;
 
+	// 押し出しフラグ
+	bool GetPushFlg(void) const;
+
 	// 当たり判定のタイプ
 	COLLIDER_TAG GetTag(void) const;
 
@@ -143,6 +146,9 @@ public:
 	// 当たり判定フラグセット
 	void SetJudgeFlg(bool flg);
 
+	// 複数コライダーを保持する場合などに、特定のコライダーのみの押し出しを 有効/ 無効 にする場合の設定
+	void SetPushFlg(bool flg) { pushFlg = (signed char)flg; }
+
 	// スキル構造体
 	void SetSkillStats(SkillStats* skill) { skillStats = skill; }
 
@@ -162,6 +168,9 @@ private:
 
 	// 当たり判定フラグ
 	bool judgeFlg;
+
+	// 押し出し判定の例外（未設定(-1)の場合はアクターのフラグが参照される）
+	signed char pushFlg;
 
 	// 当たり判定タイプ
 	COLLIDER_TAG tag;

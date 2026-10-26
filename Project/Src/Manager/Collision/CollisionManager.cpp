@@ -2499,7 +2499,7 @@ void CollisionManager::MoveCollider(ColliderBase* ownCollider, const Vector3& pu
 
 bool CollisionManager::NeedPush(ColliderBase* a, ColliderBase* b) const
 {
-	if (a->GetActor()->GetPushFlg() && b->GetActor()->GetPushFlg()) { return true; }
+	if (a->GetPushFlg() && b->GetPushFlg()) { return true; }
 	return false;
 }
 

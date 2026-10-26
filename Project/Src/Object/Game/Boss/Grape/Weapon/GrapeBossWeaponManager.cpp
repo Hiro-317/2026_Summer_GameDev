@@ -4,12 +4,11 @@
 
 #include "GrapeBossWeaponFactory.h"
 
-#include "GrapeBossWeaponBase.h"
 
 GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
 
-GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& controlSenderId, const CharacterStats& stats)
-	: controlSenderId(controlSenderId), stats(stats)
+GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
+	: operatorSenderId(operatorSenderId), stats(stats)
 {
 	// 複製ハンドル
 	bombModel = MV1LoadModel("Data/Model/Character/Grape/Bomb.mv1");
@@ -37,10 +36,10 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& controlSende
 void GrapeBossWeaponManager::Load(void)
 {
 	// 武器の初期化
-	for (auto& i : weapons) i.weaponIns->Load(controlSenderId, stats);
+	for (auto& i : weapons) i.weaponIns->Load(operatorSenderId, stats);
 }
 
-void GrapeBossWeaponManager::SubUpdate()
+void GrapeBossWeaponManager::Update()
 {
 	for (auto& i : weapons) {
 		// 生きているもののみ更新
@@ -64,7 +63,16 @@ void GrapeBossWeaponManager::SubUpdate()
 	}
 }
 
-void GrapeBossWeaponManager::SubRelease()
+void GrapeBossWeaponManager::Draw()
+{
+	for (auto& i : weapons) {
+		if (i.live) {
+			i.weaponIns->Draw();
+		}
+	}
+}
+
+void GrapeBossWeaponManager::Release()
 {
 	for (auto& i : weapons) {
 		i.weaponIns->Release();

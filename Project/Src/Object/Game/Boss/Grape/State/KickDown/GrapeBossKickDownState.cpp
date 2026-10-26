@@ -92,7 +92,7 @@ void GrapeBossKickDownState::Update(void)
 
 				// スタート位置の設定
 				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
-				bomb[i].Shot(tmpPos);
+				bomb[i].SetPos(tmpPos);
 				bomb[i].SetViewPosCircle();
 			}
 			// フレーム位置に攻撃と音を発生

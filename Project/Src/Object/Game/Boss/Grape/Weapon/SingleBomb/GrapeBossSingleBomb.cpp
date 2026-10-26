@@ -1,96 +1,83 @@
 #include "GrapeBossSingleBomb.h"
 
-#include "../../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../Common/Collider/SphereCollider.h"
+#include "../../../../../Common/Collider/XZCircleCollider.h"
+
 #include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
-GrapeBossSingleBomb::GrapeBossSingleBomb(int model, int front, int back) :
-    GrapeBossWeaponBase(model, front, back),
-    objectCollRef(nullptr),
-    attackCollRef(nullptr)
+GrapeBossSingleBomb::GrapeBossSingleBomb(int model, int front, int back)
+	: GrapeBossWeaponBase(model, front, back)
 {
-    objectCollRef = new SphereCollider(COLLIDER_TAG::BossCommon, RADIUS);
-    AddCollider(objectCollRef);
+	// 当たり判定を生成する（XZコライダー）
+	AddCollider(
+		new XZCircleCollider(
+			COLLIDER_TAG::BossAttack,
+			ATTACK_RANGE,
+			1000.0f
+		)
+	);
 
-    attackCollRef = new SphereCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS);
-    AddCollider(attackCollRef);
+	// 当たり判定を生成する（球体コライダー）
+	AddCollider(
+		new SphereCollider(
+			COLLIDER_TAG::BossAttackArea,
+			MODEL_RADIUS * ATTACK_SIZE
+		)
+	);
+	trans.scale = Vector3(ATTACK_SIZE);
 
-    trans.scale = Vector3(MODEL_SCALE);
-    SetGravityFlg(false);
-    SetPushFlg(false);
-    objectCollRef->SetJudgeFlg(false);
-    attackCollRef->SetJudgeFlg(false);
-    SetIsDraw(false);
-    count = 0.0f;
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
+	SetGravityFlg(true);
+	count = 0;
 }
 
-void GrapeBossSingleBomb::Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats)
+void GrapeBossSingleBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
 {
-    attackCollRef->SetSkillStats(new SkillStats(85, &stats));
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(85, &stats));
 
-    const float attackRadiusScale = ATTACK_RADIUS / MODEL_RADIUS;
-    collBack.scale = Vector3::XZonly(attackRadiusScale, attackRadiusScale);
-    collFront.scale = Vector3(0.0f);
+	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
+	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);
+	collFront.scale = Vector3(0.0f);
 }
 
 void GrapeBossSingleBomb::SubUpdate(void)
 {
-    switch (state) {
-    case STATE::None:
-        return;
+	// 地面についてないなら加速して落ちる
+	if (!isGround) {
 
-    case STATE::Fall:
-        if (isGround) {
-            state = STATE::Ground;
-            count = 0.0f;
-        }
-        break;
+		trans.pos.y -= 8.0f;
+	}
+	// ついてるなら爆発カウントを進める
+	else {
+		// 前フレームの判定が残ってるので
+		// それ防止に
+		// 開始されたフレームの検知
+		if (!now) {
+			// 今開始されたらフラグを立てる
+			now = true;
+			// ほんとはついてないので落下
+			trans.pos.y -= 8.0f;
+			return;
+		}
+		count++;
+		// カウントに応じて状態を変える
+		if (BOMBER_COUNT >= count) {
 
-    case STATE::Ground:
-        count += TimeScale::Get();
-        if (count < BOMBER_COUNT) {
-            const float progress = BOMBER_COUNT > 0.0f ? count / BOMBER_COUNT : 1.0f;
-            SetViewScaleCircle((ATTACK_RADIUS / MODEL_RADIUS) * progress);
-        } else {
-            Blast();
-            state = STATE::Blast;
-            count = 0.0f;
-        }
-        break;
-
-    case STATE::Blast:
-        count += TimeScale::Get();
-        if (count >= ATTACK_DURATION) {
-            attackCollRef->SetJudgeFlg(false);
-            SetIsDraw(false);
-            SetViewScaleCircle(0.0f);
-            count = 0.0f;
-            state = STATE::None;
-        }
-        break;
-    }
-}
-
-void GrapeBossSingleBomb::Shot(const Vector3& pos)
-{
-    state = STATE::Fall;
-    count = 0.0f;
-    trans.pos = pos;
-    velocity = Vector3(0.0f);
-    SetIsDraw(true);
-    SetViewScaleCircle(0.0f);
-    objectCollRef->SetJudgeFlg(true);
-    attackCollRef->SetJudgeFlg(false);
-    SetGravityFlg(true);
-    SetPushFlg(true);
-}
-
-void GrapeBossSingleBomb::Blast()
-{
-    SetViewScaleCircle(0.0f);
-    objectCollRef->SetJudgeFlg(false);
-    attackCollRef->SetJudgeFlg(true);
-    SetGravityFlg(false);
-    SetPushFlg(false);
-    velocity = Vector3(0.0f);
+			SetViewScaleCircle((ATTACK_RANGE / MODEL_RADIUS) * (count / BOMBER_COUNT));
+		}
+		// 攻撃判定オン
+		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
+			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
+		}
+		//攻撃判定オフ、終わり
+		else {
+			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+			end = true;
+			now = false;
+			count = 0;
+			SetViewScaleCircle(0.0f);
+		}
+	}
 }

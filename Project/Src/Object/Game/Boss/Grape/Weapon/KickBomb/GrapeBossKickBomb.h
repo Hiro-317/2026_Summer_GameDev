@@ -1,32 +1,35 @@
 #pragma once
 #include "../GrapeBossWeaponBase.h"
 
-class SphereCollider;
+struct CharacterStats;
 
 class GrapeBossKickBomb : public GrapeBossWeaponBase
 {
 public:
-    GrapeBossKickBomb(int model, int front, int back);
-    ~GrapeBossKickBomb() = default;
+	GrapeBossKickBomb(int model, int front, int back);
+	~GrapeBossKickBomb() = default;
 
-    void Load(const MSG_SENDER_ID controlSenderId, const CharacterStats& stats) override;
+	// ロード
+	void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
 
-    const float BOMBER_COUNT = GetParameter("KickBomb", "BomberCnt");
-    const float ATTACK_DURATION = GetParameter("KickBomb", "Duration");
-
-    void Shot(const Vector3& pos);
+	// 爆発までのカウント
+	const float BOMBER_COUNT = GetParameter("KickBomb", "BomberCnt");
+	// 攻撃持続時間
+	const float ATTACK_DURATION = GetParameter("KickBomb", "Duration");
 
 protected:
-    void SubUpdate(void) override;
+
+	// 派生先追加更新
+	virtual void SubUpdate(void) override;
 
 private:
-    const float MODEL_RADIUS = GetParameter("KickBomb", "Radius");
-    const float MODEL_SCALE = GetParameter("KickBomb", "Size");
-    const float RADIUS = MODEL_RADIUS * MODEL_SCALE;
-    const float ATTACK_RADIUS = GetParameter("KickBomb", "Range");
 
-    SphereCollider* objectCollRef;
-    SphereCollider* attackCollRef;
+	// 攻撃範囲の描画
+	const float ATTACK_RANGE = GetParameter("KickBomb", "Range");
 
-    void Blast();
+	// 攻撃サイズ倍率
+	const float ATTACK_SIZE = GetParameter("KickBomb", "Size");
+
+	// モデルのサイズ
+	const float MODEL_RADIUS = GetParameter("KickBomb", "Radius");
 };

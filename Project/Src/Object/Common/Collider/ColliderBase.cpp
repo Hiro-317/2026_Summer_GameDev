@@ -22,11 +22,15 @@ ColliderBase::ColliderBase(COLLIDER_TAG type, const Vector3& pos, const Quaterni
 
 	judgeFlg(true),
 
+	pushFlg(-1),
+
 	tag(type),
 	shape(COLLIDER_SHAPE::None),
 
 	OnCollision(nullptr),
-	OnGrounded(nullptr)
+	OnGrounded(nullptr),
+
+	skillStats(nullptr)
 {
 }
 
@@ -113,6 +117,11 @@ Vector3 ColliderBase::VTrans(const Vector3& v) const
 }
 
 bool ColliderBase::GetJudgeFlg(void) const { return judgeFlg; }
+
+bool ColliderBase::GetPushFlg(void) const {
+
+	return judgeFlg == -1 ? owner->GetPushFlg() : (bool)judgeFlg;
+}
 
 COLLIDER_TAG ColliderBase::GetTag(void) const { return tag; }
 
