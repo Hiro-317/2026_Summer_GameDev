@@ -17,7 +17,7 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	const Vector3& MODEL_SCALE,
 
 	GrapeKickDownCollOperator* collOperator,
-	BombType* bombType,
+	GrapeBossKickBomb* bomb,
 
 	const std::function<void(void)>& playAttackAnim,
 	const std::function<float(void)>& getAnimPlayRatio,
@@ -30,7 +30,7 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	LOCAL_ROT(LOCAL_ROT),
 	MODEL_SCALE(MODEL_SCALE),
 	collOperator(collOperator),
-	bombType(bombType),
+	bomb(bomb),
 	playAttackAnim(playAttackAnim),
 	getAnimPlayRatio(getAnimPlayRatio),
 	defaultChangeState(defaultChangeState),
@@ -60,7 +60,7 @@ void GrapeBossKickDownState::Enter(void)
 void GrapeBossKickDownState::Update(void)
 {
 	// アニメーションが終わっていたらステートを抜ける
-	if (getAnimPlayRatio() > 1.0f) {
+	if (getAnimPlayRatio() >= 1.0f) {
 		// アニメーションの再生割合で生成
 		if (first) {
 			// 生成数まで回す
@@ -92,14 +92,8 @@ void GrapeBossKickDownState::Update(void)
 
 				// スタート位置の設定
 				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
-				bombType[i].weaponIns->SetStartPos(tmpPos);
-				bombType[i].weaponIns->SetViewPosCircle();
-
-				// 起動を通知
-				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, tmpPos));
-
-				// 起動
-				bombType[i].live = true;
+				bomb[i].Shot(tmpPos);
+				bomb[i].SetViewPosCircle();
 			}
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);

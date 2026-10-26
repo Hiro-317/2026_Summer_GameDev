@@ -12,7 +12,7 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	GrapeKickDownCollOperator(
-		const MSG_SENDER_ID controlSenderId,
+		const MSG_SENDER_ID& controlSenderId,
 		const CharacterStats& stats
 	);
 	~GrapeKickDownCollOperator()override = default;
@@ -29,18 +29,20 @@ public:
 
 private:
 
-	// 半径
-	const float RADIUS = 300.0f;
+	// 攻撃判定用半径
+	const float ATTACK_RADIUS = 300.0f;
 
-	// コライダー描画の高さ
+	// 攻撃範囲描画の高さ
 	const float HEIGHT = 37.0f;
 
-	// コライダー描画の拡大率
-	const Vector3 SCALE = Vector3(RADIUS / 100.0f, 1.0f, RADIUS / 100.0f);
+	// 攻撃範囲描画の拡大率
+	const Vector3 SCALE = Vector3(ATTACK_RADIUS / 100.0f, 1.0f, ATTACK_RADIUS / 100.0f);
 
 #pragma region 受け取る参照変数
 
-	const MSG_SENDER_ID controlSenderId;
+	const Vector3& bossPos;
+
+	const MSG_SENDER_ID& controlSenderId;
 
 	const CharacterStats& stats;
 

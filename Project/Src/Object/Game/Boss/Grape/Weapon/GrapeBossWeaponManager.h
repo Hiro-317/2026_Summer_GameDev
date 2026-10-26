@@ -13,13 +13,6 @@ static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {
 	return ret;
 }
 
-struct BombType {
-
-	WeaponType type = WeaponType::None;
-	GrapeBossWeaponBase* weaponIns = nullptr;
-	bool live = false;
-};
-
 class GrapeBossWeaponManager : public ActorBase
 {
 public:
@@ -28,15 +21,13 @@ public:
 	~GrapeBossWeaponManager() = default;
 
 	// ほしいボムタイプの配列で返す
-	BombType* GetWeapons(WeaponType type) {
+	template<typename T = GrapeBossWeaponBase>
+	T* GetWeapons(void) {
 
 		// 配列分出す
 		for (auto& weapon : weapons) {
 			// 配列内のタイプとほしいものが同じなら
-			if (weapon.type == type) {
-				// 格納
-				return &weapon;
-			}
+			if (dynamic_cast<T*>(weapon)) { return &weapon; }
 		}
 		// ないならぬるぽ
 		return nullptr;
@@ -69,5 +60,5 @@ private:
 	int frontModel;
 
 	// 武器の配列
-	BombType weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];
+	GrapeBossWeaponBase* weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];
 };

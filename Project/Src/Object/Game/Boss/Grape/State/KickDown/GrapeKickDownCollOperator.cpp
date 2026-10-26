@@ -5,7 +5,7 @@
 #include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
 GrapeKickDownCollOperator::GrapeKickDownCollOperator(
-	const MSG_SENDER_ID controlSenderId,
+	const MSG_SENDER_ID& controlSenderId,
 	const CharacterStats& stats
 )	:
 	controlSenderId(controlSenderId),
@@ -18,9 +18,7 @@ GrapeKickDownCollOperator::GrapeKickDownCollOperator(
 void GrapeKickDownCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
-	AddCollider(
-		new XZCircleCollider(COLLIDER_TAG::BossAttack, RADIUS, 1000.0f)
-	);
+	AddCollider(new XZCircleCollider(COLLIDER_TAG::BossAttack, ATTACK_RADIUS, 1000.0f));
 
 	GetColliders().back()->SetSkillStats(new SkillStats(75, &stats));
 
@@ -40,8 +38,14 @@ void GrapeKickDownCollOperator::Load(void)
 
 void GrapeKickDownCollOperator::SubUpdate(void)
 {
-	collBack.pos = Vector3(trans.pos.x ,HEIGHT, trans.pos.z);
-	collFront.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
+	if (GetJudgeFlg()) {
+
+	}
+
+	if (isDrawArea) {
+		collBack.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
+		collFront.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
+	}
 }
 
 void GrapeKickDownCollOperator::SubDraw(void)

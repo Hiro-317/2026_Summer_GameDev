@@ -2,13 +2,12 @@
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
-#include "../../Weapon/GrapeBossWeaponManager.h"
-
 struct Transform;
 #include "../../../../../../Common/Vector3.h"
 #include "../../../../../../Common/Quaternion.h"
 
 class GrapeKickDownCollOperator;
+class GrapeBossKickBomb;
 
 class GrapeBossKickDownState : public CharacterStateBase
 {
@@ -40,7 +39,7 @@ public:
 		const Vector3& MODEL_SCALE,
 
 		GrapeKickDownCollOperator* collOperator,
-		BombType* bombType,
+		GrapeBossKickBomb* bomb,
 
 		const std::function<void(void)>& playAttackAnim,
 		const std::function<float(void)>& getAnimPlayRatio,
@@ -96,7 +95,7 @@ private:
 	GrapeKickDownCollOperator* collOperator;
 
 	// ボムの参照
-	BombType* bombType;
+	GrapeBossKickBomb* bomb;
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> playAttackAnim;
