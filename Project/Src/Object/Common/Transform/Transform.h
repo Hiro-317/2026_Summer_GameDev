@@ -150,6 +150,9 @@ struct Transform
 	/// </summary>
 	void Duplicate(int model);
 
+	/// モデル描画に使用するワールド変換行列を取得する
+	MATRIX GetWorldMatrix(void) const;
+
 	// Transform情報をモデルに適用
 	void Attach(void);
 

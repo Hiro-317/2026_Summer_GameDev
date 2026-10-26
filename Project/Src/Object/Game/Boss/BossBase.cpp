@@ -54,7 +54,7 @@ void BossBase::Load(void)
 	trans.centerDiff = MODEL_CENTER_DIFF;
 
 	// 角度のズレ(ローカル回転)
-	trans.localRotation = Quaternion::FromEulerXZY(MODEL_LOCAL_ROT);
+	trans.localRotation = MODEL_LOCAL_ROT;
 
 #pragma endregion
 

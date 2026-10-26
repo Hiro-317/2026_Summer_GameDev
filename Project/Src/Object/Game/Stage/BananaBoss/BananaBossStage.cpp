@@ -1,8 +1,8 @@
 #include "BananaBossStage.h"
 
-#include "../../../Application/Application.h"
+#include "../../../../Application/Application.h"
 
-#include "../../Common/Collider/BoxCollider.h"
+#include "../../../Common/Collider/BoxCollider.h"
 
 BananaBossStage::BananaBossStage() : ActorBase("Data/Parameter/Stage/Banana/"), backImage(-1) {}
 
@@ -58,7 +58,7 @@ void BananaBossStage::Load(void)
 				COLLIDER_TAG::Stage,
 				GetParameterToVector3("Collider", CollNumName(COLLIDER_SIZE_PARAMETER_NAME)) * trans.scale,
 				GetParameterToVector3("Collider", CollNumName(COLLIDER_POS_PARAMETER_NAME)) * trans.scale,
-				GetParameterToVector3("Collider", CollNumName(COLLIDER_ANGLE_PARAMETER_NAME)) * trans.scale
+				Quaternion::FromEulerXZY(GetParameterToVector3("Collider", CollNumName(COLLIDER_ANGLE_PARAMETER_NAME)) * trans.scale)
 			)
 		);
 

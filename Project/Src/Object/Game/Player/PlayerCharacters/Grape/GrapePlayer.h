@@ -64,32 +64,6 @@ private:
 		1.0f,	// STAMP
 	};
 
-#pragma region スキル1の定数定義
-
-	const short SKILL1_ATTACK_RATE = ;
-
-	const int SKILL1_COOL_TIME = ;
-
-#pragma endregion 
-
-#pragma region スキル2の定数定義
-
-	const short SKILL2_ATTACK_RATE = ;
-
-	const int SKILL2_COOL_TIME = ;
-
-#pragma endregion 
-
-#pragma region スキル3の定数定義
-
-	const short SKILL3_ATTACK_RATE = ;
-	const int SKILL3_COOL_TIME = ;
-
-	const int ATTACK_COUNT_TIME = ;
-	const int ATTACK_START_TIME = GetParameter("GrapeBomb", "StartTime");
-
-#pragma endregion
-
 	GrapePlayerWeaponShot* weaponShotRef;
 	GrapePlayerWeaponThrow* weaponThrowRef;
 	GrapePlayerWeaponBomb* weaponBombRef;

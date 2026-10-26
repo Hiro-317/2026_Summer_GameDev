@@ -2,10 +2,11 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../../../../Common/Vector3.h"
+
 class PlayerSimpleAttackCollOperator;
 
 struct Transform;
-struct Vector3;
 
 class TomatoPlayerTackleState : public CharacterStateBase
 {

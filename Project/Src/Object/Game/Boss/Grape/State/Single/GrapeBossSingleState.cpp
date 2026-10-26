@@ -5,9 +5,7 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 GrapeBossSingleState::GrapeBossSingleState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	const std::vector<const Vector3*> playerPos,
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	BombType* bombType,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
@@ -15,8 +13,7 @@ GrapeBossSingleState::GrapeBossSingleState(
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
+) :
 	playerPos(playerPos),
 	bombType(bombType),
 	GetTarget(GetTarget),
@@ -43,7 +40,7 @@ void GrapeBossSingleState::Update(void)
 		for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::SingleBomb]; i++) {
 
 			// スタート位置の設定
-			Vector3 tmpPos = Vector3(playerPos.at(target)->x, HEIGHT, playerPos.at(target)->z);
+			Vector3 tmpPos = Vector3(playerPos[target]->x, HEIGHT, playerPos[target]->z);
 			bombType[i].weaponIns->SetStartPos(tmpPos);
 			bombType[i].weaponIns->SetViewPosCircle();
 

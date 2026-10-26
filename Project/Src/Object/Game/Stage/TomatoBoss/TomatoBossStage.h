@@ -60,6 +60,4 @@ protected:
 private:
 
     void ColliderLoad();    // 当たり判定の読み込み
-
-    Transform sky;      // スカイドーム用
 };

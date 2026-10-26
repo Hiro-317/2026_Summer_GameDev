@@ -2,6 +2,8 @@
 
 #include "../../../../../Common/Collider/XZCircleCollider.h"
 
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+
 GrapeStampCollOperator::GrapeStampCollOperator(
 	const MSG_SENDER_ID operatorSenderId,
 	const CharacterStats& stats
@@ -16,23 +18,22 @@ GrapeStampCollOperator::GrapeStampCollOperator(
 void GrapeStampCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（XZコライダー）
-	ColliderCreate(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK, RADIUS, 1000.0f)
+	AddCollider(
+		new XZCircleCollider(COLLIDER_TAG::BossAttack, RADIUS, 1000.0f)
 	);
 	// ステージ当たり判定を生成する（XZコライダー）
-	ColliderCreate(
-		new XZCircleCollider(COLLIDER_TAG::BOSS_ATTACK_AREA, RADIUS, 1000.0f)
+	AddCollider(
+		new XZCircleCollider(COLLIDER_TAG::BossAttackArea, RADIUS, 1000.0f)
 	);
 
-	CreateAttackSkill(operatorSenderId, 75, &stats, COLLIDER_TAG::BOSS_ATTACK);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(75, &stats));
 
-	SetJudge(false);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetJudgeFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetDynamicFlg(true);
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BOSS_ATTACK_AREA).back()->SetPushFlg(true);
+	SetJudgeFlg(false);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetJudgeFlg(true);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetPushFlg(true);
 
-	collBack.Load("Range/CircleRangeBack");
-	collFront.Load("Range/CircleRangeFront");
+	collBack.LoadModel("Range/CircleRangeBack");
+	collFront.LoadModel("Range/CircleRangeFront");
 
 	collBack.pos = Vector3::Yonly(HEIGHT);
 	collFront.pos = Vector3::Yonly(HEIGHT + 1.0f);
@@ -49,7 +50,7 @@ void GrapeStampCollOperator::SubUpdate(void)
 	collFront.pos = Vector3(trans.pos.x, HEIGHT, trans.pos.z);
 }
 
-void GrapeStampCollOperator::SubAlphaDraw(void)
+void GrapeStampCollOperator::SubDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);

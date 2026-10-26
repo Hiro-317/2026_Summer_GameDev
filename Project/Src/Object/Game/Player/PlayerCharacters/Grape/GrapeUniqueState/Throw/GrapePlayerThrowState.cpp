@@ -6,6 +6,8 @@
 #include "../../../../../../../Manager/Input/InputManager.h"
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
 
+#include "../../../../../../Common/Transform/Transform.h"
+
 #include "GrapePlayerWeaponThrow.h"
 
 GrapePlayerThrowState::GrapePlayerThrowState(
@@ -17,10 +19,11 @@ GrapePlayerThrowState::GrapePlayerThrowState(
 
 	const Vector3*& bossPos,
 
-	const std::function<void(void)> playAnime,
-	const std::function<float(void)> getAnimeRatio,
-	const std::function<void(void)> defaultChangeState
+	const std::function<void(void)>& playAnime,
+	const std::function<float(void)>& getAnimeRatio,
+	const std::function<void(void)>& defaultChangeState
 ) :
+
 	COOL_TIME(COOL_TIME),
 	throwWeapon(throwWeapon),
 	playerTrans(playerTrans),

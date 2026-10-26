@@ -1,5 +1,7 @@
 #include "GrapeBossStraightState.h"
 
+#include "../../../../../../Utility/Utility.h"
+
 #include "../../Weapon/GrapeBossWeaponManager.h"
 #include "../../Weapon/Straight/GrapeBossStraight.h"
 
@@ -7,20 +9,17 @@
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
 GrapeBossStraightState::GrapeBossStraightState(
-	const std::function<void(void)>& ownChangeState, 
-	const std::function<bool(void)>& isOwnState, 
-	Vector3& pos, Vector3& angle,
+	Transform& bossTrans,
 	BombType* bombType,
-	const std::vector<const Vector3*> playerPos,
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), angle(angle),
+) :
+	bossTrans(bossTrans),
 	bombType(bombType),
 	playerPos(playerPos),
 	GetTarget(GetTarget),
@@ -46,8 +45,8 @@ void GrapeBossStraightState::Update(void)
 	if (first) {
 		if (GetAnimPlayRatio() >= RATIO) {
 			// 正面から30度ずらした一発目
-			float ang = angle.y - Deg2Rad(30.0f);
-
+			float ang = bossTrans.rotation.GetYaw() - Deg2Rad(30.0f);
+			
 			// 生成数まで回す
 			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::Straight]; i++) {
 
@@ -55,7 +54,7 @@ void GrapeBossStraightState::Update(void)
 				auto ins = dynamic_cast<GrapeBossStraight*>(bombType[i].weaponIns);
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(pos.x, HEIGHT, pos.z);
+				Vector3 tmpPos = Vector3(bossTrans.pos.x, HEIGHT, bossTrans.pos.z);
 				ins->SetStartPos(tmpPos);
 				// 進む向きを設定（ここのためにキャスト）
 				Vector3 tmpAng = Vector3(sinf(ang), 0.0f, cosf(ang));

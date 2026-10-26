@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../../ActorBase.h"
+#include "../../../../../Common/ActorBase/ActorBase.h"
 
 struct CharacterStats;
 
@@ -19,7 +19,7 @@ public:
 
 	void Load(void)override;
 
-	void CollSet(bool flg) { SetJudge(flg); }
+	void CollSet(bool flg) { SetJudgeFlg(flg); }
 
 	void SetPos(const Vector3& pos) { trans.pos = pos; }
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
@@ -47,7 +47,7 @@ private:
 #pragma endregion
 
 	void SubUpdate(void) override;
-	void SubAlphaDraw(void) override;
+	void SubDraw(void) override;
 	void SubRelease(void) override;
 
 	Transform collBack;

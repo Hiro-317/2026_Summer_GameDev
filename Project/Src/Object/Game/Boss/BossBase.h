@@ -23,7 +23,7 @@ public:
 	virtual void ReceptionUpdate(void)override;
 	virtual void SendUpdate(void)override;
 
-	const bool& GetIsDeath(void)const { return false; }
+	const bool& GetIsDeath(void)const { return isDeath; }
 
 	void SetPlayerPos(MSG_SENDER_ID id, const Vector3* pos) { playerPos[(int)id] = pos; }
 	void SetPlayerIsDeath(MSG_SENDER_ID id, const bool* isDeath) { playerIsDeath[(int)id] = isDeath; }
@@ -65,7 +65,7 @@ protected:
 	const Vector3 MODEL_CENTER_DIFF = GetParameterToVector3("Model", "CenterDiff") * MODEL_SCALE;
 
 	// äpìxÇÃÉYÉå
-	const Vector3 MODEL_LOCAL_ROT = GetParameterToVector3("Model", "LocalRot") * (DX_PI_F / 180.0f);
+	const Quaternion MODEL_LOCAL_ROT = Quaternion::FromEulerXZY(GetParameterToVector3("Model", "LocalRot") * (DX_PI_F / 180.0f));
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 
@@ -141,4 +141,7 @@ protected:
 
 	// É_ÉÅÅ[ÉWUIä«óùÉNÉâÉX
 	HitUI* hitUiRef;
+
+	// éÄñSîªíË
+	bool isDeath;
 };

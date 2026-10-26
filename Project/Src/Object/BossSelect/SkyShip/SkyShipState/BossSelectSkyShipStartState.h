@@ -2,8 +2,8 @@
 
 #include "../../../Common/CharacterBase/CharacterStateBase.h"
 
-struct Vector3;
-struct Quaternion;
+#include "../../../../Common/Vector3.h"
+#include "../../../../Common/Quaternion.h"
 
 class BossSelectSkyShipStartState : public CharacterStateBase
 {

@@ -55,7 +55,14 @@ void GrapeBossStage::ColliderLoad()
 
 	// ステージの壁の当たり判定
 	for (const ColliderInfo& info : WALL_COLLISION_INFO) {
-		AddCollider(new BoxCollider(COLLIDER_TAG::Stage, info.size, info.pos, Vector3::Yonly(info.yAngle)));
+		AddCollider(
+			new BoxCollider(
+				COLLIDER_TAG::Stage,
+				info.size,
+				info.pos,
+				Quaternion::FromEulerXZY(Vector3::Yonly(info.yAngle))
+			)
+		);
 	}
 }
 

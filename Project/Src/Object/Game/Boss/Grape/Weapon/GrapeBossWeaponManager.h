@@ -1,6 +1,8 @@
 #pragma once
 #include "GrapeBossWeaponBase.h"
 
+#include "../../../../../Manager/Net/SenderID_Define.h"
+
 struct CharacterStats;
 
 static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {

@@ -3,7 +3,7 @@
 #include "../../../../../Manager/Sound/SoundManager.h"
 
 #include "GrapeBossWeaponFactory.h"
-
+#include "GrapeBossWeaponBase.h"
 
 GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
 

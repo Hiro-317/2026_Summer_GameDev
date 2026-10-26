@@ -89,7 +89,7 @@ void GrapeBossKickDownState::Update(void)
 				}
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
+				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
 				bombType[i].weaponIns->SetStartPos(tmpPos);
 				bombType[i].weaponIns->SetViewPosCircle();
 				

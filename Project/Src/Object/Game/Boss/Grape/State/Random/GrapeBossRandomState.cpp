@@ -5,16 +5,13 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 GrapeBossRandomState::GrapeBossRandomState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	const Vector3& pos, BombType* bombType,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
+) :
 	pos(pos), bombType(bombType),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),

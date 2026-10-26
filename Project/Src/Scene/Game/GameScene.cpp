@@ -62,33 +62,29 @@ void GameScene::SubPostLoad(void)
 	}
 
 	// プレイヤーを生成
-	AddActor(new PlayerManager());
-	playerInsRef = ActorSerch<PlayerManager>(actors);
-
-	// 接続されているプレイヤー数座標を取得する
-	std::vector<const Vector3*> pos;
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		pos.emplace_back(&ActorSerch<PlayerManager>(actors)->GetPlayerIns((MSG_SENDER_ID)id)->GetTrans().pos);
-	}
-	// 接続されているプレイヤー数生存判定を取得する
-	std::vector<const bool*> live;
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-		if (!Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id)) { break; }
-		live.emplace_back(&ActorSerch<PlayerManager>(actors)->GetPlayerIns((MSG_SENDER_ID)id)->GetIsDeath());
-	}
+	playerInsRef = new PlayerManager();
+	AddActor(playerInsRef);
 
 	// ボスを生成
 	switch (selectBossType) {
-	case BOSS_TYPE::Tomato: { AddActor(new TomatoBoss(pos, live)); break; }
-	case BOSS_TYPE::Grape: { AddActor(new GrapeBoss(pos, live)); break; }
-	case BOSS_TYPE::Banana: { AddActor(new BananaBoss(pos, live)); break; }
+	case BOSS_TYPE::Tomato: { bossInsRef = new TomatoBoss(); break; }
+	case BOSS_TYPE::Grape: { bossInsRef = new GrapeBoss(); break; }
+	case BOSS_TYPE::Banana: { bossInsRef = new BananaBoss(); break; }
 	default: { break; }
 	}
-	bossInsRef = ActorSerch<BossBase>(actors);
+	AddActor(bossInsRef);
 
 	// プレイヤーにボスの座標をわたす
-	ActorSerch<PlayerManager>(actors)->SetBossPos(&ActorSerch<BossBase>(actors)->GetTrans().pos);
+	playerInsRef->SetBossPos(&bossInsRef->GetTrans().pos);
+
+	// ボスにプレイヤーの情報を渡す
+	for (int i = 0; i < Net::GetIns().GetConnectStatus().EntryCount(); i++) {
+		MSG_SENDER_ID id = (MSG_SENDER_ID)i;
+
+		bossInsRef->SetPlayerPos(id, &playerInsRef->GetPlayerIns(id)->GetTrans().pos);
+		bossInsRef->SetPlayerIsDeath((MSG_SENDER_ID)i, &playerInsRef->GetPlayerIns(id)->GetIsDeath());
+	}
+
 }
 
 void GameScene::SubPostInit(void)

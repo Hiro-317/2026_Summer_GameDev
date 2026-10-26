@@ -27,10 +27,7 @@ void BossSelectSpotManager::Load(void)
 
 		// ’Ç‰Á
 		spot.emplace_back(newSpot);
-
-		// “Ç‚Ýž‚Ý
-		spot.back()->Load();
-
+		AddChildActor(newSpot);
 		};
 
 	CreatSpot(new BossSelectTomatoSpot());
@@ -38,46 +35,14 @@ void BossSelectSpotManager::Load(void)
 	CreatSpot(new BossSelectBananaSpot());
 }
 
-void BossSelectSpotManager::SubInit(void)
-{
-	for (BossSelectSpotBase* s : spot) { s->Init(); }
-}
-
-void BossSelectSpotManager::SubUpdate(void)
-{
-	for (BossSelectSpotBase* s : spot) { s->Update(); }
-}
-
 void BossSelectSpotManager::SubDraw(void)
 {
-	for (BossSelectSpotBase* s : spot) { s->Draw(); }
 	for (BossSelectSpotBase* s : spot) { s->SelectedDraw(selectedImage[(int)Input::GetIns().LastInputKinds()]); }
-}
-
-void BossSelectSpotManager::SubAlphaDraw(void)
-{
-	for (BossSelectSpotBase* s : spot) { s->AlphaDraw(); }
 }
 
 void BossSelectSpotManager::SubRelease(void)
 {
-	for (BossSelectSpotBase*& s : spot) {
-		if (s == nullptr) { continue; }
-		s->Release();
-		delete s;
-		s = nullptr;
-	}
+	for (BossSelectSpotBase*& s : spot) { s = nullptr; }
 	DeleteGraph(selectedImage[(int)true]);
 	DeleteGraph(selectedImage[(int)false]);
-}	
-
-std::vector<ColliderBase*> BossSelectSpotManager::GetCollider(void)const {
-	std::vector<ColliderBase*> ret = {};
-
-	for (BossSelectSpotBase* const& s : spot) {
-		for (ColliderBase* coll : s->GetCollider()) { ret.emplace_back(coll); }
-	}
-
-	return ret;
 }
-

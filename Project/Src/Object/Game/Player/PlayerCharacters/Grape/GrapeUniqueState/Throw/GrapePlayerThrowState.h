@@ -2,7 +2,11 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../../../../Common/Vector3.h"
+
 class GrapePlayerWeaponThrow;
+
+struct Transform;
 
 class GrapePlayerThrowState : public CharacterStateBase
 {
@@ -18,9 +22,9 @@ public:
 
 		const Vector3*& bossPos,
 
-		const std::function<void(void)> playAnime,
-		const std::function<float(void)> getAnimeRatio,
-		const std::function<void(void)> defaultChangeState
+		const std::function<void(void)>& playAnime,
+		const std::function<float(void)>& getAnimeRatio,
+		const std::function<void(void)>& defaultChangeState
 	);
 
 	// デストラクタ

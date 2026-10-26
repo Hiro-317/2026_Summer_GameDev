@@ -4,7 +4,7 @@
 
 #include "PlayerFactory.h"
 
-#include "../../../../Manager/Net/SenderID_Define.h"
+#include "../../../../Manager/Net/NetWorkManager.h"
 
 class PlayerBase;
 

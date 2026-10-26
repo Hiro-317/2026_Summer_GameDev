@@ -130,6 +130,32 @@ void Transform::Duplicate(int model)
 	this->model = MV1DuplicateModel(model);
 }
 
+MATRIX Transform::GetWorldMatrix(void) const
+{
+	// 最終回転
+	const MATRIX rotationMat = FinalRotationMat();
+
+	// 描画座標
+	const Vector3 drawPos =
+		pos + Vector3(
+			VTransform(centerDiff.ToVECTOR(), rotationMat)
+		);
+
+	// スケール
+	MATRIX modelMat = MGetScale(scale.ToVECTOR());
+
+	// 回転
+	modelMat = MMult(modelMat, rotationMat);
+
+	// 座標
+	modelMat = MMult(
+		modelMat,
+		MGetTranslate(drawPos.ToVECTOR())
+	);
+
+	return modelMat;
+}
+
 void Transform::Attach(void)
 {
 	if (model == -1) { return; }

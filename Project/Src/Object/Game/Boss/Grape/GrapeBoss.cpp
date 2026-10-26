@@ -72,9 +72,9 @@ void GrapeBoss::BossLoad(void)
 			playerPos,
 
 			// クールタイム
-			coolTime,
+			[&]() { return coolTime; },
 			// ターゲット番号の取得
-			targetNum,
+			[&]() { return targetNum; },
 
 			// アイドルアニメーションの再生
 			[&]() { AnimePlay(ANIME_TYPE::IDLE); },
@@ -104,11 +104,10 @@ void GrapeBoss::BossLoad(void)
 			// 移動量
 			MOVE_SPEED,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos,
+			trans,
 			playerPos,
 			// ターゲット番号の取得
-			targetNum,
-			std::bind(GrapeBoss::MoveAccel, this, std::placeholders::_1),
+			[&]() { return targetNum; },
 			// 走りアニメーションの再生
 			[&]() { AnimePlay(ANIME_TYPE::RUN); },
 			// 移動後攻撃に状態遷移関数のポインタ
@@ -120,19 +119,19 @@ void GrapeBoss::BossLoad(void)
 		STATE::ATTACK_A,
 		new GrapeBossKickDownState(
 			// 自分の座標と角度とローカル角度
-			trans.pos, trans.rotation, MODEL_LOCAL_ROT,
+			trans, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
-			GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
 			// モデルの拡大率
 			MODEL_SCALE,
 			// プレイヤーの座標の読み取り
 			playerPos,
 			// 当たり判定オペレータの参照
-			SubActorSerch<GrapeKickDownCollOperator>(),
+			ChildActorSerch<GrapeKickDownCollOperator>(),
 			// アニメーションの再生関数のポインタ
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay((int)ANIME_TYPE::KICKDOWN, false); },
+			[&]() { AnimePlay((int)ANIME_TYPE::KICKDOWN); },
 			// アニメーションの再生割合を取得する関数のポインタ 
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
@@ -144,16 +143,12 @@ void GrapeBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_B),
+		STATE::ATTACK_B,
 		new GrapeBossStraightState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_B); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_B); },
 			// 自分の座標と角度
-			trans.pos, trans.rotation,
+			trans,
 			// 攻撃の種類の情報
-			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
 			// プレイヤーの座標
 			playerPos,
 			// プレイヤーのターゲット番号
@@ -171,19 +166,16 @@ void GrapeBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_C),
+		STATE::ATTACK_C,
 		new GrapeBossStampState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_C); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_C); },
 			// 自分の座標と角度
-			trans.pos, trans.rotation, isGround,
+			trans, 
+			isGround,
 			// 攻撃の種類の情報
-			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
 			// プレイヤーの座標
 			playerPos,
-			SubActorSerch<GrapeStampCollOperator>(),
+			ChildActorSerch<GrapeStampCollOperator>(),
 			// ジャンプ始めアニメーションのタイプ
 			(int)ANIME_TYPE::JUMP_START,
 			(int)ANIME_TYPE::STAMP,
@@ -210,16 +202,12 @@ void GrapeBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_D),
+		STATE::ATTACK_D,
 		new GrapeBossSingleState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_D); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_D); },
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb),
 			// プレイヤーのターゲット番号
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
@@ -235,16 +223,12 @@ void GrapeBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_E),
+		STATE::ATTACK_E,
 		new GrapeBossStalkerState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_E); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_E); },
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb),
 			// プレイヤーのターゲット番号
 			[&]() { return targetNum; },
 			// アニメーションの再生関数のポインタ
@@ -260,16 +244,12 @@ void GrapeBoss::BossLoad(void)
 		)
 	);
 	AddState(
-		static_cast<int>(STATE::ATTACK_F),
+		STATE::ATTACK_F,
 		new GrapeBossRandomState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::ATTACK_F); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::ATTACK_F); },
 			// 座標の参照
 			trans.pos,
 			// 攻撃の種類の情報
-			SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
 			// アニメーションの再生割合を取得する関数のポインタ 
@@ -284,12 +264,8 @@ void GrapeBoss::BossLoad(void)
 	);
 
 	AddState(
-		static_cast<int>(STATE::DEATH),
+		STATE::DEATH,
 		new GrapeBossDeathState(
-			// 自分の状態に遷移する関数
-			[&]() { state = static_cast<int>(STATE::DEATH); },
-			// 自分の状態かどうかを返す関数
-			[&]() { return state == static_cast<int>(STATE::DEATH); },
 			// ボス死亡アニメーション
 			[&]() { AnimePlay((int)ANIME_TYPE::DEATH, false); },
 			// アニメーションの全体時間
@@ -297,7 +273,7 @@ void GrapeBoss::BossLoad(void)
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 死んだフラグを立てる
-			[&]() {	SetIsDeath(true); }
+			[&]() {	isDeath = true; }
 		)
 	);
 
@@ -349,14 +325,14 @@ void GrapeBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA:
 		{
-			SubActorSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
-			SubActorSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
+			ChildActorSerch<GrapeKickDownCollOperator>()->SetPos(dataPtr->pos);
+			ChildActorSerch<GrapeKickDownCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		case MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC:
 		{
-			SubActorSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
-			SubActorSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale);
+			ChildActorSerch<GrapeStampCollOperator>()->SetPos(dataPtr->pos);
+			ChildActorSerch<GrapeStampCollOperator>()->SetScale(dataPtr->scale);
 			break;
 		}
 		default:
@@ -372,16 +348,16 @@ void GrapeBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA:
 		{
-			SubActorSerch<GrapeKickDownCollOperator>()->SetDrawArea(dataPtr->flg);
+			ChildActorSerch<GrapeKickDownCollOperator>()->SetDrawArea(dataPtr->flg);
 			break;
 		}
 		case MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC:
 		{
 			if (dataPtr->flg) {
-				SubActorSerch<GrapeStampCollOperator>()->DrawAreaOn();
+				ChildActorSerch<GrapeStampCollOperator>()->DrawAreaOn();
 			}
 			else {
-				SubActorSerch<GrapeStampCollOperator>()->Off();
+				ChildActorSerch<GrapeStampCollOperator>()->Off();
 			}
 			break;
 		}
@@ -398,7 +374,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		{
 		case MsgDataBossBombInform::INFORM_TYPE::Straight:
 		{
-			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight)[dataPtr->index];
+			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			dynamic_cast<GrapeBossStraight*>(weapon.weaponIns)->SetStartDir(dataPtr->moveDir);
 			weapon.live = true;
@@ -406,7 +382,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::KickBomb:
 		{
-			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb)[dataPtr->index];
+			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true;
@@ -414,7 +390,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::StampBomb:
 		{
-			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb)[dataPtr->index];
+			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true;
@@ -422,7 +398,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::SingleBomb:
 		{
-			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb)[dataPtr->index];
+			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true; 
@@ -430,7 +406,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::StalkerBomb:
 		{
-			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb)[dataPtr->index];
+			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true; 
@@ -438,7 +414,7 @@ void GrapeBoss::ReceptionUpdate(void)
 		}
 		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb:
 		{
-			auto& weapon = SubActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb)[dataPtr->index];
+			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb)[dataPtr->index];
 			weapon.weaponIns->SetStartPos(dataPtr->pos);
 			weapon.weaponIns->SetViewPosCircle();
 			weapon.live = true;

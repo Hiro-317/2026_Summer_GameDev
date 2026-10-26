@@ -16,8 +16,8 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 	const Vector3* const& targetPos,
 
 	const short SKILL_POWER,
-	const short SKILL_TIME = -1,
-	const ModifierType MODIFIER_TYPE = ModifierType::None
+	const short SKILL_TIME,
+	const ModifierType MODIFIER_TYPE
 ) :
 	COLL_TAG(COLL_TAG),
 

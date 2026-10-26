@@ -4,6 +4,10 @@
 
 #include "../../../../../../Common/Vector3.h"
 
+#include "../../../../../../Manager/Net/SenderID_Define.h"
+
+struct Transform;
+
 class GrapeBossMoveState : public CharacterStateBase
 {
 public:
@@ -17,11 +21,9 @@ public:
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	GrapeBossMoveState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED,
-		Vector3& pos, Vector3& angle, 
-		const std::vector<const Vector3*> playerPos,
+		Transform& bossTrans,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayRunAnime,
 		const std::function<void(void)> KickDownChangeState
@@ -52,14 +54,10 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// 座標の参照
-	Vector3& pos;
-
-	// 角度の参照
-	Vector3& angle;
+	Transform& bossTrans;
 
 	// プレイヤーの座標の読み取り
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	const std::function<int(void)> GetTarget;
 	// 角度を戻すポインタ

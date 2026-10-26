@@ -4,6 +4,8 @@
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../../../Manager/Net/SenderID_Define.h"
+
 struct Transform;
 struct Vector3;
 
@@ -13,8 +15,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>

@@ -9,6 +9,7 @@ GrapeBossIdleState::GrapeBossIdleState(
 	Transform& bossTrans,
 
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
+
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayIdleAnim,
@@ -53,7 +54,7 @@ void GrapeBossIdleState::Update(void)
 		cnt -= TimeScale::Get();
 		
 		// プレイヤーとの角度を出す
-		Vector3 tmp = *playerPos[target] - bossTrans.pos;
+		Vector3 tmp = (*playerPos[target]) - bossTrans.pos;
 		float dir = atan2f(tmp.x, tmp.z);
 		Vector3 forward = bossTrans.rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f));
 		float norm = dir - atan2f(forward.x, forward.z);
@@ -111,7 +112,7 @@ void GrapeBossIdleState::Update(void)
 		return;
 	}
 	// 距離と確率を出す
-	float distance = (*playerPos[target] - bossTrans.pos).Length();
+	float distance = ((*playerPos[target]) - bossTrans.pos).Length();
 	int luck = GetRand(RANDOM);
 
 	// 確率で変える

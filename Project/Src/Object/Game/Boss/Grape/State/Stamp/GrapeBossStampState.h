@@ -6,6 +6,7 @@
 #include "../../Weapon/GrapeBossWeaponManager.h"
 
 #include "../../../../../../Common/Vector3.h"
+struct Transform;
 
 class GrapeBossStampState : public CharacterStateBase
 {
@@ -13,8 +14,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
 	/// <param name="isGround">地面かどうか</param>
@@ -34,11 +33,10 @@ public:
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossStampState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
-		Vector3& pos, Vector3& angle, const bool& isGround,
+		Transform& bossTrans,
+		const bool& isGround,
 		BombType* bombType,
-		const std::vector<const Vector3*> playerPos,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		GrapeStampCollOperator* collOperator,
 		const int JUMP_START_ANIM_TYPE,
 		const int STAMP_ANIM_TYPE,
@@ -88,19 +86,15 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// 座標の参照
-	Vector3& pos;
+	Transform& bossTrans;
 
-	// 角度の参照
-	Vector3& angle;
-	
 	const bool& isGround;
 
 	// ボムの参照
 	BombType* bombType;
 
 	// プレイヤーの座標の参照
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	// コライダーのオペレーターのポインター
 	GrapeStampCollOperator* collOperator;

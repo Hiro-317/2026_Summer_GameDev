@@ -29,7 +29,6 @@ BossSelectScene::BossSelectScene() :
 
 void BossSelectScene::SubPostLoad(void)
 {
-	AddActor(new SkyDome(200.0f));
 	AddActor(new BossSelectStage());
 	AddActor(new BossSelectSpotManager());
 	AddActor(new BossSelectSkyShip());

@@ -12,8 +12,6 @@ public:
 
 	void Load(void)override;
 
-	std::vector<ColliderBase*> GetCollider(void)const override;
-
 private:
 
 	// 各スポットの実体
@@ -26,7 +24,6 @@ private:
 	void SubInit(void)override;
 	void SubUpdate(void)override;
 	void SubDraw(void)override;
-	void SubAlphaDraw(void)override;
 	void SubRelease(void)override;
 
 };

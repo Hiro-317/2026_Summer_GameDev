@@ -2,6 +2,8 @@
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../../../../Common/Vector3.h"
+
 class GrapePlayerWeaponShot;
 
 struct Transform;

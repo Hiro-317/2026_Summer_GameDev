@@ -2,9 +2,6 @@
 
 #include <algorithm>
 
-#include "../../../../Common/Vector3.h"
-#include "../../../../Common/Quaternion.h"
-
 #include "../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../Manager/Net/NetWorkManager.h"
 

@@ -28,8 +28,8 @@ private:
 
 	void CreateCamera(void)override;
 
-	const BossBase* bossInsRef;
-	const PlayerManager* playerInsRef;
+	BossBase* bossInsRef;
+	PlayerManager* playerInsRef;
 
 	// カメラ状態変更フラグ
 	bool focusFlg;

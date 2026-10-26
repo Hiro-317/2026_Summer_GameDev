@@ -6,11 +6,10 @@
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
 GrapeBossStampState::GrapeBossStampState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	Vector3& pos, Vector3& angle, const bool& isGround,
+	Transform& bossTrans,
+	const bool& isGround,
 	BombType* bombType,
-	const std::vector<const Vector3*> playerPos,
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	GrapeStampCollOperator* collOperator,
 	const int JUMP_START_ANIM_TYPE,
 	const int STAMP_ANIM_TYPE,
@@ -25,9 +24,9 @@ GrapeBossStampState::GrapeBossStampState(
 	const std::function<void(void)> offCollider,
 	const std::function<void(void)> onCollider,
 	const std::function<void(void)> SetCoolTime
-)
-	:CharacterStateBase(ownChangeState, isOwnState),
-	pos(pos), angle(angle), isGround(isGround),
+) :
+	bossTrans(bossTrans),
+	isGround(isGround),
 	bombType(bombType), playerPos(playerPos),
 	collOperator(collOperator),
 	JUMP_START_ANIM_TYPE(JUMP_START_ANIM_TYPE),
@@ -52,12 +51,12 @@ GrapeBossStampState::GrapeBossStampState(
 void GrapeBossStampState::Enter(void)
 {
 	target = GetTarget();
-	collOperator->SetPos(*playerPos.at(target));
+	collOperator->SetPos(*playerPos[target]);
 	attackPos = Vector3();
 	attackDistRate = Vector3();
 	collOperator->DrawAreaOn();
 	nowAttackTime = 0;
-	prevPos = pos.y - 0.5f;
+	prevPos = bossTrans.pos.y - 0.5f;
 	attackCnt = 0;
 	isAttack = true;
 	SetCoolTime();
@@ -66,7 +65,7 @@ void GrapeBossStampState::Enter(void)
 	cnt = 0;
 
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC));
-	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, *playerPos.at(target)));
+	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, *playerPos[target]));
 }
 
 void GrapeBossStampState::Update(void)
@@ -95,13 +94,13 @@ void GrapeBossStampState::Update(void)
 		if (isAttack) {
 			isAttack = false;
 		}
-		if (prevPos < pos.y) {
-			prevPos = pos.y;
-			pos.y += JUMP_POW;
+		if (prevPos < bossTrans.pos.y) {
+			prevPos = bossTrans.pos.y;
+			bossTrans.pos.y += JUMP_POW;
 			offCollider();
 		}
 		else {
-			prevPos = pos.y;
+			prevPos = bossTrans.pos.y;
 			onCollider();
 		}
 	}
@@ -139,7 +138,7 @@ void GrapeBossStampState::Update(void)
 				}
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
+				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
 				bombType[i].weaponIns->SetStartPos(tmpPos);
 				bombType[i].weaponIns->SetViewPosCircle();
 
@@ -171,10 +170,10 @@ void GrapeBossStampState::Update(void)
 	if (nowAttackTime < TIME_RATE) {
 
 		attackPos = collOperator->GetAttackPos();
-		attackDistRate = Vector3::XZonly(attackPos.x - pos.x, attackPos.z - pos.z) / (TIME_RATE - (float)nowAttackTime);
+		attackDistRate = Vector3::XZonly(attackPos.x - bossTrans.pos.x, attackPos.z - bossTrans.pos.z) / (TIME_RATE - (float)nowAttackTime);
 
 		nowAttackTime++;
-		pos += attackDistRate;
+		bossTrans.pos += attackDistRate;
 
 		// 予測線の更新
 		float scale = 1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE;

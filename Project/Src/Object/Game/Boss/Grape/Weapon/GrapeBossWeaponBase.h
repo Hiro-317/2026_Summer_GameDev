@@ -2,6 +2,8 @@
 
 #include "../../../../Common/ActorBase/ActorBase.h"
 
+struct CharacterStats;
+
 // 種類の列挙型定義
 enum class WeaponType {
 	None = -1,
@@ -55,7 +57,7 @@ public:
 	~GrapeBossWeaponBase() = default;
 
 	// 規定用のLoad
-	virtual void Load(void) override {};
+	void Load(void) override {};
 	// 行うロード
 	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) = 0;
 

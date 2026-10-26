@@ -149,7 +149,7 @@ void GrapePlayer::PlayerLoad(void)
 			// アニメーションの再生
 			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
 			// アニメーションの終了フラグを取得する関数
-			std::bind(GrapePlayer::IsAnimeEnd, this),
+			std::bind(&GrapePlayer::IsAnimeEnd, this),
 			// 無敵時間のセット関数
 			[&]() { invincibleCounter = 30; },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
@@ -164,7 +164,7 @@ void GrapePlayer::PlayerLoad(void)
 			// アニメーションの再生
 			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
 			// アニメーションの終了フラグを取得する関数
-			std::bind(GrapePlayer::IsAnimeEnd, this),
+			std::bind(&GrapePlayer::IsAnimeEnd, this),
 			// 死亡演出終了後の処理
 			[&]() {isDeath = true; }
 		)
