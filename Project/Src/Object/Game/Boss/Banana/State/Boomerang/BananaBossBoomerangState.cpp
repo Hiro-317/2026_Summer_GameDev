@@ -2,11 +2,10 @@
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../../Manager/Effect/EffectManager.h"
+
+#include "../../../../../../Utility/Utility.h"
 
 BananaBossBoomerangState::BananaBossBoomerangState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	BananaBossBanamerang* collOperator,
 	const std::function<Vector3(void)> HandPos,
 	const std::function<void(void)> PlayStartAnim,
@@ -17,7 +16,7 @@ BananaBossBoomerangState::BananaBossBoomerangState(
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	collOperator(collOperator),
 	HandPos(HandPos),
 	PlayStartAnim(PlayStartAnim),

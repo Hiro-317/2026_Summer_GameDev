@@ -1,28 +1,32 @@
 #pragma once
 #include "../BossBase.h"
 
+#include "State/Headbutt/TomatoHeadbuttCollOperator.h"
+#include "State/Tackle/TomatoTackleCollOperator.h"
+#include "State/Stamp/TomatoStampCollOperator.h"
+
 
 class TomatoBoss : public BossBase
 {
 public:
-	TomatoBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerDeath);
+	TomatoBoss();
 	~TomatoBoss()override = default;
 
 	// ó‘Ô‘JˆÚŒã1“xs‚¤‰Šú‰»ˆ—
-	std::vector<ColliderBase*> GetCollider(void)const override {
+	std::vector<ColliderBase*> GetColliders(void)const override {
 		std::vector<ColliderBase*> ret = {};
 		// ©g‚ÌƒRƒ‰ƒCƒ_[‚ğ•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ColliderBase*& coll : ActorBase::GetCollider()) { ret.emplace_back(coll); }
+		for (ColliderBase* collider : ActorBase::GetColliders()) { ret.emplace_back(collider); }
 
 		// •ø‚¦‚é‰ºˆÊƒNƒ‰ƒX‚Ì•Ô‹p—pˆê•Ï”‚ÉŠi”[
-		for (ActorBase* const& subObj : subObjArray) {
-			for (ColliderBase*& coll : subObj->GetCollider()) { ret.emplace_back(coll); }
+		for (ActorBase* child : ActorBase::GetChildActors()) {
+			for (ColliderBase* collider : child->GetColliders()) { ret.emplace_back(collider); }
 		}
 		// ÅI“I‚È•Ô‹p—pˆê•Ï”‚ğ•Ô‹p
 		return ret;
 	}
 
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint)override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 	virtual void ReceptionUpdate(void)override;
 
 private:
@@ -144,7 +148,7 @@ private:
 #pragma endregion ’è”’è‹`
 
 	// ƒƒCƒ“ˆ—``````````````
-	void PlayerLoad(void)override;
+	void BossLoad(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
 
 	// Šâ‚É“–‚½‚Á‚½‚©
@@ -153,4 +157,7 @@ private:
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	int coolTime;
 
+	TomatoHeadbuttCollOperator* headbuttRef;
+	TomatoStampCollOperator* stampRef;
+	TomatoTackleCollOperator* tackleRef;
 };

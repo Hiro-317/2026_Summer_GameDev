@@ -4,10 +4,9 @@
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
 TomatoBossHeadbuttState::TomatoBossHeadbuttState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	const float MOVE_SPEED, const float ATTACK_TIME,
-	Vector3& pos, Quaternion& rotation, const std::vector<const Vector3*> playerPos,
+	Vector3& pos, Quaternion& rotation,
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	TomatoHeadbuttCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> DeleteColl,
@@ -15,7 +14,7 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	MOVE_SPEED(MOVE_SPEED), ATTACK_TIME(ATTACK_TIME),
 	pos(pos), rotation(rotation), playerPos(playerPos),
 	collOperator(collOperator),
@@ -30,7 +29,7 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 void TomatoBossHeadbuttState::Enter(void)
 {
 	target = GetTarget();
-	moveDir = (*playerPos.at(target) - pos).Normalized();
+	moveDir = (*playerPos[target] - pos).Normalized();
 	time = -START_CNT;
 	DeleteColl();
 	SetCoolTime();

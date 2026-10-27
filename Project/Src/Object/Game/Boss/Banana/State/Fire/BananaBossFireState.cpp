@@ -2,11 +2,8 @@
 
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../../Manager/Effect/EffectManager.h"
 
 BananaBossFireState::BananaBossFireState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	BananaFireCollOperator* collOperator,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
@@ -14,7 +11,7 @@ BananaBossFireState::BananaBossFireState(
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	collOperator(collOperator),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
@@ -40,7 +37,6 @@ void BananaBossFireState::Update(void)
 	if (GetAnimPlayRatio() >= EFFECT_RATE && !effect) {
 		// エフェクト生成
 		effect = true;
-		EffectManager::GetIns()->CreateEffect(EFFECT_NAME::FIRE, EFFECT_POS);
 	}
 	if (GetAnimPlayRatio() >= ATTACK_RATE) {
 		// アニメーションの再生割合で生成

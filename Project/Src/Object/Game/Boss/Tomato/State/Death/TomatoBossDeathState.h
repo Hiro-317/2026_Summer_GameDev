@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
+#include "../../../../../../Common/Vector3.h"
+#include "../../../../../../Common/Quaternion.h"
 
 class TomatoBossDeathState : public CharacterStateBase
 {
@@ -8,14 +10,10 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="scale">ボスのスケール</param>
 	/// <param name="defaultScale">ボスの初期スケール</param>
 	/// <param name="IsDeath">アニメーション後の死んだ判定</param>
 	TomatoBossDeathState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		Vector3& scale, Quaternion& rotation,
 		const std::function<void(void)> IsDeath
 	);

@@ -4,6 +4,8 @@
 
 struct CharacterStats;
 
+struct XZCircleCollider;
+
 class TomatoHeadbuttCollOperator : public ActorBase
 {
 public:
@@ -56,7 +58,7 @@ private:
 
 #pragma endregion
 
-	void SubAlphaDraw(void) override;
+	void SubDraw(void) override;
 	void SubRelease(void) override;
 
 	Transform collBack;
@@ -64,4 +66,6 @@ private:
 
 	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
 	bool isDrawArea;
+
+	XZCircleCollider* collRef;
 };

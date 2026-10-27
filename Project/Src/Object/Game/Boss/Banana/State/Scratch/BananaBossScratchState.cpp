@@ -4,8 +4,6 @@
 #include "../../../../../../Manager/Sound/SoundManager.h"
 
 BananaBossScratchState::BananaBossScratchState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	BananaScratchCollOperator* collOperator,
 	const std::function<void(void)> UpdateFrame,
 	const std::function<void(void)> PlayAttackAnim,
@@ -14,7 +12,7 @@ BananaBossScratchState::BananaBossScratchState(
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	collOperator(collOperator),
 	UpdateFrame(UpdateFrame),
 	PlayAttackAnim(PlayAttackAnim),

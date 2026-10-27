@@ -2,6 +2,8 @@
 
 #include "../../../../../Common/ActorBase/ActorBase.h"
 
+#include "../../../../../Common/Collider/ColliderBase.h"
+
 class XZCircleCollider;
 
 struct CharacterStats;

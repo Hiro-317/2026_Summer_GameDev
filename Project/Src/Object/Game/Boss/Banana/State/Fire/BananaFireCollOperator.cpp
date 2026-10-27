@@ -1,5 +1,7 @@
 #include "BananaFireCollOperator.h"
 
+#include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+
 
 BananaFireCollOperator::BananaFireCollOperator(
 	const MSG_SENDER_ID controlSenderId,
@@ -13,18 +15,17 @@ BananaFireCollOperator::BananaFireCollOperator(
 void BananaFireCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（球体コライダー）
-	AddCollider(
-		new SphereCollider(COLLIDER_TAG::BossAttack, RADIUS)
-	);
+	collRef = new SphereCollider(COLLIDER_TAG::BossAttack, RADIUS);
+	AddCollider(collRef);
 
-	CreateAttackSkill(controlSenderId, 100, &stats, COLLIDER_TAG::BossAttack);
+	collRef->SetSkillStats(new SkillStats(100, &stats));
 	SetPushFlg(false);
 	SetJudgeFlg(false);
 
-	ColliderSerch(GetCollider(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(POS);
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(POS);
 
-	collBack.Load("Range/CircleRangeBack");
-	collFront.Load("Range/CircleRangeFront");
+	collBack.LoadModel("Range/CircleRangeBack");
+	collFront.LoadModel("Range/CircleRangeFront");
 
 	collBack.pos = POS;
 	collFront.pos = POS;
@@ -33,9 +34,10 @@ void BananaFireCollOperator::Load(void)
 	collFront.scale = Vector3(0.0f);
 
 	isDrawArea = false;
+	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 }
 
-void BananaFireCollOperator::SubAlphaDraw(void)
+void BananaFireCollOperator::SubDraw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);

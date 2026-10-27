@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
+#include "../../../../../../Manager/Net/SenderID_Define.h"
 
 #include "TomatoTackleCollOperator.h"
 
@@ -12,8 +13,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
 	/// <param name="ROTATION_POW">回転量</param>
 	/// <param name="pos">座標の参照</param>
 	/// <param name="angle">角度の参照</param>
@@ -24,11 +23,9 @@ public:
 	/// <param name="ReviveColl">XZのコライダを復活させる</param>
 	/// <param name="DefaultChangeState">戻すステート</param>
 	TomatoBossTackleState(
-		const std::function<void(void)>& ownChangeState,
-		const std::function<bool(void)>& isOwnState,
 		float MOVE_SPEED, float ROTATION_POW,
 		Vector3& pos, Quaternion& rotation, const Transform* trans,
-		const std::vector<const Vector3*> playerPos,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		TomatoTackleCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> ResetAngle,
@@ -79,7 +76,7 @@ private:
 	const Transform* trans;
 
 	// プレイヤーの座標の読み取り
-	const std::vector<const Vector3*> playerPos;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	// コリジョンオペレーター
 	TomatoTackleCollOperator* collOperator;

@@ -1,16 +1,17 @@
 #include "TomatoBossDeathState.h"
 
-#include "../../../../../../Scene/Game/GameScene.h"
+#include "../../../../../../Scene/SceneBase.h"
+#include "../../../../../../Scene/SceneManager.h"
+#include "../../../../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
+
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
 TomatoBossDeathState::TomatoBossDeathState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
 	Vector3& scale, Quaternion& rotation,
 	const std::function<void(void)> IsDeath
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
+	:CharacterStateBase(),
 	scale(scale), rotation(rotation), defaultScale(defaultScale),
 	IsDeath(IsDeath)
 {
@@ -18,7 +19,7 @@ TomatoBossDeathState::TomatoBossDeathState(
 
 void TomatoBossDeathState::Enter(void)
 {
-	GameScene::Shake(ShakeKinds::DIAG, ShakeSize::BIG, CHANGE_COUNT);
+	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
 }
 
 void TomatoBossDeathState::Update(void)

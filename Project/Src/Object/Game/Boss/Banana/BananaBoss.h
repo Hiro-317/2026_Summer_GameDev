@@ -1,11 +1,16 @@
 #pragma once
+
 #include "../BossBase.h"
+
+#include "State/Scratch/BananaScratchCollOperator.h"
+#include "State/Fire/BananaFireCollOperator.h"
+#include "State/Boomerang/BananaBossBanamerang.h"
 
 
 class BananaBoss : public BossBase
 {
 public:
-	BananaBoss(const std::vector<const Vector3*> playerPos, const std::vector<const bool*> playerLive);
+	BananaBoss();
 	~BananaBoss()override = default;
 
 	virtual void ReceptionUpdate(void)override;
@@ -146,4 +151,9 @@ private:
 	// ひっかき攻撃のフレーム座標
 	Vector3 StartFrame;
 	Vector3 EndFrame;
+
+	// 再帰変数
+	BananaScratchCollOperator* scratchRef;
+	BananaFireCollOperator* fireRef;
+	BananaBossBanamerang* banamerangRef;
 };
