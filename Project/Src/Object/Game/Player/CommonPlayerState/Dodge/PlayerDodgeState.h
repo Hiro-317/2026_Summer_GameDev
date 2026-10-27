@@ -60,6 +60,20 @@ private:
 
 #pragma region 定数
 
+	// ステップ
+	enum class STEP
+	{
+		// 無敵判定発生前
+		Startup,
+
+		// 無敵判定発生中
+		Active,
+
+		// 後隙
+		Recovery
+	};
+
+
 	// 回避に使用するキー
 	const KEY_TYPE DODGE_KEY;
 
@@ -94,6 +108,9 @@ private:
 	const std::function<void(void)> defaultChangeState;
 
 #pragma endregion
+
+	// ステップ
+	STEP step;
 
 	// クールタイム計測
 	int coolTimeCounter;

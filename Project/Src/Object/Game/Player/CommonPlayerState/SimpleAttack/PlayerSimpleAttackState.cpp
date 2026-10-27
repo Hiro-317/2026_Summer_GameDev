@@ -98,10 +98,14 @@ void PlayerSimpleAttackState::Update(void)
 		if (collOperator.GetIsFindAttackTarget()) {
 			// 攻撃対象が見つかっていれば、攻撃対象に向かって移動する
 			moveVec = collOperator.GetTargetPos() - trans.pos;
+			moveVec.y = 0.0f;
+			moveVec.Normalize();
 		}
 		else {
 			// 攻撃対象が見つかっていなければ、角度の方向に移動する
 			moveVec = trans.rotation.Rotate(Vector3::Zonly(1.0f));
+			moveVec.y = 0.0f;
+			moveVec.Normalize();
 		}
 
 		// 最終的な移動ベクトルで移動する

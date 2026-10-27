@@ -4,6 +4,10 @@
 #include "../../../Manager/TimeScale/TimeScale.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 
+#include "../../../Scene/SceneManager.h"
+#include "../../../Scene/SceneBase.h"
+#include "../../../Scene/Common/PostEffect/DamageFlashPostEffect/DamageFlashPostEffect.h"
+
 #include "CommonPlayerState/OtherPlayerWatch/OtherPlayerWatchState.h"
 #include "CommonPlayerState/Move/PlayerMoveState.h"
 
@@ -218,6 +222,9 @@ void PlayerBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 
 		// HPがなくなったら死亡状態に遷移させる
 		if (characterStats.hp <= 0) { ChangeState(STATE::DEATH); }
+
+		// ダメージポストエフェクト
+		SceneManager::GetIns().GetScene()->AddPostEffect(new DamageFlashPostEffect(10.0f, 10.0f));
 
 		return;
 	}

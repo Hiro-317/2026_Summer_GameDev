@@ -39,6 +39,7 @@ PlayerDodgeState::PlayerDodgeState(
 	getAnimePlayRatio(getAnimePlayRatio),
 	defaultChangeState(defaultChangeState),
 
+	step(STEP::Startup),
 	coolTimeCounter()
 {
 }
@@ -57,20 +58,76 @@ void PlayerDodgeState::Enter(void)
 	// アニメーションの再生
 	playDodgeAnime();
 
+	// ステップを「無敵判定発生前」へ
+	step = STEP::Startup;
+
 	// 攻撃のクールタイムをセットする
 	coolTimeCounter = (float)COOL_TIME;
+
+	// 無敵判定を消去
+	isInvincible = false;
 }
 
 void PlayerDodgeState::Update(void)
 {
-	// 無敵判定終了前移動させる
-	if (getAnimePlayRatio() <= INVI_END_TIME) {
+	// アニメーションの再生割合を取得
+	const float animeRatio = getAnimePlayRatio();
+
+	// ステップ別更新
+	switch (step) {
+
+	case STEP::Startup: {
+		// 前隙
+
+		// 移動ベクトル
+		Vector3 moveVec = {};
+
 		// 回避の移動処理
 		moveAccel(rotation.Rotate(Vector3::Zonly(1.0f)));
+
+		// 無敵判定発生開始
+		if (INVI_START_TIME <= animeRatio) {
+
+			// ステップを「無敵判定発生中」へ
+			step = STEP::Active;
+
+			// 無敵判定を発生
+			isInvincible = true;
+		}
+
+		break;
 	}
 
-	// アニメーションが終了していたら指定の通常状態に遷移させる
-	if (getAnimePlayRatio() >= 1.0f) { defaultChangeState(); }
+	case STEP::Active: {
+		// 攻撃判定発生中
+
+		// 攻撃判定発生終了
+		if (INVI_END_TIME <= animeRatio) {
+
+			// ステップを「後隙」へ
+			step = STEP::Recovery;
+
+			// 無敵判定を消去
+			isInvincible = false;
+		}
+
+		break;
+	}
+
+	case STEP::Recovery: {
+		// 後隙
+
+		// アニメーション再生終了で強制的に待機状態へ
+		if (1.0f <= animeRatio) {
+
+			// 待機状態へ遷移
+			defaultChangeState();
+		}
+
+		break;
+	}
+
+	}
 }
 
 void PlayerDodgeState::Exit(void)

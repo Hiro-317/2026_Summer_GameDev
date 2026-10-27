@@ -396,9 +396,12 @@ void OrangePlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, c
 	if (!Net::GetIns().IsHost()) { return; }
 
 	// 回避時の特殊無敵判定
-	if (isInvincible) {
+	if (isInvincible && invincibleCounter <= 0.0f) {
 		// ダメージが発生するコライダーを検出
-		if (other.GetTag() == COLLIDER_TAG::BossAttack) {
+		if (
+			other.GetTag() == COLLIDER_TAG::BossAttack ||
+			other.GetTag() == COLLIDER_TAG::PlayerDebuff
+			) {
 
 			// 回避成功のエフェクトを発生
 			hitUiRef->MissSetting(result.point);

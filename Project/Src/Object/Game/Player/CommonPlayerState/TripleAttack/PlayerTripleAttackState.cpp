@@ -80,12 +80,12 @@ void PlayerTripleAttackState::Enter(void)
 		attackNextStageContinueTimeCounter = 0.0f;
 	}
 
+	// 当たり判定を消去
+	collOperator.CollOff();
 	// 攻撃対象の探索を開始する
 	collOperator.TargetSerch();
-	// 攻撃のヒット管理のフラグをリセットする
+	// 攻撃のヒット管理のフラグをリセット
 	collOperator.ResetIsHit();
-	// 前回までの当たり判定を消す
-	collOperator.CollOff();
 
 	// 次段に繋がるまでのカウンターをセットする
 	attackNextStageContinueTimeCounter = ATTACK_NEXT_STAGE_CONTINUE_TIME;
@@ -117,10 +117,14 @@ void PlayerTripleAttackState::Update(void)
 		if (collOperator.GetIsFindAttackTarget()) {
 			// 攻撃対象が見つかっていれば、攻撃対象に向かって移動する
 			moveVec = collOperator.GetTargetPos() - playerTrans.pos;
+			moveVec.y = 0.0f;
+			moveVec.Normalize();
 		}
 		else {
 			// 攻撃対象が見つかっていなければ、角度の方向に移動する
 			moveVec = playerTrans.rotation.Rotate(Vector3::Zonly(1.0f));
+			moveVec.y = 0.0f;
+			moveVec.Normalize();
 		}
 
 		// 最終的な移動ベクトルで移動する
@@ -214,7 +218,4 @@ void PlayerTripleAttackState::AlwaysUpdate(void)
 			}
 		}
 	}
-
-	// 探索情報をリセットする
-	collOperator.ResetTarget();
 }
