@@ -47,12 +47,12 @@ void PlayerSkillUI::SubDraw(void)
 	if (chargeRatio > 0.0f) {
 
 		// チャージ割合による画像の縦方向のズレ
-		const int offset = (int)((float)IMAGE_SIZE.y * (1.0f - chargeRatio));
+		const int offset = (int)((float)IMAGE_SIZE.y * chargeRatio);
 
 		// 描画（チャージ中背景）
 		DrawRectGraph(
 			pos.x - (IMAGE_SIZE.x / 2),
-			pos.y + offset,
+			pos.y - (IMAGE_SIZE.y / 2) + offset,
 
 			0,
 			offset,

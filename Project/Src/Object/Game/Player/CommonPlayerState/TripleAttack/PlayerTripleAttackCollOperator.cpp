@@ -137,7 +137,7 @@ void PlayerTripleAttackCollOperator::SubUpdate(void)
 	}
 	
 	// í«è]
-	trans.pos = playerTrans.pos;
+	trans.pos = playerTrans.pos + playerTrans.rotation.Rotate(COLL_LOCAL_POS);
 	trans.rotation = playerTrans.rotation;
 }
 

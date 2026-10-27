@@ -93,6 +93,9 @@ void PlayerTripleAttackState::Enter(void)
 	// 攻撃段数に応じた攻撃アニメーションを再生する
 	playAttackAnimes[(int)attackStage]();
 
+	// ステップ初期化
+	step = STEP::Startup;
+
 	// 効果音
 	SoundManager::GetIns().Play("PlayerSimpleAttack");
 }

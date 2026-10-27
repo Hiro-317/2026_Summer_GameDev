@@ -100,6 +100,22 @@ private:
 		GetParameter("Anime", "StampAnimeSpeed"),	// STAMP
 	};
 
+	const bool ANIME_LOOP_TABLE[(int)ANIME_TYPE::MAX] =
+	{
+		true,
+		true,
+		true,
+		false,
+		false,
+		false,
+
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+	};
 	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
 
 #pragma endregion ’è”’è‹`

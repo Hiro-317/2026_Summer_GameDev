@@ -63,7 +63,7 @@ void OrangePlayer::PlayerLoad(void)
 	CreateAnimationController();
 
 	// ŠeŽíƒAƒjƒ[ƒVƒ‡ƒ“‚ð“o˜^‚·‚é
-	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED_TABLE);
+	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED_TABLE, ANIME_LOOP_TABLE);
 
 	// ```````````````````````````````````
 
@@ -281,6 +281,10 @@ void OrangePlayer::PlayerLoad(void)
 		)
 	);
 
+	// ‘Ò‹@ó‘Ô -> ˆÚ“®ó‘Ô‚Ì‘JˆÚ‚ð“o˜^
+	RegisterStateTransition(STATE::IDLE, STATE::MOVE);
+	RegisterStateTransition(STATE::MOVE, STATE::IDLE);
+
 	// ‘Ò‹@ó‘Ô/ˆÚ“®ó‘Ô -> ƒXƒLƒ‹1 ‚Ì‘JˆÚ‚ð“o˜^
 	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_1);
@@ -370,7 +374,7 @@ void OrangePlayer::PlayerLoad(void)
 		// ƒXƒLƒ‹3UI‚Ì“o˜^
 		AddChildActor(
 			new PlayerSkillUI(
-				SKILL2_UI_DRAW_POS,
+				SKILL3_UI_DRAW_POS,
 				GetParameterToInt("Dodge", "CoolTime"),
 				dynamic_cast<PlayerDodgeState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Blue,

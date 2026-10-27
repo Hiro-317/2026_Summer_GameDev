@@ -8,6 +8,8 @@
 #include "../../../Scene/SceneManager.h"
 #include "../../../Scene/SceneBase.h"
 
+#include "../../Common/Shader/ModelDamageFlashShader.h"
+
 #include "../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
 
 #include "../../Common/DataLoad/ParameterLoad.h"
@@ -116,7 +118,7 @@ void BossBase::SubUpdate(void)
 #pragma region ターゲット更新
 
 	// ターゲットの生存確認
-	if (!*playerIsDeath[targetNum]) { targetNum = -1; }
+	if (*playerIsDeath[targetNum]) { targetNum = -1; }
 
 	// 与ダメの最大値を探す
 	for (int id = 0; id < Net::GetIns().GetConnectStatus().EntryCount(); id++) {
@@ -207,6 +209,9 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// 与ダメを足す
 			damaged[static_cast<int>(other.GetActor()->GetControlSenderId())] += damage;
+
+			// 点滅
+			CreateShader(new ModelDamageFlashShader(24, 3, 0.85f, SHADER_VERTEX_TYPE::Frame1));
 		}
 	}
 }

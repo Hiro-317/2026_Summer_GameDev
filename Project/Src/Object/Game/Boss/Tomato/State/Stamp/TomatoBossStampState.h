@@ -52,10 +52,10 @@ private:
 #pragma region ’è”
 
 	// ”ò‚Ô‹­‚³
-	static constexpr float JUMP_POW = 29.0f;
+	static constexpr float JUMP_POW = 35.0f;
 
 	// –Ú•W‚Ü‚Å‚Ì“’BŠÔ(Š„‡)
-	static constexpr float TIME_RATE = 18.0f;
+	static constexpr float TIME_RATE = 25.0f;
 
 	// UŒ‚‚Ì”­¶‘±ŠÔ
 	static constexpr int ATTACK_DURATION = 5;

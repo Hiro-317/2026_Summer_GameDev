@@ -52,11 +52,6 @@ public:
 
     void Load(void)override;    // 読み込み
 
-protected:
-
-    void SubDraw(void)override;
-    void SubRelease(void)override;
-
 private:
 
     void ColliderLoad();    // 当たり判定の読み込み

@@ -181,15 +181,12 @@ void TomatoPlayer::PlayerLoad(void)
 	);
 
 	// ‘Ò‹@ó‘Ô/ˆÚ“®ó‘Ô -> ƒXƒLƒ‹1 ‚Ì‘JˆÚ‚ð“o˜^
-	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_1);
 
 	// ‘Ò‹@ó‘Ô/ˆÚ“®ó‘Ô -> ƒXƒLƒ‹2 ‚Ì‘JˆÚ‚ð“o˜^
-	RegisterStateTransition(STATE::IDLE, STATE::SKILL_2);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_2);
 
 	// ‘Ò‹@ó‘Ô/ˆÚ“®’† -> ƒXƒLƒ‹3‚Ì‘JˆÚ‚ð“o˜^
-	RegisterStateTransition(STATE::IDLE, STATE::SKILL_3);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion 

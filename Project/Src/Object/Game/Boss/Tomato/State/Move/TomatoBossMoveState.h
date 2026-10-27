@@ -5,6 +5,7 @@
 
 #include "../../../../../../Common/Vector3.h"
 #include "../../../../../../Common/Quaternion.h"
+struct Transform;
 
 class TomatoBossMoveState : public CharacterStateBase
 {
@@ -22,8 +23,8 @@ public:
 	/// <param name="HeadbuttChangeState">頭突き攻撃へのステート</param>
 	TomatoBossMoveState(
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Quaternion& rotation, 
-		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max], 
+		Transform& bossTrans,
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> ResetAngle,
 		const std::function<void(void)> HeadbuttChangeState
@@ -54,17 +55,13 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// 座標の参照
-	Vector3& pos;
-
-	// 角度の参照
-	Quaternion& rotation;
+	Transform& bossTrans;
 
 	// プレイヤーの座標の読み取り
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	const std::function<int(void)> GetTarget;
-		// 角度を戻すポインタ
+	// 角度を戻すポインタ
 	const std::function<void(void)> ResetAngle;
 
 	// 頭突きに移行するポインタ
@@ -73,6 +70,10 @@ private:
 #pragma endregion
 
 	Vector3 moveDir;
+
+	// 進行方向の回転と転がり角度を独立して保持
+	Quaternion facingRotation;
+	float rollAngle = 0.0f;
 
 	// プレイヤーターゲット
 	int target;

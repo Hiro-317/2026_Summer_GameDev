@@ -48,7 +48,7 @@ void GrapeBoss::BossLoad(void)
 	CreateAnimationController();
 
 	// äeéÌÉAÉjÉÅÅ[ÉVÉáÉìÇìoò^Ç∑ÇÈ
-	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED_TABLE);
+	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED_TABLE, ANIME_LOOP_TABLE);
 
 	// Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`Å`
 

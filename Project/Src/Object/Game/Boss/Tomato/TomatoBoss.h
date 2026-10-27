@@ -133,9 +133,9 @@ private:
 
 
 	// 画像の名前
-	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame";
-	const std::string HP_IMAGE_NAME = "BossHp";
-	const std::string HP_LOST_IMAGE_NAME = "BossHpLost";
+	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame.png";
+	const std::string HP_IMAGE_NAME = "BossHp.png";
+	const std::string HP_LOST_IMAGE_NAME = "BossHpLost.png";
 
 	// HPバーの画像サイズ
 	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);

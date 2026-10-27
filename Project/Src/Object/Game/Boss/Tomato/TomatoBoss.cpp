@@ -113,11 +113,11 @@ void TomatoBoss::BossLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED, ROTATION_POW,
 			// 自分の座標と角度、プレイヤーの座標の読み取り
-			trans.pos, trans.rotation, playerPos,
+			trans, playerPos,
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 角度を戻す
-			[&]() { trans.rotation = Quaternion::FromRotationY(trans.rotation.ToEulerXZY().y); },
+			[&]() { trans.rotation = Quaternion(); },
 			// 移動後攻撃に状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_A); }
 		)
@@ -168,13 +168,13 @@ void TomatoBoss::BossLoad(void)
 			// 移動量と回転量
 			MOVE_SPEED * 5.0f, Deg2Rad(0.3f),
 			// 自分の座標と角度、情報の読み取り,プレイヤーの座標の読み取り
-			trans.pos, trans.rotation, &trans, playerPos,
+			trans, playerPos,
 			// コリジョンオペレーターの参照渡し
 			tackleRef,
 			// 現在のターゲット番号
 			[&]() { return targetNum; },
 			// 角度を戻す
-			[&]() { trans.rotation = Quaternion::FromRotationY(trans.rotation.ToEulerXZY().y); },
+			[&]() { trans.rotation = Quaternion::FromRotationY(0.0f); },
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(GetColliders(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == COLLIDER_SHAPE::XzCircle) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す

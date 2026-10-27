@@ -58,10 +58,6 @@ void SceneBase::Load(void)
 	// Actorの生成はCollisionManager生成後に行う必要があるため、基本的にはここで行う
 	SubPostLoad();
 
-	// シーンごとに独立したカメラを生成する
-	CreateCamera();
-
-
 	// スカイボックスを生成
 	if (UseSkyBox()) { skyBox = new SkyBox(); }
 
@@ -75,6 +71,8 @@ void SceneBase::Init(void)
 	// 派生先の初期化（前）
 	SubPreInit();
 
+	// シーンごとに独立したカメラを生成する
+	CreateCamera();
 	// カメラ初期化
 	if (camera != nullptr) { camera->Init(); }
 

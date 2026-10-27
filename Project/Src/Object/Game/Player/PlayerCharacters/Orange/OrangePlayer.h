@@ -81,6 +81,21 @@ private:
 		ANIME_FOLDER_PATH + "Death.mv1"		// DEATH
 	};
 
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ^ƒCƒv‚²‚Æ‚Ìƒ‹[ƒvÄ¶ƒtƒ‰ƒO
+	const bool ANIME_LOOP_TABLE[(int)ANIME_TYPE::MAX] =
+	{
+		true, // IDLE
+		true, // WALK
+		true, // RUN
+		false, // PUNCH1
+		false, // PUNCH2
+		false, // PUNCH3
+		false, // KICK
+		false, // DODGE
+		false, // DAMAGE
+		false, // DEATH
+	};
+
 	// ``````````````````````````ƒAƒjƒ[ƒVƒ‡ƒ“
 
 #pragma endregion ’è”’è‹`

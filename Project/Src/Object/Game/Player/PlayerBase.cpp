@@ -40,7 +40,7 @@ PlayerBase::PlayerBase(
 
 	invincibleCounter(),
 
-	isDeath()
+	isDeath(false)
 {
 	trans.LoadModel(("Character/" + modelPath).c_str());
 

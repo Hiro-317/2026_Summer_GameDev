@@ -38,6 +38,9 @@ private:
 	// 当たり判定管理は使用しない
 	bool UseCollisionManager(void)const override { return false; }
 
+	// スカイボックスを使用するかどうか
+	bool UseSkyBox(void)const override { return true; }
+
 	// カメラ生成
 	void CreateCamera(void)override;
 

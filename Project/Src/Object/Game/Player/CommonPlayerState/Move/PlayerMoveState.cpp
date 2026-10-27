@@ -35,17 +35,8 @@ PlayerMoveState::PlayerMoveState(
 
 void PlayerMoveState::OwnStateConditionUpdate(void)
 {
-	// 移動にかかわるキーのダウントリガーを条件にする
-	if (
-		Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).down ||
-		Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).down ||
-		Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).down ||
-		Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).down ||
-		Input::GetIns().GetInfo(KEY_TYPE::PlayerDash).down
-		) {
-		// 自分の状態に遷移
-		OwnChangeState();
-	}
+	// 自分の状態に遷移
+	if (InputVec() != 0.0f) { OwnChangeState(); }
 }
 
 void PlayerMoveState::Enter(void)
@@ -97,6 +88,7 @@ void PlayerMoveState::Update(void)
 
 void PlayerMoveState::Exit(void)
 {
+	isDash = false;
 }
 
 void PlayerMoveState::AlwaysUpdate(void)

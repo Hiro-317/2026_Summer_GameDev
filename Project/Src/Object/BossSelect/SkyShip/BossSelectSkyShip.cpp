@@ -42,7 +42,8 @@ void BossSelectSkyShip::Load(void)
 		STATE::Start,
 		new BossSelectSkyShipStartState(
 			Vector3(-5000, 1500, 3000),
-			300,150,
+			1,1,
+			//300,150,
 			trans.pos, trans.rotation,
 			[&]() { ChangeState(STATE::Move); }
 		)

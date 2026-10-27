@@ -120,7 +120,7 @@ bool ColliderBase::GetJudgeFlg(void) const { return judgeFlg; }
 
 bool ColliderBase::GetPushFlg(void) const {
 
-	return judgeFlg == -1 ? owner->GetPushFlg() : (bool)judgeFlg;
+	return pushFlg == -1 ? owner->GetPushFlg() : (bool)pushFlg;
 }
 
 COLLIDER_TAG ColliderBase::GetTag(void) const { return tag; }

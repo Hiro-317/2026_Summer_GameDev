@@ -26,6 +26,9 @@ private:
 
 	void SubPostRelease(void)override;
 
+	// スカイボックスを使用するかどうか
+	bool UseSkyBox(void)const override { return true; }
+
 	void CreateCamera(void)override;
 
 	BossBase* bossInsRef;

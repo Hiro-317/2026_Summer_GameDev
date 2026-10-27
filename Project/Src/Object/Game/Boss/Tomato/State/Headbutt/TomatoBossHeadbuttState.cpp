@@ -49,8 +49,8 @@ void TomatoBossHeadbuttState::Update(void)
 
 		collOperator->SetScale(s);
 		collOperator->SetViewPos(pos);
-		collOperator->SetAngle(rotation.ToEulerXZY().y);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, rotation.ToEulerXZY().y));
+		collOperator->SetAngle(-rotation.ToEulerXZY().y);
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, -rotation.ToEulerXZY().y));
 		return;
 	}
 	// ‰‚ß‚È‚ç‰¹‚Æ“–‚½‚è”»’è‚ğo‚·

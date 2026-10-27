@@ -6,7 +6,7 @@
 
 TomatoBossTackleState::TomatoBossTackleState(
 	float MOVE_SPEED, float ROTATION_POW,
-	Vector3& pos, Quaternion& rotation, const Transform* trans,
+	Transform& bossTrans,
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	TomatoTackleCollOperator* collOperator,
 	const std::function<int(void)> GetTarget,
@@ -18,7 +18,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 ) 
 	:CharacterStateBase(),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
-	pos(pos), rotation(rotation), trans(trans),
+	bossTrans(bossTrans),
 	playerPos(playerPos),
 	collOperator(collOperator),
 	GetTarget(GetTarget),
@@ -48,7 +48,9 @@ void TomatoBossTackleState::Enter(void)
 
 void TomatoBossTackleState::Update(void)
 {
-	rotation.AddAngle(Vector3(rotPow, 0.0f, 0.0f));
+	if (target < 0 || target >= (int)MSG_SENDER_ID::Max || playerPos[target] == nullptr) {
+		return;
+	}
 
 	// 一秒の溜め
 	if (time < CHARGE_POW) {
@@ -56,13 +58,12 @@ void TomatoBossTackleState::Update(void)
 		time++;
 
 		// 回転の更新
-		moveDir = (*playerPos[target] - pos).Normalized();
-		rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
+		moveDir = (*playerPos[target] - bossTrans.pos).Normalized();
 		rotPow += ROTATION_POW;
 
 		// 予測線の更新
-		auto p = Vector3::XZonly(pos.x, pos.z);
-		auto a = rotation.ToEulerXZY().y;
+		auto p = Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z);
+		float a = atan2f(moveDir.x, moveDir.z); 
 		auto s = ((float)time - 180.0f) / 180.0f + 1.0f;
 
 		collOperator->SetViewPos(p);
@@ -77,7 +78,7 @@ void TomatoBossTackleState::Update(void)
 		if (time == CHARGE_POW) {
 		}
 		// 位置の更新
-		pos += moveDir * MOVE_SPEED;
+		bossTrans.pos += moveDir * MOVE_SPEED;
 
 		collOperator->CollSet(true);
 		
@@ -93,8 +94,28 @@ void TomatoBossTackleState::Update(void)
 			return;
 		}
 	}
-	rotation.AddAngle(Vector3(rotPow, 0.0f, 0.0f));
-	collOperator->SetPos(Vector3::XZonly(trans->pos.x, trans->pos.z));
+
+	// 転がりを含まない「正面方向」だけを補間する
+	const float targetAngle = atan2f(moveDir.x, moveDir.z);
+	const Quaternion targetRotation = Quaternion::FromRotationY(targetAngle);
+	const float t = 0.25f * TimeScale::Get();
+	facingRotation = Quaternion::Slerp(
+		facingRotation, targetRotation,
+		t < 0.0f ? 0.0f : (t > 1.0f ? 1.0f : t)
+	);
+
+	// X軸回転は累積して保持する
+	rollAngle += rotPow * TimeScale::Get();
+	if (rollAngle > DX_TWO_PI_F) rollAngle -= DX_TWO_PI_F;
+	if (rollAngle < -DX_TWO_PI_F) rollAngle += DX_TWO_PI_F;
+	const Quaternion rollRotation = Quaternion::FromEulerXZY(
+		Vector3(rollAngle, 0.0f, 0.0f)
+	);
+
+	// ワールドで向きを決め、そのローカルX軸に沿って転がす
+	bossTrans.SetRotation(facingRotation * rollRotation);
+
+	collOperator->SetPos(Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z));
 }
 
 void TomatoBossTackleState::Exit(void)

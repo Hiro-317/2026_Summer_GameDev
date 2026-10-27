@@ -4,6 +4,8 @@
 
 #include "../../../../Common/Vector2.h"
 
+#include "../../../../Manager/Camera/CurrentCamera.h"
+
 PlayerStaminaUI::PlayerStaminaUI(short STAMINA_MAX, const float& stamina, const Vector3& playerPos) :
 	images(),
 
@@ -38,11 +40,13 @@ void PlayerStaminaUI::SubDraw()
 	int index = 0;
 	if (GetStaminaIndex(stamina, STAMINA_MAX, index)) {
 
+		CurrentCamera::Get().Apply();
+
 		Vector3 temp = ConvWorldPosToScreenPos(playerPos.ToVECTOR());
 		Vector2 drawPos = Vector2(temp.x, temp.y);
 
 		// スタミナの描画
-		DrawRotaGraph(drawPos.x + 50, drawPos.y - 50, 1, 0, images[index], true);
+		DrawRotaGraph(drawPos.x + 100, drawPos.y - 50, 1, 0, images[index], true);
 	}
 }
 

@@ -10,6 +10,9 @@
 #include "../Manager/Camera/CurrentCamera.h"
 
 #include "Title/TitleScene.h"
+#include "Lobby/LobbyScene.h"
+#include "Lobby/MultiLobbyScene.h"
+#include "BossSelect/BossSelectScene.h"
 #include "Game/GameScene.h"
 #include "Clear/ClearScene.h"
 #include "GameOver/GameOver.h"
@@ -529,6 +532,12 @@ std::unique_ptr<SceneBase> SceneManager::CreateScene(SCENE_ID scene)const
 	switch (scene) {
 
 	case SCENE_ID::Title: { return std::make_unique<TitleScene>(); }
+
+	case SCENE_ID::Lobby: { return std::make_unique<LobbyScene>(); }
+
+	case SCENE_ID::MultiLobby: { return std::make_unique<MultiLobbyScene>(); }
+
+	case SCENE_ID::BossSelect: { return std::make_unique<BossSelectScene>(); }
 
 	case SCENE_ID::Game: { return std::make_unique<GameScene>(); }
 

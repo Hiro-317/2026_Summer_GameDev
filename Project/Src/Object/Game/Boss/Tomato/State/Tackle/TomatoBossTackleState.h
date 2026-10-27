@@ -5,7 +5,7 @@
 
 #include "TomatoTackleCollOperator.h"
 
-#include "../../../../../../Common/Vector3.h"
+struct Transform;
 
 class TomatoBossTackleState : public CharacterStateBase
 {
@@ -24,7 +24,7 @@ public:
 	/// <param name="DefaultChangeState">戻すステート</param>
 	TomatoBossTackleState(
 		float MOVE_SPEED, float ROTATION_POW,
-		Vector3& pos, Quaternion& rotation, const Transform* trans,
+		Transform& bossTrans,
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		TomatoTackleCollOperator* collOperator,
 		const std::function<int(void)> GetTarget,
@@ -67,13 +67,7 @@ private:
 #pragma region 受け取る参照変数・関数
 
 	// ボスの座標
-	Vector3& pos;
-
-	// ボスの角度
-	Quaternion& rotation;
-
-	// ボスの情報の読み取り
-	const Transform* trans;
+	Transform& bossTrans;
 
 	// プレイヤーの座標の読み取り
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
@@ -106,6 +100,10 @@ private:
 	float rotPow;
 
 	int time;
+
+	// 進行方向の回転と転がり角度を独立して保持
+	Quaternion facingRotation;
+	float rollAngle = 0.0f;
 
 	// プレイヤーターゲット
 	int target;
