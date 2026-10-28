@@ -54,7 +54,7 @@ protected:
 
 	virtual void PlayDamage(void){}
 
-	void DefaultCreateShader(void)override;
+	virtual void DefaultCreateShader(void)override;
 
 	virtual SHADER_VERTEX_TYPE GetVertexType(void) const { return SHADER_VERTEX_TYPE::Frame8; }
 

@@ -112,6 +112,9 @@ void BossBase::SubInit(void)
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
 	ChangeState(static_cast<int>(STATE::IDLE));
+
+	// ”h¶‚»‚ê‚¼‚ê‚Ì‰Šú‰»
+	BossInit();
 }
 
 void BossBase::SubUpdate(void)

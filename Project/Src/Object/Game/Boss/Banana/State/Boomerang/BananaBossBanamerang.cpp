@@ -10,8 +10,8 @@ BananaBossBanamerang::BananaBossBanamerang(
 	controlSenderId(controlSenderId),
 	stats(stats)
 {
-	banamerang.LoadModel("Character/Banana/Banamerang");
-	banamerang.scale = SIZE;
+	trans.LoadModel("Character/Banana/Banamerang");
+	trans.scale = SIZE;
 }
 
 void BananaBossBanamerang::Load(void)
@@ -23,8 +23,6 @@ void BananaBossBanamerang::Load(void)
 	collRef->SetSkillStats(new SkillStats(85, &stats));
 	SetPushFlg(false);
 	SetJudgeFlg(false);
-
-	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(banamerang.pos);
 
 	collBack.LoadModel("Range/CircleHalfRangeBack");
 	collFront.LoadModel("Range/CircleHalfRangeFront");
@@ -42,13 +40,13 @@ void BananaBossBanamerang::Load(void)
 	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 }
 
-void BananaBossBanamerang::SubDraw(void)
+void BananaBossBanamerang::Draw(void)
 {
 	if (isDrawArea) {
 		SetUseLighting(false);
 		collBack.Draw();
 		collFront.Draw();
-		banamerang.Draw();
+		trans.Draw();
 		SetUseLighting(true);
 	}
 }

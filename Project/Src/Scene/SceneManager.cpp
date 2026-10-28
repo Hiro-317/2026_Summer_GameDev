@@ -55,7 +55,11 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 最初のタイトルシーンは予約を経由せず、この初期化処理内で読み込みを開始する
-	StartLoad(CreateScene(SCENE_ID::Title), LOAD_COMMIT::Jump);
+	//StartLoad(CreateScene(SCENE_ID::Title), LOAD_COMMIT::Jump);
+
+	SetSelectCharaType(MSG_SENDER_ID::P1, CHARA_TYPE::Orange);
+	SetSelectBossType(BOSS_TYPE::Banana);
+	StartLoad(CreateScene(SCENE_ID::Game), LOAD_COMMIT::Jump);
 }
 
 void SceneManager::Release(void)

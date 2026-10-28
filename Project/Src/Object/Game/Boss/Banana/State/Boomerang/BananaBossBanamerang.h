@@ -27,11 +27,13 @@ public:
 
 	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
 
-	void SetBanameranPos(const Vector3& pos) { banamerang.pos = pos; }
-	void SetBanameranRot(const Quaternion& rot) { banamerang.rotation = rot; }
+	void SetBanameranPos(const Vector3& pos) { trans.pos = pos; }
+	void SetBanameranRot(const Quaternion& rot) { trans.rotation = rot; }
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æİ’è
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
+
+	void Draw(void) override;
 
 private:
 
@@ -55,12 +57,8 @@ private:
 
 #pragma endregion
 
-	void SubDraw(void) override;
-
 	Transform collBack;
 	Transform collFront;
-
-	Transform banamerang;
 
 	// UŒ‚”ÍˆÍ•`‰æƒtƒ‰ƒO
 	bool isDrawArea;

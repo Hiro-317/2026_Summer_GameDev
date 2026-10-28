@@ -19,7 +19,7 @@ TomatoBossDeathState::TomatoBossDeathState(
 
 void TomatoBossDeathState::Enter(void)
 {
-	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect(0.02f, 40.0f, 120.0f));
+	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect(0.008f, 20.0f, 120.0f));
 }
 
 void TomatoBossDeathState::Update(void)

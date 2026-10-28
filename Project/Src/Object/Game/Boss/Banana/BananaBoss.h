@@ -141,6 +141,9 @@ private:
 
 #pragma endregion ’è”’è‹`
 
+	SHADER_VERTEX_TYPE GetVertexType(void) const override { return SHADER_VERTEX_TYPE::NMapFrame8; }
+	void DefaultCreateShader(void)override {}
+
 	// ƒƒCƒ“ˆ—``````````````
 	void BossLoad(void)override;
 	// ``````````````ƒƒCƒ“ˆ—
