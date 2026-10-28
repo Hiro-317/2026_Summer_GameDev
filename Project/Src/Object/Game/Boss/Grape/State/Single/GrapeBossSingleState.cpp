@@ -42,6 +42,7 @@ void GrapeBossSingleState::Update(void)
 			// スタート位置の設定
 			Vector3 tmpPos = Vector3(playerPos[target]->x, HEIGHT, playerPos[target]->z);
 			bombType[i].weaponIns->SetStartPos(tmpPos);
+			bombType[i].weaponIns->SetColliderFlg(true);
 			bombType[i].weaponIns->SetViewPosCircle();
 
 			// 起動を通知

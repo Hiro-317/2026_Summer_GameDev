@@ -14,6 +14,11 @@ public:
 
 	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
 
+	void SetColliderFlg(bool flg) {
+		SetJudgeFlg(flg);
+		SetIsDraw(flg);
+	}
+
 	// ÚG”»’è
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 

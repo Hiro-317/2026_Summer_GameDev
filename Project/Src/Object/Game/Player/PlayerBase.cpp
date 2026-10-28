@@ -126,7 +126,7 @@ void PlayerBase::SubInit(void)
 	trans.pos = GetParameterToVector3("Init", "Pos") + Vector3::Xonly(150.0f) * (float)controlSenderId;
 
 	// ‰Šúó‘Ô‚ğˆÚ“®ó‘Ô‚É‚·‚é
-	ChangeState(STATE::IDLE);
+	ChangeState(STATE::MOVE);
 
 	TargetPlayerNext();
 }

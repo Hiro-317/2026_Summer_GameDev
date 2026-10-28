@@ -5,8 +5,7 @@
 #include "../../../Common/Collider/SphereCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
-GrapeBossStage::GrapeBossStage() :
-	ActorBase("Data/Parameter/Stage/Grape/"), sky()
+GrapeBossStage::GrapeBossStage() : ActorBase("Data/Parameter/Stage/Grape/")
 {
 }
 
@@ -14,13 +13,9 @@ void GrapeBossStage::Load(void)
 {
 	trans.LoadModel("Stage/GrapeBoss/GrapeBossStage");
 
-	sky.LoadModel("Stage/Sky");
-
 	// ステージのモデルの座標の補正
 	trans.centerDiff = MODEL_CENTER_DIFF;
 	trans.scale = Vector3(4.0f);
-
-	sky.scale = Vector3(4.0f);
 
 #pragma region 基底クラスにある機能の挙動設定
 
@@ -34,18 +29,6 @@ void GrapeBossStage::Load(void)
 	
 	// 衝突判定の情報読み込み
 	ColliderLoad();
-}
-
-void GrapeBossStage::SubDraw(void)
-{
-	SetUseLighting(false);
-	sky.Draw();
-	SetUseLighting(true);
-}
-
-void GrapeBossStage::SubRelease(void)
-{
-	sky.Release();
 }
 
 void GrapeBossStage::ColliderLoad()

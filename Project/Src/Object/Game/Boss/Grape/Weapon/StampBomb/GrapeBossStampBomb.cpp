@@ -8,6 +8,8 @@
 GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
 	: GrapeBossWeaponBase(model, front, back)
 {
+	SetPushFlg(true);
+
 	// 当たり判定を生成する（XZコライダー）
 	AddCollider(
 		new XZCircleCollider(

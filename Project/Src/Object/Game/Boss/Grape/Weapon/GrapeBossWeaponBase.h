@@ -62,11 +62,11 @@ public:
 	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) = 0;
 
 	// 初期設定用関数
-	void SetStartPos(Vector3 pos) { trans.pos = pos; }
+	void SetStartPos(const Vector3& pos) { trans.pos = pos; }
 	void ResetCount(void) { count = 0.0f; }
 
 	// コライダーのオン/オフ
-	void SetColliderFlg(bool flg) { SetJudgeFlg(flg); }
+	virtual void SetColliderFlg(bool flg);
 	void ResetEnd(void) { end = false; }
 
 	// 攻撃が終わったか

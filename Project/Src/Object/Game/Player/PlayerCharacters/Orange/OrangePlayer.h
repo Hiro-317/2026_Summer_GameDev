@@ -111,10 +111,4 @@ private:
 
 	// 回避に使うヒットUIクラスの参照
 	HitUI* hitUiRef;
-
-	void SubDraw(void)override {
-		SetFontSize(32);
-		DrawString(0, 300, isInvincible ? "回避中！" : "回避してない！", 0xffffff);
-		SetFontSize(16);
-	}
 };

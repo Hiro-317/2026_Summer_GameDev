@@ -54,6 +54,7 @@ void GrapeBossStalkerState::Update(void)
 				// スタート位置の設定
 				Vector3 tmpPos = Vector3(playerPos[target]->x, HEIGHT, playerPos[target]->z);
 				bombType[num].weaponIns->SetStartPos(tmpPos);
+				bombType[num].weaponIns->SetColliderFlg(true);
 				bombType[num].weaponIns->SetViewPosCircle();
 
 				// 起動を通知

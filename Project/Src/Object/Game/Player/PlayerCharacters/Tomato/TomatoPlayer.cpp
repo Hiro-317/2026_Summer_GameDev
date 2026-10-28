@@ -245,7 +245,7 @@ void TomatoPlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
-				GetParameterToInt("TripleAttack", "CoolTime"),
+				GetParameterToInt("HeadButt", "CoolTime"),
 				dynamic_cast<TomatoPlayerHeadButtState*>(&GetStateIns(STATE::SKILL_1))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Yellow,
 				"SkillSlotSimpleAttack"
@@ -256,7 +256,7 @@ void TomatoPlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
-				GetParameterToInt("SimpleAttack", "CoolTime"),
+				GetParameterToInt("Tackle", "CoolTime"),
 				dynamic_cast<TomatoPlayerTackleState*>(&GetStateIns(STATE::SKILL_2))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Red,
 				"SkillSlotTomatoTackle"
@@ -267,7 +267,7 @@ void TomatoPlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,
-				GetParameterToInt("Dodge", "CoolTime"),
+				GetParameterToInt("Stamp", "CoolTime"),
 				dynamic_cast<TomatoPlayerStampState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Red,
 				"SkillSlotTomatoStamp"

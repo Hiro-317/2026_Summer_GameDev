@@ -25,6 +25,11 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 			// ì‚Á‚Ä‚à‚ç‚Á‚½•Ší‚ðŠi”[
 			weapons[weaponNumber] = GrapeBossWeaponFactory::Create(bombModel, i, frontModel, backModel);
 
+			AddChildActor(weapons[weaponNumber].weaponIns);
+
+			weapons[weaponNumber].weaponIns->SetColliderFlg(false);
+			weapons[weaponNumber].live = false;
+
 			// ”‚ÌXV
 			weaponNumber++;
 		}
@@ -51,12 +56,14 @@ void GrapeBossWeaponManager::Update()
 				
 				i.live = false;
 				i.weaponIns->ResetEnd();
+				i.weaponIns->SetColliderFlg(false);
 				Snd::GetIns().Play("Exprosion");
 			}
 			// —áŠOˆ—
-			if (i.weaponIns->GetTrans().pos < EXIT_HEIGHT) {
+			if (i.weaponIns->GetTrans().pos.y < EXIT_HEIGHT) {
 
 				i.live = false;
+				i.weaponIns->SetColliderFlg(false);
 				i.weaponIns->ResetEnd();
 			}
 		}
@@ -75,8 +82,6 @@ void GrapeBossWeaponManager::Draw()
 void GrapeBossWeaponManager::Release()
 {
 	for (auto& i : weapons) {
-		i.weaponIns->Release();
-		delete i.weaponIns;
 		i.weaponIns = nullptr;
 	}
 	MV1DeleteModel(frontModel);
