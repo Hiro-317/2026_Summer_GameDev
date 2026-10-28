@@ -13,7 +13,17 @@ float4 main(PS_INPUT i) : SV_TARGET
 {
     float4 tex = diffuseMapTexture.Sample(diffuseMapSampler, i.uv);
     float4 base = tex * i.diffuse;
-    float3 color = CalcModelColor(base.rgb, i.vwPos, i.normal);
+    float3 litColor = CalcModelColor(base.rgb, i.vwPos, i.normal);
+        
+    // ライティング結果に、元の色を少し混ぜる
+    float ambientStrength = 0.90f;
+
+    float3 color = lerp(
+        litColor,
+        base.rgb,
+        ambientStrength
+    );
+    
     color = FinalizeModelColor(color, i.vwPos);
 
     // 元の陰影を少し残しつつ赤色へ寄せる

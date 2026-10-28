@@ -6,6 +6,8 @@
 
 #include "../../Common/CharacterBase/CharacterBase.h"
 
+#include "../../../Manager/Shader/ShaderTypeDefine.h"
+
 class HitUI;
 
 class BossBase : public CharacterBase
@@ -51,6 +53,10 @@ protected:
 	using CharacterBase::AnimePlay;
 
 	virtual void PlayDamage(void){}
+
+	void DefaultCreateShader(void)override;
+
+	virtual SHADER_VERTEX_TYPE GetVertexType(void) const { return SHADER_VERTEX_TYPE::Frame8; }
 
 #pragma region ’è”’è‹`
 	// ƒ‚ƒfƒ‹``````````````````````````````

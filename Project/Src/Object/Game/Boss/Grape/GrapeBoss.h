@@ -44,11 +44,10 @@ private:
 
 	// `````````````````````````````ˆÚ“®ó‘Ô
 
-
 	// ‰æ‘œ‚Ì–¼‘O
-	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame";
-	const std::string HP_IMAGE_NAME = "BossHp";
-	const std::string HP_LOST_IMAGE_NAME = "BossHpLost";
+	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame.png";
+	const std::string HP_IMAGE_NAME = "BossHp.png";
+	const std::string HP_LOST_IMAGE_NAME = "BossHpLost.png";
 
 	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
 	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);

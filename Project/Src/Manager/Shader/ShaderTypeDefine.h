@@ -40,6 +40,9 @@ enum class PIXEL_SHADER_TYPE
     // デフォルト
     Default,
 
+    // トゥーン
+    Toon,
+
     // リムライト
     RimLight,
 

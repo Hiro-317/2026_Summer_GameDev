@@ -177,6 +177,12 @@ private:
 			"DefaultPS"
 		},
 
+		// トゥーン
+		{
+			PIXEL_SHADER_TYPE::Toon,
+			"ToonPS"
+		},
+
 		// リムライト
 		{
 			PIXEL_SHADER_TYPE::RimLight,

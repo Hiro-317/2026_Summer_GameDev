@@ -8,6 +8,7 @@
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
+#include "../../../Common/Shader/ToonShader.h"
 
 #include "../../../../Scene/Game/GameScene.h"
 

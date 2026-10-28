@@ -11,6 +11,7 @@
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
+#include "../../../Common/Shader/ToonShader.h"
 
 #include "State/Idle/GrapeBossIdleState.h"
 #include "State/Move/GrapeBossMoveState.h"

@@ -23,7 +23,7 @@ void GrapeBossDeathState::Enter(void)
 {
 	DeathAnim();
 	changeTime = ((int)AnimeTotalTime() + DEATH_LAST_TIME);
-	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
+	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect(0.008f, 20.0f, 120.0f));
 	cnt = 0;
 }
 

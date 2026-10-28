@@ -179,6 +179,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotBase.cpp" />
     <ClCompile Include="Src\Object\BossSelect\Spot\BossSelectSpotManager.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\ModelDamageFlashShader.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\ToonShader.cpp" />
     <ClCompile Include="Src\Object\Common\SkyBox\SkyBox.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\BananaBoss.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBanamerang.cpp" />
@@ -355,6 +356,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\BossSelect\Spot\Grape\BossSelectGrapeSpot.h" />
     <ClInclude Include="Src\Object\BossSelect\Spot\Tomato\BossSelectTomatoSpot.h" />
     <ClInclude Include="Src\Object\Common\Shader\ModelDamageFlashShader.h" />
+    <ClInclude Include="Src\Object\Common\Shader\ToonShader.h" />
     <ClInclude Include="Src\Object\Common\SkyBox\SkyBox.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\BananaBoss.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
@@ -788,6 +790,10 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <FxCompile Include="Src\Shader\SkyBox\SkyBoxVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\Toon\ToonPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Src\Shader\Water\WaterPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

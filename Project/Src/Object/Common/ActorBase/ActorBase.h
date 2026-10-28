@@ -223,6 +223,8 @@ protected:
 	void CreateShader(ShaderBase* newShader);
 	// シェーダーを消去
 	void ResetShader();
+	// デフォルトシェーダー設定
+	virtual void DefaultCreateShader(void) {}
 
 	// 子クラスを追加する
 	void AddChildActor(ActorBase* child) {

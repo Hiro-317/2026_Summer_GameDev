@@ -13,6 +13,7 @@
 #include "../../../Scene/Common/PostEffect/ScreenShakePostEffect/ScreenShakePostEffect.h"
 
 #include "../../Common/DataLoad/ParameterLoad.h"
+#include "../../Common/Shader/ToonShader.h"
 
 #include "../UI/HitUI.h"
 
@@ -211,7 +212,7 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 			damaged[static_cast<int>(other.GetActor()->GetControlSenderId())] += damage;
 
 			// “_–Å
-			CreateShader(new ModelDamageFlashShader(24, 3, 0.85f, SHADER_VERTEX_TYPE::Frame1));
+			CreateShader(new ModelDamageFlashShader(24, 3, 0.85f, GetVertexType()));
 		}
 	}
 }
@@ -306,4 +307,9 @@ void BossBase::SendUpdate(void)
 	if (IsOwnControl()) {
 		Net::GetIns().Send(MsgDataBossTrans(trans.pos, trans.rotation, trans.scale));
 	}
+}
+
+void BossBase::DefaultCreateShader(void)
+{
+	CreateShader(new ToonShader(GetVertexType()));
 }
