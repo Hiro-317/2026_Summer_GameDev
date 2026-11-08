@@ -59,7 +59,7 @@ public:
 	// 規定用のLoad
 	void Load(void) override {};
 	// 行うロード
-	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) = 0;
+	virtual void Load(const CharacterStats& stats) = 0;
 
 	// 初期設定用関数
 	void SetStartPos(const Vector3& pos) { trans.pos = pos; }

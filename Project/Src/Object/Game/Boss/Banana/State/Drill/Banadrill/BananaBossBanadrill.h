@@ -1,81 +1,56 @@
 #pragma once
-
-#include "../../../../../CharacterBase.h"
-
-#include "../../../../../../Common/Collider/SphereCollider.h"
-#include "../../../../../../Common/Collider/XZCircleCollider.h"
+#include "../../../../../../Common/ActorBase/ActorBase.h"
+#include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../../Common/Collider/CapsuleCollider.h"
 
 
-class BananaBossBanadrill : public CharacterBase
+struct Transform;
+
+class BananaBossBanadrill : public ActorBase
 {
 public:
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="stats">ステータス</param>
-	BananaBossBanadrill(
-		const MSG_SENDER_ID operatorSenderId,
-		const CharacterStats& stats
-	);
-	~BananaBossBanadrill()override = default;
+	BananaBossBanadrill(const int& model, const int& front, const int& back, const CharacterStats& stats);
+	~BananaBossBanadrill() = default;
 
-	void Load(void)override;
+	void Load(void) override;
 
-	void CollSet(bool flg) { SetJudge(flg); }
-	void Off(void) { isDrawArea = false; SetJudge(false); }
+	bool Live(void) { return live; }
+	void SetLive(bool flg) { live = flg; }
 
-	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE * scale, 1.0f, SCALE * scale); }
+	bool Boot(void) { return boot; }
 
-	void SetBanameranPos(const Vector3& pos) { banadrill.pos = pos; }
-	void SetBanameranRot(const Quaternion& rot) { banadrill.rotation = rot; }
+	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); front.pos = Vector3::XZonly(pos.x, pos.z); back.pos = Vector3::XZonly(pos.x, pos.z); }
 
-	// 攻撃範囲の描画設定
-	void SetOn(void) { isDrawArea = true; live = true; }
-
-	bool GetIsGround(void) { return isGround; }
-
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& collisionPoint) override;
+	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 private:
 
-	void SubUpdate(void) override;
 	void SubDraw(void) override;
-	void SubAlphaDraw(void) override;
+	void SubUpdate(void) override;
+	void SubRelease(void) override;
 
-	// バナメランのサイズ
-	const float SIZE = 3.0f;
+	static constexpr float HEIGHT = 1000.0f;
+	static constexpr float VIEW_HEIGHT = 37.0f;
 
-	// コライダーの半径
-	const float RADIUS = 8.0f * SIZE;
-	const float ATTACK_RADIUS = RADIUS + 25.0f;
+	static constexpr int ATTACK_DURATION =  45;
 
-	// コライダー描画の拡大率
-	const float SCALE = ATTACK_RADIUS / 100.0f;
-
-	// コライダー描画の座標
-	const float HEIGHT = 37.0f;
-	const float ATTACK_HEIGHT = 1000.0f;
-
-	// 攻撃持続時間
-	const int ATTACK_DURATION = 30;
-
-#pragma region 受け取る参照変数
-
-	const MSG_SENDER_ID operatorSenderId;
+	static constexpr float HP =  150.0f;
 
 	const CharacterStats& stats;
 
-#pragma endregion
+	static constexpr float RADIUS = 100.0f;
 
-	Transform collBack;
-	Transform collFront;
+	Transform front;
+	Transform back;
 
-	Transform banadrill;
+	CapsuleCollider* collRef;
+	CapsuleCollider* attCollRef;
 
-	// 攻撃範囲描画フラグ
-	bool isDrawArea;
 	bool live;
+	bool boot;
 
-	// 攻撃時間
+	bool attack;
 	int cnt;
+
+	float hp;
 };

@@ -12,7 +12,7 @@ public:
 	// ‰Šúİ’è—pŠÖ”
 	void SetStartDir(Vector3 dir) { moveDir = dir; }
 
-	virtual void Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats) override;
+	virtual void Load(const CharacterStats& stats) override;
 
 	void SetColliderFlg(bool flg) {
 		SetJudgeFlg(flg);

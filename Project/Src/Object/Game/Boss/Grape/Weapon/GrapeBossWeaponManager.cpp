@@ -5,7 +5,6 @@
 #include "GrapeBossWeaponFactory.h"
 #include "GrapeBossWeaponBase.h"
 
-GrapeBossWeaponManager* GrapeBossWeaponManager::ins = nullptr;
 
 GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
 	: operatorSenderId(operatorSenderId), stats(stats)
@@ -34,14 +33,12 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 			weaponNumber++;
 		}
 	}
-	// •¡»—pƒnƒ“ƒhƒ‹‚ÌÁ‹Ž
-	MV1DeleteModel(bombModel);
 }
 
 void GrapeBossWeaponManager::Load(void)
 {
 	// •Ší‚Ì‰Šú‰»
-	for (auto& i : weapons) i.weaponIns->Load(operatorSenderId, stats);
+	for (auto& i : weapons) i.weaponIns->Load(stats);
 }
 
 void GrapeBossWeaponManager::Update()
@@ -84,6 +81,7 @@ void GrapeBossWeaponManager::Release()
 	for (auto& i : weapons) {
 		i.weaponIns = nullptr;
 	}
+	MV1DeleteModel(bombModel);
 	MV1DeleteModel(frontModel);
 	MV1DeleteModel(backModel);
 }

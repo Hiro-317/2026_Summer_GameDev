@@ -31,7 +31,7 @@ GrapeBossStraight::GrapeBossStraight(int model, int front, int back)
 	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttackArea).back()->SetPushFlg(false);
 }
 
-void GrapeBossStraight::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
+void GrapeBossStraight::Load(const CharacterStats& stats)
 {
 	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(50, &stats));
 

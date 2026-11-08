@@ -5,7 +5,7 @@
 GrapeBossWeaponBase::GrapeBossWeaponBase(int model, int front, int back)
 	: ActorBase("Data/Parameter/Character/Boss/Grape/Weapons/"), collBack(), collFront()
 {
-	trans.Duplicate(model);
+	trans.model = model;
 	collFront.model = front;
 	collBack.model = back;
 }

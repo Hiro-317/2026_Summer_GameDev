@@ -1,79 +1,35 @@
 #include "BananaBossDrillState.h"
 
+#include "../../../../../../Scene/SceneManager.h"
+#include "../../../../../../Scene/SceneBase.h"
+
 #include "../../../../../../Manager/Net/NetWorkManager.h"
-#include "../../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../../Manager/Effect/EffectManager.h"
+
 
 BananaBossDrillState::BananaBossDrillState(
-	const std::function<void(void)>& ownChangeState,
-	const std::function<bool(void)>& isOwnState,
-	BananaBossBanadrillManager* collOperator,
-	const std::function<Vector3(void)> HandPos,
-	const std::function<void(void)> PlayFlyAnim,
-	const std::function<float(void)> GetAnimRate,
-	const std::function<bool(void)> IsAnimeEnd,
-	const std::function<void(void)> SetInvisible,
-	const std::function<void(void)> SetVisible,
-	const std::function<void(void)> Up,
-	const std::function<void(void)> SetDown,
-	const std::function<void(void)> DefaultChangeState,
-	const std::function<void(void)> SetCoolTime
+	const std::function<void(void)>& PlayDeath,
+	const std::function<void(void)> IsDeath
 )
-	:CharacterStateBase(ownChangeState, isOwnState),
-	collOperator(collOperator),
-	HandPos(HandPos),
-	PlayFlyAnim(PlayFlyAnim),
-	IsAnimeEnd(IsAnimeEnd),
-	Up(Up), SetDown(SetDown),
-	DefaultChangeState(DefaultChangeState),
-	SetCoolTime(SetCoolTime)
+	:CharacterStateBase(),
+	PlayDeath(PlayDeath),
+	IsDeath(IsDeath)
 {
 }
 
 void BananaBossDrillState::Enter(void)
 {
-	first = true;
-	num = 0;
-	SetCoolTime();
-	PlayFlyAnim();
-	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB));
+	PlayDeath();
 }
 
 void BananaBossDrillState::Update(void)
 {
-	// アニメーションの再生中なら上昇させる
-	if (!IsAnimeEnd) {
-		if (GetAnimRate() >= ANIM_RATION) {
-			Up();
-		}
+	// アニメーションが終わっていたらシーン移行
+	if (cnt >= CHANGE_COUNT) {
+		Net::GetIns().Send(MsgDataBossIsDeath(true));
+		IsDeath();
 	}
-	// 上昇後
-	else {
-		// 最初なら透明にし一つ目を落とす
-		if (first) {
-			SetInvisible();
-			collOperator->GetBanadrill(num)->SetOn();
-			first = false;
-		}
-		else {
-			if (collOperator->GetBanadrill(num)->GetIsGround()) {
-				if (num < NUM) {
-					num++;
-					collOperator->GetBanadrill(num)->SetOn();
-				}
-				// 規定数落としたら下に移動し飛ばす
-				else if (num == NUM) {
-					SetDown();
-					PlayFlyAnim();
-					num++;
-				}
-				// 攻撃後ならデフォルトへ
-				else {
-					DefaultChangeState();
-				}
-			}
-		}
-	}
+	// チェンジ用のカウント
+	cnt++;
 }
 
 void BananaBossDrillState::Exit(void)

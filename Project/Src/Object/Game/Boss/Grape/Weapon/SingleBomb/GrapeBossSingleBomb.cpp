@@ -35,7 +35,7 @@ GrapeBossSingleBomb::GrapeBossSingleBomb(int model, int front, int back)
 	count = 0;
 }
 
-void GrapeBossSingleBomb::Load(const MSG_SENDER_ID operatorSenderId, const CharacterStats& stats)
+void GrapeBossSingleBomb::Load(const CharacterStats& stats)
 {
 	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(85, &stats));
 

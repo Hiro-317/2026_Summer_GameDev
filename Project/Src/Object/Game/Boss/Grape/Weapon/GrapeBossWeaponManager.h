@@ -44,12 +44,7 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-protected:
-
-
 private:
-
-	static GrapeBossWeaponManager* ins;
 
 	// —áŠOˆ——p
 	static constexpr float EXIT_HEIGHT = -10.0f;
