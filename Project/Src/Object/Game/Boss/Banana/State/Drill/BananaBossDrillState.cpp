@@ -10,6 +10,7 @@ BananaBossDrillState::BananaBossDrillState(
 	BananaBossBanadrillManager* collOperator,
 	const std::function<Vector3(void)> HandPos,
 	const std::function<void(void)> PlayFlyAnim,
+	const std::function<float(void)> GetAnimRate,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> SetInvisible,
 	const std::function<void(void)> SetVisible,
@@ -40,23 +41,35 @@ void BananaBossDrillState::Enter(void)
 
 void BananaBossDrillState::Update(void)
 {
+	// アニメーションの再生中なら上昇させる
 	if (!IsAnimeEnd) {
-		Up();
+		if (GetAnimRate() >= ANIM_RATION) {
+			Up();
+		}
 	}
+	// 上昇後
 	else {
+		// 最初なら透明にし一つ目を落とす
 		if (first) {
 			SetInvisible();
-			collOperator->GetBanadrill(num)->SetDrawArea(true);
+			collOperator->GetBanadrill(num)->SetOn();
 			first = false;
 		}
 		else {
 			if (collOperator->GetBanadrill(num)->GetIsGround()) {
 				if (num < NUM) {
 					num++;
-					collOperator->GetBanadrill(num)->SetDrawArea(true);
+					collOperator->GetBanadrill(num)->SetOn();
 				}
+				// 規定数落としたら下に移動し飛ばす
+				else if (num == NUM) {
+					SetDown();
+					PlayFlyAnim();
+					num++;
+				}
+				// 攻撃後ならデフォルトへ
 				else {
-					
+					DefaultChangeState();
 				}
 			}
 		}

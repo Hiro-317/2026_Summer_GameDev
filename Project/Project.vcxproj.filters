@@ -129,6 +129,7 @@
     <ClCompile Include="Src\Manager\Ranking\Ranking.cpp" />
     <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.cpp" />
     <ClCompile Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Common\Vector2I.cpp" />
     <ClCompile Include="Src\Manager\Camera\CameraEvent\WaitCameraEvent\WaitCameraEvent.cpp" />
@@ -165,6 +166,11 @@
     <ClCompile Include="Src\Scene\Common\PostEffect\ScreenShakePostEffect\ScreenShakePostEffect.cpp" />
     <ClCompile Include="Src\Object\Game\Boss\Grape\Weapon\GrapeBossWeaponFactory.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\ModelDamageFlashShader.cpp" />
+=======
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrill.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrillManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Boss\Banana\State\Drill\BananaBossDrillState.cpp" />
+>>>>>>> Game/Boss/BananaBoss
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -327,17 +333,27 @@
     <ClInclude Include="Src\Scene\BossSelect\BossConfirm\BossConfirmScene.h" />
     <ClInclude Include="Src\Manager\Camera\CameraEvent\LookAtCameraEvent\LookAtCameraEvent.h" />
     <ClInclude Include="Src\Object\BossSelect\SkyShip\SkyShipState\BossSelectSkyShipStartState.h" />
+<<<<<<< HEAD
     <ClInclude Include="Src\Manager\Ranking\Ranking.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Boomerang\BananaBossBoomerangState.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Fire\BananaBossFireState.h" />
     <ClInclude Include="Src\Object\Game\Boss\Banana\State\Fire\BananaFireCollOperator.h" />
+=======
+    <ClInclude Include="Src\Manager\Effect\Fire\EffectFire.h" />
+    <ClInclude Include="Src\Manager\Ranking\Ranking.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBanamerang.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Boomerang\BananaBossBoomerangState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaBossFireState.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Fire\BananaFireCollOperator.h" />
+>>>>>>> Game/Boss/BananaBoss
     <ClInclude Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewBase.h" />
     <ClInclude Include="Src\Object\Clear\ClearCharaPreview\ClearCharaPreviewManager.h" />
     <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Grape\ClearCharaPreviewGrape.h" />
     <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Orange\ClearCharaPreviewOrange.h" />
     <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Peach\ClearCharaPreviewPeach.h" />
     <ClInclude Include="Src\Object\Clear\ClearCharaPreview\Tomato\ClearCharaPreviewTomato.h" />
+<<<<<<< HEAD
     <ClInclude Include="Src\Common\Quaternion.h" />
     <ClInclude Include="Src\Common\Vector2I.h" />
     <ClInclude Include="Src\Manager\Input\InputManager.h" />
@@ -380,6 +396,11 @@
     <ClInclude Include="Src\Scene\Common\PostEffect\ScreenShakePostEffect\ScreenShakePostEffect.h" />
     <ClInclude Include="Src\Object\Game\Boss\Grape\Weapon\GrapeBossWeaponTypeDefine.h" />
     <ClInclude Include="Src\Object\Common\Shader\ModelDamageFlashShader.h" />
+=======
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrill.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Drill\Banadrill\BananaBossBanadrillManager.h" />
+    <ClInclude Include="Src\Object\Character\Boss\Banana\State\Drill\BananaBossDrillState.h" />
+>>>>>>> Game/Boss/BananaBoss
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Data\Image\Icon\Project.rc" />

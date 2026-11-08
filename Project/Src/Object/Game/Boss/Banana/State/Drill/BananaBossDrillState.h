@@ -25,6 +25,7 @@ public:
 		BananaBossBanadrillManager* collOperator,
 		const std::function<Vector3(void)> HandPos,
 		const std::function<void(void)> PlayFlyAnim,
+		const std::function<float(void)> GetAnimRate,
 		const std::function<bool(void)> IsAnimeEnd,
 		const std::function<void(void)> SetInvisible,
 		const std::function<void(void)> SetVisible,
@@ -66,7 +67,8 @@ private:
 	// 攻撃回数
 	const int NUM = 3;
 
-	const float ROT = 1.0f;
+	// 飛ぶまでのアニメーションの再生割合
+	const float ANIM_RATION = 0.1f;
 
 #pragma endregion
 
@@ -80,6 +82,9 @@ private:
 
 	// 溜めアニメーションの再生
 	const std::function<void(void)> PlayFlyAnim;
+
+	// アニメーションの再生割合
+	const std::function<float(void)> GetAnimRate;
 
 	// アニメーションが終わっているかどうか
 	const std::function<bool(void)> IsAnimeEnd;
