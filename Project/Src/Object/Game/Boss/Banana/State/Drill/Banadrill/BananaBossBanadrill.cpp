@@ -25,10 +25,11 @@ void BananaBossBanadrill::Load(void)
 	attCollRef->SetJudgeFlg(false);
 
 	front.scale = Vector3();
-	back.scale = Vector3(RADIUS / 100.0f);
+	back.scale = Vector3((RADIUS * 3.0f / 2.0f) / 100.0f);
 
 	front.pos = Vector3::Yonly(VIEW_HEIGHT);
 	back.pos = Vector3::Yonly(VIEW_HEIGHT);
+	first = true;
 
 	SetGravityFlg(true);
 
@@ -65,6 +66,10 @@ void BananaBossBanadrill::SubDraw(void)
 
 void BananaBossBanadrill::SubUpdate(void)
 {
+	if (!prevLive && live) {
+		first = true;
+		prevLive = live;
+	}
 	// 地面についてないなら加速して落ちる
 	if (!isGround) {
 
@@ -77,8 +82,9 @@ void BananaBossBanadrill::SubUpdate(void)
 		// 前フレームの判定が残ってるので
 		// それ防止に
 		// 開始されたフレームの検知
-		if (!attack) {
+		if (first) {
 			// 今開始されたらフラグを立てる
+			first = false;
 			attack = true;
 			// ほんとはついてないので落下
 			front.scale = Vector3((RADIUS / 100.0f) * ((HEIGHT - trans.pos.y) / (HEIGHT - VIEW_HEIGHT)));
@@ -86,19 +92,43 @@ void BananaBossBanadrill::SubUpdate(void)
 			trans.AddAngle(Vector3::Yonly(Deg2Rad(5.0f)));
 			return;
 		}
-		cnt++;
-		// 攻撃判定オン
-		if (ATTACK_DURATION >= cnt) {
-			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
-			trans.AddAngle(Vector3::Yonly(Deg2Rad(5.0f * ((ATTACK_DURATION - cnt) / ATTACK_DURATION))));
+		if (attack) {
+			cnt++;
+			// 攻撃判定オン
+			if (ATTACK_DURATION >= cnt) {
+				ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
+				trans.AddAngle(Vector3::Yonly(Deg2Rad(5.0f * ((ATTACK_DURATION - cnt) / ATTACK_DURATION))));
+			}
+			//攻撃判定オフ、終わり
+			else {
+				ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+				attack = false;
+				boot = true;
+				cnt = 0;
+				front.scale = Vector3(0.0f);
+			}
 		}
-		//攻撃判定オフ、終わり
 		else {
-			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
-			attack = false;
-			boot = true;
-			cnt = 0;
-			front.scale = Vector3(0.0f);
+			if (cnt = 0) {
+				back.scale = Vector3(RADIUS * 3.0f / 100.0f);
+				attCollRef->SetRadius(RADIUS * 3.0f);
+				attCollRef->SetSkillStats(new SkillStats(150, &stats));
+			}
+			cnt++;
+			if (BOOM_CNT < cnt) {
+				front.scale = Vector3((RADIUS * 3.0f / 100.0f) * cnt / BOOM_CNT);
+			}
+			if (BOOM_CNT == cnt) {
+				front.scale = Vector3(RADIUS * 3.0f / 100.0f);
+				ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
+			}
+			if (BOOM_CNT + BOOM_DURATION <= cnt) {
+				ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
+				live = false;
+				prevLive = false;
+				cnt = 0;
+				front.scale = Vector3(0.0f);
+			}
 		}
 	}
 }

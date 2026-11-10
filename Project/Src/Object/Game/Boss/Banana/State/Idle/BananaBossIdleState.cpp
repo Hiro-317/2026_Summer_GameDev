@@ -10,8 +10,8 @@ BananaBossIdleState::BananaBossIdleState(
 	const std::function<void(void)> PlayIdleAnim,
 	const std::function<void(void)> ScratchChangeState,
 	const std::function<void(void)> FireChangeState,
-	const std::function<void(void)> BanamerangChangeState/*,
-	const std::function<void(void)> SingleChangeState,
+	const std::function<void(void)> BanamerangChangeState,
+	const std::function<void(void)> BanadrillChangeState/*,
 	const std::function<void(void)> StalkerChangeState,
 	const std::function<void(void)> RandomChangeState*/
 )
@@ -24,8 +24,8 @@ BananaBossIdleState::BananaBossIdleState(
 	ScratchChangeState(ScratchChangeState),
 	FireChangeState(FireChangeState),
 	BanamerangChangeState(BanamerangChangeState),
-	/*SingleChangeState(SingleChangeState),
-	StalkerChangeState(StalkerChangeState),
+	BanadrillChangeState(BanadrillChangeState),
+	/*StalkerChangeState(StalkerChangeState),
 	RandomChangeState(RandomChangeState),*/
 	cnt(0), target(0), angleFlg(true)
 {

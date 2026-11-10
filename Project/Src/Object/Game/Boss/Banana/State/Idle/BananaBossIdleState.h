@@ -27,7 +27,7 @@ public:
 	/// <param name="ScratchChangeState">ひっかきへのステート</param>
 	/// <param name="FireChangeState">吐く攻撃へのステート</param>
 	/// <param name="BanamerangChangeState">バナメランへのステート</param>
-	/// <param name="SingleChangeState">一発攻撃へのステート</param>
+	/// <param name="BanadrillChangeState">バナドリルへのステート</param>
 	/// <param name="StalkerChangeState">追従攻撃へのステート</param>
 	/// <param name="RandomChangeState">ランダム攻撃へのステート</param>
 	BananaBossIdleState(
@@ -38,8 +38,8 @@ public:
 		const std::function<void(void)> PlayIdleAnim,
 		const std::function<void(void)> ScratchChangeState,
 		const std::function<void(void)> FireChangeState,
-		const std::function<void(void)> BanamerangChangeState/*,
-		const std::function<void(void)> SingleChangeState,
+		const std::function<void(void)> BanamerangChangeState,
+		const std::function<void(void)> BanadrillChangeState/*,
 		const std::function<void(void)> StalkerChangeState,
 		const std::function<void(void)> RandomChangeState*/
 	);
@@ -81,7 +81,7 @@ private:
 	// バナメランへ
 	const std::function<void(void)> BanamerangChangeState;
 	// 追従へ
-	const std::function<void(void)> SingleChangeState;
+	const std::function<void(void)> BanadrillChangeState;
 	// たくさんの追従へ
 	const std::function<void(void)> StalkerChangeState;
 	// ランダムへ

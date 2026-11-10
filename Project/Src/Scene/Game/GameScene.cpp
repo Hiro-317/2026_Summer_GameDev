@@ -122,11 +122,6 @@ void GameScene::SubPreUpdate(void)
 
 		delete dataPtr;
 	}
-}
-
-void GameScene::SubPostUpdate(void)
-{
-	Vector3 pos = Vector3();
 
 	// 注目するか
 	if (Input::GetIns().GetInfo(KEY_TYPE::CameraFocus).down) {
@@ -145,7 +140,10 @@ void GameScene::SubPostUpdate(void)
 			);
 		}
 	}
+}
 
+void GameScene::SubPostUpdate(void)
+{
 #pragma region 遷移判定（ポーズも含む）
 	// ポーズ判定
 	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {

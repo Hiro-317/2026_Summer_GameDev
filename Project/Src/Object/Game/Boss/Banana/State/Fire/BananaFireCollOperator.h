@@ -14,7 +14,6 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	BananaFireCollOperator(
-		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats
 	);
 	~BananaFireCollOperator()override = default;
@@ -44,8 +43,6 @@ private:
 	const Vector3 POS = Vector3(0.0f, 37.0f, 500.0f);
 
 #pragma region 受け取る参照変数
-
-	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

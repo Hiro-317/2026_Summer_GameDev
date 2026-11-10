@@ -2,10 +2,11 @@
 
 #include "../BossBase.h"
 
-#include "State/Scratch/BananaScratchCollOperator.h"
-#include "State/Fire/BananaFireCollOperator.h"
-#include "State/Boomerang/BananaBossBanamerang.h"
 
+class BananaScratchCollOperator;
+class BananaFireCollOperator;
+class BananaBossBanamerang;
+class BananaBossDrillManager;
 
 class BananaBoss : public BossBase
 {
@@ -159,4 +160,5 @@ private:
 	BananaScratchCollOperator* scratchRef;
 	BananaFireCollOperator* fireRef;
 	BananaBossBanamerang* banamerangRef;
+	BananaBossDrillManager* banadrillRef;
 };

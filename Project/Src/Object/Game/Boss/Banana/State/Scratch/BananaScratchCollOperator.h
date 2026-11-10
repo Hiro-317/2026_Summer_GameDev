@@ -15,7 +15,6 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	BananaScratchCollOperator(
-		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats,
 		const Vector3& pos,
 		const Vector3& StartPos,
@@ -54,8 +53,6 @@ private:
 	const Vector3 DIFF = Vector3(-160.0f, 0.0f, -875.0f);
 
 #pragma region 受け取る参照変数
-
-	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

@@ -3,8 +3,12 @@
 #include "BananaBossBanadrill.h"
 
 
-BananaBossDrillManager::BananaBossDrillManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
-	: operatorSenderId(operatorSenderId), stats(stats)
+BananaBossDrillManager::BananaBossDrillManager(
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
+	const int& target,
+	const CharacterStats& stats
+):
+	playerPos(playerPos), target(target), stats(stats)
 {
 	// 複製ハンドル
 	drillModel = MV1LoadModel("Data/Model/Character/Banan/Banadril");
@@ -24,21 +28,32 @@ void BananaBossDrillManager::Load(void)
 
 void BananaBossDrillManager::Update()
 {
+	int num = 0;
 	// 武器の更新
 	for (int i = 0; i < DRILL_NUM; i++) {
-
 		if (drills[i]->Live()) {
+			num++;
 			drills[i]->Update();
 
 			// 最後じゃない場合
 			if (i < DRILL_NUM - 1) {
 				// 次のものを起動するかどうか
 				if (drills[i]->Boot()) {
-					drills[i]->SetLive(true);
-					drills[i]->SetPos(true);
+					drills[i + 1]->SetLive(true);
+					drills[i + 1]->SetPos(*playerPos[target]);
+				}
+			}
+			// 最後の場合
+			else {
+				if (drills[i]->GetIsGround()) {
+					end = true;
 				}
 			}
 		}
+	}
+	// 生きているものがいないならフラグを折る
+	if (num == 0) {
+		end = false;
 	}
 }
 

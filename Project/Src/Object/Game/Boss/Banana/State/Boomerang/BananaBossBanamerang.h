@@ -15,7 +15,6 @@ public:
 	/// </summary>
 	/// <param name="stats">ステータス</param>
 	BananaBossBanamerang(
-		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats
 	);
 	~BananaBossBanamerang()override = default;
@@ -50,8 +49,6 @@ private:
 	const Vector3 POS = Vector3(0.0f, 37.0f, 1325.0f);
 
 #pragma region 受け取る参照変数
-
-	const MSG_SENDER_ID controlSenderId;
 
 	const CharacterStats& stats;
 

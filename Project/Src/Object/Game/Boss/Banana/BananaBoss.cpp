@@ -9,10 +9,16 @@
 #include "../../../Common/Collider/CapsuleCollider.h"
 #include "../../../Common/Collider/XZCircleCollider.h"
 
+#include "State/Scratch/BananaScratchCollOperator.h"
+#include "State/Fire/BananaFireCollOperator.h"
+#include "State/Boomerang/BananaBossBanamerang.h"
+#include "State/Drill/Banadrill/BananaBossDrillManager.h"
+
 #include "State/Idle/BananaBossIdleState.h"
 #include "State/Scratch/BananaBossScratchState.h"
 #include "State/Fire/BananaBossFireState.h"
 #include "State/Boomerang/BananaBossBoomerangState.h"
+#include "State/Drill/BananaBossDrillState.h"
 #include "State/Death/BananaBossDeathState.h"
 
 #include "../../../../Scene/Game/GameScene.h"
@@ -47,12 +53,13 @@ void BananaBoss::BossLoad(void)
 	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
 	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
-	scratchRef = new BananaScratchCollOperator(controlSenderId, characterStats, INIT_POS, StartFrame, EndFrame);
+	scratchRef = new BananaScratchCollOperator(characterStats, INIT_POS, StartFrame, EndFrame);
 	AddChildActor(scratchRef);
-	fireRef = new BananaFireCollOperator(controlSenderId, characterStats);
+	fireRef = new BananaFireCollOperator(characterStats);
 	AddChildActor(fireRef);
-	banamerangRef = new BananaBossBanamerang(controlSenderId, characterStats);
+	banamerangRef = new BananaBossBanamerang(characterStats);
 	AddChildActor(banamerangRef);
+	banadrillRef = new BananaBossDrillManager(playerPos, targetNum, characterStats);
 
 	AddState(
 		STATE::IDLE,
@@ -70,13 +77,9 @@ void BananaBoss::BossLoad(void)
 			// 吐く攻撃への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_B); },
 			// バナメランへの状態遷移関数のポインタ
-			[&]() { ChangeState((int)STATE::ATTACK_C); }//,
-			//// ひとつ追従への状態遷移関数のポインタ
-			//[&]() { ChangeState((int)STATE::ATTACK_D); },
-			//// たくさん追従への状態遷移関数のポインタ
-			//[&]() { ChangeState((int)STATE::ATTACK_E); },
-			//// たくさんランダムへの状態遷移関数のポインタ
-			//[&]() { ChangeState((int)STATE::ATTACK_F); }
+			[&]() { ChangeState((int)STATE::ATTACK_C); },
+			// バナドリルへの状態遷移関数のポインタ
+			[&]() { ChangeState((int)STATE::ATTACK_D); }
 		)
 	);
 
@@ -138,6 +141,18 @@ void BananaBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
+			[&]() { coolTime = SCRATCH_COOLTIME; }
+		)
+	);
+	AddState(
+		STATE::ATTACK_D,
+		new BananaBossDrillState(
+			trans.pos, banadrillRef,
+			INIT_POS,
+			[&]() { AnimePlay((int)ANIME_TYPE::JUMP_LOOP, true); },
+			[&]() { return GetIsDraw(); },
+			[&]() { SetIsDraw(); },
+			[&]() { ChangeState((int)STATE::IDLE); },
 			[&]() { coolTime = SCRATCH_COOLTIME; }
 		)
 	);

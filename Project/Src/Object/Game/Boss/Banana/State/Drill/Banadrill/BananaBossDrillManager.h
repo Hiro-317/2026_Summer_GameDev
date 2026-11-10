@@ -9,13 +9,19 @@ struct CharacterStats;
 class BananaBossDrillManager : public ActorBase {
 public:
 
-	BananaBossDrillManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats);
+	BananaBossDrillManager(
+		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
+		const int& target,
+		const CharacterStats& stats
+	);
 	~BananaBossDrillManager() = default;
 
 	void Load(void) override;
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;
+
+	bool GetEnd(void) { return end; }
 
 private:
 
@@ -26,7 +32,8 @@ private:
 
 #pragma region éQè∆íl
 
-	const MSG_SENDER_ID& operatorSenderId;
+	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
+	const int& target;
 	const CharacterStats& stats;
 
 #pragma endregion
@@ -37,4 +44,6 @@ private:
 	int drillModel;
 	int backModel;
 	int frontModel;
+
+	bool end;
 };

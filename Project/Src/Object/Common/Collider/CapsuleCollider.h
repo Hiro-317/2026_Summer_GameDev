@@ -87,6 +87,9 @@ public:
 	// ü•ª‚ÌI“_‚ğÄİ’è‚·‚é
 	void SetEndPos(const Vector3& endPos) { this->endPos = endPos; }
 
+	// ”¼Œa‚ğÄİ’è‚·‚é
+	void SetRadius(const float& radius) { this->radius = radius; }
+
 #pragma endregion
 
 

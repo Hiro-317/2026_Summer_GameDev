@@ -4,10 +4,8 @@
 
 
 BananaFireCollOperator::BananaFireCollOperator(
-	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats
 ) :
-	controlSenderId(controlSenderId),
 	stats(stats)
 {
 }

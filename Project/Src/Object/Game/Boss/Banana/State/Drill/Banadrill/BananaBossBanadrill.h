@@ -23,6 +23,8 @@ public:
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
+	bool GetIsGround(void) { return isGround; }
+
 private:
 
 	void SubDraw(void) override;
@@ -32,7 +34,10 @@ private:
 	static constexpr float HEIGHT = 1000.0f;
 	static constexpr float VIEW_HEIGHT = 37.0f;
 
-	static constexpr int ATTACK_DURATION =  45;
+	static constexpr int ATTACK_DURATION = 45;
+	static constexpr int BOOM_DURATION = 3;
+
+	static constexpr int BOOM_CNT = 900;
 
 	static constexpr float HP =  150.0f;
 
@@ -48,8 +53,10 @@ private:
 
 	bool live;
 	bool boot;
+	bool prevLive;
 
 	bool attack;
+	bool first;
 	int cnt;
 
 	float hp;

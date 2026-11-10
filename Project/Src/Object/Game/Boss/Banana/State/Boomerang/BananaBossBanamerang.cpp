@@ -4,10 +4,8 @@
 #include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
 BananaBossBanamerang::BananaBossBanamerang(
-	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats
 ) :
-	controlSenderId(controlSenderId),
 	stats(stats)
 {
 	trans.LoadModel("Character/Banana/Banamerang");

@@ -1,6 +1,11 @@
 #pragma once
 
 #include "../../../../../Common/CharacterBase/CharacterStateBase.h"
+#include "../../../../../../Common/Vector3.h"
+
+
+class BananaBossDrillManager;
+class GameScene;
 
 class BananaBossDrillState : public CharacterStateBase
 {
@@ -9,12 +14,15 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="ROTATION_POW">回転量</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	BananaBossDrillState(
-		const std::function<void(void)>& PlayDeath,
-		const std::function<void(void)> IsDeath
+		Vector3& pos,
+		BananaBossDrillManager* drills,
+		const Vector3& defaultPos,
+		const std::function<void(void)>& PlayFly,
+		const std::function<bool(void)>& Invisible,
+		const std::function<void(void)>& SwitchInvisible,
+		const std::function<void(void)> DefaultChangeState,
+		const std::function<void(void)> SetCoolTime
 	);
 	~BananaBossDrillState()override = default;
 
@@ -34,17 +42,29 @@ public:
 private:
 #pragma region 参照関数
 
+	// 座標の取得
+	Vector3& pos;
+	// 初期座標の取得
+	const Vector3& defaultPos;
 	// 死亡判定移行
-	const std::function<void(void)> PlayDeath;
-	const std::function<void(void)> IsDeath;
+	const std::function<void(void)> PlayFly;
+	// 描画するかフラグ
+	const std::function<bool(void)>& Invisible;
+	const std::function<void(void)>& SwitchInvisible;
 
+	const std::function<void(void)> DefaultChangeState;
+	const std::function<void(void)> SetCoolTime;
 #pragma endregion 参照関数
 
 #pragma region 定数定義
 
-	static constexpr int CHANGE_COUNT = 120;
+	static constexpr float UP = 15.0f;
+	static constexpr float SWITCH_POS = 1500.0f;
 
-#pragma endregion 定数定義
+#pragma endregion
 
-	int cnt;
+	GameScene* scene;
+	BananaBossDrillManager* drills;
+
+	bool tmpFlg;
 };

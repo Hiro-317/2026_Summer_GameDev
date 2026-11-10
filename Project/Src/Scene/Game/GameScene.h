@@ -11,6 +11,10 @@ public:
 	GameScene();
 	~GameScene()override = default;
 
+	bool GetFocus(void) { return focusFlg; }
+	void SetFocus(void) { focusFlg = !focusFlg; }
+	void SetFocus(bool flg) { focusFlg = flg; }
+
 private:
 
 	// ì«Ç›çûÇ›

@@ -3,13 +3,11 @@
 #include "../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
 BananaScratchCollOperator::BananaScratchCollOperator(
-	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats,
 	const Vector3& pos,
 	const Vector3& StartPos,
 	const Vector3& EndPos
 ) :
-	controlSenderId(controlSenderId),
 	stats(stats),
 	pos(pos),
 	StartPos(StartPos), EndPos(EndPos),
