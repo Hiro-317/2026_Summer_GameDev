@@ -37,16 +37,20 @@ float ExplosionFBM(float2 p)
 float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
                                float intensity, float seed, float3 colorRGB)
 {
-    if (duration <= 0.0 || elapsed < 0.0 || elapsed >= duration)
+    if (duration < 0.0 || elapsed < 0.0 || (duration > 0.0 && elapsed >= duration))
         return float4(0, 0, 0, 0);
 
-    float t = elapsed / duration;
+    // 無期限では展開した形状を保ち、炎の揺れを継続する。
+    // 有限寿命の形状・消滅タイミングはこれまでと同じ。
+    float t = 0.35;
+    if (duration > 0.0) { t = elapsed / duration; }
     float r = length(p);
     float edge = 1.0 - smoothstep(0.90, 1.0, r);
     float fade = 1.0 - smoothstep(0.45, 1.0, t);
-    float onset = smoothstep(0.0, 0.025, t);
+    float onset = duration > 0.0 ? smoothstep(0.0, 0.025, t) : smoothstep(0.0, 0.03, elapsed);
     float expansion = 1.0 - pow(1.0 - t, 3.0);
-    float noise = ExplosionFBM(p * 7.0 + float2(seed, -t * 3.0));
+    float noiseTime = duration > 0.0 ? t : elapsed;
+    float noise = ExplosionFBM(p * 7.0 + float2(seed, -noiseTime * 3.0));
 
     // ノイズで輪郭を揺らす火球と、発生直後だけ強く光る中心。
     float fireRadius = lerp(0.07, 0.65, expansion);

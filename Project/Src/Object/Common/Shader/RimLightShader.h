@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "ShaderBase.h"
 
@@ -14,10 +14,10 @@ public:
 	}
 	~RimLightShader()override = default;
 
-	/// ƒVƒF[ƒ_[‚Ì‰Šú‰»
-	void Init(void);
+	/// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®åˆæœŸåŒ–
+	void Init(void) override;
 
 private:
-	// ’¸“_ƒ^ƒCƒv
+	// é ‚ç‚¹ã‚¿ã‚¤ãƒ—
 	SHADER_VERTEX_TYPE vertexType;
 };

@@ -8,6 +8,7 @@
 class EffectBase : public ActorBase
 {
 public:
+    // 0秒なら無期限、正の値なら指定秒数で終了。負値・NaN・無限大は不可。
     explicit EffectBase(float durationSeconds);
     ~EffectBase() override = default;
 
@@ -21,10 +22,12 @@ public:
 
     // 経過時間を0に戻して再生する。座標はActorBase::SetPosで変更できる。
     void Restart(void);
-    // 更新と描画を停止する。オブジェクト自体は所有者が解放する。
+    // 有限・無期限のどちらでも、残り寿命を無視して即座に更新と描画を停止する。
+    // フェード待ちは行わない。オブジェクト自体は所有者が解放する。
     void Stop(void);
     // 所有者が回収・再利用を判断するときに使用する。
     bool IsFinished(void) const { return finished; }
+    bool IsInfinite(void) const { return durationSeconds == 0.0f; }
     float GetElapsedSeconds(void) const { return elapsedSeconds; }
     float GetDurationSeconds(void) const { return durationSeconds; }
 

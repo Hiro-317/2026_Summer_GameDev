@@ -8,8 +8,8 @@
 EffectBase::EffectBase(float durationSeconds) :
     durationSeconds(durationSeconds), elapsedSeconds(0.0f), finished(false)
 {
-    if (!std::isfinite(durationSeconds) || durationSeconds <= 0.0f) {
-        throw std::invalid_argument("Effect duration must be finite and positive");
+    if (!std::isfinite(durationSeconds) || durationSeconds < 0.0f) {
+        throw std::invalid_argument("Effect duration must be finite and nonnegative (zero means unlimited)");
     }
     SetDynamicFlg(false);
     SetGravityFlg(false);
@@ -30,7 +30,8 @@ void EffectBase::Update(void)
 void EffectBase::BaseUpdate(void)
 {
     elapsedSeconds += (1.0f / 60.0f) * TimeScale::Get();
-    if (elapsedSeconds >= durationSeconds) {
+    // 無期限の場合も時間は進め、ノイズなどのアニメーションを継続する。
+    if (!IsInfinite() && elapsedSeconds >= durationSeconds) {
         elapsedSeconds = durationSeconds;
         Stop();
     }

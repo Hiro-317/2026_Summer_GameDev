@@ -1,4 +1,4 @@
-#include "WaterShader.h"
+ï»¿#include "WaterShader.h"
 
 #include "../../../pch.h"
 
@@ -16,13 +16,13 @@ WaterShader::WaterShader() :
 }
 
 
-// ƒVƒF[ƒ_[‚Ì‰Šú‰»
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®åˆæœŸåŒ–
 void WaterShader::Init(void)
 {
     ShaderResourceManager::GetIns().CreateVertexShader(VERTEX_SHADER_TYPE::Water);
     ShaderResourceManager::GetIns().CreatePixelShader(PIXEL_SHADER_TYPE::Water);
 
-    // Shader‚Ìæ“¾
+    // Shaderã®å–å¾—
     vertexShaderHandle =
         ShaderResourceManager::GetIns().GetVertexShader(VERTEX_SHADER_TYPE::Water);
 
@@ -30,11 +30,11 @@ void WaterShader::Init(void)
         ShaderResourceManager::GetIns().GetPixelShader(PIXEL_SHADER_TYPE::Water);
 
 
-    // ’¸“_ƒVƒF[ƒ_[’è”ƒoƒbƒtƒ@
+    // é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å®šæ•°ãƒãƒƒãƒ•ã‚¡
 
     vertexShaderConstBufferHandle = CreateShaderConstantBuffer(sizeof(VertexShaderConstBuffer));
 
-    // ‰Šú’l
+    // åˆæœŸå€¤
     vertexShaderConstBufferData.uvScale[0] = 1.0f;
     vertexShaderConstBufferData.uvScale[1] = 1.0f;
 
@@ -48,22 +48,27 @@ void WaterShader::Init(void)
     vertexShaderConstBufferData.waterPadding[1] = 0.0f;
 
 
-    // ƒsƒNƒZƒ‹ƒVƒF[ƒ_[’è”ƒoƒbƒtƒ@
+    // ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å®šæ•°ãƒãƒƒãƒ•ã‚¡
     pixelShaderConstBufferHandle = CreateShaderConstantBuffer(sizeof(PixelShaderConstBuffer));
 
-    // ‰Šú’l
+    // åˆæœŸå€¤
     pixelShaderConstBufferData.uvScrollSpeed[0] = 0.02f;
     pixelShaderConstBufferData.uvScrollSpeed[1] = 0.01f;
 
     pixelShaderConstBufferData.time = 0.0f;
     pixelShaderConstBufferData.alpha = 0.8f;
+
+    // GPUãƒªã‚½ãƒ¼ã‚¹ã®æº–å‚™å¾Œã«ã€ActorBaseã®åˆæœŸåŒ–ãƒ»å­ã‚¢ã‚¯ã‚¿ãƒ¼ã®åˆæœŸåŒ–ã‚’é€šã™ã€‚
+    ShaderBase::Init();
 }
 
 
-// ƒVƒF[ƒ_[‚ÌXV
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®æ›´æ–°
 void WaterShader::Update(void)
 {
-    // ŠÔ‚ği‚ß‚é
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å›ºæœ‰ã®æ™‚é–“æ›´æ–°ã«åŠ ãˆã€ã‚¢ã‚¯ã‚¿ãƒ¼ã®æ›´æ–°ãƒ•ãƒƒã‚¯ã‚‚å®Ÿè¡Œã™ã‚‹ã€‚
+    ShaderBase::Update();
+    // æ™‚é–“ã‚’é€²ã‚ã‚‹
     const float TIME_SPEED = (1.0f / 60.0f) * TimeScale::Get();
 
     vertexShaderConstBufferData.time += TIME_SPEED;
@@ -71,14 +76,14 @@ void WaterShader::Update(void)
 }
 
 
-// ƒVƒF[ƒ_[‚ğ•`‰æ‚É“K—p
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’æç”»ã«é©ç”¨
 void WaterShader::Apply(void)
 {
-    // ’Êí‚ÌShader‚ğ“K—p
+    // é€šå¸¸ã®Shaderã‚’é©ç”¨
     ShaderBase::Apply();
 
 
-    // ’¸“_ƒVƒF[ƒ_[’è”ƒoƒbƒtƒ@
+    // é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å®šæ•°ãƒãƒƒãƒ•ã‚¡
     if (vertexShaderConstBufferHandle >= 0) {
         auto* buffer =
             static_cast<VertexShaderConstBuffer*>(
@@ -89,15 +94,15 @@ void WaterShader::Apply(void)
 
         *buffer = vertexShaderConstBufferData;
 
-        // CPU‘¤ ¨ GPU‘¤‚Ö”½‰f
+        // CPUå´ â†’ GPUå´ã¸åæ˜ 
         UpdateShaderConstantBuffer(vertexShaderConstBufferHandle);
 
-        // WaterVS‚Ì register(b4) ‚Éİ’è
+        // WaterVSã® register(b4) ã«è¨­å®š
         SetShaderConstantBuffer(vertexShaderConstBufferHandle, DX_SHADERTYPE_VERTEX, 4);
     }
 
 
-    // ƒsƒNƒZƒ‹ƒVƒF[ƒ_[’è”ƒoƒbƒtƒ@
+    // ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å®šæ•°ãƒãƒƒãƒ•ã‚¡
     if (pixelShaderConstBufferHandle >= 0) {
         auto* buffer =
             static_cast<PixelShaderConstBuffer*>(
@@ -108,45 +113,45 @@ void WaterShader::Apply(void)
 
         *buffer = pixelShaderConstBufferData;
 
-        // CPU‘¤ ¨ GPU‘¤‚Ö”½‰f
+        // CPUå´ â†’ GPUå´ã¸åæ˜ 
         UpdateShaderConstantBuffer(pixelShaderConstBufferHandle);
 
-        // WaterPS‚Ì register(b4) ‚Éİ’è
+        // WaterPSã® register(b4) ã«è¨­å®š
         SetShaderConstantBuffer(pixelShaderConstBufferHandle, DX_SHADERTYPE_PIXEL, 4);
     }
 }
 
 
-// ƒVƒF[ƒ_[‚Ìİ’èƒŠƒZƒbƒg
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®è¨­å®šãƒªã‚»ãƒƒãƒˆ
 void WaterShader::ResetApply(void)
 {
-    // ’è”ƒoƒbƒtƒ@‚ğ‰ğœ
+    // å®šæ•°ãƒãƒƒãƒ•ã‚¡ã‚’è§£é™¤
     SetShaderConstantBuffer(-1, DX_SHADERTYPE_VERTEX, 4);
 
     SetShaderConstantBuffer(-1, DX_SHADERTYPE_PIXEL, 4);
 
-    // Shader–{‘Ì‚ğ‰ğœ
+    // Shaderæœ¬ä½“ã‚’è§£é™¤
     ShaderBase::ResetApply();
 }
 
 
-// ƒVƒF[ƒ_[ŒÅ—LƒŠƒ\[ƒX‚Ì‰ğ•ú
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å›ºæœ‰ãƒªã‚½ãƒ¼ã‚¹ã®è§£æ”¾
 void WaterShader::Release(void)
 {
-    // ’¸“_ƒVƒF[ƒ_[’è”ƒoƒbƒtƒ@
+    // é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å®šæ•°ãƒãƒƒãƒ•ã‚¡
     if (vertexShaderConstBufferHandle >= 0) {
         DeleteShaderConstantBuffer(vertexShaderConstBufferHandle);
         vertexShaderConstBufferHandle = -1;
     }
 
 
-    // ƒsƒNƒZƒ‹ƒVƒF[ƒ_[’è”ƒoƒbƒtƒ@
+    // ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å®šæ•°ãƒãƒƒãƒ•ã‚¡
     if (pixelShaderConstBufferHandle >= 0) {
         DeleteShaderConstantBuffer(pixelShaderConstBufferHandle);
         pixelShaderConstBufferHandle = -1;
     }
 
-    // ShaderResourceManager‚©‚çØ‚è‚Ä‚¢‚éShaderƒnƒ“ƒhƒ‹©‘Ì‚Í
-    // WaterShader‚Å‚ÍDelete‚µ‚È‚¢
+    // ShaderResourceManagerã‹ã‚‰å€Ÿã‚Šã¦ã„ã‚‹Shaderãƒãƒ³ãƒ‰ãƒ«è‡ªä½“ã¯
+    // WaterShaderã§ã¯Deleteã—ãªã„
     ShaderBase::Release();
 }

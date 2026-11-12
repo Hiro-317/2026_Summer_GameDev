@@ -733,18 +733,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
     <FxCompile Include="Src\Shader\RimLight\RimLightPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -825,4 +813,45 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\EffectBase.cpp" />
+    <ClCompile Include="Src\Object\Common\Effect\PurpleExplosionActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\ExplosionShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Object\Common\Effect\PurpleExplosionActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\ExplosionShader.h" />
+    <None Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
+    <None Include="Src\Shader\PurpleExplosion\README.md" />
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\FlameBreathActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\FlameBreathShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\FlameBreathActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\FlameBreathShader.h" />
+    <None Include="Src\Shader\FlameBreath\README.md" />
+    <FxCompile Include="Src\Shader\FlameBreath\FlameBreathVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
 </Project>

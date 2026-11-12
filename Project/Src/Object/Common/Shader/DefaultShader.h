@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "ShaderBase.h"
 
@@ -7,7 +7,7 @@
 class DefaultShader : public ShaderBase
 {
 public:
-	// ’¸“_ƒ^ƒCƒv‚ğw’è‚·‚é
+	// é ‚ç‚¹ã‚¿ã‚¤ãƒ—ã‚’æŒ‡å®šã™ã‚‹
 	DefaultShader(SHADER_VERTEX_TYPE vertexType = SHADER_VERTEX_TYPE::Frame8) :
 		ShaderBase(),
 		vertexType(vertexType)
@@ -15,10 +15,10 @@ public:
 	}
 	~DefaultShader()override = default;
 
-	/// ƒVƒF[ƒ_[‚Ì‰Šú‰»
-	void Init(void);
+	/// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®åˆæœŸåŒ–
+	void Init(void) override;
 
 private:
-	// ’¸“_ƒ^ƒCƒv
+	// é ‚ç‚¹ã‚¿ã‚¤ãƒ—
 	SHADER_VERTEX_TYPE vertexType;
 };

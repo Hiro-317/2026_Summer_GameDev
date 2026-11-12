@@ -25,6 +25,22 @@ AddActor(new PurpleExplosionActor(
 親アクターから子として使用する場合は、その親の読み込み時に `AddChildActor` で追加してください。
 生成時の所有権はシーンまたは親アクターに渡すため、利用側で `delete` しません。
 
+## 無期限再生と即時停止
+
+コンストラクターの `durationSeconds` に `0.0f` を指定すると、無期限で表示します。
+展開した爆発の形状を保ち、炎の揺れを継続します。
+
+```cpp
+auto* explosion = new PurpleExplosionActor(Vector3(0.0f, 150.0f, 0.0f), 150.0f, 0.0f);
+AddActor(explosion);
+
+// 有限・無期限にかかわらず、残り寿命を無視して即座に消す。
+explosion->Stop();
+```
+
+`Stop()` はフェードを待たずに更新・描画を止めます。deleteは所有者が解放時に行います。
+`Restart()` で再開でき、`IsInfinite()` で無期限かどうかを確認できます。
+
 ## 再利用する
 
 終了時は更新と描画を止めます。自動削除はせず、シーン・親アクターの解放時に破棄します。
@@ -71,7 +87,7 @@ explosion->Restart();
 
 ## シェーダーとビルド
 
-- `PurpleExplosionShader` は `ShaderBase` を継承し、定数バッファの更新・適用・解除を担当します。
+- `ExplosionShader` は `ShaderBase` を継承し、定数バッファの更新・適用・解除を担当します。
 - 頂点・ピクセルシェーダーは `ShaderResourceManager` が所有し、複数の爆発で共有します。
 - 各爆発が所有するのは個別の定数バッファです。PSの `b4` へ時間・持続時間・明るさ・シード・RGBを渡します（32バイト）。
 - `PurpleExplosionVS.hlsl` / `PurpleExplosionPS.hlsl` を `main`、Shader Model 5.0でビルドします。

@@ -1,4 +1,4 @@
-#include "ActorBase.h"
+ï»¿#include "ActorBase.h"
 
 #include <stdexcept>
 
@@ -75,22 +75,22 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 
 void ActorBase::Init(void)
 {
-	// ƒfƒtƒHƒ‹ƒg¶¬
+	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆç”Ÿæˆ
 	DefaultCreateShader();
 
-	// ÅI”h¶ŒÅ—L
+	// æœ€çµ‚æ´¾ç”Ÿå›ºæœ‰
 	SubInit();
 
-	// ’†ŠÔŠî’êŒÅ—L
+	// ä¸­é–“åŸºåº•å›ºæœ‰
 	BaseInit();
 
-	// qƒAƒNƒ^[‚Ì‰Šú‰»
+	// å­ã‚¢ã‚¯ã‚¿ãƒ¼ã®åˆæœŸåŒ–
 	for (ActorBase* child : childActors) { child->Init(); }
 
-	// ƒ‚ƒfƒ‹§Œäî•ñ‚Ì“K—p
+	// ãƒ¢ãƒ‡ãƒ«åˆ¶å¾¡æƒ…å ±ã®é©ç”¨
 	trans.Attach();
 	
-	// ƒpƒ‰ƒ[ƒ^‚Ì‰ğ•ú
+	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è§£æ”¾
 	if (parameter != nullptr) {
 		parameter->Release();
 		delete parameter;
@@ -100,60 +100,60 @@ void ActorBase::Init(void)
 
 void ActorBase::Update(void)
 {
-	// 1ƒtƒŒ[ƒ€‘O‚Ì‰Á‘¬“x‚ğ•Û
+	// 1ãƒ•ãƒ¬ãƒ¼ãƒ å‰ã®åŠ é€Ÿåº¦ã‚’ä¿æŒ
 	Vector3 prevVelocity = velocity;
-	// “®“IƒIƒuƒWƒFƒNƒg‚Ìê‡1ƒtƒŒ[ƒ€‘O‚ÌÀ•W‚ğ•Û
+	// å‹•çš„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å ´åˆ1ãƒ•ãƒ¬ãƒ¼ãƒ å‰ã®åº§æ¨™ã‚’ä¿æŒ
 	if (dynamicFlg) { trans.prevPos = trans.pos; }
 
-	// ÅI”h¶ŒÅ—L
+	// æœ€çµ‚æ´¾ç”Ÿå›ºæœ‰
 	SubUpdate();
 
-	// ’†ŠÔŠî’êŒÅ—L
+	// ä¸­é–“åŸºåº•å›ºæœ‰
 	BaseUpdate();
 
 	if (dynamicFlg) {
-		// ‰Á‘¬“xXV
+		// åŠ é€Ÿåº¦æ›´æ–°
 		VelocityUpdate(velocity == prevVelocity);
 
-		// Ú’n”»’è‚ÌƒŠƒZƒbƒg
+		// æ¥åœ°åˆ¤å®šã®ãƒªã‚»ãƒƒãƒˆ
 		isGroundMaster = false;
 	}
 
-	// qƒAƒNƒ^[‚ÌXV
+	// å­ã‚¢ã‚¯ã‚¿ãƒ¼ã®æ›´æ–°
 	for (ActorBase* child : childActors) { child->Update(); }
 
-	// ƒVƒF[ƒ_[‚ÌXV
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®æ›´æ–°
 	if (shader != nullptr) { shader->Update(); }
 }
 
 void ActorBase::Draw(void)
 {
-	// •`‰æ”»’è
+	// æç”»åˆ¤å®š
 	if (!isDraw) { return; }
 
-	// ƒVƒF[ƒ_[‚Ì“K—p
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®é©ç”¨
 	if (shader != nullptr) { shader->Apply(); }
 
-	// ÅI”h¶ŒÅ—L
+	// æœ€çµ‚æ´¾ç”Ÿå›ºæœ‰
 	SubDraw();
 
-	// ’†ŠÔŠî’êŒÅ—L
+	// ä¸­é–“åŸºåº•å›ºæœ‰
 	BaseDraw();
 
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 	trans.Draw();
 
-	// ƒVƒF[ƒ_[‚ÌƒŠƒZƒbƒg
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ãƒªã‚»ãƒƒãƒˆ
 	if (shader != nullptr) {
 		shader->ResetApply();
 
-		// ‚Â‚¢‚Å‚ÉƒVƒF[ƒ_[‚ÌI—¹”»’è
+		// ã¤ã„ã§ã«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®çµ‚äº†åˆ¤å®š
 		if (shader->IsEnd()) {
 
-			// ‚±‚ÌƒVƒF[ƒ_[‚ğÁ‹
+			// ã“ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’æ¶ˆå»
 			ResetShader(); 
 
-			// ƒfƒtƒHƒ‹ƒg¶¬
+			// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆç”Ÿæˆ
 			DefaultCreateShader();
 		}
 	}
@@ -161,13 +161,13 @@ void ActorBase::Draw(void)
 
 void ActorBase::Release(void)
 {
-	// ÅI”h¶ŒÅ—L
+	// æœ€çµ‚æ´¾ç”Ÿå›ºæœ‰
 	SubRelease();
 
-	// ’†ŠÔŠî’êŒÅ—L
+	// ä¸­é–“åŸºåº•å›ºæœ‰
 	BaseRelease();
 
-	// qƒAƒNƒ^[‚Ì‰ğ•ú
+	// å­ã‚¢ã‚¯ã‚¿ãƒ¼ã®è§£æ”¾
 	for(ActorBase*& child : childActors) {
 		if (!child) { continue; }
 		child->Release();
@@ -175,17 +175,17 @@ void ActorBase::Release(void)
 		child = nullptr;
 	}
 
-	// ƒVƒF[ƒ_[‚Ì‰ğ•ú
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®è§£æ”¾
 	ResetShader();
 
-	// ƒpƒ‰ƒ[ƒ^‚Ì‰ğ•ú
+	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è§£æ”¾
 	if (parameter != nullptr) {
 		parameter->Release();
 		delete parameter;
 		parameter = nullptr;
 	}
 
-	// “–‚½‚è”»’èî•ñ‚ğ‰ğ•ú
+	// å½“ãŸã‚Šåˆ¤å®šæƒ…å ±ã‚’è§£æ”¾
 	for (ColliderBase*& collider : colliders) {
 		if (!collider) { continue; }
 		collider->Release();
@@ -194,7 +194,7 @@ void ActorBase::Release(void)
 	}
 	colliders.clear();
 
-	// ƒ‚ƒfƒ‹§Œäî•ñ‚Ì‰ğ•ú
+	// ãƒ¢ãƒ‡ãƒ«åˆ¶å¾¡æƒ…å ±ã®è§£æ”¾
 	trans.Release();
 }
 
@@ -233,41 +233,41 @@ void ActorBase::Gravity(void)
 
 void ActorBase::VelocityUpdate(bool	deceleration)
 {
-	// d—Íˆ—
+	// é‡åŠ›å‡¦ç†
 	Gravity();
 
-#pragma region ‰¡²iX,Zj
-	// ‰¡²‚Ì‚İ‚Ì‰Á‘¬“x‚Ì‘å‚«‚³‚ğ‹‚ß‚é
+#pragma region æ¨ªè»¸ï¼ˆX,Zï¼‰
+	// æ¨ªè»¸ã®ã¿ã®åŠ é€Ÿåº¦ã®å¤§ãã•ã‚’æ±‚ã‚ã‚‹
 	float widthAccelLen = sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 
-	// ‰¡²‚Ì‰Á‘¬“x‚ª‚ ‚éê‡
+	// æ¨ªè»¸ã®åŠ é€Ÿåº¦ãŒã‚ã‚‹å ´åˆ
 	if (widthAccelLen > 0.0f) {
 
-		// •â³”{—¦
+		// è£œæ­£å€ç‡
 		float scale = 1.0f;
 
-		// Œ¸‘¬ˆ—
+		// æ¸›é€Ÿå‡¦ç†
 		if (deceleration) {
-			// ‰¡²‚Ì‰Á‘¬“x‚ªŒ¸‘¬‚Ì”¼•ªˆÈ‰º‚Ìê‡‚ÍA‰¡²‚Ì‰Á‘¬“x‚ğ0‚É‚·‚é
+			// æ¨ªè»¸ã®åŠ é€Ÿåº¦ãŒæ¸›é€Ÿã®åŠåˆ†ä»¥ä¸‹ã®å ´åˆã¯ã€æ¨ªè»¸ã®åŠ é€Ÿåº¦ã‚’0ã«ã™ã‚‹
 			if (widthAccelLen <= (DECEL_RATE * TimeScale::Get()) * 0.5f) { velocity.x = velocity.z = 0.0f; }
 
-			// Œ¸‘¬
+			// æ¸›é€Ÿ
 			scale = (widthAccelLen - (DECEL_RATE * TimeScale::Get())) / widthAccelLen;
 		}
 
-		// Å‘å‰Á‘¬§ŒÀ`````````````````````````````
+		// æœ€å¤§åŠ é€Ÿåˆ¶é™ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½
 
-		// Å‘å‰Á‘¬‚ğ’´‚¦‚Ä‚¢‚ê‚ÎA’´‰ß•ª‚ğ‘Å‚¿Á‚·•â³”{—¦‚ğ‘g‚İ‚Ş
+		// æœ€å¤§åŠ é€Ÿã‚’è¶…ãˆã¦ã„ã‚Œã°ã€è¶…éåˆ†ã‚’æ‰“ã¡æ¶ˆã™è£œæ­£å€ç‡ã‚’çµ„ã¿è¾¼ã‚€
 		if (widthAccelLen > ACCEL_MAX) { scale = ACCEL_MAX / widthAccelLen; }
 
-		// ÀÛ‚É•â³
+		// å®Ÿéš›ã«è£œæ­£
 		velocity.x *= scale;
 		velocity.z *= scale;
-		// `````````````````````````````Å‘å‰Á‘¬§ŒÀ
+		// ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½ï½æœ€å¤§åŠ é€Ÿåˆ¶é™
 	}
 #pragma endregion
 
-	// ‰Á‘¬“x‚ğÀ•W‚É”½‰f
+	// åŠ é€Ÿåº¦ã‚’åº§æ¨™ã«åæ˜ 
 	if (velocity != 0.0f) { trans.pos += velocity * TimeScale::Get(); }
 }
 
@@ -281,12 +281,13 @@ void ActorBase::AddCollider(ColliderBase* newCollider)
 
 void ActorBase::CreateShader(ShaderBase* newShader)
 {
-	// Šù‚É¶¬‚³‚ê‚Ä‚¢‚éê‡A”jŠü
+	// æ—¢ã«ç”Ÿæˆã•ã‚Œã¦ã„ã‚‹å ´åˆã€ç ´æ£„
 	ResetShader();
 
-	// V‹KƒVƒF[ƒ_[‚ğ‚±‚ÌƒAƒNƒ^[‚É“K—p
+	// æ–°è¦ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ã“ã®ã‚¢ã‚¯ã‚¿ãƒ¼ã«é©ç”¨
 	shader = newShader;
-	// ‰Šú‰»
+	// ShaderBaseã‚‚ActorBaseã‚’ç¶™æ‰¿ã™ã‚‹ãŸã‚ã€èª­ã¿è¾¼ã¿â†’åˆæœŸåŒ–ã®é †ã§å‡¦ç†ã™ã‚‹ã€‚
+	shader->Load();
 	shader->Init();
 }
 
@@ -299,47 +300,47 @@ void ActorBase::ResetShader()
 	}
 }
 
-#pragma region ƒpƒ‰ƒ[ƒ^[ŠO•”ƒtƒ@ƒCƒ‹ŠÇ—‚ÉŠÖ‚·‚éŠÖ”
+#pragma region ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ç®¡ç†ã«é–¢ã™ã‚‹é–¢æ•°
 
 bool ActorBase::IsParameterExist(const std::string& fileName, const std::string& parameterName)const
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->IsParameterExist(fileName, parameterName);
 }
 
 float ActorBase::GetParameter(const std::string& fileName, const std::string& parameterName, int index)const
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->GetParameter(fileName, parameterName, index);
 }
 
 const std::vector<float>& ActorBase::GetParameterArray(const std::string& fileName, const std::string& parameterName)const
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->GetParameterArray(fileName, parameterName);
 }
 
 int ActorBase::GetParameterToInt(const std::string& fileName, const std::string& parameterName, int index)const
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->GetParameterToInt(fileName, parameterName, index);
 }
 
 Vector3 ActorBase::GetParameterToVector3(const std::string& fileName, const std::string& parameterName)
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->GetParameterToVector3(fileName, parameterName);
 }
 
 Vector2 ActorBase::GetParameterToVector2(const std::string& fileName, const std::string& parameterName)
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->GetParameterToVector2(fileName, parameterName);
 }
 
 Vector2I ActorBase::GetParameterToVector2I(const std::string& fileName, const std::string& parameterName)
 {
-	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadƒNƒ‰ƒX‚ª¶¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ"); }
+	if (parameter == nullptr) { throw std::runtime_error("ParameterLoadã‚¯ãƒ©ã‚¹ãŒç”Ÿæˆã•ã‚Œã¦ã„ã¾ã›ã‚“"); }
 	return parameter->GetParameterToVector2I(fileName, parameterName);
 }
 
@@ -366,16 +367,16 @@ void ActorBase::MoveAccel(const Vector3& vec)
 {
 	if (vec == 0.0f) { return; }
 
-	// “ü—Í—Ê‚É‰‚¶‚Ä‰Á‘¬
+	// å…¥åŠ›é‡ã«å¿œã˜ã¦åŠ é€Ÿ
 	velocity += (vec * ACCEL_RATE) * TimeScale::Get();
 
-	// ˆÚ“®•ûŒü‚©‚ç–Ú•W‚ÌY²‰ñ“]‚ğæ“¾
+	// ç§»å‹•æ–¹å‘ã‹ã‚‰ç›®æ¨™ã®Yè»¸å›è»¢ã‚’å–å¾—
 	const float targetAngle = atan2f(vec.x, vec.z);
 
-	// –Ú•W‰ñ“]
+	// ç›®æ¨™å›è»¢
 	const Quaternion targetRotation = Quaternion::FromRotationY(targetAngle);
 
-	// Œ»İ‚Ì‰ñ“]‚©‚ç–Ú•W‰ñ“]‚Ö•âŠÔ
+	// ç¾åœ¨ã®å›è»¢ã‹ã‚‰ç›®æ¨™å›è»¢ã¸è£œé–“
 	trans.SetRotation(
 		Quaternion::Slerp(
 			trans.rotation,

@@ -1,4 +1,4 @@
-#include "ModelDamageFlashShader.h"
+ï»¿#include "ModelDamageFlashShader.h"
 
 #include <algorithm>
 #include <cmath>
@@ -22,31 +22,36 @@ ModelDamageFlashShader::ModelDamageFlashShader(int duration, int count, float po
 
 void ModelDamageFlashShader::Init(void)
 {
-    // ƒVƒF[ƒ_[ƒnƒ“ƒhƒ‹ŠÇ—ƒNƒ‰ƒX‚ğæ“¾
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒãƒ³ãƒ‰ãƒ«ç®¡ç†ã‚¯ãƒ©ã‚¹ã‚’å–å¾—
     ShaderResourceManager& manager = ShaderResourceManager::GetIns();
 
-    // g—p‚·‚é’¸“_ƒVƒF[ƒ_[‚ğ’¸“_ƒ^ƒCƒv‚ğQÆ‚µ‚ÄŒˆ’è‚·‚é
+    // ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’é ‚ç‚¹ã‚¿ã‚¤ãƒ—ã‚’å‚ç…§ã—ã¦æ±ºå®šã™ã‚‹
     VERTEX_SHADER_TYPE useVertexShaderType = VERTEX_SHADER_TYPE::ModelDamageFlash1Frame;
     useVertexShaderType = (VERTEX_SHADER_TYPE)((int)useVertexShaderType + (int)vertexType);
 
-    // ’¸“_ƒVƒF[ƒ_[‚Ì¶¬
+    // é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç”Ÿæˆ
     manager.CreateVertexShader(useVertexShaderType);
-    // ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚Ì¶¬
+    // ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç”Ÿæˆ
     manager.CreatePixelShader(PIXEL_SHADER_TYPE::ModelDamageFlash);
 
-    // g—p‚·‚é’¸“_ƒVƒF[ƒ_[‚ğ•Û
+    // ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ä¿æŒ
     vertexShaderHandle = manager.GetVertexShader(useVertexShaderType);
 
-    // g—p‚·‚éƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ğ•Û
+    // ä½¿ç”¨ã™ã‚‹ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ä¿æŒ
     pixelShaderHandle = manager.GetPixelShader(PIXEL_SHADER_TYPE::ModelDamageFlash);
 
-    // ’è”ƒoƒbƒtƒ@‚Ì¶¬
+    // å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
     constantBufferHandle = CreateShaderConstantBuffer(sizeof(float) * 4);
 
+
+    // GPUãƒªã‚½ãƒ¼ã‚¹ã®æº–å‚™å¾Œã«ã€ActorBaseã®åˆæœŸåŒ–ãƒ»å­ã‚¢ã‚¯ã‚¿ãƒ¼ã®åˆæœŸåŒ–ã‚’é€šã™ã€‚
+    ShaderBase::Init();
 }
 
 void ModelDamageFlashShader::Update(void)
 {
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å›ºæœ‰ã®æ™‚é–“æ›´æ–°ã«åŠ ãˆã€ã‚¢ã‚¯ã‚¿ãƒ¼ã®æ›´æ–°ãƒ•ãƒƒã‚¯ã‚‚å®Ÿè¡Œã™ã‚‹ã€‚
+    ShaderBase::Update();
     if (IsEnd()) return;
 
     elapsedFrames += TimeScale::Get();
@@ -58,9 +63,9 @@ void ModelDamageFlashShader::Apply(void)
     if (!IsEnd())
     {
         const float progress = static_cast<float>(elapsedFrames) / durationFrames;
-        // 0 -> 1 -> 0 ‚ğ flashes ‰ñŒJ‚è•Ô‚·
+        // 0 -> 1 -> 0 ã‚’ flashes å›ç¹°ã‚Šè¿”ã™
         const float wave = std::abs(std::sin(progress * flashes * DX_PI_F));
-        // Œã”¼‚ÉŒü‚¯‚Ä­‚µŒ¸Š
+        // å¾ŒåŠã«å‘ã‘ã¦å°‘ã—æ¸›è¡°
         intensity = strength * wave * (1.0f - 0.35f * progress);
     }
 

@@ -110,7 +110,7 @@ void GrapePlayer::PlayerLoad(void)
 			*weaponShotRef,
 			trans,
 			bossPos,
-			[&]() { AnimePlay(ANIME_TYPE::THROW); },
+			[&]() { AnimePlay(ANIME_TYPE::THROW, false); },
 			[&]() { return GetAnimeRatio(); },
 			[&]() { ChangeState(STATE::IDLE); }
 		)
@@ -123,7 +123,7 @@ void GrapePlayer::PlayerLoad(void)
 			*weaponThrowRef,
 			trans,
 			bossPos,
-			[&]() { AnimePlay(ANIME_TYPE::THROW); },
+			[&]() { AnimePlay(ANIME_TYPE::THROW, false); },
 			[&]() { return GetAnimeRatio(); },
 			[&]() { ChangeState(STATE::IDLE); }
 		)
@@ -136,7 +136,7 @@ void GrapePlayer::PlayerLoad(void)
 			GetParameter("GrapeBomb", "CoolTime"),
 			*weaponBombRef,
 			trans,
-			[&]() { AnimePlay(ANIME_TYPE::TOSS); },
+			[&]() { AnimePlay(ANIME_TYPE::TOSS, false); },
 			[&]() { return GetAnimeRatio(); },
 			[&]() { ChangeState(STATE::IDLE); }
 		)
@@ -147,7 +147,7 @@ void GrapePlayer::PlayerLoad(void)
 		STATE::DAMAGE,
 		new PlayerDamageState(
 			// アニメーションの再生
-			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE, false); },
 			// アニメーションの終了フラグを取得する関数
 			std::bind(&GrapePlayer::IsAnimeEnd, this),
 			// 無敵時間のセット関数
@@ -162,13 +162,16 @@ void GrapePlayer::PlayerLoad(void)
 		STATE::DEATH,
 		new PlayerDeathState(
 			// アニメーションの再生
-			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE, false); },
 			// アニメーションの終了フラグを取得する関数
 			std::bind(&GrapePlayer::IsAnimeEnd, this),
 			// 死亡演出終了後の処理
 			[&]() {isDeath = true; }
 		)
 	);
+
+	RegisterStateTransition(STATE::IDLE, STATE::MOVE);
+	RegisterStateTransition(STATE::MOVE, STATE::IDLE);
 
 	// 待機状態/移動状態 -> スキル1 の遷移を登録
 	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
