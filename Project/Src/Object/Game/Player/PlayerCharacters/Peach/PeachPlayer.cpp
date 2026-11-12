@@ -291,7 +291,7 @@ void PeachPlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
-				GetParameterToInt("TripleAttack", "CoolTime"),
+				GetParameterToInt("SimpleAttack", "CoolTime"),
 				dynamic_cast<PlayerSimpleAttackState*>(&GetStateIns(STATE::SKILL_1))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Yellow,
 				"SkillSlotSimpleAttack"
