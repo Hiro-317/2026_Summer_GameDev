@@ -147,7 +147,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 移動用の関数
 			std::bind(&PeachPlayer::MoveAccel, this, std::placeholders::_1),
 			// アニメーション再生
-			[&]() { AnimePlay(ANIME_TYPE::PUNCH); },
+			[&]() { AnimePlay(ANIME_TYPE::PUNCH, false); },
 			// アニメーションの再生割合を取得する関数
 			std::bind(&PeachPlayer::GetAnimeRatio, this),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は待機状態に遷移するようにする）
@@ -168,7 +168,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 判定管理
 			*healCollOperatorRef,
 			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay(ANIME_TYPE::HEAL); },
+			[&]() { AnimePlay(ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ
 			[&]() { return GetAnimeRatio(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
@@ -188,7 +188,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 判定管理
 			*healCollOperatorRef,
 			// アニメーションの再生関数のポインタ
-			[&]() { AnimePlay(ANIME_TYPE::HEAL); },
+			[&]() { AnimePlay(ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ
 			[&]() { return GetAnimeRatio(); },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
@@ -200,7 +200,7 @@ void PeachPlayer::PlayerLoad(void)
 		STATE::DAMAGE,
 		new PlayerDamageState(
 			// アニメーションの再生
-			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE, false); },
 			// アニメーションの終了フラグを取得する関数
 			std::bind(&PeachPlayer::IsAnimeEnd, this),
 			// 無敵時間のセット関数
@@ -215,13 +215,16 @@ void PeachPlayer::PlayerLoad(void)
 		STATE::DEATH,
 		new PlayerDeathState(
 			// アニメーションの再生
-			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
+			[&]() { AnimePlay(ANIME_TYPE::DAMAGE, false); },
 			// アニメーションの終了フラグを取得する関数
 			std::bind(&PeachPlayer::IsAnimeEnd, this),
 			// 死亡演出終了後の処理
 			[&]() { isDeath = true; }
 		)
 	);
+
+	RegisterStateTransition(STATE::IDLE, STATE::MOVE);
+	RegisterStateTransition(STATE::MOVE, STATE::IDLE);
 
 	// 待機状態/移動状態 -> スキル1 の遷移を登録
 	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);

@@ -128,7 +128,7 @@ void PlayerSimpleAttackState::Update(void)
 		// 攻撃判定発生中
 
 		// 攻撃判定発生終了
-		if (animeRatio <= COLL_END_TIME) {
+		if (COLL_END_TIME <= animeRatio) {
 
 			// ステップを「後隙」へ
 			step = STEP::Recovery;
