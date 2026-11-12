@@ -77,9 +77,10 @@ void FlameBreathActor::Draw(void)
 
 void FlameBreathActor::SubDraw(void)
 {
-    // 出始めは短く、寿命の最初の16%で設定距離まで伸びる。
+    // 出始めは短く、有限寿命なら最初の16%、無期限なら0.24秒で設定距離まで伸びる。
     // 中心軸は常にdirectionの直線上に置き、炎の揺れはシェーダー内で表現する。
-    float growth = std::clamp(GetElapsedSeconds() / (GetDurationSeconds() * 0.16f), 0.0f, 1.0f);
+    const float growthSeconds = IsInfinite() ? 0.24f : GetDurationSeconds() * 0.16f;
+    float growth = std::clamp(GetElapsedSeconds() / growthSeconds, 0.0f, 1.0f);
     growth = growth * growth * (3.0f - 2.0f * growth);
     const float reach = 0.05f + 0.95f * growth;
     const float distance = settings.distance * reach;

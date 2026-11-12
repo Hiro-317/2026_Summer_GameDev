@@ -28,7 +28,25 @@ AddActor(breath);
 
 シーンの `SubPostLoad` や `SubPostUpdate` などから追加できます。
 向きのベクトルは内部で正規化するため、長さにかかわらず距離は `distance` で決まります。
-ゼロ方向、正でない距離・半径・寿命、負の強度・速度、有限でない数値は例外になります。
+ゼロ方向、正でない距離・半径、負の寿命・強度・速度、有限でない数値は例外になります。
+寿命の `0.0f` は無期限を意味します。
+
+## 無期限再生と即時停止
+
+```cpp
+FlameBreathSettings settings;
+settings.durationSeconds = 0.0f; // 無期限。勝手にフェードアウトしない。
+auto* breath = new FlameBreathActor(startPoint, direction, settings);
+AddActor(breath);
+
+// 終わらせたいタイミングで呼ぶ。有限寿命の途中でも同じように即座に消せる。
+breath->Stop();
+```
+
+`Stop()` は残り時間やフェードを待たず、その呼び出し後の更新・描画を止めます。
+オブジェクトのdeleteはせず、所有するシーン・親アクターの解放時に破棄します。
+再開するときは `Restart()`、無期限かどうかの確認は `IsInfinite()` を使います。
+無期限のブレスは0.24秒で設定距離へ伸び、以後は炎の模様を流し続けます。
 
 ## 再生中の変更と再利用
 

@@ -5,7 +5,7 @@
 class PurpleExplosionShader;
 
 // 指定したワールド座標で紫色の火球・衝撃波・火花を描画するアクター。
-// position: 中心座標、radius: 最大半径、durationSeconds: 再生時間（秒）。
+// position: 中心座標、radius: 最大半径、durationSeconds: 再生時間（秒、0なら無期限）。
 // intensity: 明るさ（0以上）、seed: 火花とノイズの模様を決める値。
 // color: 0xRRGGBB形式の色。省略すると紫色になる。
 class PurpleExplosionActor : public EffectBase

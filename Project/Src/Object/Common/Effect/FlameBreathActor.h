@@ -10,7 +10,7 @@ struct FlameBreathSettings
 {
     float distance = 600.0f;       // 開始点からの最大到達距離
     float radius = 90.0f;          // 先端付近の最大半径。太さはおよそこの2倍。
-    float durationSeconds = 1.5f;  // 発生・消滅を含む寿命
+    float durationSeconds = 1.5f;  // 発生・消滅を含む寿命。0.0fならStopまで無期限。
     float intensity = 2.0f;        // 発光の強さ（0以上）
     float flowSpeed = 3.0f;        // 炎の模様が先端へ流れる速さ（0以上）
     unsigned int color = 0xff7020; // 指定を省略した場合は橙色の炎

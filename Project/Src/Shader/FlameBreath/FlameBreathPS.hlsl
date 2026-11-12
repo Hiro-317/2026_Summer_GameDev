@@ -46,13 +46,19 @@ float BreathFBM(float2 p)
 
 float4 main(FlameBreathInput input) : SV_TARGET
 {
-    if (durationSeconds <= 0.0 || elapsedSeconds < 0.0 || elapsedSeconds >= durationSeconds ||
+    // 寿命0は無期限。有限の場合だけ、指定時間を超えたら光を消す。
+    if (durationSeconds < 0.0 || elapsedSeconds < 0.0 ||
+        (durationSeconds > 0.0 && elapsedSeconds >= durationSeconds) ||
         input.drawParameters.y <= 0.0)
         return float4(0, 0, 0, 0);
 
-    float life = saturate(elapsedSeconds / durationSeconds);
-    // 発生時に光を立ち上げ、寿命の最後に滑らかに消す。
-    float envelope = smoothstep(0.0, 0.06, life) * (1.0 - smoothstep(0.72, 1.0, life));
+    // 無期限では立ち上がり後の光量を保ち、模様だけを流し続ける。
+    // durationSecondsで割る処理は有限寿命の分岐内だけで行う。
+    float envelope = smoothstep(0.0, 0.09, elapsedSeconds);
+    if (durationSeconds > 0.0) {
+        float life = saturate(elapsedSeconds / durationSeconds);
+        envelope = smoothstep(0.0, 0.06, life) * (1.0 - smoothstep(0.72, 1.0, life));
+    }
     float time = elapsedSeconds * flowSpeed;
     float fire;
     float core;
