@@ -2,9 +2,9 @@
 
 #include "../../../Application/Application.h"
 
-#include "../../../Scene/SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../Manager/Input/InputManager.h"
 
 #include "CharaSelectPreview/Orange/OrangeCharaSelectPreview.h"
 #include "CharaSelectPreview/Tomato/TomatoCharaSelectPreview.h"
@@ -73,10 +73,10 @@ void CharaSelectPreviewManager::Draw(void)
 	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1 + easingRate, 0, arrowImage, true);
 
 	// 決定キーの描画
-	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y - 48, 1 + easingRate, 0, enterImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y - 48, 1 + easingRate, 0, enterImage[(int)Input::GetIns().LastInputKinds()], true);
 
 	// とじるキーの描画
-	DrawRotaGraph(EXIT_IMAGE_POS.x, EXIT_IMAGE_POS.y, 1 + easingRate, 0, exitImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(EXIT_IMAGE_POS.x, EXIT_IMAGE_POS.y, 1 + easingRate, 0, exitImage[(int)Input::GetIns().LastInputKinds()], true);
 }
 
 void CharaSelectPreviewManager::Release(void)

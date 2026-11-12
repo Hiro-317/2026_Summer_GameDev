@@ -1,11 +1,13 @@
 #include "MultiPopupScene.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../pch.h"
+
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Font/FontManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 #include "MatchingLoadingScene.h"
 #include "Password/PasswordScene.h"
@@ -27,7 +29,7 @@ MultiPopupScene::MultiPopupScene() :
 {
 }
 
-void MultiPopupScene::Load(void)
+void MultiPopupScene::SubPostLoad(void)
 {
 #pragma region 画像を読み込む
 
@@ -61,7 +63,7 @@ void MultiPopupScene::Load(void)
 #pragma endregion
 }
 
-void MultiPopupScene::Init(void)
+void MultiPopupScene::SubPostInit(void)
 {
 	// 選択の初期化
 	select = SELECT::MakeRoom;
@@ -71,12 +73,10 @@ void MultiPopupScene::Init(void)
 	selectEasing = 0.0f;
 }
 
-void MultiPopupScene::Update(void)
+void MultiPopupScene::SubPostUpdate(void)
 {
-#pragma region 操作
-
 	// タイトル画面に戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemButton");
@@ -84,24 +84,22 @@ void MultiPopupScene::Update(void)
 		// 自身を破棄する
 		SceneManager::GetIns().PopScene();
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
 	// パスワード入力
-	if (Key::GetIns().GetInfo(KEY_TYPE::MULTI_POP_UP_PASSWORD).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::MultiPopUpPassword).down) {
 		// 効果音
 		Snd::GetIns().Play("SystemButton");
 
 		// 専用のシーンを追加する
-		SceneManager::GetIns().PushScene(std::make_shared<PasswordScene>());
+		SceneManager::GetIns().PushScene(std::make_unique<PasswordScene>());
 
-		// 安全
 		return;
 	}
 
 	// 左
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -112,7 +110,7 @@ void MultiPopupScene::Update(void)
 		if (select <= SELECT::None) { select = (SELECT)((int)SELECT::None + 1); }
 	}
 	// 右
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -124,7 +122,7 @@ void MultiPopupScene::Update(void)
 	}
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 選択中での状態分け
 		switch (select) {
@@ -137,7 +135,7 @@ void MultiPopupScene::Update(void)
 			clsDx();
 
 			// シーンをマルチ用のロビーに移動させる
-			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MULTI_LOBBY);
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::MultiLobby);
 
 			// 以降はthisがnullptrとなっているため終了
 			return;
@@ -151,7 +149,7 @@ void MultiPopupScene::Update(void)
 			clsDx();
 
 			// マッチング中シーンを追加
-			SceneManager::GetIns().PushScene(std::make_shared<MatchingLoadingScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<MatchingLoadingScene>());
 
 			// 以降はthisがnullptrとなっているため終了
 			return;
@@ -159,10 +157,7 @@ void MultiPopupScene::Update(void)
 
 		default: { break; }	// 例外
 		}
-
 	}
-
-#pragma endregion
 
 #pragma region イージング
 	selectEasingCounter += 0.08f;
@@ -172,7 +167,7 @@ void MultiPopupScene::Update(void)
 
 }
 
-void MultiPopupScene::Draw(void)
+void MultiPopupScene::SubPostDraw(void)
 {
 	// 背景色
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -189,12 +184,15 @@ void MultiPopupScene::Draw(void)
 	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) { tempPos.x++; }
 
 	DrawRotaGraph(1100, 130, 1, 0, passwordFrameImage, true);
-	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Key::GetIns().LastInputKinds()], true);
-	DrawFormatStringToHandle(
-		1060, 119,
-		0x000000, Font::GetIns().GetFont(FontKinds::DELASUKO_GOTHIC_45),
-		std::to_string(Net::GetIns().GetAddressProviderPassword()).c_str()
-	);
+	DrawRotaGraph(1100, 130 + 60, 1, 0, passwordButtonImage[(int)Input::GetIns().LastInputKinds()], true);
+	unsigned short providerPassword = Net::GetIns().GetAddressProviderPassword();
+	if (providerPassword != 0) {
+		DrawFormatStringToHandle(
+			1060, 119,
+			0x000000, Font::GetIns().GetFont(FontKinds::DELASUKO_GOTHIC_45),
+			std::to_string(providerPassword).c_str()
+		);
+	}
 
 	// 選択肢
 	for (int i = 0; i < (int)SELECT::Max; i++) {
@@ -212,16 +210,16 @@ void MultiPopupScene::Draw(void)
 		SELECT_POS[(int)select].x + ENTER_KEY_LOCAL_POS.x,
 		SELECT_POS[(int)select].y + ENTER_KEY_LOCAL_POS.y + (int)(selectEasing * ENTER_KEY_LOCAL_POS_EASING_RATE),
 		0.75f + selectEasing, 0,
-		enterKeyImage[(int)Key::GetIns().LastInputKinds()],
+		enterKeyImage[(int)Input::GetIns().LastInputKinds()],
 		true
 	);
 
 	// 画面左上に配置するとじるキー
-	DrawRotaGraph(EXIT_KEY_POS.x, EXIT_KEY_POS.y, 1 + selectEasing, 0, exitKeyImage[(int)Key::GetIns().LastInputKinds()], true);
+	DrawRotaGraph(EXIT_KEY_POS.x, EXIT_KEY_POS.y, 1 + selectEasing, 0, exitKeyImage[(int)Input::GetIns().LastInputKinds()], true);
 
 }
 
-void MultiPopupScene::Release(void)
+void MultiPopupScene::SubPreRelease(void)
 {
 
 #pragma region 画像を解放

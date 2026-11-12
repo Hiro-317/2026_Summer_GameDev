@@ -4,7 +4,7 @@
 //
 #define IDI_ICON1                       123
 
-// Next default values for new objects
+// Next default values for new actors
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

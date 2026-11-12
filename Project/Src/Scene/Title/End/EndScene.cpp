@@ -3,11 +3,15 @@
 #include"../../../Utility/Utility.h"
 
 #include"../../../Application/Application.h"
-#include"../../SceneManager/SceneManager.h"
-#include"../../../Manager/Input/KeyManager.h"
+
+#include"../../../Manager/Input/InputManager.h"
 #include"../../../Manager/Sound/SoundManager.h"
 
+#include"../../../Scene/SceneManager.h"
+
 EndScene::EndScene() :
+	SceneBase(),
+
 	nowSelect(),
 
 	frameImage(),
@@ -22,7 +26,7 @@ EndScene::EndScene() :
 {
 }
 
-void EndScene::Load(void)
+void EndScene::SubPostLoad(void)
 {
 
 #pragma region ‰æ‘œ‚ğ“Ç‚İ‚Ş
@@ -43,7 +47,7 @@ void EndScene::Load(void)
 
 }
 
-void EndScene::Init(void)
+void EndScene::SubPostInit(void)
 {
 	// Œ»İ‚Ì‘I‘ğó‘Ô‚ğ‰Šú‰»
 	nowSelect = SELECT::No;
@@ -55,10 +59,10 @@ void EndScene::Init(void)
 	charaEasingRotate = 0.0f;
 }
 
-void EndScene::Update(void)
+void EndScene::SubPostUpdate(void)
 {
 	// –ß‚éƒ{ƒ^ƒ“‚Åƒ^ƒCƒgƒ‹‚É–ß‚é
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 		Snd::GetIns().Play("SystemButton");
 		SoundManager::GetIns().PausePlay();
 		SceneManager::GetIns().PopScene();
@@ -67,12 +71,12 @@ void EndScene::Update(void)
 
 	// ‘I‘ğˆ‚É‚æ‚Á‚Ä•ªŠò
 	switch (nowSelect) {
-		
+
 	case EndScene::SELECT::Yes: {
 		// ‘I‘ğó‘ÔuYesv’†‚Ìˆ—
 
 		// ‰Eƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 			// Œø‰Ê‰¹
 			Snd::GetIns().Play("SystemSelect");
 
@@ -81,7 +85,7 @@ void EndScene::Update(void)
 		}
 
 		// Œˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 			// Œø‰Ê‰¹
 			Snd::GetIns().Play("SystemButton");
 
@@ -99,7 +103,7 @@ void EndScene::Update(void)
 		// ‘I‘ğó‘ÔuNov’†‚Ìˆ—
 
 		// ¶ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 			// Œø‰Ê‰¹
 			Snd::GetIns().Play("SystemSelect");
 
@@ -108,7 +112,7 @@ void EndScene::Update(void)
 		}
 
 		// Œˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 			// Œø‰Ê‰¹
 			Snd::GetIns().Play("SystemButton");
 
@@ -140,7 +144,7 @@ void EndScene::Update(void)
 	// ``````````````````````````````‰‰oXV
 }
 
-void EndScene::Draw(void) 
+void EndScene::SubPreDraw(void)
 {
 	// ‰æ–Ê‘S‘Ì‚ğ”¼“§–¾•`‰æ
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -166,7 +170,7 @@ void EndScene::Draw(void)
 	drawImage(charaImage, CHARA_POS, 1.0f, charaEasingRotate);
 }
 
-void EndScene::Release(void) 
+void EndScene::SubPreRelease(void)
 {
 
 #pragma region ‰æ‘œ‚ğ‰ğ•ú

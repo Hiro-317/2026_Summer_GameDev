@@ -38,6 +38,7 @@ public:
 		GOKUSYOU_80,
 		GOKUSYOU_110,
 
+		MARUMINYA_40,
 		MARUMINYA_50,
 		MARUMINYA_80,
 
@@ -66,6 +67,7 @@ public:
 		80,		// GOKUSYOU_80
 		110,	// GOKUSYOU_110
 
+		40,		// MARUMINYA_50
 		50,		// MARUMINYA_50
 		80,		// MARUMINYA_80
 
@@ -99,6 +101,7 @@ private:
 		"x10y12pxDonguriDuel",	// GOKUSYOU_110
 
 		"x12y12pxMaruMinya",	// MARUMINYA_50
+		"x12y12pxMaruMinya",	// MARUMINYA_50
 		"x12y12pxMaruMinya",	// MARUMINYA_80
 
 		"KKM-アナログテレビフォントv2",	// HIT_UI_32
@@ -121,6 +124,7 @@ private:
 		-1,	// GOKUSYOU_80
 		-1,	// GOKUSYOU_110
 
+		-1,	// MARUMINYA_40
 		-1,	// MARUMINYA_50
 		20,	// MARUMINYA_80
 
@@ -157,6 +161,7 @@ private:
 		0x01,	// GOKUSYOU_80
 		0x01,	// GOKUSYOU_110
 
+		0x01,	// MARUMINYA_40
 		0x01,	// MARUMINYA_50
 		0x01,	// MARUMINYA_80
 

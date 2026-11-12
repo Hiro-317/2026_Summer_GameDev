@@ -15,7 +15,7 @@ private:
 
 	void SubLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Character/Peach/PeachModel");
+		trans.LoadModel("Character/Peach/PeachModel");
 
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -25,7 +25,7 @@ private:
 		trans.centerDiff = Vector3::Yonly(-225);
 
 		// アニメーションを登録する
-		AddInFbxAnimation(7, 1.0f, 0);
+		AddInFbxAnimation(7, 1.0f, true, 0);
 
 		CHARA_NAME = "おももこまち";
 

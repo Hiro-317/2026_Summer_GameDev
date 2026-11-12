@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../../Common/ActorBase/ActorBase.h"
+
 #include "../../../Manager/Net/NetWorkDefine.h"
 
-#include "../../ActorBase.h"
-
-#include "../../CharaTypeDefine.h"
+#include "../../Common/CharaTypeDefine.h"
 
 class CharaSelectPreviewBase;
 
@@ -18,7 +18,6 @@ public:
 	void Init(void)override;
 	void Update(void)override;
 	void Draw(void)override;
-	void AlphaDraw(void)override {}
 	void Release(void)override;
 
 	void ChangeCharacter(CHARA_TYPE select);
@@ -48,6 +47,6 @@ private:
 	// 拡大演出の最終的な倍率
 	float easingRate;
 
-	// 選択中キャラのプレビューオブジェクト配列
+	// 選択中キャラのプレビュー
 	CharaSelectPreviewBase* charaPreview;
 };

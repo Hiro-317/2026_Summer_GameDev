@@ -4,13 +4,14 @@
 
 #include "../Manager/FPS/FPS.h"
 #include "../Manager/Net/NetWorkManager.h"
-#include "../Manager/Input/KeyManager.h"
-#include "../Manager/Camera/Camera.h"
+#include "../Manager/TimeScale/TimeScale.h"
+#include "../Manager/Input/InputManager.h"
 #include "../Manager/Sound/SoundManager.h"
+#include "../Manager/Shader/ShaderResourceManager.h"
 #include "../Manager/Font/FontManager.h"
-#include "../Manager/Effect/EffectManager.h"
-#include "../Scene/SceneManager/SceneManager.h"
+#include "../Manager/Ranking/Ranking.h"
 
+#include "../Scene/SceneManager.h"
 
 Application* Application::ins = nullptr;
 
@@ -56,9 +57,7 @@ void Application::Init(void)
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	if (DxLib_Init() == -1) { isInitFail = true; return; }
 
-	if (Effekseer_Init(EFFECT_MAX_NUM) == -1) { isInitFail = true; return; }
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
-	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// 描画先画面を裏にする
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -73,20 +72,23 @@ void Application::Init(void)
 	// 通信管理クラスの生成 / 初期化処理
 	Net::CreateIns();
 
-	// 入力管理クラスの生成 / 初期化処理
-	Key::CreateIns();
+	// 時間倍率管理クラスの生成 / 初期化処理
+	TimeScale::CreateIns();
 
-	// カメラ
-	Camera::CreateIns();
+	// 入力管理クラスの生成 / 初期化処理
+	Input::CreateIns();
 
 	// サウンド管理クラスの生成 / 初期化処理
 	Snd::CreateIns();
 
+	// シェーダーデータ管理の生成 / 初期化処理
+	ShaderResourceManager::CreateIns();
+
 	// フォントデータ生成 / 初期化処理
 	Font::CreateIns();
 
-	// エフェクト管理クラス生成 / 初期化処理
-	EffectManager::CreateIns();
+	// ランキング管理クラス生成 / 読み込み
+	Ranking::CreateIns();
 
 	// シーン管理初期化 / 初期化処理
 	SceneManager::CreateIns();
@@ -104,29 +106,26 @@ void Application::Run(void)
 		// 通信管理クラスの更新
 		Net::GetIns().Update();
 
+		// 時間倍率
+		TimeScale::GetIns().Update();
+
 		// 入力管理クラスの更新
-		if (GetWindowActiveFlag()) { KeyManager::GetIns().Update(); }
+		Input::GetIns().Update();
 
 		// シーン管理更新
 		SceneManager::GetIns().Update();
-
-		// カメラ更新
-		Camera::GetIns().Update();
 
 		// 音声管理クラスの更新
 		Snd::GetIns().Update();
 
 		// デバッグ表示切替
-		if (Key::GetIns().GetInfo(KEY_TYPE::DEBUG_DRAW_SWITCH).down) { DrawDebugSwitch(); }
+		if (Input::GetIns().GetInfo(KEY_TYPE::DebugDrawSwitch).down) { DrawDebugSwitch(); }
 
 		// フレームレート計算
 		fps->CalcFrameRate();
 
 		// 背面描画画面をクリア
 		ClearDrawScreen();
-
-		// カメラ情報を適用
-		Camera::GetIns().Apply();
 
 		// シーン管理描画
 		SceneManager::GetIns().Draw();
@@ -147,20 +146,23 @@ void Application::Release(void)
 	// シーン管理解放・削除	
 	SceneManager::DeleteIns();
 
-	// エフェクト管理クラス解放・削除
-	EffectManager::DeleteIns();
+	// ランキング管理クラス保存・削除
+	Ranking::DeleteIns();
 
 	// フォントデータの削除
 	Font::DeleteIns();
 
+	// シェーダーデータ管理の削除
+	ShaderResourceManager::DeleteIns();
+
 	// サウンド管理解放・削除
 	Snd::DeleteIns();
 
-	// カメラ
-	Camera::DeleteIns();
-
 	// 入力制御削除
-	Key::DeleteIns();
+	Input::DeleteIns();
+
+	// 時間倍率管理削除
+	TimeScale::DeleteIns();
 
 	// 通信管理削除
 	Net::DeleteIns();
@@ -168,8 +170,6 @@ void Application::Release(void)
 	// フレームレート解放
 	delete fps;
 
-	// エフェクト終了
-	Effkseer_End();
 	// DxLib終了
 	if (DxLib_End() == -1) { isReleaseFail = true; }
 }

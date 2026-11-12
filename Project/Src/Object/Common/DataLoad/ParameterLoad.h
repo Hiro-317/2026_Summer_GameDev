@@ -5,6 +5,8 @@
 #include <string>
 
 struct Vector3;
+struct Vector2;
+struct Vector2I;
 
 class ParameterLoad
 {
@@ -37,6 +39,16 @@ public:
 
     /// Vector3Œ^‚Æ‚µ‚ÄŽæ“¾
     Vector3 GetParameterToVector3(
+        const std::string& fileName,
+        const std::string& parameterName) const;
+
+    /// Vector2Œ^‚Æ‚µ‚ÄŽæ“¾
+    Vector2 GetParameterToVector2(
+        const std::string& fileName,
+        const std::string& parameterName) const;
+
+    /// Vector2IŒ^‚Æ‚µ‚ÄŽæ“¾
+    Vector2I GetParameterToVector2I(
         const std::string& fileName,
         const std::string& parameterName) const;
 

@@ -20,8 +20,6 @@ private:
 	NetWorkManager();
 	~NetWorkManager() = default;
 
-	static constexpr int PORT_NUMBER = 54321;
-
 public:
 #pragma region シングルトン定義
 	// 生成/初期化
@@ -140,14 +138,14 @@ public:
 		return data;
 	}
 
+	// ホストかどうか
+	bool IsHost(void)const { return GetSenderId() == HOST_SENDER_ID; }
+
 	// 状態取得
 	NetState GetState(void)const { return state; }
 
-	// ホストかどうか
-	bool IsHost(void)const { return senderId == HOST_SENDER_ID; }
-
 	// 自身の送信ID
-	MSG_SENDER_ID GetSenderId(void)const { return senderId; }
+	MSG_SENDER_ID GetSenderId(void)const { return (state != NetState::None) ? senderId : HOST_SENDER_ID; }
 
 	// 接続状況を取得
 	const ConnectStatus& GetConnectStatus(void)const { return connectStatus; }
@@ -170,52 +168,148 @@ public:
 		state = NetState::Disconnection;
 	}
 
+	// 格納保持されたままのデータを解放する
+	void ReceptionDataReset(void) {
+		// 格納保持されたままのたまった受信データを全て 解放/削除 する
+		for (int dataType = 0; dataType < (int)MSG_DATA_TYPE::Max; dataType++) {
+			for (int senderId = 0; senderId < (int)MSG_SENDER_ID::Max; senderId++) {
+				for (void* ptr : msgData[dataType][senderId]) {
+					if (!ptr) { continue; }
+					switch ((MSG_DATA_TYPE)dataType) {
+					case MSG_DATA_TYPE::None: { delete ptr; break; }
+					case MSG_DATA_TYPE::ConnectInform: { delete static_cast<MsgDataConnectInform*>(ptr); break; }
+					case MSG_DATA_TYPE::SenderId: { delete static_cast<MsgDataSenderId*>(ptr); break; }
+					case MSG_DATA_TYPE::ConnectStatus: { delete static_cast<MsgDataConnectStatus*>(ptr); break; }
+					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
+					case MSG_DATA_TYPE::GameTime: { delete static_cast<MsgDataGameTime*>(ptr); break; }
+					case MSG_DATA_TYPE::CameraEvent: { delete static_cast<MsgDataCameraEvent*>(ptr); break; }
+					case MSG_DATA_TYPE::BossSelect: { delete static_cast<MsgDataBossSelect*>(ptr); break; }
+					case MSG_DATA_TYPE::CharaSelect: { delete static_cast<MsgDataCharaSelect*>(ptr); break; }
+					case MSG_DATA_TYPE::ClientReady: { delete static_cast<MsgDataClientReady*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerTrans: { delete static_cast<MsgDataPlayerTrans*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerAnimeType: { delete static_cast<MsgDataPlayerAnimeType*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerHp: { delete static_cast<MsgDataPlayerHp*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerHeal: { delete static_cast<MsgDataPlayerHeal*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerModifier: { delete static_cast<MsgDataPlayerModifier*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerShotPos: { delete static_cast<MsgDataGrapePlayerShotPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShot: { delete static_cast<MsgDataGrapePlayerShot*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShotBlast: { delete static_cast<MsgDataGrapePlayerShotBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerThrowPos: { delete static_cast<MsgDataGrapePlayerThrowPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrow: { delete static_cast<MsgDataGrapePlayerThrow*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrowBlast: { delete static_cast<MsgDataGrapePlayerThrowBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerBomb: { delete static_cast<MsgDataGrapePlayerBomb*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombBlast: { delete static_cast<MsgDataGrapePlayerBombBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::PlayerToPlayerTarget: { delete static_cast<MsgDataPlayerToPlayerTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
+					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
+					case MSG_DATA_TYPE::BossTrans: { delete static_cast<MsgDataBossTrans*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAttackDraw: { delete static_cast<MsgDataBossAttackDraw*>(ptr); break; }
+					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
+					case MSG_DATA_TYPE::BossIsDeath: { delete static_cast<MsgDataBossIsDeath*>(ptr); break; }
+					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::BossChangeState: { delete static_cast<MsgDataBossChangeState*>(ptr); break; }
+					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
+					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
+					case MSG_DATA_TYPE::EffectCreate: { delete static_cast<MsgDataEffectCreate*>(ptr); break; }
+					case MSG_DATA_TYPE::EffectFollow: { delete static_cast<MsgDataEffectFollow*>(ptr); break; }
+					}
+				}
+				msgData[dataType][senderId].clear();
+			}
+		}
+	}
 #pragma endregion 共通操作
 
 
 #pragma region ホスト操作
 	// ホストとして受付開始
 	bool StartHost(void) {
-		// 接続受付を開始する
-		ENetAddress address = ENetAddress(ENET_HOST_ANY, PORT_NUMBER);
+		// すでにホストが存在している場合は失敗
+		if (host != nullptr) { return false; }
+
+		ENetAddress address{};
+		address.host = ENET_HOST_ANY;
+
+		// 0を指定するとOSが空いているポートを自動割り当て
+		address.port = 0;
+
+		// 生成
 		host = enet_host_create(&address, (size_t)MSG_SENDER_ID::Max, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
 
-		// セッティング失敗として「false」を返し終了
+		// 生成に失敗したら「操作失敗」として処理を中断する
 		if (host == nullptr) { return false; }
 
-		// 成功～～～～～～～～～～～～～～～～～～～～～～～
+		// 実際にOSから割り当てられたポート番号を取得
+		ENetAddress localAddress{};
+		if (enet_socket_get_address(host->socket, &localAddress) != 0) {
+			enet_host_destroy(host);
+			host = nullptr;
 
-		// 状態を「ホストとして待機中」に設定する
-		state = NetState::Hosting;
+			return false;
+		}
 
-		// 送信IDを設定
+		// 実際にOSから割り当てられたポート番号を取得
+		localGamePort = localAddress.port;
+
+		// ホスト
 		senderId = HOST_SENDER_ID;
 
-		// 接続状況を更新
+		// 接続情報初期化
+		connectInfo.clear();
+
+		// 接続状態初期化
 		connectStatus.Reset();
 
-		// ブロードキャスト送信のためのUDPソケットを生成する
-		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword);
+		// 新しいHostAddressProviderを生成
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword, host, localGamePort);
 
-		// ウィンドウテキストを設定
+		// 状態を更新
+		state = NetState::Hosting;
+
+		// ウィンドウテキストをホストとして設定
 		SetWindowText("<ホスト> P1");
 
-		// セッティング成功として「true」を返し終了
 		return true;
 	}
 
 	// 接続受付を終了し、「接続完了・プレイ中」の状態へ遷移する
 	void CloseReceptionToConnected(void) {
 		// ホストアドレス取得クラスの削除
-		hostAddressProvider->End();
-		delete hostAddressProvider;
-		hostAddressProvider = nullptr;
+		if (hostAddressProvider != nullptr) {
+			hostAddressProvider->End();
+			delete hostAddressProvider;
+			hostAddressProvider = nullptr;
+		}
 
 		// クライアントに接続人数確定（接続待ち終了）の通知を送る
 		Send(MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::CloseReceptionToConnected));
 
 		// 状態を「接続完了・プレイ中」に設定
 		state = NetState::Connected;
+	}
+
+	// 現状の接続を維持したまま、接続受付を再開する
+	void ResumptionReceptionToHosting(void) {
+
+		if (state != NetState::Connected) { return; }
+		if (!IsHost()) { return; }
+
+		// 保存情報でHostAddressProviderを生成
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Host, addressProviderPassword, host, localGamePort);
+
+		// クライアントに接続人数確定（接続待ち終了）の通知を送る
+		Send(MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::ResumptionReceptionToConnected));
+
+		// 状態を更新
+		state = NetState::Hosting;
 	}
 #pragma endregion ホスト操作
 
@@ -224,20 +318,44 @@ public:
 
 	// クライアントとして接続
 	void ConnectClient(void) {
-		bool socketCreate = false;
-		while (!socketCreate) {
-			hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, addressProviderPassword);
-			socketCreate = hostAddressProvider->SocketCreateResult();
-			if (!socketCreate) {
-				hostAddressProvider->End();
-				delete hostAddressProvider;
-				hostAddressProvider = nullptr;
-			}
+
+		// 重複して呼ばれないように
+		if (host != nullptr) { return; }
+
+		// クライアント用ENetHost生成
+		ENetAddress bindAddress{};
+		// 全NICで受信可能
+		bindAddress.host = ENET_HOST_ANY;
+		// OSに空いているポートを自動で割り当ててもらう
+		bindAddress.port = 0;
+
+		// 生成
+		host = enet_host_create(&bindAddress, 1, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
+
+		// 生成失敗
+		if (host == nullptr) { state = NetState::Error; return; }
+
+		// OSから実際に割り当てられたポート番号を取得
+		ENetAddress localAddress{};
+		if (enet_socket_get_address(host->socket, &localAddress) != 0) {
+
+			enet_host_destroy(host);
+			host = nullptr;
+
+			state = NetState::Error;
+
+			return;
 		}
 
-		host = enet_host_create(nullptr, 1, (size_t)MSG_DATA_CHANNEL::Max, 0, 0);
+		localGamePort = localAddress.port;
 
-		// 状態を「クライアントとして接続中」に設定する
+		// HostAddressProvider生成
+		hostAddressProvider = new HostAddressProvider(HostAddressProvider::MODE::Client, addressProviderPassword, host, localGamePort);
+
+		// SenderIDはホスト接続後に決定
+		senderId = MSG_SENDER_ID::Max;
+
+		// 接続中へ
 		state = NetState::Connecting;
 	}
 
@@ -283,6 +401,8 @@ private:
 	HostAddressProvider* hostAddressProvider;
 	// アドレス取得用あいことば
 	unsigned short addressProviderPassword;
+	// OSから自動割り当てされた、ENetゲーム通信用ポート
+	enet_uint16 localGamePort;
 
 	// 送信ID
 	MSG_SENDER_ID senderId;
@@ -311,6 +431,8 @@ private:
 		case MSG_DATA_TYPE::SenderId: { MsgDataSenderIdRecv(event); break; }
 		case MSG_DATA_TYPE::ConnectStatus: { MsgDataConnectStatusRecv(event); break; }
 		case MSG_DATA_TYPE::SystemInform: { MsgDataRecv<MsgDataSystemInform>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GameTime: { MsgDataRecv<MsgDataGameTime>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::CameraEvent: { MsgDataRecv<MsgDataCameraEvent>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossSelect: { MsgDataRecv<MsgDataBossSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::CharaSelect: { MsgDataRecv<MsgDataCharaSelect>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::ClientReady: { MsgDataRecv<MsgDataClientReady>(event, headerData->senderId); break; }
@@ -320,16 +442,22 @@ private:
 		case MSG_DATA_TYPE::PlayerDamage: { MsgDataRecv<MsgDataPlayerDamage>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerHeal: { MsgDataRecv<MsgDataPlayerHeal>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerModifier: { MsgDataRecv<MsgDataPlayerModifier>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::PlayerShotStart: { MsgDataRecv<MsgDataPlayerShotStart>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::PlayerShotEnd: { MsgDataRecv<MsgDataPlayerShotEnd>(event, headerData->senderId); break; }
+
+		case MSG_DATA_TYPE::GrapePlayerShotPos: { MsgDataRecv<MsgDataGrapePlayerShotPos>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerShot: { MsgDataRecv<MsgDataGrapePlayerShot>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerShotBlast: { MsgDataRecv<MsgDataGrapePlayerShotBlast>(event, headerData->senderId); break; }
+
+		case MSG_DATA_TYPE::GrapePlayerThrowPos: { MsgDataRecv<MsgDataGrapePlayerThrowPos>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerThrow: { MsgDataRecv<MsgDataGrapePlayerThrow>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerThrowBlast: { MsgDataRecv<MsgDataGrapePlayerThrowBlast>(event, headerData->senderId); break; }
+
+		case MSG_DATA_TYPE::GrapePlayerBomb: { MsgDataRecv<MsgDataGrapePlayerBomb>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::GrapePlayerBombBlast: { MsgDataRecv<MsgDataGrapePlayerBombBlast>(event, headerData->senderId); break; }
+
 		case MSG_DATA_TYPE::PlayerToPlayerTarget: { MsgDataRecv<MsgDataPlayerToPlayerTarget>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerMissNotice: { MsgDataRecv<MsgDataPlayerMissNotice>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerState: { MsgDataRecv<MsgDataPlayerState>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerCollOperator: { MsgDataRecv<MsgDataPlayerCollOperator>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombStart: { MsgDataRecv<MsgDataGrapePlayerBombStart>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombEnd: { MsgDataRecv<MsgDataGrapePlayerBombEnd>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombThrowStart: { MsgDataRecv<MsgDataGrapePlayerBombThrowStart>(event, headerData->senderId); break; }
-		case MSG_DATA_TYPE::GrapePlayerBombThrowEnd: { MsgDataRecv<MsgDataGrapePlayerBombThrowEnd>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::PlayerInput: { MsgDataRecv<MsgDataPlayerInput>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTrans: { MsgDataRecv<MsgDataBossTrans>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAttackDrawFlg: { MsgDataRecv<MsgDataBossAttackDrawFlg>(event, headerData->senderId); break; }
@@ -337,6 +465,7 @@ private:
 		case MSG_DATA_TYPE::BossHit: { MsgDataRecv<MsgDataBossHit>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossIsDeath: { MsgDataRecv<MsgDataBossIsDeath>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossTarget: { MsgDataRecv<MsgDataBossTarget>(event, headerData->senderId); break; }
+		case MSG_DATA_TYPE::BossChangeState: { MsgDataRecv<MsgDataBossChangeState>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossAnimeType: { MsgDataRecv<MsgDataBossAnimeType>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::BossBombInform: { MsgDataRecv<MsgDataBossBombInform>(event, headerData->senderId); break; }
 		case MSG_DATA_TYPE::EffectCreate: { MsgDataRecv<MsgDataEffectCreate>(event, headerData->senderId); break; }
@@ -401,7 +530,7 @@ private:
 	// 接続完全リセット
 	void DisconnectionComplete(void) {
 		// ホストアドレス取得クラスの削除
-		if (hostAddressProvider) {
+		if (hostAddressProvider != nullptr) {
 			hostAddressProvider->End();
 			delete hostAddressProvider;
 			hostAddressProvider = nullptr;
@@ -418,6 +547,8 @@ private:
 					case MSG_DATA_TYPE::SenderId: { delete static_cast<MsgDataSenderId*>(ptr); break; }
 					case MSG_DATA_TYPE::ConnectStatus: { delete static_cast<MsgDataConnectStatus*>(ptr); break; }
 					case MSG_DATA_TYPE::SystemInform: { delete static_cast<MsgDataSystemInform*>(ptr); break; }
+					case MSG_DATA_TYPE::GameTime: { delete static_cast<MsgDataGameTime*>(ptr); break; }
+					case MSG_DATA_TYPE::CameraEvent: { delete static_cast<MsgDataCameraEvent*>(ptr); break; }
 					case MSG_DATA_TYPE::BossSelect: { delete static_cast<MsgDataBossSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::CharaSelect: { delete static_cast<MsgDataCharaSelect*>(ptr); break; }
 					case MSG_DATA_TYPE::ClientReady: { delete static_cast<MsgDataClientReady*>(ptr); break; }
@@ -427,16 +558,22 @@ private:
 					case MSG_DATA_TYPE::PlayerDamage: { delete static_cast<MsgDataPlayerDamage*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerHeal: { delete static_cast<MsgDataPlayerHeal*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerModifier: { delete static_cast<MsgDataPlayerModifier*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerShotStart: { delete static_cast<MsgDataPlayerShotStart*>(ptr); break; }
-					case MSG_DATA_TYPE::PlayerShotEnd: { delete static_cast<MsgDataPlayerShotEnd*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerShotPos: { delete static_cast<MsgDataGrapePlayerShotPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShot: { delete static_cast<MsgDataGrapePlayerShot*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerShotBlast: { delete static_cast<MsgDataGrapePlayerShotBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerThrowPos: { delete static_cast<MsgDataGrapePlayerThrowPos*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrow: { delete static_cast<MsgDataGrapePlayerThrow*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerThrowBlast: { delete static_cast<MsgDataGrapePlayerThrowBlast*>(ptr); break; }
+
+					case MSG_DATA_TYPE::GrapePlayerBomb: { delete static_cast<MsgDataGrapePlayerBomb*>(ptr); break; }
+					case MSG_DATA_TYPE::GrapePlayerBombBlast: { delete static_cast<MsgDataGrapePlayerBombBlast*>(ptr); break; }
+
 					case MSG_DATA_TYPE::PlayerToPlayerTarget: { delete static_cast<MsgDataPlayerToPlayerTarget*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerMissNotice: { delete static_cast<MsgDataPlayerMissNotice*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerState: { delete static_cast<MsgDataPlayerState*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerCollOperator: { delete static_cast<MsgDataPlayerCollOperator*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombStart: { delete static_cast<MsgDataGrapePlayerBombStart*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombEnd: { delete static_cast<MsgDataGrapePlayerBombEnd*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombThrowStart: { delete static_cast<MsgDataGrapePlayerBombThrowStart*>(ptr); break; }
-					case MSG_DATA_TYPE::GrapePlayerBombThrowEnd: { delete static_cast<MsgDataGrapePlayerBombThrowEnd*>(ptr); break; }
 					case MSG_DATA_TYPE::PlayerInput: { delete static_cast<MsgDataPlayerInput*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTrans: { delete static_cast<MsgDataBossTrans*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAttackDrawFlg: { delete static_cast<MsgDataBossAttackDrawFlg*>(ptr); break; }
@@ -444,6 +581,7 @@ private:
 					case MSG_DATA_TYPE::BossHit: { delete static_cast<MsgDataBossHit*>(ptr); break; }
 					case MSG_DATA_TYPE::BossIsDeath: { delete static_cast<MsgDataBossIsDeath*>(ptr); break; }
 					case MSG_DATA_TYPE::BossTarget: { delete static_cast<MsgDataBossTarget*>(ptr); break; }
+					case MSG_DATA_TYPE::BossChangeState: { delete static_cast<MsgDataBossChangeState*>(ptr); break; }
 					case MSG_DATA_TYPE::BossAnimeType: { delete static_cast<MsgDataBossAnimeType*>(ptr); break; }
 					case MSG_DATA_TYPE::BossBombInform: { delete static_cast<MsgDataBossBombInform*>(ptr); break; }
 					case MSG_DATA_TYPE::EffectCreate: { delete static_cast<MsgDataEffectCreate*>(ptr); break; }
@@ -469,6 +607,9 @@ private:
 			enet_host_destroy(host);
 			host = nullptr;
 		}
+
+		// ENetゲームポートを未設定に戻す
+		localGamePort = 0;
 
 		// 送信者IDを未設定に戻す
 		senderId = MSG_SENDER_ID::None;

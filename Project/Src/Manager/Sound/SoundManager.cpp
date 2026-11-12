@@ -153,7 +153,7 @@ void SoundManager::Play(const std::string& id)
 		ChangeVolumeSoundMem(VolumeValue(id), info.id);
 
 		// ループ再生するかどうか
-		bool loop = (SOUND_TABLE.at(id).loop) ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK;
+		auto loop = (SOUND_TABLE.at(id).loop) ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK;
 
 		// 再生
 		PlaySoundMem(info.id, loop, true);
@@ -230,7 +230,7 @@ void SoundManager::PausePlay(void)
 			if (!info.paused) { continue; }
 
 			// ループ再生するかどうか
-			bool loop = (SOUND_TABLE.at(sound.first).loop) ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK;
+			auto loop = (SOUND_TABLE.at(sound.first).loop) ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK;
 
 			// 途中から再生
 			PlaySoundMem(info.id, loop, false);

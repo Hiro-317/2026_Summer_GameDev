@@ -8,6 +8,7 @@ NetWorkManager::NetWorkManager() :
 
     hostAddressProvider(nullptr),
     addressProviderPassword(0),
+    localGamePort(0),
 
     senderId(MSG_SENDER_ID::None),
     connectInfo(),
@@ -38,14 +39,46 @@ void NetWorkManager::Init()
 // 更新
 void NetWorkManager::Update()
 {
-    // 生成されていたら
-    if (hostAddressProvider) { hostAddressProvider->Update(); }
     // 状態に合わせた更新処理関数を呼び出す
     (this->*stateUpdate[(int)state])();
 }
 // 解放
 void NetWorkManager::Release()
 {
+    if (state != NetState::None) {
+
+        // 接続中の強制終了の場合、ここで切断要求を送る
+        Disconnection();
+
+        // 接続相手が切断要求を受け取らないままpeerを消去する恐れがあるため、
+        // 切断完了の通知を受け取るまでここで待つ（無限ループ防止のため 1000回 のループを制限とする（60FPS基準でおよそ15秒程度））
+        for (unsigned short i = 0; i < 1000; i++) {
+
+            // イベント受信用の一時変数
+            ENetEvent event;
+
+            // 切断完了の通知を受け取ったらそのpeerを消去する
+            while (enet_host_service(host, &event, 0) > 0) {
+                switch (event.type) {
+
+                case ENET_EVENT_TYPE_CONNECT: { break; }
+                case ENET_EVENT_TYPE_RECEIVE: { enet_packet_destroy(event.packet); break; }
+
+                case ENET_EVENT_TYPE_DISCONNECT: {
+                    for (auto it = connectInfo.begin(); it != connectInfo.end(); it++) {
+                        // 接続情報を消去
+                        if (it->peer == event.peer) { connectInfo.erase(it); break; }
+                    }
+                    break;
+                }
+                }
+            }
+
+            // 接続情報が全てなくなったらループ終了
+            if (connectInfo.empty()) { break; }
+        }
+    }
+
     // リセット
     DisconnectionComplete();
 
@@ -62,6 +95,17 @@ void NetWorkManager::NoneUpdate(void) {}
 // ホストとして待機中
 void NetWorkManager::HostingUpdate(void)
 {
+    if (hostAddressProvider != nullptr) {
+        hostAddressProvider->Update();
+
+        if (hostAddressProvider->IsError()) {
+            hostAddressProvider->End();
+
+            delete hostAddressProvider;
+            hostAddressProvider = nullptr;
+        }
+    }
+
 	// イベント受信用の一時変数
     ENetEvent event;
 
@@ -94,15 +138,17 @@ void NetWorkManager::HostingUpdate(void)
                     disConnectInfo->header.senderId = it->senderId;
                     msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)it->senderId].emplace_back(disConnectInfo);
 
-                    // 接続状況を更新（末尾を消す）
-                    connectStatus.RemoveMember();
-                    // 新しい接続状況を送る
-                    Send(MsgDataConnectStatus(connectStatus));
-
-					// 接続情報を消去
+                    // 接続情報を消去
                     connectInfo.erase(it);
+
 					// 新しい接続情報をもとにクライアントの送信IDを割り当てなおす
                     ReassignSenderId();
+
+                    // 接続状況を更新（末尾を消す）
+                    connectStatus.RemoveMember();
+
+                    // 新しい接続状況を送る
+                    Send(MsgDataConnectStatus(connectStatus));
 
                     break;
                 }
@@ -117,37 +163,80 @@ void NetWorkManager::HostingUpdate(void)
 // クライアントとして接続中
 void NetWorkManager::ConnectingUpdate(void)
 {
-    if (hostAddressProvider) {
-        // ホストのIPアドレスを取得する
-        std::string hostAddress;
-        if (!hostAddressProvider->GetHostAddress(hostAddress)) { return; }
+    // 接続先探索中
+    if (hostAddressProvider != nullptr) {
+        // Provider更新
+        hostAddressProvider->Update();
 
-		// ホストアドレス取得クラスの削除
+        // エラー
+        if (hostAddressProvider->IsError()) {
+            hostAddressProvider->End();
+
+            delete hostAddressProvider;
+            hostAddressProvider = nullptr;
+
+            state = NetState::Error;
+
+            return;
+        }
+
+        // 最終接続先取得
+        NetEndpoint endpoint;
+        CONNECTION_ROUTE route;
+
+        // まだ検索中
+        if (!hostAddressProvider->GetConnectEndpoint(endpoint, route)) { return; }
+
+        //------------------------------------------------------
+        // Provider終了
+        //------------------------------------------------------
+
         hostAddressProvider->End();
         delete hostAddressProvider;
         hostAddressProvider = nullptr;
 
-		// 接続要求を送る
-        ENetAddress address;
-        enet_address_set_host(&address, hostAddress.c_str());
-        address.port = PORT_NUMBER;
-        connectInfo.emplace_back(enet_host_connect(host, &address, (size_t)MSG_DATA_CHANNEL::Max, 0), HOST_SENDER_ID);
+        // ENet接続先作成
+        ENetAddress address{};
+        if (enet_address_set_host(&address, endpoint.ip.c_str()) != 0) {
+            state = NetState::Error;
+            return;
+        }
+
+        address.port = endpoint.port;
+
+        // 接続要求
+        ENetPeer* peer = enet_host_connect(host, &address, (size_t)MSG_DATA_CHANNEL::Max, 0);
+
+        if (peer == nullptr) { state = NetState::Error; return; }
     }
 
-    // イベント受信用の一時変数
-    ENetEvent event;
-    // イベントがある限りループして処理する
+    // ENetイベント処理
+
+    ENetEvent event{};
     while (enet_host_service(host, &event, 0) > 0) {
+
+        // 接続成功
         if (event.type == ENET_EVENT_TYPE_CONNECT) {
+
+            // 状態を更新
             state = NetState::Connected;
-            // 新規接続としてキューに情報を保持する
+
+            // 接続先を保存
+            connectInfo.emplace_back(event.peer, HOST_SENDER_ID);
+
+            // 新規接続確立を情報として保存
             MsgDataConnectInform* connectInform = new MsgDataConnectInform(MsgDataConnectInform::INFORM_TYPE::Connect);
             connectInform->header.senderId = HOST_SENDER_ID;
             msgData[(int)MsgDataConnectInform::DATA_TYPE][(int)HOST_SENDER_ID].emplace_back(connectInform);
-            break;
+
+            continue;
         }
-        if (event.type == ENET_EVENT_TYPE_DISCONNECT) { DisconnectionComplete(); break; }
-        MsgDataRecv(event);
+
+        // 切断
+        if (event.type == ENET_EVENT_TYPE_DISCONNECT) { DisconnectionComplete(); continue; }
+
+        // データ受信
+        if (event.type == ENET_EVENT_TYPE_RECEIVE) { MsgDataRecv(event); continue; }
     }
 }
 

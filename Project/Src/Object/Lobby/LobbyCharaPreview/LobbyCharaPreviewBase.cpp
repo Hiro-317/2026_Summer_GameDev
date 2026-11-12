@@ -11,7 +11,8 @@ LobbyCharaPreviewBase::LobbyCharaPreviewBase(const Vector3& pos, unsigned char o
 	playAnimeType(0),
 
 	OPERATOR_IMAGE_PATH("Data/Image/Lobby/P" + std::to_string(operatorNumber) + ".png"),
-	operatorImage(-1)
+	operatorImage(-1),
+	operatorImagePos(600.0f)
 {
 	trans.pos = pos;
 }
@@ -24,7 +25,9 @@ void LobbyCharaPreviewBase::AnimationControllerCreate(void)
 
 void LobbyCharaPreviewBase::Load(void)
 {
-	operatorImage = LoadGraph(OPERATOR_IMAGE_PATH.c_str());
+	if (Net::GetIns().GetState() != Net::NetState::None) {
+		operatorImage = LoadGraph(OPERATOR_IMAGE_PATH.c_str());
+	}
 
 	CharacterLoad();
 }
@@ -50,7 +53,14 @@ void LobbyCharaPreviewBase::Update(void)
 
 void LobbyCharaPreviewBase::SubDraw(void)
 {
-	DrawBillboard3D((trans.pos + Vector3::Yonly(600.0f)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+	if (operatorImage != -1) {
+		DrawBillboard3D((trans.pos + Vector3::Yonly(operatorImagePos)).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, operatorImage, true);
+	}
+}
+
+void LobbyCharaPreviewBase::OwnOperatorDraw(int image)
+{
+	DrawBillboard3D((trans.pos + ownOperatorImagePos[(int)Net::GetIns().GetSenderId()]).ToVECTOR(), 0.5f, 0.5f, 200.0f, 0.0f, image, true);
 }
 
 void LobbyCharaPreviewBase::SubRelease(void)
@@ -61,22 +71,23 @@ void LobbyCharaPreviewBase::SubRelease(void)
 		delete anime;
 		anime = nullptr;
 	}
-
-	DeleteGraph(operatorImage);
+	if (operatorImage != -1) {
+		DeleteGraph(operatorImage);
+	}
 }
 
-void LobbyCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, int playAnimeType)
+void LobbyCharaPreviewBase::AddInFbxAnimation(int inFbxMaxIndex, float speed, bool loop, int playAnimeType)
 {
 	AnimationControllerCreate();
 	for (int index = 0; index < inFbxMaxIndex; index++) {
-		anime->AddInFbx(index, speed, index);
+		anime->AddInFbx(index, speed, loop, index);
 	}
 	this->playAnimeType = playAnimeType;
 }
 
-void LobbyCharaPreviewBase::AddAnimation(const char* filePath, float speed, int index)
+void LobbyCharaPreviewBase::AddAnimation(int index, float speed, bool loop, const char* filePath)
 {
 	AnimationControllerCreate();
-	anime->Add(index, speed, filePath);
+	anime->Add(index, speed, loop, filePath);
 	playAnimeType = index;
 }

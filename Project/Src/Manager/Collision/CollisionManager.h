@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "ChunkStDefine.h"
 
 #include "../../Object/Common/Collider/ColliderBase.h"
@@ -8,7 +10,7 @@ class LineCollider;
 class SphereCollider;
 class CapsuleCollider;
 class BoxCollider;
-class ModelCollider;
+class MeshCollider;
 class XZCircleCollider;
 
 class CollisionManager
@@ -71,27 +73,28 @@ private:
 	const std::map<COLLIDER_TAG, COLLIDER_GROUP>TAG_TO_GROUP_LIST = {
 
 		// プレイヤー系
-		{ COLLIDER_TAG::PLAYER,			COLLIDER_GROUP::Player },
-		{ COLLIDER_TAG::PLAYER_ATTACK,	COLLIDER_GROUP::Player },
-		{ COLLIDER_TAG::PLAYER_COMMON,	COLLIDER_GROUP::Player },
+		{ COLLIDER_TAG::Player,			COLLIDER_GROUP::Player },
+		{ COLLIDER_TAG::PlayerAttack,	COLLIDER_GROUP::Player },
+		{ COLLIDER_TAG::PlayerCommon,	COLLIDER_GROUP::Player },
 
 		// エネミー系
-		{ COLLIDER_TAG::BOSS,	COLLIDER_GROUP::Enemy },
-		{ COLLIDER_TAG::ENEMY,	COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::Boss,		COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::BossCommon,	COLLIDER_GROUP::Enemy },
+		{ COLLIDER_TAG::Enemy,		COLLIDER_GROUP::Enemy },
 
 		// ステージ系
-		{ COLLIDER_TAG::STAGE,	COLLIDER_GROUP::Stage },
+		{ COLLIDER_TAG::Stage,	COLLIDER_GROUP::Stage },
 
 		// プレイヤー系にだけ当たるコライダー
-		{ COLLIDER_TAG::BOSS_DISTANCE,	COLLIDER_GROUP::PlayerOnly },
-		{ COLLIDER_TAG::BOSS_ATTACK,			COLLIDER_GROUP::PlayerOnly },
-		{ COLLIDER_TAG::PLAYER_HEAL,			COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::BossDistance,	COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::PlayerHeal,		COLLIDER_GROUP::PlayerOnly },
+		{ COLLIDER_TAG::BossAttack,	COLLIDER_GROUP::PlayerOnly },
 
 		// エネミー系にだけ当たるコライダー
 
 
 		// ステージ系にだけ当たるコライダー
-		{ COLLIDER_TAG::BOSS_ATTACK_AREA,	COLLIDER_GROUP::StageOnly },
+		{ COLLIDER_TAG::BossAttackArea,	COLLIDER_GROUP::StageOnly },
 	};
 
 
@@ -113,7 +116,7 @@ public:
 	void Check(void);
 
 	// チャンク描画
-	void DrawChunkGrid(void) const;
+	void DrawChunkGrid(const Vector3& cameraPos) const;
 
 	// 解放
 	void Clear(void) {
@@ -131,6 +134,11 @@ private:
 
 	// 重複判定防止の判定記録
 	std::unordered_set<ColliderPairKey, ColliderPairKeyHash> checkedPairs;
+
+	// MeshCollider内部BVH検索用の作業バッファ
+	// clearのみで再利用し、判定ごとのメモリ確保を抑える
+	std::vector<unsigned int> meshQueryBufferA;
+	std::vector<unsigned int> meshQueryBufferB;
 
 
 #pragma region 判定の振り分け
@@ -152,7 +160,7 @@ private:
 	void CheckPairOnce(ColliderBase* a, ColliderBase* b);
 
 	// 形状の振り分け
-	bool IsHit(ColliderBase* a, ColliderBase* b, Vector3& collisionPoint);
+	bool IsHit(ColliderBase* a, ColliderBase* b, CollisionResult& result);
 
 #pragma endregion
 
@@ -161,22 +169,22 @@ private:
 	// 同形状同士～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 	// 線分×線分
-	bool LineToLine(LineCollider* a, LineCollider* b, Vector3& collisionPoint);
+	bool LineToLine(LineCollider* a, LineCollider* b, CollisionResult& result);
 
 	// 球体×球体
-	bool SphereToSphere(SphereCollider* a, SphereCollider* b, Vector3& collisionPoint);
+	bool SphereToSphere(SphereCollider* a, SphereCollider* b, CollisionResult& result);
 
 	// カプセル×カプセル
-	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, Vector3& collisionPoint);
+	bool CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, CollisionResult& result);
 
 	// ボックス×ボックス
-	bool BoxToBox(BoxCollider* a, BoxCollider* b, Vector3& collisionPoint);
+	bool BoxToBox(BoxCollider* a, BoxCollider* b, CollisionResult& result);
 
-	// モデル×モデル
-	bool ModelToModel(ModelCollider* a, ModelCollider* b, Vector3& collisionPoint);
+	// メッシュ×メッシュ
+	bool MeshToMesh(MeshCollider* a, MeshCollider* b, CollisionResult& result);
 
 	// XZ平面上の円形×XZ平面上の円形
-	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, Vector3& collisionPoint);
+	bool XZCircleToXZCircle(XZCircleCollider* a, XZCircleCollider* b, CollisionResult& result);
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～同形状同士
 
@@ -184,40 +192,40 @@ private:
 	// 別形状同士～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 	// 線分×球体
-	bool LineToSphere(LineCollider* line, SphereCollider* sphere, Vector3& collisionPoint);
+	bool LineToSphere(LineCollider* line, SphereCollider* sphere, CollisionResult& result);
 
 	// 線分×カプセル
-	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule, Vector3& collisionPoint);
+	bool LineToCapsule(LineCollider* line, CapsuleCollider* capsule, CollisionResult& result);
 
 	// 線分×ボックス
-	bool LineToBox(LineCollider* line, BoxCollider* box, Vector3& collisionPoint);
+	bool LineToBox(LineCollider* line, BoxCollider* box, CollisionResult& result);
 
-	// 線分×モデル
-	bool LineToModel(LineCollider* line, ModelCollider* model, Vector3& collisionPoint);
+	// 線分×メッシュ
+	bool LineToMesh(LineCollider* line, MeshCollider* mesh, CollisionResult& result);
 
 	// 球体×カプセル
-	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, Vector3& collisionPoint);
+	bool SphereToCapsule(SphereCollider* sphere, CapsuleCollider* capsule, CollisionResult& result);
 
 	// 球体×ボックス
-	bool SphereToBox(SphereCollider* sphere, BoxCollider* box, Vector3& collisionPoint);
+	bool SphereToBox(SphereCollider* sphere, BoxCollider* box, CollisionResult& result);
 
-	// 球体×モデル
-	bool SphereToModel(SphereCollider* sphere, ModelCollider* model, Vector3& collisionPoint);
+	// 球体×メッシュ
+	bool SphereToMesh(SphereCollider* sphere, MeshCollider* mesh, CollisionResult& result);
 
 	// 球体×XZ平面上の円形
-	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, Vector3& collisionPoint);
+	bool SphereToXZCircle(SphereCollider* sphere, XZCircleCollider* xzcircle, CollisionResult& result);
 
 	// カプセル×ボックス
-	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, Vector3& collisionPoint);
+	bool CapsuleToBox(CapsuleCollider* capsule, BoxCollider* box, CollisionResult& result);
 
-	// カプセル×モデル
-	bool CapsuleToModel(CapsuleCollider* capsule, ModelCollider* model, Vector3& collisionPoint);
+	// カプセル×メッシュ
+	bool CapsuleToMesh(CapsuleCollider* capsule, MeshCollider* mesh, CollisionResult& result);
 
 	// カプセル×XZ平面上の円形
-	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, Vector3& collisionPoint);
+	bool CapsuleToXZCircle(CapsuleCollider* capsule, XZCircleCollider* xzcircle, CollisionResult& result);
 
-	// ボックス×モデル
-	bool BoxToModel(BoxCollider* box, ModelCollider* model, Vector3& collisionPoint);
+	// ボックス×メッシュ
+	bool BoxToMesh(BoxCollider* box, MeshCollider* mesh, CollisionResult& result);
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～別形状同士
 
@@ -271,10 +279,7 @@ private:
 	/// <param name="a">コライダー１</param>
 	/// <param name="b">コライダー２</param>
 	/// <returns></returns>
-	bool NeedPush(ColliderBase* a, ColliderBase* b)const {
-		if (a->GetPushFlg() && b->GetPushFlg()) { return true; }
-		return false;
-	}
+	bool NeedPush(ColliderBase* a, ColliderBase* b)const;
 
 	/// <summary>
 	/// 重みづけの割合を計算
@@ -300,96 +305,22 @@ private:
 	}
 
 	/// <summary>
-	/// 押し出し処理
+	/// 2つのコライダーを重みに合わせて押し出す
 	/// </summary>
-	/// <param name="a">コライダー１</param>
-	/// <param name="b">コライダー２</param>
-	/// <param name="normal">押し出し方向</param>
-	/// <param name="overlap">めり込んだ量</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const {
-		// 動的フラグ
-		bool aDynamic = a->GetDynamicFlg();
-		bool bDynamic = b->GetDynamicFlg();
-
-		// 両方動的オブジェクトの場合
-		if (aDynamic && bDynamic)
-		{
-			float aRatio = 0.0f, bRatio = 0.0f;
-			WeightRatioCalculation(a->GetPushWeight(), b->GetPushWeight(), aRatio, bRatio);
-
-			a->SetTransformPos(a->GetTransform().pos + normal * (overlap * aRatio));
-			b->SetTransformPos(b->GetTransform().pos - normal * (overlap * bRatio));
-
-			if (normal.y > 0.5f) { a->CallOnGrounded(); }
-			else if (normal.y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// aだけ動的の場合
-		else if (aDynamic && !bDynamic)
-		{
-			a->SetTransformPos(a->GetTransform().pos + normal * overlap);
-			if (normal.y > 0.5f) { a->CallOnGrounded(); }
-		}
-		// bだけ動的の場合
-		else if (!aDynamic && bDynamic)
-		{
-			b->SetTransformPos(b->GetTransform().pos - normal * overlap);
-			if (normal.y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// 両方静的オブジェクトの場合
-		else { /*何もしない*/ }
-	}
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const;
 
 	/// <summary>
-	/// 押し出し処理
+	/// 2つのコライダーを押し出しベクトルに合わせて押し出す
 	/// </summary>
-	/// <param name="a">コライダー１</param>
-	/// <param name="b">コライダー２</param>
-	/// <param name="overlapVec">押し出しベクトル</param>
-	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const {
-		// 動的フラグ
-		bool aDynamic = a->GetDynamicFlg();
-		bool bDynamic = b->GetDynamicFlg();
-
-		// 両方動的オブジェクトの場合
-		if (aDynamic && bDynamic)
-		{
-			float aRatio = 0.0f, bRatio = 0.0f;
-			WeightRatioCalculation(a->GetPushWeight(), b->GetPushWeight(), aRatio, bRatio);
-
-			a->SetTransformPos(a->GetTransform().pos + overlapVec * aRatio);
-			b->SetTransformPos(b->GetTransform().pos - overlapVec * bRatio);
-
-			Vector3 normalOverlapVec = overlapVec.Normalized();
-
-			if (normalOverlapVec.y > 0.5f) { a->CallOnGrounded(); }
-			else if (normalOverlapVec.y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// aだけ動的の場合
-		else if (aDynamic && !bDynamic)
-		{
-			a->SetTransformPos(a->GetTransform().pos + overlapVec);
-			if (overlapVec.Normalized().y > 0.5f) { a->CallOnGrounded(); }
-		}
-		// bだけ動的の場合
-		else if (!aDynamic && bDynamic)
-		{
-			b->SetTransformPos(b->GetTransform().pos - overlapVec);
-			if (overlapVec.Normalized().y < -0.5f) { b->CallOnGrounded(); }
-		}
-		// 両方静的オブジェクトの場合
-		else { /*何もしない*/ }
-	}
+	void ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& overlapVec)const;
 
 	/// <summary>
-	/// 押し出し処理
+	/// 指定した片方のコライダーだけを押し出す
 	/// </summary>
-	/// <param name="a">無条件に押し出される方</param>
-	/// <param name="b">無条件に動かさず押し出す方</param>
-	/// <param name="overlapVec">押し出しベクトル</param>
-	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const {
-		dynamicColl->SetTransformPos(dynamicColl->GetTransform().pos + overlapVec);
-		if (overlapVec.Normalized().y > 0.5f) { dynamicColl->CallOnGrounded(); }
-	}
+	void ApplyPushOneSide(ColliderBase* dynamicColl, ColliderBase* staticColl, const Vector3& overlapVec)const;
+
+	// 押し出しベクトルをコライダーへ適用し、接地判定も行う
+	void MoveCollider(ColliderBase* ownCollider, const Vector3& pushVector, const ColliderBase& otherCollider)const;
 #pragma endregion
 
 };

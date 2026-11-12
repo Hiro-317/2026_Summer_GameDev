@@ -1,11 +1,14 @@
 #include "OptionScene.h"
 
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../../pch.h"
+
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 
-#include "../../SceneManager/SceneManager.h"
+#include "../../../Scene/SceneManager.h"
 
 OptionScene::OptionScene() :
+	SceneBase(),
 
 	nowSelect(SELECT::None),
 
@@ -26,7 +29,7 @@ OptionScene::OptionScene() :
 {
 }
 
-void OptionScene::Load(void)
+void OptionScene::SubPostLoad(void)
 {
 #pragma region Še‰æ‘œ‚Ì“Ç‚İ‚İ
 
@@ -62,20 +65,20 @@ void OptionScene::Load(void)
 
 }
 
-void OptionScene::Init(void)
+void OptionScene::SubPostInit(void)
 {
 	// Œ»İ‚Ì‘I‘ğó‘Ô‚ğ‰Šú‰»
 	nowSelect = (SELECT)((int)SELECT::None + 1);
 }
 
-void OptionScene::Update(void)
+void OptionScene::SubPostUpdate(void)
 {
 	isPushMinusButton = false;
 	isPushPlusButton = false;
 
 #pragma region ‘€ì
 	// ƒQ[ƒ€I—¹ˆ—```````````````````````````````````
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// Œø‰Ê‰¹
 		Snd::GetIns().Play("SystemSelect");
@@ -89,7 +92,7 @@ void OptionScene::Update(void)
 	// ```````````````````````````````````ƒQ[ƒ€I—¹ˆ—
 
 	// ‘€ì‚É‚æ‚Á‘I‘ğˆ‚ğ•Ï‚¦‚é``````````````````````````````
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 
 		// 1‚Â‘O‚Ìƒ^ƒCƒv‚Ö
 		nowSelect = (SELECT)((int)nowSelect - 1);
@@ -97,7 +100,7 @@ void OptionScene::Update(void)
 		// ”ÍˆÍŠO‚¾‚Á‚½‚ç‹t‚Ì’[‚Ö
 		if (nowSelect <= SELECT::None) { nowSelect = (SELECT)((int)SELECT::Max - 1); }
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 
 		// 1‚ÂŸ‚Ìƒ^ƒCƒv‚Ö
 		nowSelect = (SELECT)((int)nowSelect + 1);
@@ -112,31 +115,31 @@ void OptionScene::Update(void)
 
 	case OptionScene::SELECT::MasterVolume: {
 		// ƒ}ƒXƒ^[ƒ{ƒŠƒ…[ƒ€Œ¸Z
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).now) { Snd::GetIns().AddMasterVolume(-2); isPushMinusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).now) { Snd::GetIns().AddMasterVolume(-2); isPushMinusButton = true; }
 		// ƒ}ƒXƒ^[ƒ{ƒŠƒ…[ƒ€‰ÁZ
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).now) { Snd::GetIns().AddMasterVolume(2); isPushPlusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).now) { Snd::GetIns().AddMasterVolume(2); isPushPlusButton = true; }
 		break;
 	}
 
 	case OptionScene::SELECT::BgmVolume: {
 		// BGMƒ{ƒŠƒ…[ƒ€Œ¸Z
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).now) { Snd::GetIns().AddBgmVolume(-0.01f); isPushMinusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).now) { Snd::GetIns().AddBgmVolume(-0.01f); isPushMinusButton = true; }
 		// BGMƒ{ƒŠƒ…[ƒ€‰ÁZ
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).now) { Snd::GetIns().AddBgmVolume(0.01f); isPushPlusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).now) { Snd::GetIns().AddBgmVolume(0.01f); isPushPlusButton = true; }
 		break;
 	}
 
 	case OptionScene::SELECT::SeVolume: {
 		// SEƒ{ƒŠƒ…[ƒ€Œ¸Z
-		if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).now) { Snd::GetIns().AddSeVolume(-0.01f); isPushMinusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Left).now) { Snd::GetIns().AddSeVolume(-0.01f); isPushMinusButton = true; }
 		// SEƒ{ƒŠƒ…[ƒ€‰ÁZ
-		if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).now) { Snd::GetIns().AddSeVolume(0.01f); isPushPlusButton = true; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::Right).now) { Snd::GetIns().AddSeVolume(0.01f); isPushPlusButton = true; }
 		break;
 	}
 
 	case OptionScene::SELECT::Exit: {
 		// I—¹
-		if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 			// Œø‰Ê‰¹
 			Snd::GetIns().Play("SystemSelect");
 
@@ -160,7 +163,7 @@ void OptionScene::Update(void)
 
 }
 
-void OptionScene::Draw(void)
+void OptionScene::SubPreDraw(void)
 {
 	// ‰æ‘œ•`‰æ‚Ìƒ‰ƒ€ƒ_ŠÖ”
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f)->void {
@@ -226,7 +229,7 @@ void OptionScene::Draw(void)
 
 }
 
-void OptionScene::Release(void)
+void OptionScene::SubPreRelease(void)
 {
 #pragma region Še‰æ‘œ‚Ì‰ğ•ú
 

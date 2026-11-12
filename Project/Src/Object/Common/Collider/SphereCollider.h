@@ -5,11 +5,11 @@
 class SphereCollider : public ColliderBase
 {
 public:
-	SphereCollider(COLLIDER_TAG type, float radius, const Vector3& pos = Vector3(), const Vector3& angle = Vector3()) :
-		ColliderBase(type, pos, angle),
+	SphereCollider(COLLIDER_TAG tag, float radius, const Vector3& pos = Vector3()) :
+		ColliderBase(tag, pos),
 		radius(radius)
 	{
-		SetShape(SHAPE::SPHERE);
+		SetShape(COLLIDER_SHAPE::Sphere);
 	}
 	~SphereCollider()override {}
 

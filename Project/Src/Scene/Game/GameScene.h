@@ -1,77 +1,56 @@
 #pragma once
+
 #include"../SceneBase.h"
 
-#include"../../Common/Vector2.h"
-
-#include"../../Manager/Collision/CollisionManager.h"
-
-#include<vector>
-
-#include"../../Object/ActorBase.h"
+class BossBase;
+class PlayerManager;
 
 class GameScene : public SceneBase
 {
 public:
 	GameScene();
-	~GameScene()override;
+	~GameScene()override = default;
 
-	// 読み込み
-	void Load(void)override;
-	// 初期化処理
-	void Init(void)override;
-	// 更新ステップ
-	void Update(void)override;
-	// 描画処理
-	void Draw(void)override;
-	// 解放処理
-	void Release(void)override;
-
-
-	// ヒットストップ演出
-	static void HitStop(int time = 20) { hitStop = time; }
-
-	// スロー演出
-	static void Slow(int time = 10, int inter = 5) { slow = time; slowInter = inter; }
-
-	// 画面揺れの種類
-	enum ShakeKinds { WID/*横揺れ*/, HIG/*縦揺れ*/, DIAG/*斜め揺れ*/, ROUND/*くるくる*/ };
-	// 画面揺れの大きさ
-	enum ShakeSize { SMALL = 3/*小さく*/, MEDIUM = 5/*中くらい*/, BIG = 8, /*大きく*/ };
-
-	/// <summary>
-	/// 画面揺らし
-	/// </summary>
-	/// <param name="kinds">揺れ方(enum ShakeKinds を使用)</param>
-	/// <param name="size">揺れる大きさ(enum ShakeSize を使用)</param>
-	/// <param name="time">揺れる時間(フレーム数)</param>
-	static void Shake(ShakeKinds kinds = ShakeKinds::DIAG, ShakeSize size = ShakeSize::MEDIUM, int time = 20);
+	bool GetFocus(void) { return focusFlg; }
+	void SetFocus(void) { focusFlg = !focusFlg; Focus(); }
+	void SetFocus(bool flg) { focusFlg = flg; Focus(); }
+	void FocusLock(void) { focus = !focus; }
+	void FocusLock(bool flg) { focus = flg; }
 
 private:
 
-	// 当たり判定管理クラス
-	CollisionManager* collision;
+	// 読み込み
+	void SubPostLoad(void)override;
+	// 初期化（メイン処理の後）
+	void SubPostInit(void)override;
+	// 更新（前）
+	void SubPreUpdate(void)override;
+	// 更新（後）
+	void SubPostUpdate(void)override;
+
+	void SubUiDraw(void)override;
+
+	void SubPostRelease(void)override;
+
+	// スカイボックスを使用するかどうか
+	bool UseSkyBox(void)const override { return true; }
+
+	void CreateCamera(void)override;
+
+	BossBase* bossInsRef;
+	PlayerManager* playerInsRef;
 
 	// カメラ状態変更フラグ
 	bool focusFlg;
+	bool focus;
 
-#pragma region 画面演出用
-	// ヒットストップカウンター
-	static int hitStop;
+	// 1フレームの秒数
+	const float FRAME_TIME = 1.0f / 60.0f;
+	// 時間計測
+	float time;
 
-	// スローカウンター
-	static int slow;
-	static int slowInter;
+	// マルチで時間をどのくらいの間隔で同期するか（秒数）
+	const char MULTI_TIME_SEND_COUNT = 5;
 
-	// 画面揺れ------------------------
-	int mainScreen;
-	static int shake;
-	static ShakeKinds shakeKinds;
-	static ShakeSize shakeSize;
-	Vector2I ShakePoint(void);
-	//---------------------------------
-#pragma endregion
+	void Focus(void);
 };
-
-
-using ShakeKinds = GameScene::ShakeKinds;
-using ShakeSize = GameScene::ShakeSize;

@@ -5,17 +5,17 @@
 #include "../../Application/Application.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
-#include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/Camera.h"
+#include "../../Manager/Input/InputManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 
-#include "../SceneManager/SceneManager.h"
+#include "../../Scene/SceneManager.h"
 
 #include "../Common/Option/OptionScene.h"
 #include "End/EndScene.h"
 
 TitleScene::TitleScene():
+	SceneBase(),
 
 	nowSelect(SELECT::None),
 
@@ -53,12 +53,10 @@ TitleScene::TitleScene():
 {
 }
 
-void TitleScene::Load(void)
+void TitleScene::SubPostLoad(void)
 {
 	// 音声のシーン切り替え
 	Snd::GetIns().ChangeScene("Title");
-
-	Key::GetIns().SetMouseFixed(false);
 
 #pragma region 画像の読み込み
 
@@ -93,11 +91,8 @@ void TitleScene::Load(void)
 #pragma endregion
 }
 
-void TitleScene::Init(void)
+void TitleScene::SubPostInit(void)
 {
-	// カメラの初期化
-	Camera::GetIns().ChangeModeFixedPoint(Vector3(), Vector3());
-
 	Net::GetIns().Disconnection();
 
 	// 現在選択中の選択肢を初期化
@@ -114,12 +109,12 @@ void TitleScene::Init(void)
 	// 演出更新
 	EasingUpdate();
 }
-void TitleScene::Update(void)
+void TitleScene::SubPostUpdate(void)
 {
 #pragma region 操作/進行
 
 	// ゲーム終了処理
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// 再生中の音声を一時停止
 		Snd::GetIns().Pause();
@@ -127,14 +122,13 @@ void TitleScene::Update(void)
  		Snd::GetIns().Play("SystemSelect");
 
 		// ゲーム終了用のイベントシーンを挿入
-		SceneManager::GetIns().PushScene(std::make_shared<EndScene>());
+		SceneManager::GetIns().PushScene(std::make_unique<EndScene>());
 
-		// 以降はthisがnullptrとなっているため終了
 		return;
 	}
 
 	// 操作によって選択肢を変える
-	if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 		// 1つ前のタイプへ
 		nowSelect = (SELECT)((int)nowSelect - 1);
 		// 範囲外だったら逆の端へ
@@ -143,7 +137,7 @@ void TitleScene::Update(void)
 		// 演出を初期化
 		selectEasingCounter = 0.0f;
 	}
-	if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 		// 1つ次のタイプへ
 		nowSelect = (SELECT)((int)nowSelect + 1);
 		// 範囲外だったら逆の端へ
@@ -154,7 +148,7 @@ void TitleScene::Update(void)
 	}
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 現在の選択状態に応じて分岐
 		switch (nowSelect) {
@@ -166,10 +160,9 @@ void TitleScene::Update(void)
 			Snd::GetIns().Play("SystemSelect");
 
 			// ロビー画面へ
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 
-			// 以降はthisがnullptrとなっているため終了
-			return;
+			break;
 		}
 
 		case TitleScene::SELECT::Option: {
@@ -179,7 +172,7 @@ void TitleScene::Update(void)
 			Snd::GetIns().Play("SystemSelect");
 
 			// 専用のシーンを追加
-			SceneManager::GetIns().PushScene(std::make_shared<OptionScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<OptionScene>());
 
 			break;
 		}
@@ -193,7 +186,7 @@ void TitleScene::Update(void)
 			Snd::GetIns().Play("SystemSelect");
 
 			// 専用のシーンを追加
-			SceneManager::GetIns().PushScene(std::make_shared<EndScene>());
+			SceneManager::GetIns().PushScene(std::make_unique<EndScene>());
 
 			break;
 		}
@@ -207,7 +200,7 @@ void TitleScene::Update(void)
 	EasingUpdate();
 }
 
-void TitleScene::Draw(void)
+void TitleScene::SubPostDraw(void)
 {
 	// 画像描画のラムダ関数
 	auto drawImage = [](int handle, const Vector2I& pos, float rate = 1.0f, float angle = 0.0f, bool reverse = false)->void {
@@ -247,7 +240,7 @@ void TitleScene::Draw(void)
 	drawImage(frameImage, FRAME_POS);
 #pragma endregion
 }
-void TitleScene::Release(void)
+void TitleScene::SubPreRelease(void)
 {
 #pragma region 各画像の解放
 

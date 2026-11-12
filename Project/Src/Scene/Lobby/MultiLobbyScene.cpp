@@ -1,44 +1,48 @@
 #include "MultiLobbyScene.h"
 
-#include "../../Manager/Input/KeyManager.h"
-#include "../../Manager/Camera/Camera.h"
+#include "../../pch.h"
+
+#include "../../Utility/Utility.h"
+
+#include "../../Manager/Input/InputManager.h"
+#include "../../Manager/Camera/FixedPoint/FixedPointCamera.h"
+#include "../../Manager/Camera/CameraEvent/StartCameraEvent/StartCameraEvent.h"
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Sound/SoundManager.h"
 
-#include "../../Scene/SceneManager/SceneManager.h"
+#include "../../Scene/../Scene/SceneManager.h"
 
-#include "BossSelect/BossSelectScene.h"
-#include "CharaSelect/CharaSelectScene.h"
+#include "../ActorUseDefine.h"
 
-#include "../../Object/SkyDome/SkyDome.h"
+#include "CharaSelect/LobbyCharaSelectScene.h"
+
 #include "../../Object/Lobby/LobbyStage/LobbyStage.h"
 #include "../../Object/Lobby/LobbyCharaPreview/LobbyCharaPreviewManager.h"
-#include "../../Object/Lobby/LobbyBossPreview/LobbyBossPreview.h"
 
 MultiLobbyScene::MultiLobbyScene() : 
 	SceneBase(),
-	IS_HOST(Net::GetIns().IsHost())
+	IS_HOST(Net::GetIns().IsHost()),
+
+	choice(),
+
+	buttonSelectionState(),
+
+	boardImage(-1),
+
+	choiceButtonImage(),
+
+	arrowImage(-1),
+
+	enterKeyImage()
 {
 }
 
-void MultiLobbyScene::Load(void)
+void MultiLobbyScene::SubPostLoad(void)
 {
-	// 初期化も含めたオブジェクト生成のラムダ関数
-	auto ObjAdd = [&](ActorBase* newClass)->void {
-		// 配列の末尾に追加
-		objects.emplace_back(newClass);
-		// 共通の読み込み処理
-		objects.back()->Load();
-		};
-
-	// オブジェクト生成（生成の順番がそのまま(更新/描画)順）
-	//<例>ObjAdd(new Player());
-
-	ObjAdd(new SkyDome());
-	ObjAdd(new LobbyStage());
-	ObjAdd(new LobbyCharaPreviewManager());
-	ObjAdd(new LobbyBossPreview());
+	// オブジェクト生成
+	AddActor(new LobbyStage());
+	AddActor(new LobbyCharaPreviewManager());
 
 	// ホストは自分以外の全員、クライアントは自分のみの準備完了状態を管理する
 	readyList.resize((int)MSG_SENDER_ID::Max, (unsigned char)false);
@@ -70,12 +74,9 @@ void MultiLobbyScene::Load(void)
 #pragma endregion
 }
 
-void MultiLobbyScene::Init(void)
+void MultiLobbyScene::SubPostInit(void)
 {
 	SetFogEnable(false);
-
-	// オブジェクト全ての初期化処理
-	for (ActorBase* obj : objects) { obj->Init(); }
 
 	// クライアントの準備完了状態を初期化
 	for (unsigned char& ready : readyList) { ready = (unsigned char)false; }
@@ -87,28 +88,22 @@ void MultiLobbyScene::Init(void)
 	// ボタンごとの選択状態を初期化
 	ButtonSelectionStateReload();
 
-	// カメラの設定
-	Camera::GetIns().ChangeModeDisplay(Vector3::Yonly(150.0f), Vector3::YZonly(500.0f, -2000.0f), 0.0f);
-
 	// 自信のキャラクタータイプを初期化する
-	SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
+	if (SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId()) == CHARA_TYPE::None) {
+		SceneManager::GetIns().SetSelectCharaType(Net::GetIns().GetSenderId(), (CHARA_TYPE)((int)CHARA_TYPE::None + 1));
+	}
 
 	// キャラ変更情報を送信
 	Net::GetIns().Send(MsgDataCharaSelect((int)SceneManager::GetIns().GetSelectCharaType(Net::GetIns().GetSenderId())));
 
 	// キャラプレビューの初期化
-	ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId());
+	ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(Net::GetIns().GetSenderId());
 }
 
-void MultiLobbyScene::Update(void)
+void MultiLobbyScene::SubPostUpdate(void)
 {
-	// オブジェクト全ての更新処理
-	for (ActorBase* obj : objects) { obj->Update(); }
-
-#pragma region 操作
-
 	// タイトル画面に戻る
-	if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemButton");
@@ -117,12 +112,12 @@ void MultiLobbyScene::Update(void)
 		Net::GetIns().Disconnection();
 
 		// ロビー画面に戻る
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 		return;
 	}
 
 	// 左
-	if (Key::GetIns().GetInfo(KEY_TYPE::LEFT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Left).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -136,7 +131,7 @@ void MultiLobbyScene::Update(void)
 		ButtonSelectionStateReload();
 	}
 	// 右
-	if (Key::GetIns().GetInfo(KEY_TYPE::RIGHT).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Right).down) {
 
 		// 効果音
 		Snd::GetIns().Play("SystemSelect");
@@ -151,7 +146,7 @@ void MultiLobbyScene::Update(void)
 	}
 
 	// 決定
-	if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
 		// 効果音
 		if (choice > CHOICE::None && choice < CHOICE::Max &&
@@ -175,26 +170,9 @@ void MultiLobbyScene::Update(void)
 			Net::GetIns().Disconnection();
 
 			// 通常のロビー画面に戻る
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
 
 			// 以降はthisがnullptrとなっているため終了
-			return;
-		}
-
-		case MultiLobbyScene::CHOICE::BossChange: {	// ボス変更
-
-			// ホスト以外は処理しない
-			if (!IS_HOST) { break; }
-
-			// 専用のシーンを追加する
-			SceneManager::GetIns().PushScene(
-				std::make_shared<BossSelectScene>(
-					// ボス変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyBossPreview>()->SetSelectBossType(SceneManager::GetIns().GetSelectBossType()); }
-				)
-			);
-
-			// このシーンの処理は終了
 			return;
 		}
 
@@ -205,9 +183,10 @@ void MultiLobbyScene::Update(void)
 
 			// 専用のシーンを追加する
 			SceneManager::GetIns().PushScene(
-				std::make_shared<CharaSelectScene>(
+				std::make_unique<LobbyCharaSelectScene>(
 					// キャラ変更シーンから戻ってきたときに、プレビューを更新
-					[&]() { ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(Net::GetIns().GetSenderId()); }
+					[&]() { ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(Net::GetIns().GetSenderId()); },
+					std::bind(&MultiLobbyScene::ReceptionUpdate, this)
 				)
 			);
 
@@ -227,10 +206,10 @@ void MultiLobbyScene::Update(void)
 				Net::GetIns().CloseReceptionToConnected();
 
 				// ゲームシーン遷移を通知
-				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame));
+				Net::GetIns().Send(MsgDataSystemInform(MsgDataSystemInform::INFORM_TYPE::ChangeSceneBossSelect));
 
 				// ゲームシーン遷移
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BossSelect);
 
 				// 以降はthisがnullptrとなっているため終了
 				return;
@@ -253,15 +232,97 @@ void MultiLobbyScene::Update(void)
 		}
 	}
 
+	// 受信処理
+	ReceptionUpdate();
+}
+
+void MultiLobbyScene::SubPostDraw(void)
+{
+	// ボードの描画
+	DrawRotaGraph(BOARD_POS.x, BOARD_POS.y, 1, 0, boardImage, true);
+
+	// 選択肢の描画
+	for (int i = 0; i < (int)CHOICE::Max; i++) {
+		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)buttonSelectionState[i]], true);
+	}
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
+	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Input::GetIns().LastInputKinds()], true);
+}
+
+void MultiLobbyScene::SubPreRelease(void)
+{
+#pragma region 画像の解放
+
+	// 選択中の決定キー
+	DeleteGraph(enterKeyImage[(int)true]);
+	DeleteGraph(enterKeyImage[(int)false]);
+
+	// 選択中の矢印
+	DeleteGraph(arrowImage);
+
+	// 選択肢ボタンの画像
+	for(int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
+		for (int selectionState = 0; selectionState < (int)SELECTION_STATE::Max; selectionState++) {
+			DeleteGraph(choiceButtonImage[choiceIndex][selectionState]);
+		}
+	}
+
+	// 画面上部のボードの画像
+	DeleteGraph(boardImage);
+
 #pragma endregion
 
-#pragma region 受信処理
+	SetFogEnable(true);
+}
 
+void MultiLobbyScene::CreateCamera(void)
+{
+	// 定点カメラを生成する
+	camera = new FixedPointCamera(FixedPointCamera::LookAt, Vector3::YZonly(750.0f, -2000.0f), Vector3::Yonly(150.0f));
+
+	// イベントカメラを生成
+	camera->StartEvent(new StartCameraEvent(*camera, Vector3(0.0f, 1500.0f, -5000.0f), Vector3::Yonly(Deg2Rad(-30.0f)), 0.0f, 200.0f));
+}
+
+void MultiLobbyScene::ButtonSelectionStateReload(void)
+{
+	// クライアントで準備完了を押していた場合、要素すべてを選択不可状態にする
+	if (!IS_HOST && readyList.at((int)Net::GetIns().GetSenderId()) == (unsigned char)true) {
+		for (auto& state : buttonSelectionState) { state = SELECTION_STATE::Disable; }
+		return;
+	}
+
+	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
+		// choice(選択中のボタンの種類) を参照し、
+		// そのボタンを 選択中の場合「Select」/ 選択中の場合「NotSelect」
+		buttonSelectionState[choiceIndex] = ((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
+	}
+
+	if (!IS_HOST) { return; }
+	// ホストの場合
+
+	// 全クライアントの準備完了フラグを確認する
+	// まだ全員準備完了していなかったら、出撃ボタンを選択不可状態にする
+	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
+
+		// まず、参加しているクライアントかどうかを確認する（参加していないクライアントの準備完了フラグは見ない）
+		if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id) == false) { break; }
+
+		// 準備完了していないクライアントがいたら、出撃ボタンを選択不可状態にする
+		if (readyList.at(id) == (unsigned char)false) {
+			buttonSelectionState[(int)CHOICE::Enter] = SELECTION_STATE::Disable;
+			break;
+		}
+	}
+}
+
+void MultiLobbyScene::ReceptionUpdate(void)
+{
 	// 接続/切断 の受信
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
 
-		switch (dataPtr->inform)
-		{
+		switch (dataPtr->inform) {
+
 		case MsgDataConnectInform::INFORM_TYPE::None: { break; }
 
 		case MsgDataConnectInform::INFORM_TYPE::Connect: {
@@ -291,7 +352,8 @@ void MultiLobbyScene::Update(void)
 		case MsgDataConnectInform::INFORM_TYPE::Disconnect: {
 			if (!Net::GetIns().IsHost()) {
 				Net::GetIns().Disconnection();
-				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::LOBBY);
+				SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Lobby);
+				delete dataPtr;
 				return;
 			}
 
@@ -304,7 +366,9 @@ void MultiLobbyScene::Update(void)
 			}
 
 			// キャラプレビューを更新する
-			ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+			for (int id = (int)dataPtr->header.senderId; id < (int)MSG_SENDER_ID::Max; id++) {
+				ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara((MSG_SENDER_ID)id);
+			}
 
 			// 最新状態の選択キャラを送りなおす
 			for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
@@ -324,19 +388,6 @@ void MultiLobbyScene::Update(void)
 		}
 
 		delete dataPtr;
-
-	}
-
-	// 選択ボスの受信
-	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataBossSelect>()) {
-
-		// 受け取ったボスタイプを保存する
-		SceneManager::GetIns().SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
-
-		// ボスプレビューを更新する
-		ObjSerch<LobbyBossPreview>()->SetSelectBossType((BOSS_TYPE)dataPtr->bossType);
-
-		delete dataPtr;
 	}
 
 	// 選択キャラの受信
@@ -346,13 +397,13 @@ void MultiLobbyScene::Update(void)
 		SceneManager::GetIns().SetSelectCharaType(dataPtr->header.senderId, (CHARA_TYPE)dataPtr->charaType);
 
 		// キャラプレビューを更新する
-		ObjSerch<LobbyCharaPreviewManager>()->ReloadChara(dataPtr->header.senderId);
+		ActorSerch<LobbyCharaPreviewManager>(actors)->ReloadChara(dataPtr->header.senderId);
 
 		delete dataPtr;
 	}
 
 	// 準備完了の受信
-	while(auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>(MSG_SENDER_ID::None, true)) {
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataClientReady>(MSG_SENDER_ID::None, true)) {
 
 		// 受け取った準備完了フラグを保存する
 		readyList.at((int)dataPtr->header.senderId) = (unsigned char)dataPtr->ready;
@@ -362,113 +413,19 @@ void MultiLobbyScene::Update(void)
 
 		delete dataPtr;
 	}
-	
+
 	// システム通知の受信
 	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>()) {
-		
+
 		// シーン遷移の受信
-		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneGame) {
+		if (dataPtr->inform == MsgDataSystemInform::INFORM_TYPE::ChangeSceneBossSelect) {
 			// ゲームシーン遷移
-			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GAME);
+			SceneManager::GetIns().ChangeSceneFade(SCENE_ID::BossSelect);
 
 			delete dataPtr;
 			return;
 		}
 
 		delete dataPtr;
-	}
-
-#pragma endregion
-}
-
-void MultiLobbyScene::Draw(void)
-{
-	// オブジェクト全ての描画処理
-	for (ActorBase* obj : objects) { obj->Draw(); }
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	for (ActorBase* obj : objects) { obj->AlphaDraw(); }
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	for (ActorBase* obj : objects) { obj->UiDraw(); }
-
-	// ボードの描画
-	DrawRotaGraph(BOARD_POS.x, BOARD_POS.y, 1, 0, boardImage, true);
-
-	// 選択肢の描画
-	for (int i = 0; i < (int)CHOICE::Max; i++) {
-		DrawRotaGraph(CHOICE_BUTTON_POS[i].x, CHOICE_BUTTON_POS[i].y, 1, 0, choiceButtonImage[i][(int)buttonSelectionState[i]], true);
-	}
-	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y, 1, 0, arrowImage, true);
-	DrawRotaGraph(CHOICE_BUTTON_POS[(int)choice].x, CHOICE_BUTTON_POS[(int)choice].y - 75, 0.3f, 0, enterKeyImage[(int)Key::GetIns().LastInputKinds()], true);
-
-}
-
-void MultiLobbyScene::Release(void)
-{
-#pragma region 画像の解放
-
-	// 選択中の決定キー
-	DeleteGraph(enterKeyImage[(int)true]);
-	DeleteGraph(enterKeyImage[(int)false]);
-
-	// 選択中の矢印
-	DeleteGraph(arrowImage);
-
-	// 選択肢ボタンの画像
-	for(int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
-		for (int selectionState = 0; selectionState < (int)SELECTION_STATE::Max; selectionState++) {
-			DeleteGraph(choiceButtonImage[choiceIndex][selectionState]);
-		}
-	}
-
-	// 画面上部のボードの画像
-	DeleteGraph(boardImage);
-
-#pragma endregion
-
-	// オブジェクト全ての解放処理
-	for (ActorBase* obj : objects) {
-		if (!obj) { continue; }
-		obj->Release();
-		delete obj;
-		obj = nullptr;
-	}
-
-	SetFogEnable(true);
-}
-
-void MultiLobbyScene::ButtonSelectionStateReload(void)
-{
-	// クライアントで準備完了を押していた場合、要素すべてを選択不可状態にする
-	if (!IS_HOST && readyList.at((int)Net::GetIns().GetSenderId()) == (unsigned char)true) {
-		for (auto& state : buttonSelectionState) { state = SELECTION_STATE::Disable; }
-		return;
-	}
-
-	for (int choiceIndex = 0; choiceIndex < (int)CHOICE::Max; choiceIndex++) {
-		// choice(選択中のボタンの種類) を参照し、
-		// そのボタンを 選択中の場合「Select」/ 選択中の場合「NotSelect」
-		buttonSelectionState[choiceIndex] =
-			((int)choice == choiceIndex) ? SELECTION_STATE::Select : SELECTION_STATE::NotSelect;
-	}
-
-	if (!IS_HOST) {
-		// クライアントの場合、ボス変更ボタンは選択不可状態にする
-		buttonSelectionState[(int)CHOICE::BossChange] = SELECTION_STATE::Disable;
-		return;
-	}
-	// ホストの場合
-
-	// 全クライアントの準備完了フラグを確認する
-	// まだ全員準備完了していなかったら、出撃ボタンを選択不可状態にする
-	for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
-
-		// まず、参加しているクライアントかどうかを確認する（参加していないクライアントの準備完了フラグは見ない）
-		if (Net::GetIns().GetConnectStatus().IsEntry((MSG_SENDER_ID)id) == false) { break; }
-
-		// 準備完了していないクライアントがいたら、出撃ボタンを選択不可状態にする
-		if (readyList.at(id) == (unsigned char)false) {
-			buttonSelectionState[(int)CHOICE::Enter] = SELECTION_STATE::Disable;
-			break;
-		}
 	}
 }

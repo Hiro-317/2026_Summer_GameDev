@@ -1,0 +1,64 @@
+#pragma once
+
+#include "../../../../../Common/ActorBase/ActorBase.h"
+
+#include "../../../../../Common/Collider/XZCircleCollider.h"
+
+struct CharacterStats;
+
+
+class BananaBossBanamerang : public ActorBase
+{
+public:
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="stats">ステータス</param>
+	BananaBossBanamerang(
+		const CharacterStats& stats
+	);
+	~BananaBossBanamerang()override = default;
+
+	void Load(void)override;
+
+	void CollSet(bool flg) { SetJudgeFlg(flg); }
+	void Off(void) { isDrawArea = false; SetJudgeFlg(false); }
+
+	void SetScale(const float& scale) { collFront.scale = Vector3(SCALE.x * scale, 1.0f, SCALE.z * scale); }
+
+	void SetBanameranPos(const Vector3& pos) { trans.pos = pos; }
+	void SetBanameranRot(const Quaternion& rot) { trans.rotation = rot; }
+
+	// 攻撃範囲の描画設定
+	void SetDrawArea(bool flg) { isDrawArea = flg; }
+
+	void Draw(void) override;
+
+private:
+
+	// バナメランのサイズ
+	const float SIZE = 8.75f;
+
+	// コライダーの半径
+	const float RADIUS = 575.0f;
+
+	// コライダー描画の拡大率
+	const Vector3 SCALE = Vector3(11.5f, 1.0f, 12.2f);
+
+	// コライダー描画の座標
+	const Vector3 POS = Vector3(0.0f, 37.0f, 1325.0f);
+
+#pragma region 受け取る参照変数
+
+	const CharacterStats& stats;
+
+#pragma endregion
+
+	Transform collBack;
+	Transform collFront;
+
+	// 攻撃範囲描画フラグ
+	bool isDrawArea;
+
+	XZCircleCollider* collRef;
+};

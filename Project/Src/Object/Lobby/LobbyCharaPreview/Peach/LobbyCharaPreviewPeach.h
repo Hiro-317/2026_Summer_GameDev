@@ -12,7 +12,7 @@ private:
 
 	void CharacterLoad(void)override {
 		// モデルを読み込む
-		trans.Load("Character/Peach/PeachModel");
+		trans.LoadModel("Character/Peach/PeachModel");
 
 		// ライティングの調整
 		MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -21,6 +21,10 @@ private:
 		// モデルのスケール
 		trans.scale = 2.5f;
 
-		AddInFbxAnimation(7, 1.0f, 0);
+		AddInFbxAnimation(7, 1.0f, true, 0);
+
+		// 操作者を示すイメージの高さ
+		operatorImagePos = 550.0f;
+		for (Vector3& pos : ownOperatorImagePos) { pos.y = 550.0f; }
 	}
 };

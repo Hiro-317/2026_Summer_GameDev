@@ -15,14 +15,13 @@ private:
 
 	void SubLoad(void)override {
 		// ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
-		trans.Load("Character/Tomato/Tomato");
+		trans.LoadModel("Character/Tomato/Tomato");
 
 
 		trans.scale = 2.5f;
 		trans.centerDiff = Vector3::Yonly(-200);
 
 		CHARA_NAME = "ƒŠƒRƒsƒ“";
-
 
 		HP = GetParameterToInt("TomatoParameter", "PlayerHP");
 		ATTACK = GetParameterToInt("TomatoParameter", "PlayerAttackPower");

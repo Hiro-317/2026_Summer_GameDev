@@ -1,8 +1,10 @@
 #pragma once
 
+#include <string>
+
 #include "../SceneBase.h"
 
-#include "../../Common/Vector2.h"
+#include "../../Common/Vector2I.h"
 
 #include "../../Application/Application.h"
 
@@ -12,25 +14,42 @@ public:
 	LobbyScene();
 	~LobbyScene() = default;
 
-	// 読み込み
-	void Load(void)override;
-	// 初期化処理
-	void Init(void)override;
-	// 更新ステップ
-	void Update(void)override;
-	// 描画処理
-	void Draw(void)override;
-	// 解放処理
-	void Release(void)override;
-
 private:
+
+#pragma region 主要関数再定義
+
+	// 読み込み
+	void SubPostLoad(void)override;
+
+	// 初期化
+	void SubPostInit(void)override;
+
+	// 更新
+	void SubPostUpdate(void)override;
+
+	// 描画
+	void SubPostDraw(void)override;
+
+	// 終了
+	void SubPreRelease(void);
+
+#pragma endregion
+
+	// 当たり判定管理は使用しない
+	bool UseCollisionManager(void)const override { return false; }
+
+	// スカイボックスを使用するかどうか
+	bool UseSkyBox(void)const override { return true; }
+
+	// カメラ生成
+	void CreateCamera(void)override;
+
 #pragma region 定数定義
 	enum class CHOICE {
 		None = -1,
 
 		Exit,			// タイトルに戻る
 		Multi,			// マルチプレイ
-		BossChange,		// ボスセレクト
 		CharaChange,	// キャラチェンジ
 		Enter,			// 出撃
 
@@ -44,7 +63,6 @@ private:
 	const std::string CHOICE_BUTTON_IMAGE_NAME[(int)CHOICE::Max] = {
 		"LobbyExit",		// タイトルに戻る
 		"LobbyMulti",		// マルチプレイ
-		"LobbyBossChange",	// ボスセレクト
 		"LobbyCharaChange",	// キャラチェンジ
 		"LobbyEnter",		// 出撃
 	};
@@ -56,8 +74,7 @@ private:
 	// ボタンの画像の位置
 	const Vector2I CHOICE_BUTTON_POS[(int)CHOICE::Max] = {
 		{ 100, App::GetIns().SCREEN_SIZE_Y - 100 },									// タイトルに戻る
-		{ App::GetIns().SCREEN_SIZE_X - 700, App::GetIns().SCREEN_SIZE_Y - 100 },	// マルチプレイ
-		{ App::GetIns().SCREEN_SIZE_X - 500, App::GetIns().SCREEN_SIZE_Y - 100 },	// ボスセレクト
+		{ App::GetIns().SCREEN_SIZE_X - 500, App::GetIns().SCREEN_SIZE_Y - 100 },	// マルチプレイ
 		{ App::GetIns().SCREEN_SIZE_X - 300, App::GetIns().SCREEN_SIZE_Y - 100 },	// キャラチェンジ
 		{ App::GetIns().SCREEN_SIZE_X - 100, App::GetIns().SCREEN_SIZE_Y - 100 },	// 出撃
 	};

@@ -1,58 +1,58 @@
-#include "GamePauseh.h"
+#include "GamePause.h"
 
 #include "../../../Utility/Utility.h"
 
 #include "../../../Application/Application.h"
-#include "../../SceneManager/SceneManager.h"
-#include "../../../Manager/Input/KeyManager.h"
+#include "../../SceneManager.h"
+#include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Sound/SoundManager.h"
 #include "../../../Manager/Net/NetWorkManager.h"
 
-GamePause::GamePause(MSG_SENDER_ID operatorSenderId) :
+GamePause::GamePause(MSG_SENDER_ID controlSenderId) :
+	SceneBase(),
+
 	img(),
 	nowSelect(SELECT::YES),
 
-	operatorSenderId(operatorSenderId),
-	isOperator(operatorSenderId == MSG_SENDER_ID::None ? true : operatorSenderId == Net::GetIns().GetSenderId())
+	controlSenderId(controlSenderId),
+	isOperator(controlSenderId == MSG_SENDER_ID::None ? true : controlSenderId == Net::GetIns().GetSenderId())
 {
 }
 
-GamePause::~GamePause()
-{
-}
-
-void GamePause::Load(void)
+void GamePause::SubPostLoad(void)
 {
 	img[(int)SELECT::YES] = LoadImg("Data/Image/Title/End/Yes.png");
 	img[(int)SELECT::NO] = LoadImg("Data/Image/Title/End/No.png");
 }
 
-void GamePause::Init(void)
+void GamePause::SubPostInit(void)
 {
 	nowSelect = SELECT::YES;
-	SoundManager::GetIns().AllStop();
-	Key::GetIns().SetMouseFixed(false);
+	SoundManager::GetIns().Pause();
+	Snd::GetIns().Play("SystemButton");
+	Input::GetIns().SetMouseFixed(false);
 }
 
-void GamePause::Update(void)
+void GamePause::SubPostUpdate(void)
 {
 	// 自分がポーズ画面を開いたとき
 	if (isOperator) {
 
-		if (Key::GetIns().GetInfo(KEY_TYPE::PAUSE).down) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
-			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
+			Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PopGamePause);
 
-			SoundManager::GetIns().PausePlay();
+			Snd::GetIns().PausePlay();
 			Snd::GetIns().Play("SystemButton");
 			SceneManager::GetIns().PopScene();
+			Input::GetIns().SetMouseFixed(true);
 			return;
 		}
 
 		switch (nowSelect) {
 
 		case GamePause::SELECT::YES:
-			if (Key::GetIns().GetInfo(KEY_TYPE::DOWN).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Down).down) {
 
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch);
 
@@ -60,12 +60,13 @@ void GamePause::Update(void)
 				Snd::GetIns().Play("SystemSelect");
 			}
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
-				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby);
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect);
 
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::LOBBY);
+
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				return;
 			}
 
@@ -73,7 +74,7 @@ void GamePause::Update(void)
 
 		case GamePause::SELECT::NO:
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::UP).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Up).down) {
 
 				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch);
 
@@ -81,14 +82,14 @@ void GamePause::Update(void)
 				Snd::GetIns().Play("SystemSelect");
 			}
 
-			if (Key::GetIns().GetInfo(KEY_TYPE::ENTER).down) {
+			if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
 
-				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::GamePauseEnd);
+				Net::GetIns().EventInformSend(MsgDataSystemInform::INFORM_TYPE::PopGamePause);
 
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
-				Key::GetIns().SetMouseFixed(true);
+				Input::GetIns().SetMouseFixed(true);
 				return;
 			}
 
@@ -101,23 +102,19 @@ void GamePause::Update(void)
 
 		while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataSystemInform>(MSG_SENDER_ID::None, true)) {
 
-			bool isReturn = false;
-
 			switch (dataPtr->inform) {
 			case MsgDataSystemInform::INFORM_TYPE::None: { break; }
 
-			case MsgDataSystemInform::INFORM_TYPE::ChangeSceneLobby: {
+			case MsgDataSystemInform::INFORM_TYPE::JumpSceneBossSelect: {
 				Snd::GetIns().Play("SystemButton");
-				SceneManager::GetIns().JumpSceneFade(SCENE_ID::LOBBY);
-				isReturn = true;
+				SceneManager::GetIns().JumpSceneFade(SCENE_ID::BossSelect);
 				break;
 			}
-			case MsgDataSystemInform::INFORM_TYPE::GamePauseEnd: {
+			case MsgDataSystemInform::INFORM_TYPE::PopGamePause: {
 				Snd::GetIns().PausePlay();
 				Snd::GetIns().Play("SystemButton");
 				SceneManager::GetIns().PopScene();
-				Key::GetIns().SetMouseFixed(true);
-				isReturn = true;
+				Input::GetIns().SetMouseFixed(true);
 				break;
 			}
 			case MsgDataSystemInform::INFORM_TYPE::GamePauseChoicesSwitch: {
@@ -131,14 +128,23 @@ void GamePause::Update(void)
 			}
 
 			delete dataPtr;
-
-			if (isReturn) { return; }
 		}
 
 	}
+
+	// 切断 の受信
+	while (auto dataPtr = Net::GetIns().GetMsgData<MsgDataConnectInform>()) {
+
+		if (dataPtr->inform == MsgDataConnectInform::INFORM_TYPE::Disconnect) {
+			Net::GetIns().Disconnection();
+			SceneManager::GetIns().JumpSceneFade(SCENE_ID::Lobby);
+		}
+
+		delete dataPtr;
+	}
 }
 
-void GamePause::Draw(void)
+void GamePause::SubPreDraw(void)
 {
 	int xx = Application::SCREEN_SIZE_X;
 	int yy = Application::SCREEN_SIZE_Y;
@@ -152,8 +158,7 @@ void GamePause::Draw(void)
 	DrawRotaGraph(x, y, 1, 0, img[(int)nowSelect], true);
 }
 
-void GamePause::Release(void)
+void GamePause::SubPreRelease(void)
 {
 	for (auto& id : img) { DeleteGraph(id); }
-
 }

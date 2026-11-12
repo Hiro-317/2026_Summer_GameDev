@@ -2,7 +2,7 @@
 
 #include "../../../Manager/Net/NetWorkManager.h"
 
-#include "../../../Scene/SceneManager/SceneManager.h"
+#include "../../../Scene/../Scene/SceneManager.h"
 
 #include "Orange/LobbyCharaPreviewOrange.h"
 #include "Tomato/LobbyCharaPreviewTomato.h"
@@ -10,7 +10,8 @@
 #include "Grape/LobbyCharaPreviewGrape.h"
 
 LobbyCharaPreviewManager::LobbyCharaPreviewManager() :
-	charaPreview{ nullptr, nullptr, nullptr, nullptr }
+	charaPreview{ nullptr, nullptr, nullptr, nullptr },
+	ownControlImage(-1)
 {
 }
 
@@ -19,7 +20,11 @@ void LobbyCharaPreviewManager::Load(void)
 	if(SceneManager::GetIns().GetSelectCharaType(Net::HOST_SENDER_ID) == CHARA_TYPE::None) {
 		SceneManager::GetIns().SetSelectCharaType(Net::HOST_SENDER_ID, CHARA_TYPE::Orange);
 	}
-	ReloadChara(Net::HOST_SENDER_ID);
+	if (Net::GetIns().GetState() == Net::NetState::None) { ReloadChara(); }
+	else {
+		ReloadChara(MSG_SENDER_ID::P1);
+		ownControlImage = LoadGraph(OWN_OPERATOR_IMAGE[(int)Net::GetIns().GetSenderId()].c_str());
+	}
 }
 
 void LobbyCharaPreviewManager::Update(void)
@@ -38,10 +43,15 @@ void LobbyCharaPreviewManager::Draw(void)
 		if (preview == nullptr) { continue; }
 		preview->Draw();
 	}
+	if (ownControlImage != -1) {
+		charaPreview[(int)Net::GetIns().GetSenderId()]->OwnOperatorDraw(ownControlImage);
+	}
 }
 
 void LobbyCharaPreviewManager::Release(void)
 {
+	if (ownControlImage != -1) { DeleteGraph(ownControlImage); }
+
 	// キャラプレビューの解放
 	for (LobbyCharaPreviewBase*& preview : charaPreview) {
 		if (preview == nullptr) { continue; }
@@ -66,22 +76,22 @@ void LobbyCharaPreviewManager::ReloadChara(void)
 	case CHARA_TYPE::None: { return; }	// 未選択
 
 	case CHARA_TYPE::Orange: {	// オレンジ
-		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS, (int)MSG_SENDER_ID::P1 + 1);
 		break;
 	}
 
 	case CHARA_TYPE::Tomato: {	// トマト
-		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewTomato(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewTomato(CHARA_PREVIEW_POS, (int)MSG_SENDER_ID::P1 + 1);
 		break;
 	}
 
-	case CHARA_TYPE::Peach: {	// トマト
-		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewPeach(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+	case CHARA_TYPE::Peach: {	// 桃
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewPeach(CHARA_PREVIEW_POS, (int)MSG_SENDER_ID::P1 + 1);
 		break;
 	}
 
-	case CHARA_TYPE::Grape: {	// トマト
-		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewGrape(CHARA_PREVIEW_POS[(int)MSG_SENDER_ID::P1], (int)MSG_SENDER_ID::P1 + 1);
+	case CHARA_TYPE::Grape: {	// ぶどう
+		charaPreview[(int)MSG_SENDER_ID::P1] = new LobbyCharaPreviewGrape(CHARA_PREVIEW_POS, (int)MSG_SENDER_ID::P1 + 1);
 		break;
 	}
 
@@ -114,30 +124,26 @@ void LobbyCharaPreviewManager::ReloadChara(MSG_SENDER_ID senderId)
 	case CHARA_TYPE::None: { return; }	// 未選択
 
 	case CHARA_TYPE::Orange: {	// オレンジ
-		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
+		charaPreview[(int)senderId] = new LobbyCharaPreviewOrange(MULTI_CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 
 	case CHARA_TYPE::Tomato: {	// トマト
-		charaPreview[(int)senderId] = new LobbyCharaPreviewTomato(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
+		charaPreview[(int)senderId] = new LobbyCharaPreviewTomato(MULTI_CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 
-	case CHARA_TYPE::Peach: {	// トマト
-		charaPreview[(int)senderId] = new LobbyCharaPreviewPeach(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
+	case CHARA_TYPE::Peach: {	// 桃
+		charaPreview[(int)senderId] = new LobbyCharaPreviewPeach(MULTI_CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 
-	case CHARA_TYPE::Grape: {	// トマト
-		charaPreview[(int)senderId] = new LobbyCharaPreviewGrape(CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
+	case CHARA_TYPE::Grape: {	// ぶどう
+		charaPreview[(int)senderId] = new LobbyCharaPreviewGrape(MULTI_CHARA_PREVIEW_POS[(int)senderId], (int)senderId + 1);
 		break;
 	}
 
 	default: { return; }	// 例外
-
-
-
-
 	}
 
 	// キャラプレビューのロードと初期化
