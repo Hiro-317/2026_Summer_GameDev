@@ -1,4 +1,4 @@
-#include "RimLightShader.h"
+ï»¿#include "RimLightShader.h"
 
 #include "../../../pch.h"
 
@@ -6,21 +6,24 @@
 
 void RimLightShader::Init(void)
 {
-    // ƒVƒF[ƒ_[ƒnƒ“ƒhƒ‹ŠÇ—ƒNƒ‰ƒX‚ğæ“¾
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒãƒ³ãƒ‰ãƒ«ç®¡ç†ã‚¯ãƒ©ã‚¹ã‚’å–å¾—
     ShaderResourceManager& manager = ShaderResourceManager::GetIns();
 
-    // g—p‚·‚é’¸“_ƒVƒF[ƒ_[‚ğ’¸“_ƒ^ƒCƒv‚ğQÆ‚µ‚ÄŒˆ’è‚·‚é
+    // ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’é ‚ç‚¹ã‚¿ã‚¤ãƒ—ã‚’å‚ç…§ã—ã¦æ±ºå®šã™ã‚‹
     VERTEX_SHADER_TYPE useVertexShaderType = VERTEX_SHADER_TYPE::RimLight1Frame;
     useVertexShaderType = (VERTEX_SHADER_TYPE)((int)useVertexShaderType + (int)vertexType);
 
-    // ’¸“_ƒVƒF[ƒ_[‚Ì¶¬
+    // é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç”Ÿæˆ
     manager.CreateVertexShader(useVertexShaderType);
-    // ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚Ì¶¬
+    // ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç”Ÿæˆ
     manager.CreatePixelShader(PIXEL_SHADER_TYPE::RimLight);
 
-    // g—p‚·‚é’¸“_ƒVƒF[ƒ_[‚ğ•Û
+    // ä½¿ç”¨ã™ã‚‹é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ä¿æŒ
     vertexShaderHandle = manager.GetVertexShader(useVertexShaderType);
 
-    // g—p‚·‚éƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ğ•Û
+    // ä½¿ç”¨ã™ã‚‹ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ä¿æŒ
     pixelShaderHandle = manager.GetPixelShader(PIXEL_SHADER_TYPE::RimLight);
+
+    // GPUãƒªã‚½ãƒ¼ã‚¹ã®æº–å‚™å¾Œã«ã€ActorBaseã®åˆæœŸåŒ–ãƒ»å­ã‚¢ã‚¯ã‚¿ãƒ¼ã®åˆæœŸåŒ–ã‚’é€šã™ã€‚
+    ShaderBase::Init();
 }

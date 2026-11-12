@@ -1,4 +1,4 @@
-#include "ToonShader.h"
+﻿#include "ToonShader.h"
 #include "../../../pch.h"
 #include "../../../Manager/Shader/ShaderResourceManager.h"
 
@@ -15,4 +15,7 @@ void ToonShader::Init(void)
 
     vertexShaderHandle = manager.GetVertexShader(vsType);
     pixelShaderHandle = manager.GetPixelShader(PIXEL_SHADER_TYPE::Toon);
+
+    // GPUリソースの準備後に、ActorBaseの初期化・子アクターの初期化を通す。
+    ShaderBase::Init();
 }

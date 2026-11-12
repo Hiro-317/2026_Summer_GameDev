@@ -42,6 +42,9 @@ void FlameBreathShader::Init(void)
     if (constantBufferHandle < 0) {
         throw std::runtime_error("Could not create flame breath constant buffer");
     }
+
+    // GPUリソースの準備後に、ActorBaseの初期化・子アクターの初期化を通す。
+    ShaderBase::Init();
 }
 
 void FlameBreathShader::Apply(void)
