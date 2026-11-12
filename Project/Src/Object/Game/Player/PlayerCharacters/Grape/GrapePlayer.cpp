@@ -123,7 +123,7 @@ void GrapePlayer::PlayerLoad(void)
 			*weaponThrowRef,
 			trans,
 			bossPos,
-			[&]() { AnimePlay(ANIME_TYPE::THROW, false); },
+			[&]() { AnimePlay(ANIME_TYPE::TOSS, false); },
 			[&]() { return GetAnimeRatio(); },
 			[&]() { ChangeState(STATE::IDLE); }
 		)
@@ -136,7 +136,7 @@ void GrapePlayer::PlayerLoad(void)
 			GetParameter("GrapeBomb", "CoolTime"),
 			*weaponBombRef,
 			trans,
-			[&]() { AnimePlay(ANIME_TYPE::TOSS, false); },
+			[&]() { AnimePlay(ANIME_TYPE::KICK_DOWN, false); },
 			[&]() { return GetAnimeRatio(); },
 			[&]() { ChangeState(STATE::IDLE); }
 		)
@@ -263,7 +263,7 @@ void GrapePlayer::PlayerLoad(void)
 		// ƒXƒLƒ‹3UI‚Ì“o˜^
 		AddChildActor(
 			new PlayerSkillUI(
-				SKILL2_UI_DRAW_POS,
+				SKILL3_UI_DRAW_POS,
 				GetParameter("GrapeBomb", "CoolTime"),
 				dynamic_cast<GrapePlayerBombState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Purple,

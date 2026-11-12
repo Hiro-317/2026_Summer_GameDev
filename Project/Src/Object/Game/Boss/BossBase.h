@@ -122,11 +122,16 @@ protected:
 		MAX
 	};
 
-	// ƒXƒLƒ‹UI‚ÌÀ•W@````````````````````````````````
-	const Vector2I SKILL1_UI_DRAW_POS = Vector2I(Application::SCREEN_SIZE_X_HALF + 600, Application::SCREEN_SIZE_Y_HALF + 300);
-	const Vector2I SKILL2_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 120, SKILL1_UI_DRAW_POS.y - 100);
-	const Vector2I SKILL3_UI_DRAW_POS = Vector2I(SKILL1_UI_DRAW_POS.x - 240, SKILL1_UI_DRAW_POS.y);
-	// ````````````````````````````````@ƒXƒLƒ‹UI‚ÌÀ•W@
+	// ‰æ‘œ‚Ì–¼‘O
+	static const inline std::string HP_FRAME_IMAGE_NAME = "BossHpFrame.png";
+	static const inline std::string HP_IMAGE_NAME = "BossHp.png";
+	static const inline std::string HP_LOST_IMAGE_NAME = "BossHpLost.png";
+
+	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
+	static const inline Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
+	static const inline Vector2I HP_GAUGE_OFFSET = Vector2I(18, 0);
+	static const inline Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, (int)((float)HP_IMAGE_SIZE.y / 1.5f));
+
 #pragma endregion ’è”’è‹`
 
 	// ƒvƒŒƒCƒ„[‚ÌÀ•W‚ÌQÆ(“Ç‚İæ‚èê—p)

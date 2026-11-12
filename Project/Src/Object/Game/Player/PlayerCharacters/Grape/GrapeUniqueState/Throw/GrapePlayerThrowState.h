@@ -62,7 +62,7 @@ private:
 	const Vector3*& bossPos;
 
 	// 終了までのカウント用
-	float timeCounter;
+	void Aim(void);
 
 	const std::function<void(void)> playAnime;
 	const std::function<float(void)> getAnimeRatio;

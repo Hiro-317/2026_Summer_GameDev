@@ -34,12 +34,8 @@ public:
 	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
-	// 派生先追加接地判定（デフォルトはY軸加速度の打ち消し）
-	void SubOnGrounded(COLLIDER_TAG ownTag, const ColliderBase& other) {
-
-		// 動的オブジェクトの場合のみ、下方向のY軸加速度のみを打ち消す
-		if (GetDynamicFlg()) { velocity.y = (velocity.y < 0.0f) ? -velocity.y : velocity.y; }
-	}
+	// 地面への接地で跳ね返る。
+	void SubOnGrounded(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 	// 弾を発射するときに呼び出す処理
 	void Shot(const Vector3& pos, const Vector3& vec, bool send = false);
@@ -62,13 +58,18 @@ private:
 	enum class STATE {
 		None,
 		Move,
-		Blast,
 	};
 
 	// 攻撃倍率
 	const short ATTACK_RATE_PERCENT;
 
-	const short LIFE_TIME = 40;
+	const short LIFE_TIME = 180;
+
+	// スキル1の4倍の大きさと、ゆったり大きく跳ねる専用の重力。
+	static constexpr float MODEL_SCALE = 1.0f;
+	static constexpr float COLLIDER_RADIUS = 100.0f;
+	static constexpr float BOUNCE_SPEED = 15.0f;
+	static constexpr float BOUNCE_GRAVITY = 0.65f;
 
 #pragma endregion
 

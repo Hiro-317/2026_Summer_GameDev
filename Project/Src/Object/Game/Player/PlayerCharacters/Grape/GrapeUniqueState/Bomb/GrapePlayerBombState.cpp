@@ -41,7 +41,8 @@ void GrapePlayerBombState::OwnStateConditionUpdate(void)
 void GrapePlayerBombState::Enter(void)
 {
 	// クールタイムをセット
-	coolTimeCounter = COOL_TIME;
+	coolTimeCounter = static_cast<float>(COOL_TIME);
+	isShot = false;
 
 	// アニメーションを再生
 	playAnime();
@@ -54,7 +55,7 @@ void GrapePlayerBombState::Update(void)
 	if (animeRatio > 0.3f) {
 		if (!isShot) {
 			// 発射
-			bombWeapon.Put(playerTrans.pos);
+			bombWeapon.Put(playerTrans.pos, true);
 			isShot = true;
 		}
 	}

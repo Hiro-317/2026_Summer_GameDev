@@ -1,169 +1,156 @@
 #include "GrapePlayerWeaponBomb.h"
 
 #include "../../../../../../../Manager/Net/NetWorkManager.h"
-
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
-
 #include "../../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../../Common/Effect/PurpleExplosionActor.h"
 
 GrapePlayerWeaponBomb::GrapePlayerWeaponBomb(
-	short ATTACK_RATE_PERCENT,
-	const CharacterStats& playerStats,
-
-	float ATTACK_COUNT_TIME,
-
-	const Transform& playerTrans,
-
-	const MSG_SENDER_ID& controlSenderId
+    short ATTACK_RATE_PERCENT, const CharacterStats& playerStats,
+    float ATTACK_COUNT_TIME, const Transform& playerTrans, const MSG_SENDER_ID& controlSenderId
 ) :
-	ActorBase(),
-
-	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
-	playerStats(playerStats),
-	ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
-	playerTrans(playerTrans),
-	controlSenderId(controlSenderId),
-
-	lifeCounter(),
-	state(),
-	collRef(nullptr)
+    ActorBase(),
+    ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+    ATTACK_COUNT_TIME(ATTACK_COUNT_TIME),
+    playerStats(playerStats),
+    controlSenderId(controlSenderId),
+    lifeCounter(0.0f),
+    state(STATE::None),
+    triggerCollider(nullptr),
+    attackCollider(nullptr),
+    terrainCollider(nullptr),
+    explosion(nullptr)
 {
+    ActorBase::controlSenderId = controlSenderId;
 }
 
 void GrapePlayerWeaponBomb::Load(void)
 {
-#pragma region 基底クラスにある機能の挙動設定
+    SetDynamicFlg(true);
+    SetGravityFlg(false);
+    SetPushFlg(false);
+    trans.LoadModel("Character/Grape/Bomb");
+    trans.scale = 0.5f;
 
-	// 動的オブジェクトとしての挙動を無効にする
-	SetDynamicFlg(true);
+    // 設置中は接触を検知するだけで、ダメージは発生させない。
+    triggerCollider = new SphereCollider(COLLIDER_TAG::PlayerCommon, PUT_RADIUS);
+    triggerCollider->SetPushFlg(false);
+    AddCollider(triggerCollider);
 
-	// 重力を有効にする
-	SetGravityFlg(true);
+    // 爆発範囲は最初から登録し、接触による起爆でも空間分割に反映させる。
+    attackCollider = new SphereCollider(COLLIDER_TAG::PlayerAttack, BLAST_RADIUS);
+    attackCollider->SetSkillStats(new SkillStats(ATTACK_RATE_PERCENT, &playerStats));
+    attackCollider->SetPushFlg(false);
+    AddCollider(attackCollider);
 
-	// 衝突時の押し出しを無効にする
-	SetPushFlg(true);
+    terrainCollider = new SphereCollider(COLLIDER_TAG::BossAttackArea, PUT_RADIUS * 0.5f);
+    terrainCollider->SetPushFlg(true);
+    AddCollider(terrainCollider);
 
-	SetPushWeight(20);
+    explosion = new PurpleExplosionActor(Vector3(), BLAST_RADIUS, BLAST_EFFECT_TIME / 60.0f);
+    AddChildActor(explosion);
+    SetJudgeFlg(false);
+    SetIsDraw(false);
+}
 
-#pragma endregion
-
-	trans.LoadModel("Character/Grape/Bomb");
-	trans.scale = 0.5f;
-
-	// コライダー生成
-	collRef = new SphereCollider(COLLIDER_TAG::PlayerAttack, PUT_RADIUS);
-	// スキルのダメージ量の設定
-	collRef->SetSkillStats(new SkillStats(ATTACK_RATE_PERCENT, &playerStats));
-	AddCollider(collRef);
-
-	// 初期化処理
-	SetJudgeFlg(false);
-
-	// 最初は描画しない
-	SetIsDraw(false);
+void GrapePlayerWeaponBomb::Init(void)
+{
+    ActorBase::Init();
+    // 子Actorの初期化で再生状態になるため、その後に待機させる。
+    explosion->Stop();
 }
 
 void GrapePlayerWeaponBomb::SubUpdate(void)
 {
-	switch (state) {
-
-	case GrapePlayerWeaponBomb::STATE::None: { return; }
-
-	case GrapePlayerWeaponBomb::STATE::Put: {
-
-		// 撃った瞬間から弾の生存時間を減らす
-		lifeCounter -= TimeScale::Get();
-		if (lifeCounter < 0.0f) {
-
-			lifeCounter = 0.0f;
-
-			Blast();
-
-			return;
-		}
-
-		break;
-	}
-
-	case GrapePlayerWeaponBomb::STATE::Blast: {
-
-		if (GetJudgeFlg()) { SetJudgeFlg(false); }
-
-		state = STATE::None;
-		SetIsDraw(false);
-
-		break;
-	}
-
-	}
+    if (Net::GetIns().GetState() != Net::NetState::None) { ReceptionUpdate(); }
+    if (state == STATE::Put) {
+        lifeCounter -= TimeScale::Get();
+        if (lifeCounter <= 0.0f) { Blast(trans.pos, Net::GetIns().IsHost()); }
+    }
+    else if (state == STATE::Blast) {
+        lifeCounter += TimeScale::Get();
+        if (lifeCounter >= BLAST_ATTACK_TIME) { attackCollider->SetJudgeFlg(false); }
+        if (lifeCounter >= BLAST_EFFECT_TIME) {
+            state = STATE::None;
+            SetJudgeFlg(false);
+            explosion->Stop();
+        }
+    }
 }
 
 void GrapePlayerWeaponBomb::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (!Net::GetIns().IsHost()) { return; }
+    if (!Net::GetIns().IsHost()) { return; }
+    const auto tag = other.GetTag();
+    const bool isBoss = tag == COLLIDER_TAG::Boss || tag == COLLIDER_TAG::BossDistance || tag == COLLIDER_TAG::Enemy;
+    if (state == STATE::Put && ownTag == COLLIDER_TAG::PlayerCommon && isBoss) {
+        Blast();
+    }
+    else if (state == STATE::Blast && ownTag == COLLIDER_TAG::PlayerAttack &&
+        (tag == COLLIDER_TAG::BossDistance || tag == COLLIDER_TAG::Enemy)) {
+        // 同じ爆発で複数フレーム連続してダメージを与えない。
+        attackCollider->SetJudgeFlg(false);
+    }
+}
+
+void GrapePlayerWeaponBomb::SubOnGrounded(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+    if (state != STATE::Put || other.GetTag() != COLLIDER_TAG::Stage || velocity.y > 0.0f) { return; }
+    // 設置時は真下に落として接地させ、その後はその位置に固定する。
+    velocity = Vector3();
+    SetGravityFlg(false);
+    terrainCollider->SetJudgeFlg(false);
 }
 
 void GrapePlayerWeaponBomb::Put(const Vector3& pos, bool send)
 {
-	trans.pos = pos;
-	velocity = playerTrans.rotation.Rotate(Vector3(0, 20, 5));
-
-	state = STATE::Put;
-
-	SetJudgeFlg(true);
-	SetIsDraw(true);
-
-	// 重力を有効にする
-	SetGravityFlg(true);
-
-	// 衝突時の押し出しを無効にする
-	SetPushFlg(true);
-
-	collRef->SetRadius(PUT_RADIUS * trans.scale.MaxElementF());
-
-	if (send) {
-		Net::GetIns().Send(MsgDataGrapePlayerBomb(pos), controlSenderId);
-	}
+    trans.pos = pos;
+    trans.prevPos = pos;
+    velocity = Vector3();
+    lifeCounter = ATTACK_COUNT_TIME;
+    state = STATE::Put;
+    explosion->Stop();
+    SetIsDraw(true);
+    SetGravityFlg(true);
+    SetPushFlg(true);
+    triggerCollider->SetJudgeFlg(true);
+    terrainCollider->SetJudgeFlg(true);
+    attackCollider->SetJudgeFlg(false);
+    if (send) { Net::GetIns().Send(MsgDataGrapePlayerBomb(pos), controlSenderId); }
 }
 
 void GrapePlayerWeaponBomb::Blast(void)
 {
-	Blast(trans.pos, true);
+    Blast(trans.pos, true);
 }
 
 void GrapePlayerWeaponBomb::Blast(const Vector3& pos, bool send)
 {
-	trans.pos = pos;
-
-	state = STATE::Blast;
-
-	// 重力を有効にする
-	SetGravityFlg(false);
-
-	// 衝突時の押し出しを無効にする
-	SetPushFlg(false);
-
-	collRef->SetRadius(BLAST_RADIUS * trans.scale.MaxElementF());
-
-	if (send) {
-		Net::GetIns().Send(MsgDataGrapePlayerShotBlast(trans.pos), controlSenderId);
-	}
+    if (state != STATE::Put) { return; }
+    trans.pos = pos;
+    velocity = Vector3();
+    lifeCounter = 0.0f;
+    state = STATE::Blast;
+    SetGravityFlg(false);
+    SetPushFlg(false);
+    SetIsDraw(false);
+    triggerCollider->SetJudgeFlg(false);
+    terrainCollider->SetJudgeFlg(false);
+    attackCollider->SetJudgeFlg(true);
+    explosion->SetPos(pos);
+    explosion->Restart();
+    if (send) { Net::GetIns().Send(MsgDataGrapePlayerBombBlast(pos), controlSenderId); }
 }
 
 void GrapePlayerWeaponBomb::ReceptionUpdate(void)
 {
-	while (MsgDataGrapePlayerShot* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerShot>(controlSenderId)) {
-
-		Put(dataPtr->pos);
-
-		delete dataPtr;
-	}
-
-	while (MsgDataGrapePlayerShotBlast* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerShotBlast>(controlSenderId)) {
-
-		Blast(dataPtr->pos);
-
-		delete dataPtr;
-	}
+    while (auto* data = Net::GetIns().GetMsgData<MsgDataGrapePlayerBomb>(controlSenderId, true)) {
+        Put(data->pos);
+        delete data;
+    }
+    while (auto* data = Net::GetIns().GetMsgData<MsgDataGrapePlayerBombBlast>(controlSenderId)) {
+        Blast(data->pos);
+        delete data;
+    }
 }

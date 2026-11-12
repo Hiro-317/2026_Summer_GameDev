@@ -1,152 +1,112 @@
 #include "GrapePlayerWeaponShot.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "../../../../../../../Manager/Net/NetWorkManager.h"
-
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
-
 #include "../../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
 
-GrapePlayerWeaponShot::GrapePlayerWeaponShot(short ATTACK_RATE_PERCENT, const CharacterStats& playerStats, const Transform& playerTrans, const MSG_SENDER_ID& controlSenderId):
-	ActorBase(),
-
-	ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
-
-	playerStats(playerStats),
-
-	playerTrans(playerTrans),
-
-	controlSenderId(controlSenderId),
-
-	moveVec(),
-	lifeCounter(),
-	state()
+GrapePlayerWeaponShot::GrapePlayerWeaponShot(
+    short ATTACK_RATE_PERCENT,
+    const CharacterStats& playerStats,
+    const Transform& playerTrans,
+    const MSG_SENDER_ID& controlSenderId
+) :
+    ActorBase(),
+    ATTACK_RATE_PERCENT(ATTACK_RATE_PERCENT),
+    playerStats(playerStats),
+    playerTrans(playerTrans),
+    controlSenderId(controlSenderId),
+    moveVec(),
+    lifeCounter(0.0f),
+    state(STATE::None)
 {
+    // 所有プレイヤーと同じ操作権・ダメージ送信者IDを武器にも設定する。
+    ActorBase::controlSenderId = controlSenderId;
 }
 
 void GrapePlayerWeaponShot::Load(void)
 {
-#pragma region 基底クラスにある機能の挙動設定
+    SetDynamicFlg(true);
+    SetGravityFlg(false);
+    SetPushFlg(false);
+    trans.LoadModel("Character/Grape/Bomb");
+    trans.scale = 0.1f;
 
-	// 動的オブジェクトとしての挙動を無効にする
-	SetDynamicFlg(true);
-
-	// 重力を無効にする
-	SetGravityFlg(false);
-
-	// 衝突時の押し出しを無効にする
-	SetPushFlg(false);
-
-#pragma endregion
-
-	// 弾のモデルをロード、スケールの設定
-	trans.LoadModel("Character/Grape/Bomb");
-	trans.scale = 0.1f;
-
-	// コライダー生成
-	SphereCollider* coll = new SphereCollider(COLLIDER_TAG::PlayerAttack, 50.0f);
-	coll->SetSkillStats(new SkillStats(ATTACK_RATE_PERCENT, &playerStats));
-	AddCollider(coll);
-	coll = nullptr;
-
-	// 初期化処理
-	SetJudgeFlg(false);
-
-	// 最初は描画しない
-	SetIsDraw(false);
-
-	state = STATE::None;
+    auto* coll = new SphereCollider(COLLIDER_TAG::PlayerAttack, 50.0f);
+    coll->SetSkillStats(new SkillStats(ATTACK_RATE_PERCENT, &playerStats));
+    AddCollider(coll);
+    SetJudgeFlg(false);
+    SetIsDraw(false);
+    state = STATE::None;
 }
 
-void GrapePlayerWeaponShot::Update(void)
+void GrapePlayerWeaponShot::SubUpdate(void)
 {
-	switch (state) {
+    // 発射と消滅の通知は、この武器が自身で受け取る。
+    if (Net::GetIns().GetState() != Net::NetState::None) { ReceptionUpdate(); }
+    if (state != STATE::Move) { return; }
 
-	case GrapePlayerWeaponShot::STATE::None: { return; }
+    if (lifeCounter <= 0.0f) {
+        Blast(trans.pos, Net::GetIns().IsHost());
+        return;
+    }
 
-	case GrapePlayerWeaponShot::STATE::Move: {
-
-		// 撃った瞬間から弾の生存時間を減らす
-		lifeCounter -= TimeScale::Get();
-		if (lifeCounter < 0.0f) {
-
-			lifeCounter = 0.0f;
-
-			Blast();
-
-			return;
-		}
-
-		// 弾を飛ばす処理
-		trans.pos += moveVec;
-
-		break;
-	}
-
-	case GrapePlayerWeaponShot::STATE::Blast: {
-
-		if (GetJudgeFlg()) { SetJudgeFlg(false); }
-
-		state = STATE::None;
-
-		break;
-	}
-
-	}
+    // 保存済みの速度だけで移動し、発射後のプレイヤーには追従しない。
+    const float elapsed = (std::min)(TimeScale::Get(), lifeCounter);
+    trans.pos += moveVec * elapsed;
+    lifeCounter -= elapsed;
+    SendUpdate();
 }
 
 void GrapePlayerWeaponShot::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (!Net::GetIns().IsHost()) { return; }
-
-	if (state == STATE::None) { return; }
-
-	// 攻撃の当たり判定
-	switch (other.GetTag()) {
-
-	case COLLIDER_TAG::Enemy:
-	case COLLIDER_TAG::BossDistance:
-		Blast();
-		break;
-
-	default:break;
-	}
+    if (!Net::GetIns().IsHost() || state != STATE::Move) { return; }
+    // ボス本体の押し出し判定ではなく、ダメージ受付判定への命中で終了する。
+    if (other.GetTag() == COLLIDER_TAG::Enemy || other.GetTag() == COLLIDER_TAG::BossDistance) {
+        Blast();
+    }
 }
 
 void GrapePlayerWeaponShot::Shot(const Vector3& pos, const Vector3& vec, bool send)
 {
-	trans.pos = pos;
-	moveVec = vec * 40.0f;
+    if (vec.LengthSq() <= 0.000001f) { return; }
+    const Vector3 direction = vec.Normalized();
+    trans.pos = pos;
+    trans.prevPos = pos;
+    trans.SetRotation(Quaternion::FromRotationY(std::atan2(direction.x, direction.z)));
+    moveVec = direction * 40.0f;
+    velocity = Vector3();
+    lifeCounter = static_cast<float>(LIFE_TIME);
+    state = STATE::Move;
+    SetJudgeFlg(true);
+    SetIsDraw(true);
 
-	state = STATE::Move;
-
-	SetJudgeFlg(true);
-	SetIsDraw(true);
-
-	if (send) {
-		Net::GetIns().Send(MsgDataGrapePlayerShot(pos, vec), controlSenderId);
-	}
+    if (send) { Net::GetIns().Send(MsgDataGrapePlayerShot(pos, direction), controlSenderId); }
 }
 
 void GrapePlayerWeaponShot::Blast(void)
 {
-	Blast(trans.pos, true);
+    Blast(trans.pos, true);
 }
 
 void GrapePlayerWeaponShot::Blast(const Vector3& pos, bool send)
 {
-	trans.pos = pos;
-
-	state = STATE::Blast;
-
-	if (send) {
-		Net::GetIns().Send(MsgDataGrapePlayerShotBlast(trans.pos), controlSenderId);
-	}
+    // 命中・寿命のどちらでも、判定と描画を即座に止めて次の発射に再利用する。
+    trans.pos = pos;
+    moveVec = Vector3();
+    lifeCounter = 0.0f;
+    state = STATE::None;
+    SetJudgeFlg(false);
+    SetIsDraw(false);
+    if (send) { Net::GetIns().Send(MsgDataGrapePlayerShotBlast(pos), controlSenderId); }
 }
 
 void GrapePlayerWeaponShot::ReceptionUpdate(void)
 {
-	while (MsgDataGrapePlayerShot* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerShot>(controlSenderId)) {
+	while (MsgDataGrapePlayerShot* dataPtr = Net::GetIns().GetMsgData<MsgDataGrapePlayerShot>(controlSenderId, true)) {
 
 		Shot(dataPtr->pos, dataPtr->vec);
 
@@ -186,7 +146,7 @@ void GrapePlayerWeaponShot::ReceptionUpdate(void)
 
 void GrapePlayerWeaponShot::SendUpdate(void)
 {
-	if (Net::GetIns().IsHost() || IsOwnControl()) {
+	if (state == STATE::Move && Net::GetIns().IsHost()) {
 		// 自身の座標
 		Net::GetIns().Send(MsgDataGrapePlayerShotPos(trans.pos), controlSenderId);
 	}

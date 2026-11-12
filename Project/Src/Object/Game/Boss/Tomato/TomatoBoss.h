@@ -131,17 +131,6 @@ private:
 
 	// `````````````````````````````````
 
-
-	// ‰æ‘œ‚Ì–¼‘O
-	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame.png";
-	const std::string HP_IMAGE_NAME = "BossHp.png";
-	const std::string HP_LOST_IMAGE_NAME = "BossHpLost.png";
-
-	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
-	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
-	const Vector2I HP_GAUGE_OFFSET = Vector2I(18, 0);
-	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, (int)((float)HP_IMAGE_SIZE.y / 1.5f));
-
 	// ƒfƒtƒHƒ‹ƒg‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	static constexpr int DEFAULT_COOLTIME = 120;
 

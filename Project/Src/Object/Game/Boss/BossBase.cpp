@@ -16,11 +16,13 @@
 #include "../../Common/Shader/ToonShader.h"
 
 #include "../UI/HitUI.h"
+#include "../UI/HpBarUI.h"
 
 #include "../../Common/Collider/XZCircleCollider.h"
 #include "../../Common/Collider/LineCollider.h"
 
 #include "../../Common/CharacterBase/CharacterStatsDefine.h"
+
 
 BossBase::BossBase(const std::string& parameterPath, std::string modelPath) :
 	CharacterBase(
@@ -101,6 +103,28 @@ void BossBase::Load(void)
 		);
 	}
 
+#pragma endregion
+
+
+#pragma region UIê∂ê¨
+	// HPÉoÅ[ê∂ê¨
+	AddChildActor(
+		new HpBarUI(
+			"Data/Image/Game/UI/Boss/HP/" + HP_FRAME_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_IMAGE_NAME,
+			"Data/Image/Game/UI/Boss/HP/" + HP_LOST_IMAGE_NAME,
+
+			Vector2I(667, 50),
+			Vector2I(629, 50),
+
+			HP_UI_POS,
+
+			characterStats
+		)
+	);
+
+	hitUiRef = new HitUI();
+	AddChildActor(hitUiRef);
 #pragma endregion
 }
 

@@ -30,8 +30,6 @@ public:
 
 	// ロード
 	void Load(void)override;
-	// 更新処理
-	void Update(void)override;
 
 	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
@@ -48,13 +46,14 @@ public:
 	void SendUpdate(void)override;
 
 private:
+	// 共通のActor更新を通して、独立した弾の動作を実行する。
+	void SubUpdate(void)override;
 
 #pragma region 定数
 
 	enum class STATE {
 		None,
 		Move,
-		Blast,
 	};
 
 	// 攻撃倍率
