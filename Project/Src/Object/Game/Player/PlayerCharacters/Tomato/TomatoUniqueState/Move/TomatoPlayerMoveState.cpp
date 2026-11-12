@@ -28,7 +28,8 @@ TomatoPlayerMoveState::TomatoPlayerMoveState(
     ROLL_RADIUS(ROLL_RADIUS),
     isDash(false),
     dashStamina(static_cast<float>(DASH_STAMINA_MAX)),
-    isTired(false)
+    isTired(false),
+    spinAngle(0.0f)
 {
 }
 
@@ -66,7 +67,7 @@ void TomatoPlayerMoveState::Update(void)
     }
 
     // 加速度ではなく、実際に移動した距離で転がる。
-    UpdateRolling();
+    // 転がり回転は、所有するプレイヤーの移動処理後に更新する。
 }
 
 void TomatoPlayerMoveState::Exit(void)
@@ -121,14 +122,11 @@ void TomatoPlayerMoveState::UpdateRolling(void)
     const float distance = move.Length();
     if (distance <= 0.0001f) { return; }
 
-    // ワールド空間での転がり軸 = 上方向 × 移動方向。
-    const Vector3 direction = move / distance;
-    const Vector3 worldAxis(direction.z, 0.0f, -direction.x);
+    // 前転する面が進行方向を向くように、水平の向きを合わせる。
+    const float heading = std::atan2(move.x, move.z);
 
-    // ワールド空間での回転をrotationへ直接追加する。
-    // Transformの行列規約では、現在の回転 * 追加回転 の順。
-    const float rollAngle = distance / ROLL_RADIUS;
-    const MATRIX deltaMat = MGetRotAxis(worldAxis.ToVECTOR(), rollAngle);
-    const MATRIX newRotationMat = MMult(playerTrans.RotationMat(), deltaMat);
+    // 左右軸まわりの前転を合成してから、進行方向へ向ける。
+    spinAngle = std::fmod(spinAngle + distance / ROLL_RADIUS, 2.0f * DX_PI_F);
+    const MATRIX newRotationMat = MMult(MGetRotX(spinAngle), MGetRotY(heading));
     playerTrans.SetRotation(Quaternion::FromMatrix(newRotationMat));
 }

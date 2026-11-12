@@ -23,6 +23,8 @@ public:
 		PlayerSimpleAttackCollOperator& collOperator,
 
 		Transform& trans,
+		const Vector3& defaultCenterDiff,
+		float headButtDistance,
 
 		std::function<void(void)> defaultChangeState
 	);
@@ -88,9 +90,9 @@ private:
 	// クールタイム計測
 	float coolTimeCounter;
 
-	// 頭突き移動量（モデルのローカル +Z 方向）
-	static constexpr float HEADBUTT_DISTANCE = 2.0f;
-	static constexpr float HEADBUTT_WINDUP = 0.25f;
+	// 頭突きで前方へ突き出す最大距離
+	const float HEADBUTT_DISTANCE;
+	Vector3 attackDirection;
 
 	// 攻撃判定の有効状態
 	bool collActive;

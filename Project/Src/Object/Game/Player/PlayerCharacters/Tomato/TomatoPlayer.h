@@ -14,6 +14,7 @@ public:
 	~TomatoPlayer()override = default;
 
 	void PlayerLoad(void)override;
+	void Update(void)override;
 
 	// 当たり判定処理
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
@@ -22,6 +23,12 @@ public:
 	void SendUpdate(void)override;
 
 private:
+
+// 通常移動では姿勢を補間せず、加速だけを行う。
+	void MoveRollingAccel(const Vector3& vec);
+
+	// スタンプ中は落下時の接地をステートへ即時通知する。
+	void SubOnGrounded(COLLIDER_TAG ownTag, const ColliderBase& other)override;
 
 #pragma region スキル1の定数定義
 

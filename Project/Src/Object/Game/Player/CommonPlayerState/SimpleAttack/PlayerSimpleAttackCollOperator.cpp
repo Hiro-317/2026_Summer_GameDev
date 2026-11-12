@@ -47,7 +47,8 @@ PlayerSimpleAttackCollOperator::PlayerSimpleAttackCollOperator(
 
 	isFindAttackTarget(false),
 	targetPos(nullptr),
-	isHit(false)
+	isHit(false),
+	attackWorldOffset()
 {
 }
 
@@ -139,7 +140,7 @@ void PlayerSimpleAttackCollOperator::SubUpdate(void)
 	}
 
 	// í«è]
-	trans.pos = playerTrans.pos;
+	trans.pos = playerTrans.pos + attackWorldOffset;
 	trans.rotation = playerTrans.rotation;
 }
 

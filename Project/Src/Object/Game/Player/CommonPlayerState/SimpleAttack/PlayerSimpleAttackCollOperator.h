@@ -62,6 +62,9 @@ public:
 	// 攻撃の判定を発生させる
 	void CollOn(bool sendNetwork = true);
 
+	// モデルだけを突き出す攻撃用。通常攻撃ではゼロのまま使用する。
+	void SetAttackWorldOffset(const Vector3& offset) { attackWorldOffset = offset; }
+
 	// 攻撃の判定を消す
 	void CollOff(bool sendNetwork = true);
 
@@ -122,6 +125,8 @@ private:
 
 	// 攻撃のヒット管理のフラグ
 	bool isHit;
+
+	Vector3 attackWorldOffset;
 
 	// 更新処理
 	void SubUpdate(void)override;

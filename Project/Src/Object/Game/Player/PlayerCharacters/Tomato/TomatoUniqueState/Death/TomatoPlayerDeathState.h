@@ -3,29 +3,34 @@
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Transform;
+struct Vector3;
 
 class TomatoPlayerDeathState : public CharacterStateBase
 {
 public:
-	TomatoPlayerDeathState(Transform& playerTrans, std::function<void(void)> playerDeathSetting);
+    TomatoPlayerDeathState(
+        Transform& playerTrans,
+        Vector3& velocity,
+        std::function<void(bool)> setIsGravity,
+        std::function<void(bool)> setJudge,
+        std::function<void(void)> playerDeathSetting);
+    ~TomatoPlayerDeathState() override = default;
 
-	~TomatoPlayerDeathState()override = default;
-
-	// 状態遷移後1度行う初期化処理
-	void Enter(void)override;
-	// 更新処理
-	void Update(void)override;
-	// 状態遷移前1度行う終了処理
-	void Exit(void)override;
+    void Enter(void) override;
+    void Update(void) override;
+    void Exit(void) override;
 
 private:
+    Transform& playerTrans;
+    Vector3& velocity;
+    const std::function<void(bool)> setIsGravity;
+    const std::function<void(bool)> setJudge;
+    const std::function<void(void)> playerDeathSetting;
 
-	// モデル制御情報の参照
-	Transform& playerTrans;
-
-	// 死亡後の設定
-	const std::function<void(void)> playerDeathSetting;
-
-	float animeCounter;
+    static constexpr float HOP_HEIGHT = 60.0f;
+    static constexpr float DEATH_TIME = 60.0f;
+    float elapsedTime;
+    float startHeight;
+    float heading;
+    bool finished;
 };
-

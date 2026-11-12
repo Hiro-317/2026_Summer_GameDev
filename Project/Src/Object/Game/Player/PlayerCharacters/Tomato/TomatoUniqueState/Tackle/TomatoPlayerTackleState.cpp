@@ -1,177 +1,162 @@
 #include "TomatoPlayerTackleState.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "../../../../../../../Manager/Input/InputManager.h"
 #include "../../../../../../../Manager/Sound/SoundManager.h"
+#include "../../../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../../../Manager/Camera/CurrentCamera.h"
-
 #include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 
 TomatoPlayerTackleState::TomatoPlayerTackleState(
-
-	PlayerSimpleAttackCollOperator& collOperator,
-
-	Transform& playerTrans,
-	
-	const std::function<void(void)> chargeAttackBuff,
-	const std::function<void(void)> chargeAttackBuffDelete,
-	const std::function<void(void)> defaultChangeState
+    PlayerSimpleAttackCollOperator& collOperator,
+    Transform& playerTrans,
+    Vector3& velocity,
+    float moveSpeed,
+    float rotationPower,
+    int coolTime,
+    std::function<void(void)> chargeAttackBuff,
+    std::function<void(void)> chargeAttackBuffDelete,
+    std::function<void(void)> defaultChangeState
 ) :
-	collOperator(collOperator),
-
-	playerTrans(playerTrans),
-
-	chargeAttackBuff(chargeAttackBuff),
-	chargeAttackBuffDelete(chargeAttackBuffDelete),
-	defaultChangeState(defaultChangeState)
+    MOVE_SPEED(moveSpeed),
+    ROTATION_POW(rotationPower),
+    COOL_TIME(coolTime),
+    playerTrans(playerTrans),
+    velocity(velocity),
+    collOperator(collOperator),
+    moveDir(),
+    heading(0.0f),
+    spinAngle(0.0f),
+    timeCounter(0.0f),
+    chargeCounter(0.0f),
+    coolTimeCounter(0.0f),
+    step(STEP::Charge),
+    chargeAttackBuff(chargeAttackBuff),
+    chargeAttackBuffDelete(chargeAttackBuffDelete),
+    defaultChangeState(defaultChangeState)
 {
-
 }
 
 void TomatoPlayerTackleState::OwnStateConditionUpdate(void)
 {
-	// 攻撃のクールタイム中は状態遷移しない
-	if (coolTimeCounter > 0.0f) { return; }
-
-	// ステート遷移処理
-	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill2).down) {
-		OwnChangeState();
-	}
+    if (coolTimeCounter > 0.0f) { return; }
+    if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill2).down) { OwnChangeState(); }
 }
 
 void TomatoPlayerTackleState::Enter(void)
 {
-	//	当たったかどうかのフラグをリセット
-	collOperator.ResetIsHit();
+    collOperator.CollOff();
+    collOperator.ResetIsHit();
+    collOperator.SetAttackWorldOffset(Vector3());
 
-	// 突進方向の取得
-	moveDir.x = sinf(playerTrans.rotation.ToEulerXZY().y);
-	moveDir.z = cosf(playerTrans.rotation.ToEulerXZY().y);
-	moveDir.Normalize();
+    // 前転中でも左右軸は水平なので、前後が反転しない向きを取得できる。
+    const Vector3 right = playerTrans.VTrans(Vector3(1.0f, 0.0f, 0.0f));
+    heading = std::atan2(-right.z, right.x);
+    moveDir = Vector3(std::sin(heading), 0.0f, std::cos(heading));
+    spinAngle = 0.0f;
+    timeCounter = 0.0f;
+    chargeCounter = 0.0f;
+    coolTimeCounter = 0.0f;
+    step = STEP::Charge;
 
-	// X軸の角度をゼロに初期化(回転量で突進の開始を判断しているから、初期化しておく)
-	playerTrans.rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
-
-	// カウンターの初期化
-	timeCounter = COUNT_MAX;
-	coolTimeCounter = chargeCounter;
-
-	step = STEP::Charge;
+    // 通常移動の慣性だけを止める。重力・接地は共通基盤に任せる。
+    velocity.x = velocity.z = 0.0f;
+    SoundManager::GetIns().Play("TackleCharge");
 }
 
 void TomatoPlayerTackleState::Update(void)
 {
-	// スキルUIのチャージがcoolTimeCounterを参照して動くため同期しておく
-	coolTimeCounter = chargeCounter;
+    velocity.x = velocity.z = 0.0f;
 
-	switch (step) {
+    if (step == STEP::Charge) {
+        Vector3 input = InputVec();
+        if (input != 0.0f) {
+            input.TransMatOwn(MGetRotY(CurrentCamera::Get().GetRotation().GetYaw()));
+            moveDir = input.Normalized();
+            heading = std::atan2(moveDir.x, moveDir.z);
+        }
 
-	case TomatoPlayerTackleState::STEP::Charge: {
+        // 入力がない場合は最後に向いた方向を維持する。
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill2).now) {
+            chargeCounter = (std::min)(CHARGE_TIME, chargeCounter + TimeScale::Get());
+            coolTimeCounter = static_cast<float>(COOL_TIME) * chargeCounter / CHARGE_TIME;
+            UpdateRotation();
+            // 長押し中は音声が終わったら再生し直す。
+            SoundManager::GetIns().Play("TackleCharge");
+            return;
+        }
 
-		// これはスキルのUIをチャージ用に動かすための特殊処理処理
-		Charge(chargeCounter, COOL_TIME, CHARGE_TIME);
+        StartTackle();
+    }
 
-		// 回転スタート
-		playerTrans.rotation.AddAngle(Vector3(ROTATION_POW, 0.0f, 0.0f));
-
-		// チャージの効果音を再生
-		SoundManager::GetIns().Play("TackleCharge");
-
-		// 入力を取得
-		moveDir = InputVec().Normalized();
-
-		// 移動方向をカメラで回転させる
-		moveDir.TransMatOwn(MGetRotY(CurrentCamera::Get().GetRotation().GetYaw()));
-
-		// 角度を入力方向に向ける
-		if (moveDir != 0.0f) { playerTrans.rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z)); }
-
-		// 離した瞬間にタックル開始
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill2).up) {
-			step = STEP::Tackle;
-
-			moveDir = Vector3(sinf(playerTrans.rotation.ToEulerXZY().y), 0.0f, cosf(playerTrans.rotation.ToEulerXZY().y));
-			moveDir.Normalize();
-		}
-
-		break;
-	}
-
-	case TomatoPlayerTackleState::STEP::Tackle: {
-		Tackle();
-		break;
-	}
-		break;
-	}
+    Tackle();
 }
 
-void TomatoPlayerTackleState::Exit(void)
+void TomatoPlayerTackleState::StartTackle(void)
 {
-	// 念のためすべて初期化
-	timeCounter = 0;
-	collOperator.CollOff();
-	collOperator.ResetIsHit();
+    step = STEP::Tackle;
+    timeCounter = COUNT_MAX;
+    coolTimeCounter = static_cast<float>(COOL_TIME);
+    SoundManager::GetIns().Stop("TackleCharge");
+    SoundManager::GetIns().Play("TackleMove");
 
-	// スキルのクールタイムをセット
-	coolTimeCounter = COOL_TIME;
-	chargeCounter = 0;
-
-	// チャージ攻撃のバフを削除
-	chargeAttackBuffDelete();
-}
-
-void TomatoPlayerTackleState::AlwaysUpdate(void)
-{
-	// 自身の状態でないときは、攻撃のクールタイムを減らす
-	if (!IsOwnState()) {
-		// 攻撃のクールタイムを減らす
-		if (coolTimeCounter > 0) { coolTimeCounter--; }
-	}
+    // 最大チャージ時の補正は開始時に一度だけ適用する。
+    if (chargeCounter >= CHARGE_TIME) { chargeAttackBuff(); }
+    collOperator.CollOn();
 }
 
 void TomatoPlayerTackleState::Tackle(void)
 {
-	// チャージの効果音を消して、タックルの効果音を再生
-	SoundManager::GetIns().Stop("TackleCharge");
-	SoundManager::GetIns().Play("TackleMove");
+    // 最後の突進フレームの衝突判定を終えてから、次の更新で終了する。
+    if (timeCounter <= 0.0f) {
+        defaultChangeState();
+        return;
+    }
 
-	// 突進中も回転を続ける
-	playerTrans.rotation.AddAngle(Vector3(ROTATION_POW, 0.0f, 0.0f));
-	// カウントを開始
-	timeCounter--;
-	// 前方に向かって突進
-	playerTrans.pos += moveDir * MOVE_SPEED;
+    const float elapsed = (std::min)(TimeScale::Get(), timeCounter);
+    playerTrans.pos += moveDir * (MOVE_SPEED * elapsed);
+    timeCounter -= elapsed;
+    UpdateRotation();
+}
 
-	// チャージできていたら、バフをかけて攻撃力を増やす
-	if (chargeCounter >= COOL_TIME) {
-		chargeAttackBuff();
-	}
+void TomatoPlayerTackleState::UpdateRotation(void)
+{
+    // 方向転換しても前転角を失わず、突進開始後も同じ速度で回り続ける。
+    spinAngle = std::fmod(spinAngle + ROTATION_POW * TimeScale::Get(), 2.0f * DX_PI_F);
+    playerTrans.SetRotation(Quaternion::FromMatrix(MMult(MGetRotX(spinAngle), MGetRotY(heading))));
+}
 
-	// 当たり判定をオンにする
-	collOperator.CollOn();
+void TomatoPlayerTackleState::Exit(void)
+{
+    collOperator.CollOff();
+    collOperator.ResetIsHit();
+    collOperator.SetAttackWorldOffset(Vector3());
+    velocity.x = velocity.z = 0.0f;
+    timeCounter = 0.0f;
+    chargeCounter = 0.0f;
+    coolTimeCounter = static_cast<float>(COOL_TIME);
+    chargeAttackBuffDelete();
+    SoundManager::GetIns().Stop("TackleCharge");
+    SoundManager::GetIns().Stop("TackleMove");
+}
 
-	// 当たったらタイマーを強制的に終了し、次の処理へ
-	if (collOperator.GetIsHit()) {
-		timeCounter = 0;
-		collOperator.CollOff();
-	}
+void TomatoPlayerTackleState::AlwaysUpdate(void)
+{
+    if (!IsOwnState() && coolTimeCounter > 0.0f) {
+        coolTimeCounter = (std::max)(0.0f, coolTimeCounter - TimeScale::Get());
+    }
 }
 
 Vector3 TomatoPlayerTackleState::InputVec(void) const
 {
-	// 返却用一時変数
-	Vector3 vec = Vector3();
-
-	// コントローラーの入力を取得
-	vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
-
-	// 入力がなければ次にキーボードの入力を取得
-	if (vec == 0.0f) {
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
-		vec.Normalize();
-	}
-
-	return vec;
+    Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
+    if (vec == 0.0f) {
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
+    }
+    return vec.Normalized();
 }

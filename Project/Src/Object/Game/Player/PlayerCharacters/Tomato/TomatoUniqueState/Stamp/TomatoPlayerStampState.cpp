@@ -1,136 +1,140 @@
 #include "TomatoPlayerStampState.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "../../../../../../../Manager/Input/InputManager.h"
-#include "../../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
-
 #include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 
 TomatoPlayerStampState::TomatoPlayerStampState(
-	const bool& isGround,
-
-	PlayerSimpleAttackCollOperator& collOperator,
-
-	const std::function<void(const Vector3&)>& moveAccel,
-	float& accelMax,
-
-	Vector3& velocity,
-
-	const std::function<void(bool)>& setIsGravity,
-	const std::function<void(void)>& defaultChangeState
+    Transform& playerTrans,
+    PlayerSimpleAttackCollOperator& collOperator,
+    const std::function<void(const Vector3&)>& moveAccel,
+    float& accelMax,
+    Vector3& velocity,
+    int coolTime,
+    float jumpPower,
+    float fallSpeed,
+    const std::function<void(bool)>& setIsGravity,
+    const std::function<void(void)>& defaultChangeState
 ) :
-	DEFAULT_ACCEL_MAX(accelMax),
-
-	isGround(isGround),
-
-	collOperator(collOperator),
-
-	moveAccel(moveAccel),
-	accelMax(accelMax),
-
-	velocity(velocity),
-	setIsGravity(setIsGravity),
-	defaultChangeState(defaultChangeState)
+    COOL_TIME(coolTime),
+    JUMP_POWER(jumpPower),
+    FALL_SPEED(fallSpeed),
+    playerTrans(playerTrans),
+    collOperator(collOperator),
+    moveAccel(moveAccel),
+    accelMax(accelMax),
+    velocity(velocity),
+    setIsGravity(setIsGravity),
+    defaultChangeState(defaultChangeState),
+    defaultAccelMax(0.0f),
+    step(STEP::Rising),
+    landingCounter(0.0f),
+    coolTimeCounter(0.0f)
 {
 }
 
 void TomatoPlayerStampState::OwnStateConditionUpdate(void)
 {
-	// 攻撃のクールタイム中は状態遷移しない
-	if (coolTimeCounter > 0) { return; }
-
-	// ステート遷移処理
-	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill3).down) {
-		OwnChangeState();
-	}
+    if (coolTimeCounter > 0.0f) { return; }
+    if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill3).down) { OwnChangeState(); }
 }
 
 void TomatoPlayerStampState::Enter(void)
 {
-	// 重力を一時的に消す
-	setIsGravity(false);
+    collOperator.CollOff();
+    collOperator.ResetIsHit();
+    collOperator.SetAttackWorldOffset(Vector3());
+    step = STEP::Rising;
+    landingCounter = 0.0f;
+    coolTimeCounter = static_cast<float>(COOL_TIME);
+    defaultAccelMax = accelMax;
+    accelMax = JUMP_MOVE_SPEED;
 
-	// クールタイムをセット
-	coolTimeCounter = COOL_TIME;
+    // 通常移動の慣性を持ち込まず、空中の位置調整だけを受け付ける。
+    velocity.x = velocity.z = 0.0f;
+    velocity.y = JUMP_POWER;
+    setIsGravity(false);
 
-	// ジャンプの初速を設定
-	velocity.y = JUMP_POWER;
-
-	// フラグの初期化
-	isEnd = false;
-	collOperator.ResetIsHit();
-
-	accelMax = JUMP_MOVE_SPEED;
+    // 通常移動の前転姿勢を起こして跳び上がる。
+    const Vector3 right = playerTrans.VTrans(Vector3(1.0f, 0.0f, 0.0f));
+    playerTrans.SetRotation(Quaternion::FromRotationY(std::atan2(-right.z, right.x)));
 }
 
 void TomatoPlayerStampState::Update(void)
 {
-	// 攻撃終了フラグがtrueの場合ステートを抜ける
-	if (isEnd) { defaultChangeState(); return; }
+    if (step == STEP::Landed) {
+        landingCounter += TimeScale::Get();
+        if (landingCounter >= LAND_ATTACK_TIME) { defaultChangeState(); }
+        return;
+    }
 
-	// 地面に到着したら、当たり判定を発生
-	if (isGround) {
-		collOperator.CollOn();
+    // 共通重力との二重適用を避け、頂点からはスタンプ用の速度で落下する。
+    if (step == STEP::Rising) {
+        velocity.y -= GRAVITY * TimeScale::Get();
+        if (velocity.y <= 0.0f) {
+            step = STEP::Falling;
+            velocity.y = -FALL_SPEED;
+        }
+    }
+    else {
+        velocity.y = -FALL_SPEED;
+    }
 
-		// 1フレーム待ってステートを終了する
-		isEnd = true;
-	}
+    JumpMove();
+}
 
-	// 重力をかけていく
-	velocity.y -= GRAVITY;
+void TomatoPlayerStampState::OnGrounded(void)
+{
+    // 跳躍直前の接地や、上昇中に段差に触れた通知では発動しない。
+    if (step != STEP::Falling || velocity.y > 0.0f) { return; }
 
-	// 移動処理
-	JumpMove();
+    step = STEP::Landed;
+    landingCounter = 0.0f;
+    velocity = Vector3();
+    UpdateColliderPosition();
+    collOperator.CollOn();
+}
+
+void TomatoPlayerStampState::UpdateColliderPosition(void)
+{
+    collOperator.SetPos(playerTrans.pos);
 }
 
 void TomatoPlayerStampState::Exit(void)
 {
-	// すべて一応初期化
-	collOperator.CollOff();
-	collOperator.ResetIsHit();
-	isEnd = false;
-
-	accelMax = DEFAULT_ACCEL_MAX;
-	// 重力をもとに戻す
-	setIsGravity(true);
+    // 被ダメージなどによる中断時も、判定・速度上限・重力を確実に戻す。
+    collOperator.CollOff();
+    collOperator.ResetIsHit();
+    collOperator.SetAttackWorldOffset(Vector3());
+    accelMax = defaultAccelMax;
+    setIsGravity(true);
+    landingCounter = 0.0f;
 }
 
 void TomatoPlayerStampState::AlwaysUpdate(void)
 {
-	// 自身の状態でないときは、攻撃のクールタイムを減らす
-	if (!IsOwnState()) {
-		// 攻撃のクールタイムを減らす
-		if (coolTimeCounter > 0.0f) {
-			coolTimeCounter -= TimeScale::Get();
-			if (coolTimeCounter < 0.0f) { coolTimeCounter = 0.0f; }
-		}
-	}
+    if (!IsOwnState() && coolTimeCounter > 0.0f) {
+        coolTimeCounter = (std::max)(0.0f, coolTimeCounter - TimeScale::Get());
+    }
 }
 
 void TomatoPlayerStampState::JumpMove(void)
 {
-	//コントローラーの入力を取得
-	Vector3 vec = Input::GetIns().GetLeftStickVec().ToVector3XZ();
+    Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
+    if (vec == 0.0f) {
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
+        if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
+        vec.Normalize();
+    }
 
-	// 入力がなければ次にキーボードの入力を取得
-	if (vec == 0.0f) {
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
-	}
-
-	// 最終的に入力があれば加速度に加算する
-	if (vec != 0.0f) {
-
-		// 正規化
-		vec.Normalize();
-
-		// 移動方向をカメラで回転させる
-		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetRotation().GetYaw()));
-
-		// 移動
-		moveAccel(vec);
-	}
+    if (vec != 0.0f) {
+        vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetRotation().GetYaw()));
+        moveAccel(vec);
+    }
 }

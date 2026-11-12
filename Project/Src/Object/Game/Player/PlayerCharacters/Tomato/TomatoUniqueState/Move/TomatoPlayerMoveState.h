@@ -31,6 +31,9 @@ public:
     void Exit(void) override;
     void AlwaysUpdate(void) override;
 
+    // 所有するプレイヤーの移動処理後に呼び出す。
+    void UpdateRolling(void);
+
     const float& GetDashStamina(void) const { return dashStamina; }
     bool IsTired(void) const { return isTired; }
 
@@ -47,7 +50,10 @@ private:
     float dashStamina;
     bool isTired;
 
+    // 水平の進行方向とは独立して保持する、左右軸まわりの前転角。
+    float spinAngle;
+
     Vector3 InputVec(void) const;
     float MOVE_SPEED_MAX(bool isDash) const;
-    void UpdateRolling(void);
+
 };

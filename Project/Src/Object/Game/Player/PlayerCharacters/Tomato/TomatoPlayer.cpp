@@ -1,5 +1,7 @@
 #include "TomatoPlayer.h"
 
+#include "../../../../../Manager/TimeScale/TimeScale.h"
+
 #include "../../../../../Manager/Net/NetWorkManager.h"
 
 #include "../../../../../Scene/SceneManager.h"
@@ -61,7 +63,8 @@ void TomatoPlayer::PlayerLoad(void)
 		new PlayerSimpleAttackCollOperator(
 			0.0f,
 			COLLIDER_TAG::PlayerAttack,
-			100.0f,
+			// 本体のカプセル半径より一回り大きい球を使用する。
+			MODEL_SIZE.x * 0.5f * GetParameter("Collider", "ModelToColliderRate") * 1.2f,
 			Vector3(),
 			SKILL2_DAMAGE_RATE,
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::TomatoPlayerTackle,
@@ -100,7 +103,7 @@ void TomatoPlayer::PlayerLoad(void)
 			characterStats,
 			1.5f,
 			100,
-			std::bind(&TomatoPlayer::MoveAccel, this, std::placeholders::_1),
+			std::bind(&TomatoPlayer::MoveRollingAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
 			trans,
 			100.0f
@@ -114,11 +117,14 @@ void TomatoPlayer::PlayerLoad(void)
 			// クールタイム
 			SKILL1_COOL_TIME,
 			// 攻撃判定の発生時間
-			10.0f, 100.0f,
+			HEAD_BUTT_ATTACK_TIME * 0.35f, HEAD_BUTT_ATTACK_TIME * 0.5f,
 			HEAD_BUTT_ATTACK_TIME,
 			// 頭突き攻撃の当たり判定発生管理用クラス
 			*headButtCollOperatorRef,
 			trans,
+			// PlayerLoad後に共通基盤が設定する、元のモデル座標補正を渡す。
+			GetParameterToVector3("Model", "CenterDiff") * GetParameterToVector3("Model", "Scale"),
+			HEAD_BUTT_SPEED * HEAD_BUTT_ATTACK_TIME * 0.5f,
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -130,8 +136,12 @@ void TomatoPlayer::PlayerLoad(void)
 		new TomatoPlayerTackleState(
 			// 突進攻撃の当たり判定発生管理用クラス
 			*tackleCollOperatorRef,
-			// 座標 / 角度
+			// 座標 / 角度と、チャージ中に止める通常移動の慣性。
 			trans,
+			velocity,
+			TACKLE_SPEED,
+			ROTATION_POW,
+			SKILL2_COOL_TIME,
 			// チャージ後の突進の攻撃力を増やす関数のポインタ.
 			[&]() { 
 				characterStats.attackPower.AddModifier(
@@ -147,12 +157,15 @@ void TomatoPlayer::PlayerLoad(void)
 	AddState(
 		STATE::SKILL_3,
 		new TomatoPlayerStampState(
-			isGround,
+			trans,
 			// スタンプ攻撃の当たり判定発生管理用クラス
 			*stampCollOperatorRef,
 			std::bind(&TomatoPlayer::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
 			velocity,
+			SKILL3_COOL_TIME,
+			STAMP_JUMP_POWER,
+			STAMP_FALL_SPEED,
 			std::bind(&TomatoPlayer::SetGravityFlg,this,std::placeholders::_1),
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
@@ -164,8 +177,9 @@ void TomatoPlayer::PlayerLoad(void)
 		new TomatoPlayerDamageState(
 			// 座標
 			trans.rotation,
-			// 無敵時間のセット関数
-			[&]() {},
+			velocity,
+			// CSVは初期化後に解放されるため、無敵時間をここで取得して保持する。
+			[this, damageInviTime = GetParameter("Damage", "DamageInviTime")]() { invincibleCounter = damageInviTime; },
 			// 攻撃終了後の状態遷移関数のポインタ (今回は移動状態に遷移するようにする）
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
@@ -176,7 +190,10 @@ void TomatoPlayer::PlayerLoad(void)
 		STATE::DEATH,
 		new TomatoPlayerDeathState(
 			trans,
-			[&]() {isDeath = true; }
+			velocity,
+			[this](bool enabled) { SetGravityFlg(enabled); },
+			[this](bool enabled) { SetJudgeFlg(enabled); },
+			[this]() { isDeath = true; }
 		)
 	);
 
@@ -277,6 +294,32 @@ void TomatoPlayer::PlayerLoad(void)
 	}
 
 #pragma endregion
+}
+
+void TomatoPlayer::Update(void)
+{
+	PlayerBase::Update();
+
+	// 座標の移動後に、このフレームの水平移動量を転がり回転へ反映する。
+	if (IsOwnControl() && GetState() == static_cast<int>(STATE::MOVE)) {
+		static_cast<TomatoPlayerMoveState&>(GetStateIns(STATE::MOVE)).UpdateRolling();
+	}
+	if (IsOwnControl() && GetState() == static_cast<int>(STATE::SKILL_3)) {
+		static_cast<TomatoPlayerStampState&>(GetStateIns(STATE::SKILL_3)).UpdateColliderPosition();
+	}
+}
+
+void TomatoPlayer::SubOnGrounded(COLLIDER_TAG ownTag, const ColliderBase& other)
+{
+    PlayerBase::SubOnGrounded(ownTag, other);
+    if (IsOwnControl() && GetState() == static_cast<int>(STATE::SKILL_3)) {
+        static_cast<TomatoPlayerStampState&>(GetStateIns(STATE::SKILL_3)).OnGrounded();
+    }
+}
+
+void TomatoPlayer::MoveRollingAccel(const Vector3& vec)
+{
+	velocity += (vec * ACCEL_RATE) * TimeScale::Get();
 }
 
 void TomatoPlayer::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)

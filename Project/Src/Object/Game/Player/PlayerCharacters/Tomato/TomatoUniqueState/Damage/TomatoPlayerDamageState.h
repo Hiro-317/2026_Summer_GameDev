@@ -1,43 +1,31 @@
-#pragma once
+﻿#pragma once
 
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Quaternion;
+struct Vector3;
 
 class TomatoPlayerDamageState : public CharacterStateBase
 {
 public:
+    TomatoPlayerDamageState(
+        Quaternion& rotation,
+        Vector3& velocity,
+        std::function<void(void)> inviStart,
+        std::function<void(void)> defaultChangeState);
+    ~TomatoPlayerDamageState() override = default;
 
-	/// <summary>
-	/// ダメージ
-	/// </summary>
-	/// <param name="rotation"></param>
-	/// <param name="InviStart"></param>
-	/// <param name="DefaultChangeState"></param>
-	TomatoPlayerDamageState(
-		Quaternion& rotation,
-		const std::function<void(void)> inviStart,
-		const std::function<void(void)> defaultChangeState
-	);
-
-	// デストラクタ
-	~TomatoPlayerDamageState()override = default;
-
-	// 状態遷移後1度行う初期化処理
-	void Enter(void)override;
-	// 更新処理
-	void Update(void)override;
-	// 状態遷移前1度行う終了処理
-	void Exit(void)override;
+    void Enter(void) override;
+    void Update(void) override;
+    void Exit(void) override;
 
 private:
-
-	// プレイヤーの回転の参照
-	Quaternion& rotation;
-
-	// 無敵時間のセット関数
-	const std::function<void(void)> inviStart;
-
-	// ダメージ状態終了後の状態遷移関数のポインタ
-	const std::function<void(void)> defaultChangeState;
+    // 軽くのけぞってから元へ戻る演出を時間で管理する。
+    static constexpr float DAMAGE_TIME = 40.0f;
+    Quaternion& rotation;
+    Vector3& velocity;
+    const std::function<void(void)> inviStart;
+    const std::function<void(void)> defaultChangeState;
+    float elapsedTime;
+    float heading;
 };
