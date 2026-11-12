@@ -1,4 +1,4 @@
-﻿// 紫色の爆発の模様・色・消滅を計算する共通処理。
+// 紫色の爆発の模様・色・消滅を計算する共通処理。
 // PurpleExplosionPS.hlslから読み込むため、このファイル単体ではコンパイルしない。
 #ifndef PURPLE_EXPLOSION_HLSL
 #define PURPLE_EXPLOSION_HLSL

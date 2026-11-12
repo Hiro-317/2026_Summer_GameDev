@@ -1,4 +1,4 @@
-﻿#include "../Common/Vertex/VertexInputType.hlsli"
+#include "../Common/Vertex/VertexInputType.hlsli"
 #define VERTEX_INPUT DX_VERTEX3DSHADER
 #include "../Common/Vertex/VertexShader3DHeader.hlsli"
 
