@@ -477,4 +477,16 @@
     <None Include="Src\Shader\Shadow\ShadowVSBody.hlsli" />
     <None Include="Src\Shader\Shadow\ShadowVSOutput.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\EffectBase.cpp" />
+    <ClCompile Include="Src\Object\Common\Effect\PurpleExplosionActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\PurpleExplosionShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Object\Common\Effect\PurpleExplosionActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\PurpleExplosionShader.h" />
+    <None Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
+    <None Include="Src\Shader\PurpleExplosion\README.md" />
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionVS.hlsl" />
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionPS.hlsl" />
+  </ItemGroup>
 </Project>

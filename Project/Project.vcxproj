@@ -813,4 +813,26 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\EffectBase.cpp" />
+    <ClCompile Include="Src\Object\Common\Effect\PurpleExplosionActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\PurpleExplosionShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Object\Common\Effect\PurpleExplosionActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\PurpleExplosionShader.h" />
+    <None Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
+    <None Include="Src\Shader\PurpleExplosion\README.md" />
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
 </Project>

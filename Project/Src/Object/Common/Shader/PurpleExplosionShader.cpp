@@ -1,0 +1,67 @@
+#include "PurpleExplosionShader.h"
+
+#include <stdexcept>
+
+#include "../../../pch.h"
+#include "../../../Manager/Shader/ShaderResourceManager.h"
+
+PurpleExplosionShader::PurpleExplosionShader(float durationSeconds, float intensity, float seed) :
+    parameters{0.0f, durationSeconds, intensity, seed}, constantBufferHandle(-1)
+{
+}
+
+PurpleExplosionShader::~PurpleExplosionShader()
+{
+    Release();
+}
+
+void PurpleExplosionShader::Init(void)
+{
+    if (constantBufferHandle >= 0) { return; }
+
+    // 初回だけ共有シェーダーを読み込む。複数の爆発アクターでハンドルを共有する。
+    auto& resources = ShaderResourceManager::GetIns();
+    resources.CreateVertexShader(VERTEX_SHADER_TYPE::PurpleExplosion);
+    resources.CreatePixelShader(PIXEL_SHADER_TYPE::PurpleExplosion);
+    vertexShaderHandle = resources.GetVertexShader(VERTEX_SHADER_TYPE::PurpleExplosion);
+    pixelShaderHandle = resources.GetPixelShader(PIXEL_SHADER_TYPE::PurpleExplosion);
+    if (vertexShaderHandle < 0 || pixelShaderHandle < 0) {
+        throw std::runtime_error("Could not load PurpleExplosionVS/PS.cso; build the shaders first");
+    }
+
+    // 時間・明るさは爆発ごとに異なるため、定数バッファはインスタンスごとに持つ。
+    constantBufferHandle = CreateShaderConstantBuffer(sizeof(Parameters));
+    if (constantBufferHandle < 0) {
+        throw std::runtime_error("Could not create purple explosion constant buffer");
+    }
+}
+
+void PurpleExplosionShader::Apply(void)
+{
+    auto* buffer = static_cast<Parameters*>(GetBufferShaderConstantBuffer(constantBufferHandle));
+    if (buffer == nullptr) {
+        throw std::runtime_error("Could not map purple explosion constant buffer");
+    }
+    // CPU側の値をGPUへ反映してから、ShaderBaseの共通処理でシェーダーを適用する。
+    *buffer = parameters;
+    UpdateShaderConstantBuffer(constantBufferHandle);
+    ShaderBase::Apply();
+    SetShaderConstantBuffer(constantBufferHandle, DX_SHADERTYPE_PIXEL, 4);
+}
+
+void PurpleExplosionShader::ResetApply(void)
+{
+    SetShaderConstantBuffer(-1, DX_SHADERTYPE_PIXEL, 4);
+    ShaderBase::ResetApply();
+}
+
+void PurpleExplosionShader::Release(void)
+{
+    if (constantBufferHandle >= 0) {
+        DeleteShaderConstantBuffer(constantBufferHandle);
+        constantBufferHandle = -1;
+    }
+    // 共有する頂点・ピクセルシェーダーの実体はShaderResourceManagerが所有する。
+    // このクラスでは定数バッファだけを解放し、共有シェーダーは削除しない。
+    ShaderBase::Release();
+}

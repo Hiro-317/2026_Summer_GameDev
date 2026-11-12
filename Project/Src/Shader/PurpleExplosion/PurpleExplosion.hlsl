@@ -1,35 +1,7 @@
-// Purple explosion on a camera-facing world-space quad. Shader Model 5.0+.
-// Compile VSMain as vs_5_0 and PSMain as ps_5_0.
-// Draw 6 vertices without a vertex buffer (triangle list).
-// Blend: Src=ONE, Dest=ONE (additive). Depth test ON, depth write OFF, cull NONE.
-// Bind constants at b0. Matrix below is row-major, using mul(vector, matrix).
-// CameraRight/Up must be normalized world-space camera basis vectors.
-// Example: CenterWS=(0,1,0), Radius=3, ElapsedSeconds=0.35,
-// DurationSeconds=1.2, Intensity=2, Seed=1.
-// Update ElapsedSeconds each frame; reset to zero to trigger another explosion.
-
+// 紫色の爆発の模様・色・消滅を計算する共通処理。
+// PurpleExplosionPS.hlslから読み込むため、このファイル単体ではコンパイルしない。
 #ifndef PURPLE_EXPLOSION_HLSL
 #define PURPLE_EXPLOSION_HLSL
-
-cbuffer PurpleExplosionConstants : register(b0)
-{
-    row_major float4x4 ViewProjection;
-    float3 CenterWS;
-    float Radius;                // Maximum world-space radius; must be > 0.
-    float3 CameraRightWS;
-    float ElapsedSeconds;
-    float3 CameraUpWS;
-    float DurationSeconds;       // Must be > 0.
-    float Intensity;             // HDR brightness, typically 1 to 4.
-    float Seed;
-    float2 ExplosionPadding;
-};
-
-struct ExplosionVaryings
-{
-    float4 positionCS : SV_POSITION;
-    float2 localUV : TEXCOORD0;   // Centered coordinates, from -1 to +1.
-};
 
 float ExplosionHash(float2 p)
 {
@@ -60,23 +32,8 @@ float ExplosionFBM(float2 p)
     return value;
 }
 
-ExplosionVaryings VSMain(uint vertexID : SV_VertexID)
-{
-    const float2 corners[6] = {
-        float2(-1, -1), float2(-1, 1), float2(1, 1),
-        float2(-1, -1), float2(1, 1), float2(1, -1)
-    };
-    ExplosionVaryings output;
-    float2 p = corners[vertexID];
-    float3 positionWS = CenterWS + max(Radius, 0.0) *
-        (CameraRightWS * p.x + CameraUpWS * p.y);
-    output.positionCS = mul(float4(positionWS, 1.0), ViewProjection);
-    output.localUV = p;
-    return output;
-}
-
-// Can also be called from an engine-specific fragment shader.
-// Returns premultiplied HDR radiance, ready for ONE/ONE additive blending.
+// 中心を原点とする-1～1の座標から爆発色を計算する。
+// 戻り値のRGBにはフェードを乗算済み。描画側は乗算済みαの加算ブレンドを使う。
 float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
                                float intensity, float seed)
 {
@@ -91,14 +48,14 @@ float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
     float expansion = 1.0 - pow(1.0 - t, 3.0);
     float noise = ExplosionFBM(p * 7.0 + float2(seed, -t * 3.0));
 
-    // Turbulent purple fireball, with a brief pale violet core.
+    // ノイズで輪郭を揺らす火球と、発生直後だけ強く光る薄紫の中心。
     float fireRadius = lerp(0.07, 0.65, expansion);
     float distortedRadius = r + (noise - 0.45) * 0.16;
     float fire = 1.0 - smoothstep(fireRadius * 0.3, fireRadius, distortedRadius);
     fire *= (0.55 + noise) * pow(1.0 - t, 1.4);
     float flash = exp(-r * r * 95.0) * exp(-t * 16.0);
 
-    // Outward shockwave, kept inside the quad to avoid hard clipping.
+    // 外側へ広がる衝撃波。板ポリゴンの端で切れない範囲に収める。
     float ringRadius = lerp(0.03, 0.85, expansion);
     float ringWidth = lerp(0.035, 0.018, t);
     float aa = max(fwidth(r), 0.001);
@@ -106,7 +63,7 @@ float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
                                   abs(r - ringRadius));
     ring *= (1.0 - t) * 0.8;
 
-    // Deterministic sparks, each travelling outwards along a seeded ray.
+    // シードに応じた方向へ火花を飛ばす。同じシードなら毎回同じ模様になる。
     float sparks = 0.0;
     [unroll]
     for (int i = 0; i < 20; ++i)
@@ -133,12 +90,6 @@ float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
     float envelope = edge * fade * onset;
     float alpha = saturate((fire + ring + flash + sparks) * envelope);
     return float4(radiance * envelope * max(intensity, 0.0), alpha);
-}
-
-float4 PSMain(ExplosionVaryings input) : SV_TARGET
-{
-    return EvaluatePurpleExplosion(input.localUV, ElapsedSeconds,
-                                   DurationSeconds, Intensity, Seed);
 }
 
 #endif
