@@ -1,4 +1,4 @@
-#include "EffectBase.h"
+﻿#include "EffectBase.h"
 
 #include <cmath>
 #include <stdexcept>

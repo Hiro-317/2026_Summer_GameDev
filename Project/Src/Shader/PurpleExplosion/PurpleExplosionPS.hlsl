@@ -1,4 +1,4 @@
-#include "PurpleExplosion.hlsl"
+﻿#include "PurpleExplosion.hlsl"
 
 cbuffer PurpleExplosionParameters : register(b4)
 {

@@ -1,4 +1,4 @@
-#include "PurpleExplosionShader.h"
+﻿#include "PurpleExplosionShader.h"
 
 #include <stdexcept>
 

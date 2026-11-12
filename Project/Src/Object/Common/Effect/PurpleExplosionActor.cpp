@@ -1,4 +1,4 @@
-#include "PurpleExplosionActor.h"
+﻿#include "PurpleExplosionActor.h"
 
 #include <cmath>
 #include <stdexcept>

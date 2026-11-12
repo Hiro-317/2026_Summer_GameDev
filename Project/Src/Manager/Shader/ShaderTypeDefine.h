@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // 頂点シェーダーの種類
 enum class VERTEX_SHADER_TYPE
