@@ -87,7 +87,7 @@ explosion->Restart();
 
 ## シェーダーとビルド
 
-- `PurpleExplosionShader` は `ShaderBase` を継承し、定数バッファの更新・適用・解除を担当します。
+- `ExplosionShader` は `ShaderBase` を継承し、定数バッファの更新・適用・解除を担当します。
 - 頂点・ピクセルシェーダーは `ShaderResourceManager` が所有し、複数の爆発で共有します。
 - 各爆発が所有するのは個別の定数バッファです。PSの `b4` へ時間・持続時間・明るさ・シード・RGBを渡します（32バイト）。
 - `PurpleExplosionVS.hlsl` / `PurpleExplosionPS.hlsl` を `main`、Shader Model 5.0でビルドします。

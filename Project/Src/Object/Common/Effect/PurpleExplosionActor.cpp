@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "../Shader/PurpleExplosionShader.h"
+#include "../Shader/ExplosionShader.h"
 
 PurpleExplosionActor::PurpleExplosionActor(const Vector3& position, float radius,
     float durationSeconds, float intensity, float seed, unsigned int color) :
@@ -20,7 +20,7 @@ PurpleExplosionActor::PurpleExplosionActor(const Vector3& position, float radius
 
 void PurpleExplosionActor::DefaultCreateShader(void)
 {
-    explosionShader = new PurpleExplosionShader(GetDurationSeconds(), intensity, seed, color);
+    explosionShader = new ExplosionShader(GetDurationSeconds(), intensity, seed, color);
     CreateShader(explosionShader);
 }
 

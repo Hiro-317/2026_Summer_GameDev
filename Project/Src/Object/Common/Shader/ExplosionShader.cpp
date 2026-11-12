@@ -1,11 +1,11 @@
-﻿#include "PurpleExplosionShader.h"
+﻿#include "ExplosionShader.h"
 
 #include <stdexcept>
 
 #include "../../../pch.h"
 #include "../../../Manager/Shader/ShaderResourceManager.h"
 
-PurpleExplosionShader::PurpleExplosionShader(float durationSeconds, float intensity, float seed,
+ExplosionShader::ExplosionShader(float durationSeconds, float intensity, float seed,
     unsigned int color) :
     parameters{0.0f, durationSeconds, intensity, seed, 0.0f, 0.0f, 0.0f, 0.0f},
     constantBufferHandle(-1)
@@ -13,19 +13,19 @@ PurpleExplosionShader::PurpleExplosionShader(float durationSeconds, float intens
     SetColor(color);
 }
 
-void PurpleExplosionShader::SetColor(unsigned int rgb)
+void ExplosionShader::SetColor(unsigned int rgb)
 {
     parameters.colorR = static_cast<float>((rgb >> 16) & 0xff) / 255.0f;
     parameters.colorG = static_cast<float>((rgb >> 8) & 0xff) / 255.0f;
     parameters.colorB = static_cast<float>(rgb & 0xff) / 255.0f;
 }
 
-PurpleExplosionShader::~PurpleExplosionShader()
+ExplosionShader::~ExplosionShader()
 {
     Release();
 }
 
-void PurpleExplosionShader::Init(void)
+void ExplosionShader::Init(void)
 {
     if (constantBufferHandle >= 0) { return; }
 
@@ -49,7 +49,7 @@ void PurpleExplosionShader::Init(void)
     ShaderBase::Init();
 }
 
-void PurpleExplosionShader::Apply(void)
+void ExplosionShader::Apply(void)
 {
     auto* buffer = static_cast<Parameters*>(GetBufferShaderConstantBuffer(constantBufferHandle));
     if (buffer == nullptr) {
@@ -62,13 +62,13 @@ void PurpleExplosionShader::Apply(void)
     SetShaderConstantBuffer(constantBufferHandle, DX_SHADERTYPE_PIXEL, 4);
 }
 
-void PurpleExplosionShader::ResetApply(void)
+void ExplosionShader::ResetApply(void)
 {
     SetShaderConstantBuffer(-1, DX_SHADERTYPE_PIXEL, 4);
     ShaderBase::ResetApply();
 }
 
-void PurpleExplosionShader::Release(void)
+void ExplosionShader::Release(void)
 {
     if (constantBufferHandle >= 0) {
         DeleteShaderConstantBuffer(constantBufferHandle);
