@@ -1,4 +1,4 @@
-// 紫色の爆発の模様・色・消滅を計算する共通処理。
+// 指定色の爆発の模様・色・消滅を計算する共通処理。
 // PurpleExplosionPS.hlslから読み込むため、このファイル単体ではコンパイルしない。
 #ifndef PURPLE_EXPLOSION_HLSL
 #define PURPLE_EXPLOSION_HLSL
@@ -35,7 +35,7 @@ float ExplosionFBM(float2 p)
 // 中心を原点とする-1～1の座標から爆発色を計算する。
 // 戻り値のRGBにはフェードを乗算済み。描画側は乗算済みαの加算ブレンドを使う。
 float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
-                               float intensity, float seed)
+                               float intensity, float seed, float3 colorRGB)
 {
     if (duration <= 0.0 || elapsed < 0.0 || elapsed >= duration)
         return float4(0, 0, 0, 0);
@@ -48,7 +48,7 @@ float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
     float expansion = 1.0 - pow(1.0 - t, 3.0);
     float noise = ExplosionFBM(p * 7.0 + float2(seed, -t * 3.0));
 
-    // ノイズで輪郭を揺らす火球と、発生直後だけ強く光る薄紫の中心。
+    // ノイズで輪郭を揺らす火球と、発生直後だけ強く光る中心。
     float fireRadius = lerp(0.07, 0.65, expansion);
     float distortedRadius = r + (noise - 0.45) * 0.16;
     float fire = 1.0 - smoothstep(fireRadius * 0.3, fireRadius, distortedRadius);
@@ -82,11 +82,15 @@ float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
         sparks += spark * (1.0 - smoothstep(0.35, 0.95, t));
     }
 
-    float3 violet = float3(0.46, 0.035, 1.0);
-    float3 pink = float3(0.9, 0.16, 1.0);
-    float3 pale = float3(0.85, 0.65, 1.0);
-    float3 radiance = lerp(violet, pink, saturate(noise)) * fire * 2.0;
-    radiance += violet * ring * 1.5 + pale * (flash * 3.5 + sparks * 2.0);
+    // 指定色から火球・衝撃波・火花の色を作る。
+    // 中心と火花は白に近づけて明るくし、基本の色味は保つ。
+    // 明るい側の色も入力の最大成分に合わせ、黒なら発光しないようにする。
+    float3 baseColor = saturate(colorRGB);
+    float peak = max(baseColor.r, max(baseColor.g, baseColor.b));
+    float3 hotColor = lerp(baseColor, float3(peak, peak, peak), 0.25);
+    float3 paleColor = lerp(baseColor, float3(peak, peak, peak), 0.65);
+    float3 radiance = lerp(baseColor, hotColor, saturate(noise)) * fire * 2.0;
+    radiance += baseColor * ring * 1.5 + paleColor * (flash * 3.5 + sparks * 2.0);
     float envelope = edge * fade * onset;
     float alpha = saturate((fire + ring + flash + sparks) * envelope);
     return float4(radiance * envelope * max(intensity, 0.0), alpha);

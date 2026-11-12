@@ -47,15 +47,39 @@ bool finished = explosion->IsFinished();
 経過時間は既存ゲームに合わせて `1 / 60秒 × TimeScale::Get()` で進めます。
 ポーズ中など、所有者が更新しない間は再生も進みません。
 
+## 色を変更する
+
+色は `0xRRGGBB` 形式で指定します。指定を省略すると紫色になります。
+
+```cpp
+// コンストラクターの最後の引数で、生成時の色を指定する。
+auto* explosion = new PurpleExplosionActor(
+    Vector3(0.0f, 150.0f, 0.0f), 150.0f, 1.2f, 2.0f, 1.0f, 0xff4000);
+AddActor(explosion);
+
+// 再生中にも変更可能。次の描画から青色に変わる。
+explosion->SetColor(0x00aaff);
+
+// 初期化前やRestartの前にも設定できる。色の変更だけでは時間をリセットしない。
+explosion->SetColor(0x00ff80);
+explosion->Restart();
+```
+
+火球・衝撃波・火花が指定色に合わせて変わり、中心と火花は明るい色になります。
+黒（`0x000000`）は発光しません。明るさは引き続き `intensity` で指定します。
+各アクターが色を保持するため、同時に別々の色で再生できます。
+
 ## シェーダーとビルド
 
 - `PurpleExplosionShader` は `ShaderBase` を継承し、定数バッファの更新・適用・解除を担当します。
 - 頂点・ピクセルシェーダーは `ShaderResourceManager` が所有し、複数の爆発で共有します。
-- 各爆発が所有するのは個別の定数バッファです。PSの `b4` へ時間・持続時間・明るさ・シードを渡します。
+- 各爆発が所有するのは個別の定数バッファです。PSの `b4` へ時間・持続時間・明るさ・シード・RGBを渡します（32バイト）。
 - `PurpleExplosionVS.hlsl` / `PurpleExplosionPS.hlsl` を `main`、Shader Model 5.0でビルドします。
 - `Project.vcxproj` に登録済みで、出力先は `Project/Data/Shader/PurpleExplosionVS.cso` と `PurpleExplosionPS.cso` です。
 - `PurpleExplosion.hlsl` は共通の評価関数で、単体のコンパイル対象ではありません。
 - 描画は半透明パスで行い、乗算済みαの加算ブレンドを使います。深度判定は有効、描画中の深度書き込みは無効です。
 - 描画後はブレンド・カリングを元に戻し、深度書き込みは既存3Dシーンの通常設定（有効）へ戻します。
+
+HLSLファイルはUTF-8の署名なし（BOMなし）で保存してください。C++ファイルはUTF-8 BOM付きです。
 
 Windows版Visual Studio / DxLibでの実行確認は別途必要です。
