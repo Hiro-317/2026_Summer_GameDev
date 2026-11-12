@@ -835,4 +835,23 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
       <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\FlameBreathActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\FlameBreathShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\FlameBreathActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\FlameBreathShader.h" />
+    <None Include="Src\Shader\FlameBreath\README.md" />
+    <FxCompile Include="Src\Shader\FlameBreath\FlameBreathVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
 </Project>

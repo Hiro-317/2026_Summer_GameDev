@@ -489,4 +489,13 @@
     <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionVS.hlsl" />
     <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosionPS.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\FlameBreathActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\FlameBreathShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\FlameBreathActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\FlameBreathShader.h" />
+    <None Include="Src\Shader\FlameBreath\README.md" />
+    <FxCompile Include="Src\Shader\FlameBreath\FlameBreathVS.hlsl" />
+    <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl" />
+  </ItemGroup>
 </Project>

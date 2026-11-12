@@ -35,6 +35,9 @@ enum class VERTEX_SHADER_TYPE
 
     // 紫色の爆発
     PurpleExplosion,
+
+    // 直線状の炎ブレス
+    FlameBreath,
 };
 
 // ピクセルシェーダーの種類
@@ -88,6 +91,9 @@ enum class PIXEL_SHADER_TYPE
 
     // 紫色の爆発
     PurpleExplosion,
+
+    // 直線状の炎ブレス
+    FlameBreath,
 };
 
 // 頂点タイプ
