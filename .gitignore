@@ -44,3 +44,5 @@
 *x64/
 
 Project/Data/Ranking/Ranking.csv
+
+Project/Data/Shader/*.cso

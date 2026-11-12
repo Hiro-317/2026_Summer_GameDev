@@ -72,5 +72,5 @@ private:
 
 #pragma endregion
 
-	int coolTimeCounter;
+	float coolTimeCounter;
 };

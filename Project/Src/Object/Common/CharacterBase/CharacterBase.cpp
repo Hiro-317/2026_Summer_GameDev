@@ -79,6 +79,9 @@ void CharacterBase::BaseUpdate(void)
 		for (std::pair<const int, CharacterStateBase*>& s : stateMap) { s.second->AlwaysUpdate(); }
 	}
 
+	// バフ / デバフ の更新
+	characterStats.ModifinerTimeUpdate();
+
 	// アニメーション更新
 	if (anime) { anime->Update(); }
 }

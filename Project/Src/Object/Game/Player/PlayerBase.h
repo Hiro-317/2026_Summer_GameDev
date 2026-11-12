@@ -2,6 +2,8 @@
 
 #include "../../Common/CharacterBase/CharacterBase.h"
 
+#include <array>
+
 #include "../../../Application/Application.h"
 
 #include "../../../Manager/Net/SenderID_Define.h"
@@ -155,7 +157,7 @@ protected:
 	static const inline Vector2I ICON_IMAGE_SIZE = Vector2I(70, 73);
 
 	// HPバー（アイコン付き）の描画位置テーブル
-	static const inline Vector2I HP_UI_DRAW_POS[(int)MSG_SENDER_ID::Max] = {
+	static const inline std::array<Vector2I, (size_t)MSG_SENDER_ID::Max> HP_UI_DRAW_POS = {
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF),
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 1)),
 		Vector2I(80, App::SCREEN_SIZE_Y_HALF + (ICON_IMAGE_SIZE.y * 2)),

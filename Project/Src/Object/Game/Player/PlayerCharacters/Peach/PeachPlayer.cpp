@@ -24,6 +24,8 @@
 #include "../../PlayerUI/PlayerSkillUI.h"
 #include "../../PlayerUI/PlayerStaminaUI.h"
 
+#include "../../PlayerUI/ToPlayerTargetUI.h"
+
 PeachPlayer::PeachPlayer(MSG_SENDER_ID controlSenderId) :
 	PlayerBase(controlSenderId,
 
@@ -186,7 +188,7 @@ void PeachPlayer::PlayerLoad(void)
 			// 攻撃判定発生開始時間
 			0.3f,
 			// 判定管理
-			*healCollOperatorRef,
+			*buffCollOperatorRef,
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay(ANIME_TYPE::HEAL, false); },
 			// アニメーションの再生割合のゲット関数ポインタ
@@ -322,6 +324,9 @@ void PeachPlayer::PlayerLoad(void)
 				"SkillSlotMoveSpeedBuff"
 			)
 		);
+
+		// ターゲットUIの登録
+		AddChildActor(new ToPlayerTargetUI(HP_UI_DRAW_POS, targetPlayerIndex));
 	}
 
 #pragma endregion 

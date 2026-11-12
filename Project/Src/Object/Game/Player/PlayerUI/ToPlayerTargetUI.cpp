@@ -14,7 +14,7 @@ ToPlayerTargetUI::ToPlayerTargetUI(const std::array<Vector2I, (size_t)MSG_SENDER
 void ToPlayerTargetUI::Load(void)
 {
 	// 画像を読み込む（選択中フレーム）
-	selectedFrameImage = LoadGraph("Data/Image/Game/UI/Player/PlayerToNowSelect.png");
+	selectedFrameImage = LoadGraph("Data/Image/Game/UI/Player/HP/PlayerToNowSelect.png");
 }
 
 void ToPlayerTargetUI::SubInit(void)
@@ -27,7 +27,7 @@ void ToPlayerTargetUI::SubDraw(void)
 {
 	// 描画（選択中フレーム）
 	DrawRotaGraph(DRAW_POS_TABLE.at(targetPlayerIndex).x, DRAW_POS_TABLE.at(targetPlayerIndex).y, 1, 0, selectedFrameImage, true);
-}	
+}
 
 void ToPlayerTargetUI::SubRelease(void)
 {
