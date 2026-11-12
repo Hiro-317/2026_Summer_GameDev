@@ -5,9 +5,19 @@
 #include "../../../pch.h"
 #include "../../../Manager/Shader/ShaderResourceManager.h"
 
-PurpleExplosionShader::PurpleExplosionShader(float durationSeconds, float intensity, float seed) :
-    parameters{0.0f, durationSeconds, intensity, seed}, constantBufferHandle(-1)
+PurpleExplosionShader::PurpleExplosionShader(float durationSeconds, float intensity, float seed,
+    unsigned int color) :
+    parameters{0.0f, durationSeconds, intensity, seed, 0.0f, 0.0f, 0.0f, 0.0f},
+    constantBufferHandle(-1)
 {
+    SetColor(color);
+}
+
+void PurpleExplosionShader::SetColor(unsigned int rgb)
+{
+    parameters.colorR = static_cast<float>((rgb >> 16) & 0xff) / 255.0f;
+    parameters.colorG = static_cast<float>((rgb >> 8) & 0xff) / 255.0f;
+    parameters.colorB = static_cast<float>(rgb & 0xff) / 255.0f;
 }
 
 PurpleExplosionShader::~PurpleExplosionShader()
@@ -29,7 +39,7 @@ void PurpleExplosionShader::Init(void)
         throw std::runtime_error("Could not load PurpleExplosionVS/PS.cso; build the shaders first");
     }
 
-    // 時間・明るさは爆発ごとに異なるため、定数バッファはインスタンスごとに持つ。
+    // 時間・明るさ・色は爆発ごとに異なるため、定数バッファはインスタンスごとに持つ。
     constantBufferHandle = CreateShaderConstantBuffer(sizeof(Parameters));
     if (constantBufferHandle < 0) {
         throw std::runtime_error("Could not create purple explosion constant buffer");

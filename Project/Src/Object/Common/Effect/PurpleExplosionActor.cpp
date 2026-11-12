@@ -6,8 +6,9 @@
 #include "../Shader/PurpleExplosionShader.h"
 
 PurpleExplosionActor::PurpleExplosionActor(const Vector3& position, float radius,
-    float durationSeconds, float intensity, float seed) :
+    float durationSeconds, float intensity, float seed, unsigned int color) :
     EffectBase(durationSeconds), radius(radius), intensity(intensity), seed(seed),
+    color(color & 0xffffff),
     explosionShader(nullptr)
 {
     if (!std::isfinite(radius) || radius <= 0.0f ||
@@ -19,7 +20,7 @@ PurpleExplosionActor::PurpleExplosionActor(const Vector3& position, float radius
 
 void PurpleExplosionActor::DefaultCreateShader(void)
 {
-    explosionShader = new PurpleExplosionShader(GetDurationSeconds(), intensity, seed);
+    explosionShader = new PurpleExplosionShader(GetDurationSeconds(), intensity, seed, color);
     CreateShader(explosionShader);
 }
 
@@ -27,6 +28,8 @@ void PurpleExplosionActor::Draw(void)
 {
     if (!GetIsDraw() || IsFinished() || explosionShader == nullptr) { return; }
     explosionShader->SetElapsedSeconds(GetElapsedSeconds());
+    // 色はアクターごとに保持する。共有シェーダーを使う別の爆発には影響しない。
+    explosionShader->SetColor(color);
     ActorBase::Draw();
 }
 
