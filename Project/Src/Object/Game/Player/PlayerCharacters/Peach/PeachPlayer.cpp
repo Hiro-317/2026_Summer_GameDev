@@ -45,17 +45,17 @@ PeachPlayer::PeachPlayer(MSG_SENDER_ID controlSenderId) :
 
 void PeachPlayer::PlayerLoad(void)
 {
-	// å½±ã‚’æ¶ˆã™ï¼ˆæ¶ˆã•ãªã‹ã£ãŸã‚‰ã€å¤‰ãªè‰²åˆã„ã«ãªã‚‹ã®ã§ï¼‰
+	// ‰e‚ğÁ‚·iÁ‚³‚È‚©‚Á‚½‚çA•Ï‚ÈF‡‚¢‚É‚È‚é‚Ì‚Åj
 	MV1SetSpcColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 	MV1SetDifColorScale(trans.model, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹
+	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ğ¶¬‚·‚é
 	CreateAnimationController();
 	AddInFbxAnimation((int)ANIME_TYPE::MAX, ANIME_SPEED);
 
-#pragma region ä¸‹ä½ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ
+#pragma region ‰ºˆÊƒIƒuƒWƒFƒNƒg‚Ì¶¬
 
-	// ãƒ‘ãƒ³ãƒç”¨ã®å½“ãŸã‚Šåˆ¤å®šç®¡ç†ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆ
+	// ƒpƒ“ƒ`—p‚Ì“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX‚ğ¶¬
 	punchCollOperatorRef =
 		new PlayerSimpleAttackCollOperator(
 			GetParameter("SimpleAttack", "TargetSerchRange"),
@@ -68,10 +68,10 @@ void PeachPlayer::PlayerLoad(void)
 			controlSenderId,
 			characterStats
 		);
-	// è¿½åŠ 
+	// ’Ç‰Á
 	AddChildActor(punchCollOperatorRef);
 
-	// å›å¾©ç”¨ã®å½“ãŸã‚Šåˆ¤å®šç®¡ç†ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆ
+	// ‰ñ•œ—p‚Ì“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX‚ğ¶¬
 	healCollOperatorRef =
 		new PlayerSingleModifierCollOperator(
 			COLLIDER_TAG::PlayerHeal,
@@ -80,10 +80,10 @@ void PeachPlayer::PlayerLoad(void)
 			targetPlayerPos,
 			100
 		);
-	// è¿½åŠ 
+	// ’Ç‰Á
 	AddChildActor(healCollOperatorRef);
 
-	// ãƒãƒ•ç”¨ã®å½“ãŸã‚Šåˆ¤å®šç®¡ç†ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆ
+	// ƒoƒt—p‚Ì“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX‚ğ¶¬
 	buffCollOperatorRef =
 		new PlayerSingleModifierCollOperator(
 			COLLIDER_TAG::PlayerBuff,
@@ -94,84 +94,84 @@ void PeachPlayer::PlayerLoad(void)
 			150,
 			ModifierType::PeachPlayerSkillBuff
 		);
-	// è¿½åŠ 
+	// ’Ç‰Á
 	AddChildActor(buffCollOperatorRef);
 	
 #pragma endregion 
 
-#pragma region çŠ¶æ…‹è¨­å®š
+#pragma region ó‘Ôİ’è
 
-	// å¾…æ©ŸçŠ¶æ…‹ã‚’è¿½åŠ ã™ã‚‹
+	// ‘Ò‹@ó‘Ô‚ğ’Ç‰Á‚·‚é
 	AddState(
 		STATE::IDLE,
 		new PlayerIdleState([&]() { AnimePlay(ANIME_TYPE::IDLE); })
 	);
 
-	// ç§»å‹•çŠ¶æ…‹ã‚’è¿½åŠ ã™ã‚‹
+	// ˆÚ“®ó‘Ô‚ğ’Ç‰Á‚·‚é
 	AddState(
 		STATE::MOVE,
 		new PlayerMoveState(
-			// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®å‚ç…§
+			// ƒXƒe[ƒ^ƒX‚ÌQÆ
 			characterStats,
-			// ãƒ€ãƒƒã‚·ãƒ¥ã®ç§»å‹•é‡å€ç‡
+			// ƒ_ƒbƒVƒ…‚ÌˆÚ“®—Ê”{—¦
 			GetParameter("Move", "DashSpeedRate"),
-			// ã‚¹ã‚¿ãƒŸãƒŠé‡
+			// ƒXƒ^ƒ~ƒi—Ê
 			(short)GetParameterToInt("Move", "DashStaminaMax"),
-			// ç§»å‹•ç”¨ã®é–¢æ•°
+			// ˆÚ“®—p‚ÌŠÖ”
 			std::bind(&PeachPlayer::MoveAccel, this, std::placeholders::_1),
-			// æ¨ªè»¸åŠ é€Ÿåº¦ã®æœ€å¤§å€¤ã®å‚ç…§
+			// ‰¡²‰Á‘¬“x‚ÌÅ‘å’l‚ÌQÆ
 			ACCEL_MAX,
-			// æ­©ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
+			// •à‚«ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
 			[&]() { AnimePlay(ANIME_TYPE::WALK); },
-			// èµ°ã‚Šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
+			// ‘–‚èƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
 			[&]() { AnimePlay(ANIME_TYPE::RUN); }
 		)
 	);
 
-	// æ”»æ’ƒçŠ¶æ…‹ã‚’è¿½åŠ ã™ã‚‹ (ãƒ‘ãƒ³ãƒ)
+	// UŒ‚ó‘Ô‚ğ’Ç‰Á‚·‚é (ƒpƒ“ƒ`)
 	AddState(
 		STATE::SKILL_1,
 		new PlayerSimpleAttackState(
-			// ä½¿ç”¨ã™ã‚‹ã‚­ãƒ¼
+			// g—p‚·‚éƒL[
 			KEY_TYPE::PlayerSkill1,
-			// ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
+			// ƒN[ƒ‹ƒ^ƒCƒ€
 			GetParameterToInt("SimpleAttack", "CoolTime"),
-			// æ”»æ’ƒåˆ¤å®šç™ºç”Ÿé–‹å§‹æ™‚é–“
+			// UŒ‚”»’è”­¶ŠJnŠÔ
 			GetParameter("SimpleAttack", "CollStartTime"),
-			// æ”»æ’ƒåˆ¤å®šç™ºç”Ÿçµ‚äº†æ™‚é–“
+			// UŒ‚”»’è”­¶I—¹ŠÔ
 			GetParameter("SimpleAttack", "CollEndTime"),
-			// æ”»æ’ƒåˆ¤å®šç®¡ç†
+			// UŒ‚”»’èŠÇ—
 			*punchCollOperatorRef,
-			// ãƒ¢ãƒ‡ãƒ«åˆ¶å¾¡æƒ…å ±ã®å‚ç…§
+			// ƒ‚ƒfƒ‹§Œäî•ñ‚ÌQÆ
 			trans,
-			// ç§»å‹•ç”¨ã®é–¢æ•°
+			// ˆÚ“®—p‚ÌŠÖ”
 			std::bind(&PeachPlayer::MoveAccel, this, std::placeholders::_1),
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
+			// ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
 			[&]() { AnimePlay(ANIME_TYPE::PUNCH); },
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿå‰²åˆã‚’å–å¾—ã™ã‚‹é–¢æ•°
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡‚ğæ“¾‚·‚éŠÖ”
 			std::bind(&PeachPlayer::GetAnimeRatio, this),
-			// æ”»æ’ƒçµ‚äº†å¾Œã®çŠ¶æ…‹é·ç§»é–¢æ•°ã®ãƒã‚¤ãƒ³ã‚¿ (ä»Šå›ã¯å¾…æ©ŸçŠ¶æ…‹ã«é·ç§»ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ï¼‰
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚Í‘Ò‹@ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
 			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
-	// å›å¾©
+	// ‰ñ•œ
 	AddState(
 		STATE::SKILL_2,
 		new PlayerSingleModifierState(
-			// ä½¿ç”¨ã™ã‚‹ã‚­ãƒ¼
+			// g—p‚·‚éƒL[
 			KEY_TYPE::PlayerSkill2,
-			// ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
+			// ƒN[ƒ‹ƒ^ƒCƒ€
 			600,
-			// æ”»æ’ƒåˆ¤å®šç™ºç”Ÿé–‹å§‹æ™‚é–“
+			// UŒ‚”»’è”­¶ŠJnŠÔ
 			0.3f,
-			// åˆ¤å®šç®¡ç†
+			// ”»’èŠÇ—
 			*healCollOperatorRef,
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé–¢æ•°ã®ãƒã‚¤ãƒ³ã‚¿
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŠÖ”‚Ìƒ|ƒCƒ“ƒ^
 			[&]() { AnimePlay(ANIME_TYPE::HEAL); },
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿå‰²åˆã®ã‚²ãƒƒãƒˆé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡‚ÌƒQƒbƒgŠÖ”ƒ|ƒCƒ“ƒ^
 			[&]() { return GetAnimeRatio(); },
-			// æ”»æ’ƒçµ‚äº†å¾Œã®çŠ¶æ…‹é·ç§»é–¢æ•°ã®ãƒã‚¤ãƒ³ã‚¿ (ä»Šå›ã¯ç§»å‹•çŠ¶æ…‹ã«é·ç§»ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ï¼‰
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚ÍˆÚ“®ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
@@ -179,19 +179,19 @@ void PeachPlayer::PlayerLoad(void)
 	AddState(
 		STATE::SKILL_3,
 		new PlayerSingleModifierState(
-			// ä½¿ç”¨ã™ã‚‹ã‚­ãƒ¼
+			// g—p‚·‚éƒL[
 			KEY_TYPE::PlayerSkill3,
-			// ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
+			// ƒN[ƒ‹ƒ^ƒCƒ€
 			600,
-			// æ”»æ’ƒåˆ¤å®šç™ºç”Ÿé–‹å§‹æ™‚é–“
+			// UŒ‚”»’è”­¶ŠJnŠÔ
 			0.3f,
-			// åˆ¤å®šç®¡ç†
+			// ”»’èŠÇ—
 			*healCollOperatorRef,
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé–¢æ•°ã®ãƒã‚¤ãƒ³ã‚¿
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŠÖ”‚Ìƒ|ƒCƒ“ƒ^
 			[&]() { AnimePlay(ANIME_TYPE::HEAL); },
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿå‰²åˆã®ã‚²ãƒƒãƒˆé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶Š„‡‚ÌƒQƒbƒgŠÖ”ƒ|ƒCƒ“ƒ^
 			[&]() { return GetAnimeRatio(); },
-			// æ”»æ’ƒçµ‚äº†å¾Œã®çŠ¶æ…‹é·ç§»é–¢æ•°ã®ãƒã‚¤ãƒ³ã‚¿ (ä»Šå›ã¯ç§»å‹•çŠ¶æ…‹ã«é·ç§»ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ï¼‰
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚ÍˆÚ“®ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
 			[&]() { ChangeState((int)STATE::MOVE); }
 		)
 	);
@@ -199,53 +199,53 @@ void PeachPlayer::PlayerLoad(void)
 	AddState(
 		STATE::DAMAGE,
 		new PlayerDamageState(
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿ
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶
 			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’å–å¾—ã™ã‚‹é–¢æ•°
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌI—¹ƒtƒ‰ƒO‚ğæ“¾‚·‚éŠÖ”
 			std::bind(&PeachPlayer::IsAnimeEnd, this),
-			// ç„¡æ•µæ™‚é–“ã®ã‚»ãƒƒãƒˆé–¢æ•°
+			// –³“GŠÔ‚ÌƒZƒbƒgŠÖ”
 			[&]() { invincibleCounter = 30; },
-			// æ”»æ’ƒçµ‚äº†å¾Œã®çŠ¶æ…‹é·ç§»é–¢æ•°ã®ãƒã‚¤ãƒ³ã‚¿ (ä»Šå›ã¯å¾…æ©ŸçŠ¶æ…‹ã«é·ç§»ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ï¼‰
+			// UŒ‚I—¹Œã‚Ìó‘Ô‘JˆÚŠÖ”‚Ìƒ|ƒCƒ“ƒ^ (¡‰ñ‚Í‘Ò‹@ó‘Ô‚É‘JˆÚ‚·‚é‚æ‚¤‚É‚·‚éj
 			[&]() { ChangeState(STATE::IDLE); }
 		)
 	);
 
-	// æ­»äº¡çŠ¶æ…‹ã‚’è¿½åŠ ã™ã‚‹
+	// €–Só‘Ô‚ğ’Ç‰Á‚·‚é
 	AddState(
 		STATE::DEATH,
 		new PlayerDeathState(
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿ
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶
 			[&]() { AnimePlay(ANIME_TYPE::DAMAGE); },
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’å–å¾—ã™ã‚‹é–¢æ•°
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌI—¹ƒtƒ‰ƒO‚ğæ“¾‚·‚éŠÖ”
 			std::bind(&PeachPlayer::IsAnimeEnd, this),
-			// æ­»äº¡æ¼”å‡ºçµ‚äº†å¾Œã®å‡¦ç†
+			// €–S‰‰oI—¹Œã‚Ìˆ—
 			[&]() { isDeath = true; }
 		)
 	);
 
-	// å¾…æ©ŸçŠ¶æ…‹/ç§»å‹•çŠ¶æ…‹ -> ã‚¹ã‚­ãƒ«1 ã®é·ç§»ã‚’ç™»éŒ²
+	// ‘Ò‹@ó‘Ô/ˆÚ“®ó‘Ô -> ƒXƒLƒ‹1 ‚Ì‘JˆÚ‚ğ“o˜^
 	RegisterStateTransition(STATE::IDLE, STATE::SKILL_1);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_1);
 
-	// å¾…æ©ŸçŠ¶æ…‹/ç§»å‹•çŠ¶æ…‹ -> ã‚¹ã‚­ãƒ«2 ã®é·ç§»ã‚’ç™»éŒ²
+	// ‘Ò‹@ó‘Ô/ˆÚ“®ó‘Ô -> ƒXƒLƒ‹2 ‚Ì‘JˆÚ‚ğ“o˜^
 	RegisterStateTransition(STATE::IDLE, STATE::SKILL_2);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_2);
 
-	// å¾…æ©ŸçŠ¶æ…‹/ç§»å‹•ä¸­ -> ã‚¹ã‚­ãƒ«3ã®é·ç§»ã‚’ç™»éŒ²
+	// ‘Ò‹@ó‘Ô/ˆÚ“®’† -> ƒXƒLƒ‹3‚Ì‘JˆÚ‚ğ“o˜^
 	RegisterStateTransition(STATE::IDLE, STATE::SKILL_3);
 	RegisterStateTransition(STATE::MOVE, STATE::SKILL_3);
 
 #pragma endregion 
 
-#pragma region UIã®ç™»éŒ²ã¨è¨­å®š
+#pragma region UI‚Ì“o˜^‚Æİ’è
 
-	// HPUIã®åº§æ¨™è¨­å®š
+	// HPUI‚ÌÀ•Wİ’è
 	int number = 0;
 	if (IsOwnControl()) {
 		number = 0;
 	}
 	else {
-		// æ“ä½œè€…ã ã‘ä¸€ç•ªä¸Šã«è¡¨ç¤ºã€ãã‚Œä»¥å¤–ã®äººã®HPã¯ä¸‹ã«æç”»
+		// ‘€ìÒ‚¾‚¯ˆê”Ôã‚É•\¦A‚»‚êˆÈŠO‚Ìl‚ÌHP‚Í‰º‚É•`‰æ
 		for (int id = 0; id < (int)MSG_SENDER_ID::Max; id++) {
 			if (Net::GetIns().GetSenderId() == (MSG_SENDER_ID)id) { continue; }
 			number++;
@@ -253,7 +253,7 @@ void PeachPlayer::PlayerLoad(void)
 		}
 	}
 
-	// HPãƒãƒ¼UIã®ç™»éŒ²
+	// HPƒo[UI‚Ì“o˜^
 	AddChildActor(
 		new HpBarUI(
 			PLAYER_UI_IMAGE_FILE_PATH + HP_FRAME_IMAGE_NAME,
@@ -275,10 +275,10 @@ void PeachPlayer::PlayerLoad(void)
 		)
 	);
 
-	// è‡ªåˆ†ãŒæ“ä½œè€…ã‹ã©ã†ã‹
+	// ©•ª‚ª‘€ìÒ‚©‚Ç‚¤‚©
 	if (IsOwnControl()) {
 
-		// ã‚¹ã‚¿ãƒŸãƒŠUIã®ç™»éŒ²
+		// ƒXƒ^ƒ~ƒiUI‚Ì“o˜^
 		AddChildActor(
 			new PlayerStaminaUI(
 				GetParameter("Move", "DashStaminaMax"),
@@ -287,7 +287,7 @@ void PeachPlayer::PlayerLoad(void)
 			)
 		);
 
-		// ã‚¹ã‚­ãƒ«1UIã®ç™»éŒ²
+		// ƒXƒLƒ‹1UI‚Ì“o˜^
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
@@ -298,7 +298,7 @@ void PeachPlayer::PlayerLoad(void)
 			)
 		);
 
-		// ã‚¹ã‚­ãƒ«2UIã®ç™»éŒ²
+		// ƒXƒLƒ‹2UI‚Ì“o˜^
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
@@ -309,7 +309,7 @@ void PeachPlayer::PlayerLoad(void)
 			)
 		);
 
-		// ã‚¹ã‚­ãƒ«3UIã®ç™»éŒ²
+		// ƒXƒLƒ‹3UI‚Ì“o˜^
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,
@@ -340,28 +340,28 @@ void PeachPlayer::ReceptionUpdate(void)
 		switch (dataPtr->collKinds) {
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::CommonPlayerSimpleAttack: {
-			// ãƒ‘ãƒ³ãƒ
+			// ƒpƒ“ƒ`
 			if (dataPtr->isCollider) { punchCollOperatorRef->CollOn(); }
 			else { punchCollOperatorRef->CollOff(); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal: {
-			// å›å¾©
+			// ‰ñ•œ
 			if (dataPtr->isCollider) { healCollOperatorRef->CollOn(); }
 			else { healCollOperatorRef->CollOff(); }
 			break;
 		}
 
 		case MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff: {
-			// ãƒãƒ•
+			// ƒoƒt
 			if (dataPtr->isCollider) { buffCollOperatorRef->CollOn(); }
 			else { buffCollOperatorRef->CollOff(); }
 
 			break;
 		}
 
-		default: { break; }	// ä¾‹å¤–
+		default: { break; }	// —áŠO
 		}
 
 		delete dataPtr;
