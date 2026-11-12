@@ -60,6 +60,9 @@ private:
 
 	static constexpr float UP = 75.0f;
 	static constexpr float SWITCH_POS = 10000.0f;
+	static constexpr float CAMERA_SWITCH_POS = 8000.0f;
+	static constexpr int START_CNT = 60;
+	static constexpr int END_CNT = START_CNT + 30;
 
 #pragma endregion
 
@@ -67,4 +70,6 @@ private:
 	BananaBossDrillManager* drills;
 
 	bool tmpFlg;
+
+	int cnt;
 };

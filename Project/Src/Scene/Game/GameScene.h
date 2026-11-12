@@ -12,8 +12,10 @@ public:
 	~GameScene()override = default;
 
 	bool GetFocus(void) { return focusFlg; }
-	void SetFocus(void) { focusFlg = !focusFlg; }
-	void SetFocus(bool flg) { focusFlg = flg; }
+	void SetFocus(void) { focusFlg = !focusFlg; Focus(); }
+	void SetFocus(bool flg) { focusFlg = flg; Focus(); }
+	void FocusLock(void) { focus = !focus; }
+	void FocusLock(bool flg) { focus = flg; }
 
 private:
 
@@ -40,6 +42,7 @@ private:
 
 	// カメラ状態変更フラグ
 	bool focusFlg;
+	bool focus;
 
 	// 1フレームの秒数
 	const float FRAME_TIME = 1.0f / 60.0f;
@@ -48,4 +51,6 @@ private:
 
 	// マルチで時間をどのくらいの間隔で同期するか（秒数）
 	const char MULTI_TIME_SEND_COUNT = 5;
+
+	void Focus(void);
 };
