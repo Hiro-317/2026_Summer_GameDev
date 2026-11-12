@@ -1,7 +1,8 @@
 #pragma once
 #include "../../../../../../Common/ActorBase/ActorBase.h"
 #include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
-#include "../../../../../../Common/Collider/CapsuleCollider.h"
+#include "../../../../../../Common/Collider/XZCircleCollider.h"
+#include "../../../../../../Common/Collider/SphereCollider.h"
 
 
 struct Transform;
@@ -14,16 +15,15 @@ public:
 
 	void Load(void) override;
 
-	bool Live(void) { return live; }
+	bool GetLive(void) { return live; }
 	void SetLive(bool flg) { live = flg; }
 
-	bool Boot(void) { return boot; }
-
-	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); front.pos = Vector3::XZonly(pos.x, pos.z); back.pos = Vector3::XZonly(pos.x, pos.z); }
+	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); front.pos = Vector3(pos.x, VIEW_HEIGHT, pos.z); back.pos = Vector3(pos.x, VIEW_HEIGHT, pos.z); }
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
-	bool GetIsGround(void) { return isGround; }
+	bool GetBoot(void) const { return boot; }
+	void ResetBoot(void) { boot = false; }
 
 private:
 
@@ -37,23 +37,26 @@ private:
 	static constexpr int ATTACK_DURATION = 45;
 	static constexpr int BOOM_DURATION = 3;
 
-	static constexpr int BOOM_CNT = 900;
+	static constexpr int BOOM_CNT = 300;
 
-	static constexpr float HP =  150.0f;
+	static constexpr float HP =  100.0f;
 
 	const CharacterStats& stats;
 
-	static constexpr float RADIUS = 100.0f;
+	static constexpr float RADIUS = 80.0f;
+	static constexpr float DRILL_RADIUS = 150.0f;
+	static constexpr float BOOM_RADIUS = 250.0f;
 
 	Transform front;
 	Transform back;
 
-	CapsuleCollider* collRef;
-	CapsuleCollider* attCollRef;
+	SphereCollider* collRef;
+	XZCircleCollider* attCollRef;
 
 	bool live;
-	bool boot;
 	bool prevLive;
+
+	bool boot;
 
 	bool attack;
 	bool first;

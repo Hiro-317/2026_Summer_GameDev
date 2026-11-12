@@ -16,12 +16,13 @@ public:
 	);
 	~BananaBossDrillManager() = default;
 
-	void Load(void) override;
+	void Load(void) override {};
 	void Update(void) override;
-	void Draw(void) override;
 	void Release(void) override;
 
-	bool GetEnd(void) { return end; }
+	bool GetEnd(void) { bool ed = end; end = false; return ed; }
+
+	void Start(void);
 
 private:
 

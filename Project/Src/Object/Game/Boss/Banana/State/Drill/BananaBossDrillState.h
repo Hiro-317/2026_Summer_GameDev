@@ -18,9 +18,9 @@ public:
 		Vector3& pos,
 		BananaBossDrillManager* drills,
 		const Vector3& defaultPos,
-		const std::function<void(void)>& PlayFly,
-		const std::function<bool(void)>& Invisible,
-		const std::function<void(void)>& SwitchInvisible,
+		const std::function<void(void)> PlayFly,
+		const std::function<bool(void)> Invisible,
+		const std::function<void(void)> SwitchInvisible,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> SetCoolTime
 	);
@@ -49,8 +49,8 @@ private:
 	// 死亡判定移行
 	const std::function<void(void)> PlayFly;
 	// 描画するかフラグ
-	const std::function<bool(void)>& Invisible;
-	const std::function<void(void)>& SwitchInvisible;
+	const std::function<bool(void)> Invisible;
+	const std::function<void(void)> SwitchInvisible;
 
 	const std::function<void(void)> DefaultChangeState;
 	const std::function<void(void)> SetCoolTime;
@@ -58,8 +58,8 @@ private:
 
 #pragma region 定数定義
 
-	static constexpr float UP = 15.0f;
-	static constexpr float SWITCH_POS = 1500.0f;
+	static constexpr float UP = 75.0f;
+	static constexpr float SWITCH_POS = 10000.0f;
 
 #pragma endregion
 

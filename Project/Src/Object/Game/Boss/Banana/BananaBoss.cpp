@@ -60,6 +60,7 @@ void BananaBoss::BossLoad(void)
 	banamerangRef = new BananaBossBanamerang(characterStats);
 	AddChildActor(banamerangRef);
 	banadrillRef = new BananaBossDrillManager(playerPos, targetNum, characterStats);
+	AddChildActor(banadrillRef);
 
 	AddState(
 		STATE::IDLE,
@@ -153,7 +154,7 @@ void BananaBoss::BossLoad(void)
 			[&]() { return GetIsDraw(); },
 			[&]() { SetIsDraw(); },
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = SCRATCH_COOLTIME; }
+			[&]() { coolTime = SCRATCH_COOLTIME + 30; }
 		)
 	);
 

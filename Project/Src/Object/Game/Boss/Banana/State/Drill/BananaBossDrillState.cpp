@@ -12,9 +12,9 @@ BananaBossDrillState::BananaBossDrillState(
 	Vector3& pos,
 	BananaBossDrillManager* drills,
 	const Vector3& defaultPos,
-	const std::function<void(void)>& PlayFly,
-	const std::function<bool(void)>& Invisible,
-	const std::function<void(void)>& SwitchInvisible,
+	const std::function<void(void)> PlayFly,
+	const std::function<bool(void)> Invisible,
+	const std::function<void(void)> SwitchInvisible,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 ) :
@@ -23,15 +23,19 @@ BananaBossDrillState::BananaBossDrillState(
 	defaultPos(defaultPos),
 	PlayFly(PlayFly),
 	Invisible(Invisible),
-	SwitchInvisible(SwitchInvisible)
+	SwitchInvisible(SwitchInvisible),
+	DefaultChangeState(DefaultChangeState),
+	SetCoolTime(SetCoolTime)
 {
-	scene = dynamic_cast<GameScene*>(SceneManager::GetIns().GetScene());
 }
 
 void BananaBossDrillState::Enter(void)
 {
 	PlayFly();
 	pos.y += UP;
+	if (scene == nullptr) {
+		scene = dynamic_cast<GameScene*>(SceneManager::GetIns().GetScene());
+	}
 }
 
 void BananaBossDrillState::Update(void)
@@ -51,6 +55,8 @@ void BananaBossDrillState::Update(void)
 				SwitchInvisible();
 				tmpFlg = scene->GetFocus();
 				scene->SetFocus(false);
+				drills->Start();
+				pos.y = -SWITCH_POS;
 			}
 		}
 		if (defaultPos.y > pos.y) {
