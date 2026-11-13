@@ -20,6 +20,7 @@ settings.intensity = 2.5f;       // 発光の強さ
 settings.flowSpeed = 3.0f;       // 模様が流れる速さ
 settings.color = 0xff8020;      // 0xRRGGBB形式
 settings.seed = 1.0f;           // 炎の模様
+settings.stopSeconds = 0.24f;   // Stop後に根元から先端へ消える時間
 
 auto* breath = new FlameBreathActor(
     Vector3(0.0f, 150.0f, 0.0f), // 開始点（ワールド座標）
@@ -28,7 +29,7 @@ auto* breath = new FlameBreathActor(
 AddActor(breath); // 準備だけ。ここではまだ表示しない。
 
 // 攻撃開始など、表示したいタイミングで呼ぶ。
-breath->Play();
+breath->Restart();
 ```
 
 シーンの `SubPostLoad` や `SubPostUpdate` などから追加できます。
@@ -36,10 +37,10 @@ breath->Play();
 ゼロ方向、正でない距離・半径、負の寿命・強度・速度、有限でない数値は例外になります。
 寿命の `0.0f` は無期限を意味します。
 
-初期化が済んだ後は、同じインスタンスに `Play()` を何度でも呼んで使い回せます。
+初期化が済んだ後は、同じインスタンスに `Restart()` を何度でも呼んで使い回せます。
 再生中に呼ぶとその再生を最初からやり直します。同時に独立した再生が必要な分は、個別のアクターを用意します。
 
-## 無期限再生と即時停止
+## 無期限再生と根元からの停止
 
 ```cpp
 FlameBreathSettings settings;
@@ -48,16 +49,23 @@ auto* breath = new FlameBreathActor(startPoint, direction, settings);
 AddActor(breath); // 準備だけ。ここではまだ表示しない。
 
 // 攻撃開始など、表示したいタイミングで呼ぶ。
-breath->Play();
+breath->Restart();
 
-// 終わらせたいタイミングで呼ぶ。有限寿命の途中でも同じように即座に消せる。
+// 炎の供給を止め、根元から先端へ順に消す。完全停止まで更新を続ける。
 breath->Stop();
 ```
 
-`Stop()` は残り時間やフェードを待たず、その呼び出し後の更新・描画を止めます。
+`Stop()` は先端の位置を保ったまま、炎の後端を根元から先端へ進めます。
+`settings.stopSeconds`（標準0.24秒）後に完全停止します。0を指定すると即時停止します。
+消えている間は `IsFinished()` がfalseです。完全停止まで、シーンや親からUpdate/Drawを呼び続けてください。
+毎フレームStopを呼んでも停止演出は最初に戻りません。ポーズ中は進行も止まります。
+その場で全て消す場合は `StopImmediately()` を呼びます。初期化前のStopも即時キャンセルします。
+有限寿命の自動終了はこれまでどおり寿命に達した時点で止まります。
 オブジェクトのdeleteはせず、所有するシーン・親アクターの解放時に破棄します。
-再生・再開するときは `Play()` または `Restart()`、無期限かどうかの確認は `IsInfinite()` を使います。
-無期限のブレスは0.24秒で設定距離へ伸び、以後は炎の模様を流し続けます。
+新しく根元から再生するときは `Restart()`、無期限かどうかの確認は `IsInfinite()` を使います。
+無期限のブレスはRestartのたびに0.24秒で設定距離へ伸び、以後は炎の模様を流し続けます。
+停止演出中にRestartした場合も、経過時間・伸び・停止状態を初期化します。
+Playの共通処理は変更していません。新しい発生として伸び直させる呼び出しはRestartを使ってください。
 
 ## 再生中の変更と再利用
 
@@ -69,7 +77,8 @@ breath->SetStrength(1000.0f, 120.0f, 3.0f); // 距離・半径・明るさ
 breath->SetColor(0x4090ff);               // 青い炎
 breath->SetFlowSpeed(4.0f);
 
-breath->Stop();    // 更新・描画を止める
+breath->Stop();    // 根元から先端へ消す
+breath->StopImmediately(); // 必要なら演出を待たず即時に消す
 breath->Restart(); // 設定を保ったまま、経過時間を0に戻して再生
 bool finished = breath->IsFinished();
 ```
@@ -85,7 +94,7 @@ bool finished = breath->IsFinished();
 // 開始点は口元。circleCenterは予告円のワールド中心、circleRadiusはその半径。
 breath->SetStartPoint(mouthPosition);
 breath->SetEndCircle(circleCenter, circleRadius); // 標準は水平な終端円。
-breath->Play();
+breath->Restart();
 
 // 再生中に口元が動いても、終端円は指定した位置に残る。
 breath->SetStartPoint(mouthPosition);
@@ -113,7 +122,9 @@ breath->SetEndCircle(circleCenter, circleRadius, Vector3(0.0f, 0.8660254f, 0.5f)
 - C++とVS/PSは `Project.vcxproj` に登録済みです。HLSLは `main` / Shader Model 5.0でコンパイルします。
 - 出力は `Project/Data/Shader/FlameBreathVS.cso` / `FlameBreathPS.cso` です。
 - C++はUTF-8 BOM付き、HLSLはUTF-8 BOMなしで保存してください。
-- 円錐は周方向32分割・長さ方向8分割の側面と、円形の終端面を持ちます。カメラに合わせて形状を回しません。
+- 円錐は周方向32分割・長さ方向8分割の薄い側面と、円形の終端面を持ちます。カメラに合わせて形状を回しません。
+- 内部に3枚の半透明の炎を重ね、初期のブレスと同じ流れるノイズ、白い芯、ぼかした横端を描きます。外側の円錐は薄い発光に抑えています。
+- 根元からの停止では円錐の先端を固定し、後端を先へ進めて残った炎だけを描画します。
 - 半径はワールド単位です。展開後の終端円周の頂点が、指定した半径と終端面上に配置されます。
 - VSは通常のワールド→ビュー→射影変換を行い、PSは側面と終端円へ炎の模様を付けます。
 - `FlameBreathActor.cpp/.h`と`FlameBreathVS/PS.hlsl`を一緒に更新してリビルドしてください。

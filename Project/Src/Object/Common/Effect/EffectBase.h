@@ -41,8 +41,8 @@ public:
     /// <summary>
     /// 経過時間を0へ戻して更新・描画を再開する。
     /// </summary>
-    /// <remarks>座標や色の設定は保持する。再生数は増えない。再生中は最初から再生する。</remarks>
-    void Restart(void);
+    /// <remarks>座標や色の設定は保持する。再生数は増えない。</remarks>
+    virtual void Restart(void);
 
     /// <summary>
     /// 残り寿命やフェードを待たずに更新・描画を即時停止する。
@@ -80,3 +80,4 @@ private:
     float elapsedSeconds;
     bool finished;
 };
+
