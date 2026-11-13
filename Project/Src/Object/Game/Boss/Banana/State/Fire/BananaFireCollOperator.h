@@ -29,7 +29,7 @@ public:
 	// 攻撃範囲の描画設定
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
 
-	void EffectPlay(void) { flRef->Play(); }
+	void EffectPlay(void) { flRef->Restart(); }
 	void EffectStop(void) { flRef->Stop(); }
 
 private:
@@ -45,6 +45,12 @@ private:
 
 	// コライダーの座標
 	const Vector3 POS = Vector3(0.0f, 37.0f, 500.0f);
+
+	// ブレスの開始座標
+	const Vector3 START_POS = Vector3::YZonly(350.0f, 1350.0f);
+
+	// ブレスの再生向き
+	const Vector3 DIRECTION = Vector3::YZonly(-0.25f, -0.5f);
 
 #pragma region 受け取る参照変数
 
