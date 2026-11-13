@@ -4,30 +4,51 @@
 
 class ExplosionShader;
 
-// 指定したワールド座標で紫色の火球・衝撃波・火花を描画するアクター。
-// position: 中心座標、radius: 最大半径、durationSeconds: 再生時間（秒、0なら無期限）。
-// intensity: 明るさ（0以上）、seed: 火花とノイズの模様を決める値。
-// color: 0xRRGGBB形式の色。省略すると紫色になる。
+/// <summary>
+/// 指定座標へ火球・衝撃波・火花を描画する爆発アクター。
+/// </summary>
+/// <remarks>色の既定値は紫。EffectBaseが寿命と停止・再利用を管理する。</remarks>
 class PurpleExplosionActor : public EffectBase
 {
 public:
-    // シーンなどから、表示したいタイミングで生成する。
+
+    /// <summary>
+    /// 指定した位置・大きさ・色で爆発アクターを生成する。
+    /// </summary>
+    /// <param name="position">爆発の中心（ワールド座標）。</param>
+    /// <param name="radius">最大半径（ワールド単位、0より大きい値）。</param>
+    /// <param name="durationSeconds">寿命（秒）。正の値で自動終了、0.0fでStopするまで無期限。負値・NaN・無限大は指定不可。</param>
+    /// <param name="intensity">発光の強さ（0以上）。1.0fが基準、2.0fで明るく、0.0fで発光なし。</param>
+    /// <param name="seed">炎・火花の模様を決める有限の値。同じ値で同じ模様になる。</param>
+    /// <param name="color">色（0xRRGGBB）。例: 0xff8020は橙、0x00aaffは青。省略時は紫。</param>
     PurpleExplosionActor(
-        const Vector3& position,        // 爆発の中心（ワールド座標）。
-        float radius = 150.0f,          // 最大半径（ワールド単位）。0より大きい値を指定する。
-        float durationSeconds = 1.2f,   // 寿命（秒）。0.0fならStop()を呼ぶまで無期限。
-        float intensity = 2.0f,         // 発光の強さ（0以上）。大きくすると明るくなる。
-        float seed = 1.0f,              // 炎・火花の模様。別々の値を指定すると模様が変わる。
-        unsigned int color = 0x7509ff   // 色（0xRRGGBB）。例: 0xff8020=橙。省略時は紫。
+        const Vector3& position,
+        float radius = 150.0f,
+        float durationSeconds = 1.2f,
+        float intensity = 2.0f,
+        float seed = 1.0f,
+        unsigned int color = 0x7509ff
     );
+    /// <summary>
+    /// 爆発アクターを破棄する。
+    /// </summary>
     ~PurpleExplosionActor() override = default;
 
+    /// <summary>
+    /// 時間・色をシェーダーへ反映して爆発を描画する。終了済みなら描画しない。
+    /// </summary>
     void Draw(void) override;
 
-    // 初期化前・再生中・再利用時のどのタイミングでも変更できる。
-    // 例: 0xff4000（赤橙）、0x00aaff（青）、0xffffff（白）。
-    // 変更は次の描画から反映する。上位8ビットは使用しない。
+    /// <summary>
+    /// 次の描画から使用する色を変更する。
+    /// </summary>
+    /// <remarks>初期化前・再生中・再利用時のいずれでも変更可能。時間はリセットしない。</remarks>
+    /// <param name="rgb">0xRRGGBB形式の色。例: 0xff4000は赤橙、0x00aaffは青。上位8ビットは使用しない。</param>
     void SetColor(unsigned int rgb) { color = rgb & 0xffffff; }
+    /// <summary>
+    /// 現在の設定色を取得する。
+    /// </summary>
+    /// <returns>0xRRGGBB形式の色。</returns>
     unsigned int GetColor(void) const { return color; }
 
 private:
