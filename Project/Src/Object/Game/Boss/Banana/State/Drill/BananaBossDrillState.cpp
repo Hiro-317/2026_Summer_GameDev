@@ -55,12 +55,9 @@ void BananaBossDrillState::Update(void)
 			}
 		}
 		if (drills->GetEnd()) {
-			cnt++;
-			if (cnt > END_CNT) {
-				SwitchInvisible();
-				scene->FocusLock(true);
-				scene->SetFocus(tmpFlg);
-			}
+			SwitchInvisible();
+			scene->FocusLock(true);
+			scene->SetFocus(tmpFlg);
 		}
 	}
 	else {
@@ -85,6 +82,7 @@ void BananaBossDrillState::Exit(void)
 {
 	pos = defaultPos;
 	SetCoolTime();
+	cnt = 0;
 }
 
 void BananaBossDrillState::AlwaysUpdate(void)

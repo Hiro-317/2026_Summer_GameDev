@@ -53,9 +53,11 @@ public:
 
 private:
     void DefaultCreateShader(void) override;
+    void SubUpdate(void) override;
     void SubDraw(void) override;
     void SubRelease(void) override;
 
+    const Vector3& position;
     float radius;
     float intensity;
     float seed;

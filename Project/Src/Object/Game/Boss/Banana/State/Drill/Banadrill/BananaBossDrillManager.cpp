@@ -44,6 +44,7 @@ void BananaBossDrillManager::Update()
 			}
 			drills[i]->ResetBoot();
 		}
+		drills[i]->EffectUpdate();
 	}
 }
 

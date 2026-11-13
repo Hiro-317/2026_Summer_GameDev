@@ -7,6 +7,8 @@
 
 struct Transform;
 
+class ExplosionActor;
+
 class BananaBossBanadrill : public ActorBase
 {
 public:
@@ -21,6 +23,8 @@ public:
 	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); front.pos = Vector3(pos.x, VIEW_HEIGHT, pos.z); back.pos = Vector3(pos.x, VIEW_HEIGHT, pos.z); }
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
+
+	void EffectUpdate(void);
 
 	bool GetBoot(void) const { return boot; }
 	void ResetBoot(void) { boot = false; }
@@ -63,4 +67,6 @@ private:
 	int cnt;
 
 	float hp;
+
+	ExplosionActor* exRef;
 };
