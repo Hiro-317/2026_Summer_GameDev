@@ -21,7 +21,7 @@ void BossSelectSkyShipMoveState::Enter(void)
 void BossSelectSkyShipMoveState::Update(void)
 {
 	// コントローラーの入力を取得
-	Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZ();
+	Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
 
 	// 入力がなければ次にキーボードの入力を取得
 	if (vec == 0.0f) {

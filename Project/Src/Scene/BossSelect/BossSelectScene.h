@@ -27,6 +27,9 @@ private:
 	void SubPostRelease(void)override;
 #pragma endregion
 
+	// スカイボックスを使用するかどうか
+	bool UseSkyBox(void)const override { return true; }
+
 	void CreateCamera(void)override;
 
 	int boardImage;
