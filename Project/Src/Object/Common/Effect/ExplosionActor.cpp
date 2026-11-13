@@ -36,11 +36,26 @@ void ExplosionActor::Draw(void)
 
 void ExplosionActor::SubDraw(void)
 {
-    // 画面の右・上方向から毎回組み直し、カメラの回転にかかわらず常に正面を向ける。
-    // アクターや親の回転は使わない。座標と半径だけを反映する。
-    const Vector3 right(GetCameraRightVector());
-    const Vector3 up(GetCameraUpVector());
-    const Vector3 normal(GetCameraBackVector());
+    // 爆発の中心からカメラ位置への方向を正面にする。
+    // カメラの視線方向を流用しないので、画面端の爆発もカメラを直接向く。
+    // アクターや親の回転は使わず、描画するたびに向きを更新する。
+    Vector3 normal = Vector3(GetCameraPosition()) - trans.pos;
+    constexpr float directionEpsilonSq = 0.000001f;
+    if (normal.LengthSq() <= directionEpsilonSq) {
+        // カメラと爆発が同じ位置では方向を決められないため、カメラの背面方向を使う。
+        normal = Vector3(GetCameraBackVector());
+    }
+    normal.Normalize();
+
+    // カメラの上方向を基準にして、ロールにも追従する直交した左右・上下軸を作る。
+    Vector3 right = normal.Cross(Vector3(GetCameraUpVector()));
+    if (right.LengthSq() <= directionEpsilonSq) {
+        // 真上・真下から見る場合も、外積が0になって板が潰れるのを防ぐ。
+        const Vector3 cameraRight(GetCameraRightVector());
+        right = cameraRight - normal * cameraRight.Dot(normal);
+    }
+    right.Normalize();
+    const Vector3 up = right.Cross(normal).Normalized();
     const float corners[4][2] = {{-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
     VERTEX3DSHADER vertices[4]{};
     for (int i = 0; i < 4; ++i) {
