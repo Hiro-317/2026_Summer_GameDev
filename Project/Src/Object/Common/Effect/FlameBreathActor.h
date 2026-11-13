@@ -37,6 +37,10 @@ struct FlameBreathSettings
     /// 炎の模様を変える有限の値。同じ値で同じ模様になる。
     /// </summary>
     float seed = 1.0f;
+    /// <summary>
+    /// Stop後、根元から先端へ炎が消え切るまでの秒数。0なら即時停止。
+    /// </summary>
+    float stopSeconds = 0.24f;
 };
 
 /// <summary>
@@ -63,6 +67,24 @@ public:
     /// 現在の向き・大きさ・色・時間でブレスを描画する。終了済みなら描画しない。
     /// </summary>
     void Draw(void) override;
+
+    /// <summary>
+    /// 停止中の炎の後端もTimeScaleに従って進める。消え切るまで更新を続ける。
+    /// </summary>
+    void Update(void) override;
+    /// <summary>
+    /// 伸び・停止状態と経過時間を全て戻し、根元から新しく再生する。
+    /// </summary>
+    void Restart(void) override;
+    /// <summary>
+    /// 根元から先端へ順に消す。無限再生中もstopSeconds後に完全停止する。
+    /// 繰り返し呼んでも停止の進みは戻らない。完全停止まではIsFinishedがfalseになる。
+    /// </summary>
+    void Stop(void) override;
+    /// <summary>
+    /// 残っている炎と停止演出をその場で消す。Playで再利用できる。
+    /// </summary>
+    void StopImmediately(void);
 
     /// <summary>
     /// ブレスの開始点を変更する。口元などへの毎フレームの追従にも使用できる。
@@ -121,6 +143,9 @@ private:
 
     Vector3 direction;
     FlameBreathSettings settings;
+    bool stopping;
+    float stopElapsedSeconds;
+    float stopFrontFraction;
     bool useEndCircle;
     Vector3 endCircleCenter;
     Vector3 endCircleNormal;

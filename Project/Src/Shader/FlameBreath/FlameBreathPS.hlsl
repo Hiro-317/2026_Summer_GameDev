@@ -82,18 +82,38 @@ float4 main(FlameBreathInput input) : SV_TARGET
         core = smoothstep(0.50, 0.88, noise + detail * 0.25) * root * 0.45;
         glow = fire * 0.10;
         // 裏表の側面を加算しても、平板の白い塊になりすぎないよう調整する。
-        fire *= 0.55;
-        core *= 0.55;
-    } else {
+        // 円錐の表面は薄い発光だけにし、硬い塗りつぶしを避ける。
+        float shell = facing * facing * 0.12;
+        fire *= shell;
+        core *= shell;
+        glow *= shell;
+    } else if (input.drawParameters.x < 1.5) {
         // 補助の板ではなく、設定した終端円そのものを塗る。
         float2 p = input.uv * 2.0 - 1.0;
         float radius = length(p);
         float noise = BreathFBM(p * 3.5 + float2(-time, time * 0.3) + seed);
         // ノイズで輪郭を縮めず、円周まで炎を残す。揺れは明るさに付ける。
         float edge = 1.0 - smoothstep(0.985, 1.015, radius);
-        fire = edge * (0.35 + noise * 0.45);
-        core = (1.0 - smoothstep(0.15, 0.85, radius)) * (0.35 + noise * 0.25);
+        fire = edge * (0.20 + noise * 0.30);
+        core = (1.0 - smoothstep(0.15, 0.85, radius)) * (0.20 + noise * 0.20);
         glow = edge * 0.10;
+    } else {
+        // 初期のブレスと同じ、流れるノイズ・白い芯・柔らかい横端を内部へ重ねる。
+        float u = saturate(input.uv.x);
+        float y = input.uv.y * 2.0 - 1.0;
+        float noise = BreathFBM(float2(u * 7.0 - time * 2.0, y * 4.0) + seed);
+        float detail = BreathFBM(float2(u * 18.0 - time * 3.5, y * 9.0) + seed * 2.3);
+        // 形状自体が円錐なので、UVの横幅をもう一度先細りにしない。
+        float ripple = (noise - 0.45) * 0.20;
+        float radial = abs(y - ripple) / 0.86;
+        float turbulentEdge = 0.82 + noise * 0.30 + detail * 0.16;
+        float aa = max(fwidth(radial), 0.015);
+        float mask = 1.0 - smoothstep(turbulentEdge - 0.25, turbulentEdge + aa, radial);
+        float ends = smoothstep(0.0, 0.012, u) * (1.0 - smoothstep(0.90, 1.0, abs(y)));
+        // 3面の重なりを考慮した明るさ。円の手前で消す終端フェードは入れない。
+        fire = mask * (0.55 + noise * 0.8 + detail * 0.35) * ends * 0.38;
+        core = (1.0 - smoothstep(0.12, 0.48, radial)) * (0.75 + detail * 0.35) * ends * 0.38;
+        glow = (1.0 - smoothstep(0.5, 1.25, radial)) * 0.16 * ends * 0.38;
     }
 
     // 外側を指定色にし、内側は白に近づけて高温の炎らしく光らせる。

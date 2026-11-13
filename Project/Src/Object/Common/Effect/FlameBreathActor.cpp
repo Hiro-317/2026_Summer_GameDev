@@ -6,10 +6,12 @@
 #include <stdexcept>
 
 #include "../Shader/FlameBreathShader.h"
+#include "../../../Manager/TimeScale/TimeScale.h"
 
 FlameBreathActor::FlameBreathActor(const Vector3& startPoint, const Vector3& direction,
     const FlameBreathSettings& settings) :
     EffectBase(settings.durationSeconds), direction(), settings(settings),
+    stopping(false), stopElapsedSeconds(0.0f), stopFrontFraction(0.0f),
     useEndCircle(false), endCircleCenter(), endCircleNormal(0.0f, 1.0f, 0.0f),
     breathShader(nullptr)
 {
@@ -18,6 +20,9 @@ FlameBreathActor::FlameBreathActor(const Vector3& startPoint, const Vector3& dir
     SetStrength(settings.distance, settings.radius, settings.intensity);
     SetFlowSpeed(settings.flowSpeed);
     SetColor(settings.color);
+    if (!std::isfinite(settings.stopSeconds) || settings.stopSeconds < 0.0f) {
+        throw std::invalid_argument("Flame breath stop time must be finite and nonnegative");
+    }
     if (!std::isfinite(settings.seed)) {
         throw std::invalid_argument("Flame breath seed must be finite");
     }
@@ -100,6 +105,53 @@ void FlameBreathActor::DefaultCreateShader(void)
     CreateShader(breathShader);
 }
 
+void FlameBreathActor::Restart(void)
+{
+    // EffectBase*からRestartした場合も、毎回ブレス固有の停止状態を初期化する。
+    stopping = false;
+    stopElapsedSeconds = 0.0f;
+    stopFrontFraction = 0.0f;
+    EffectBase::Restart();
+}
+
+void FlameBreathActor::Stop(void)
+{
+    if (IsFinished() || stopping) { return; }
+    // 初期化前のキャンセル、有限寿命の終了、演出時間0はその場で止める。
+    if (breathShader == nullptr || settings.stopSeconds == 0.0f ||
+        (!IsInfinite() && GetElapsedSeconds() >= GetDurationSeconds())) {
+        StopImmediately();
+        return;
+    }
+    const float growthSeconds = IsInfinite() ? 0.24f : GetDurationSeconds() * 0.16f;
+    float growth = std::clamp(GetElapsedSeconds() / growthSeconds, 0.0f, 1.0f);
+    stopFrontFraction = growth * growth * (3.0f - 2.0f * growth);
+    if (stopFrontFraction <= 0.000001f) { StopImmediately(); return; }
+    stopping = true;
+    stopElapsedSeconds = 0.0f;
+}
+
+void FlameBreathActor::StopImmediately(void)
+{
+    stopping = false;
+    stopElapsedSeconds = 0.0f;
+    stopFrontFraction = 0.0f;
+    EffectBase::Stop();
+}
+
+void FlameBreathActor::Update(void)
+{
+    if (IsFinished()) { return; }
+    if (stopping) {
+        stopElapsedSeconds += (1.0f / 60.0f) * TimeScale::Get();
+        if (stopElapsedSeconds >= settings.stopSeconds) {
+            StopImmediately();
+            return;
+        }
+    }
+    EffectBase::Update();
+}
+
 void FlameBreathActor::Draw(void)
 {
     if (!GetIsDraw() || IsFinished() || breathShader == nullptr) { return; }
@@ -117,7 +169,11 @@ void FlameBreathActor::SubDraw(void)
     const float growthSeconds = IsInfinite() ? 0.24f : GetDurationSeconds() * 0.16f;
     float growth = std::clamp(GetElapsedSeconds() / growthSeconds, 0.0f, 1.0f);
     growth = growth * growth * (3.0f - 2.0f * growth);
-    const float reach = 0.05f + 0.95f * growth;
+    // 先端と後端を別々に管理する。再生時は先端が伸び、停止時は後端だけが進む。
+    const float frontFraction = stopping ? stopFrontFraction : growth;
+    const float tailFraction = stopping ? frontFraction *
+        std::clamp(stopElapsedSeconds / settings.stopSeconds, 0.0f, 1.0f) : 0.0f;
+    if (frontFraction - tailFraction <= 0.000001f) { return; }
     Vector3 axis = direction;
     float maximumDistance = settings.distance;
     if (useEndCircle) {
@@ -127,9 +183,9 @@ void FlameBreathActor::SubDraw(void)
         axis = delta.Normalized();
         maximumDistance = delta.Length();
     }
-    const float distance = maximumDistance * reach;
-    const float radius = settings.radius * (0.25f + 0.75f * growth);
-    const Vector3 tip = trans.pos + axis * distance;
+    const float distance = maximumDistance;
+    const float radius = settings.radius;
+    const Vector3 tip = trans.pos + axis * (distance * frontFraction);
 
     // カメラに向けた板ではなく、円周を結んだ立体の円錐を作る。
     // 終端円指定時は床・斜面の向きを使い、通常はブレス軸に垂直な円を使う。
@@ -145,14 +201,20 @@ void FlameBreathActor::SubDraw(void)
     constexpr int bodyVertexCount = (lengthSegments + 1) * ringStride;
     constexpr int capCenterIndex = bodyVertexCount;
     constexpr int capRingStart = capCenterIndex + 1;
-    constexpr int vertexCount = capRingStart + ringStride;
-    constexpr int indexCount = lengthSegments * radialSegments * 6;
+    // 円錐内部に3枚の炎の断面を重ねる。どの視点でも白い芯と柔らかい輪郭を残す。
+    constexpr int corePlanes = 3;
+    constexpr int coreVertexStart = capRingStart + ringStride;
+    constexpr int coreVerticesPerPlane = (lengthSegments + 1) * 2;
+    constexpr int vertexCount = coreVertexStart + corePlanes * coreVerticesPerPlane;
+    constexpr int indexCount = lengthSegments * radialSegments * 6 + radialSegments * 3 +
+        corePlanes * lengthSegments * 6;
     constexpr float twoPi = 6.28318530718f;
     std::array<VERTEX3DSHADER, vertexCount> vertices{};
     std::array<unsigned short, indexCount> indices{};
 
     for (int ring = 0; ring <= lengthSegments; ++ring) {
-        const float u = static_cast<float>(ring) / lengthSegments;
+        const float ringFraction = static_cast<float>(ring) / lengthSegments;
+        const float u = tailFraction + (frontFraction - tailFraction) * ringFraction;
         const Vector3 center = trans.pos + axis * (distance * u);
         for (int segment = 0; segment <= radialSegments; ++segment) {
             const float v = static_cast<float>(segment) / radialSegments;
@@ -180,10 +242,29 @@ void FlameBreathActor::SubDraw(void)
         vertex.u = 0.5f + std::cos(angle) * 0.5f;
         vertex.v = 0.5f + std::sin(angle) * 0.5f;
     }
-    for (int i = capCenterIndex; i < vertexCount; ++i) {
+    for (int i = capCenterIndex; i < coreVertexStart; ++i) {
         vertices[i].norm = planeNormal.ToVECTOR();
         vertices[i].su = 1.0f; // 実際の終端円。視線方向では隠さない。
         vertices[i].sv = 1.0f;
+    }
+    for (int plane = 0; plane < corePlanes; ++plane) {
+        const float angle = twoPi * static_cast<float>(plane) / (corePlanes * 2);
+        const Vector3 radial = side * std::cos(angle) + up * std::sin(angle);
+        const Vector3 normal = radial.Cross(axis).Normalized();
+        for (int ring = 0; ring <= lengthSegments; ++ring) {
+            const float fraction = static_cast<float>(ring) / lengthSegments;
+            const float u = tailFraction + (frontFraction - tailFraction) * fraction;
+            const Vector3 center = trans.pos + axis * (distance * u);
+            for (int edge = 0; edge < 2; ++edge) {
+                auto& vertex = vertices[coreVertexStart + plane * coreVerticesPerPlane + ring * 2 + edge];
+                vertex.pos = (center + radial * (radius * u * (edge == 0 ? -1.0f : 1.0f))).ToVECTOR();
+                vertex.norm = normal.ToVECTOR();
+                vertex.u = u;
+                vertex.v = static_cast<float>(edge);
+                vertex.su = 2.0f; // 元の見た目に近い、円錐内部の炎
+                vertex.sv = 1.0f;
+            }
+        }
     }
     for (auto& vertex : vertices) { vertex.dif = GetColorU8(255, 255, 255, 255); }
     int index = 0;
@@ -192,7 +273,7 @@ void FlameBreathActor::SubDraw(void)
             const unsigned short a = static_cast<unsigned short>(ring * ringStride + segment);
             const unsigned short b = a + ringStride;
             // 頂点が一点に集まる根元では、面積0の三角形を作らない。
-            if (ring > 0) {
+            if (ring > 0 || tailFraction > 0.0f) {
                 indices[index++] = a; indices[index++] = b; indices[index++] = a + 1;
             }
             indices[index++] = a + 1; indices[index++] = b; indices[index++] = b + 1;
@@ -204,6 +285,18 @@ void FlameBreathActor::SubDraw(void)
         indices[index++] = static_cast<unsigned short>(capRingStart + segment + 1);
     }
 
+    for (int plane = 0; plane < corePlanes; ++plane) {
+        for (int ring = 0; ring < lengthSegments; ++ring) {
+            const unsigned short a = static_cast<unsigned short>(coreVertexStart +
+                plane * coreVerticesPerPlane + ring * 2);
+            const unsigned short b = a + 2;
+            if (ring > 0 || tailFraction > 0.0f) {
+                indices[index++] = a; indices[index++] = b; indices[index++] = a + 1;
+            }
+            indices[index++] = a + 1; indices[index++] = b; indices[index++] = b + 1;
+        }
+    }
+
     int previousBlend = 0, previousBlendParameter = 0;
     GetDrawBlendMode(&previousBlend, &previousBlendParameter);
     const int previousCulling = GetUseBackCulling();
@@ -212,7 +305,7 @@ void FlameBreathActor::SubDraw(void)
     // 壁には隠れるが、透明部分で後続の物体を遮らないよう深度を書き込まない。
     SetUseZBuffer3D(true);
     SetWriteZBuffer3D(false);
-    DrawPolygonIndexed3DToShader(vertices.data(), vertexCount, indices.data(), indexCount / 3);
+    DrawPolygonIndexed3DToShader(vertices.data(), vertexCount, indices.data(), index / 3);
     // 既存の3Dシーンが使用する通常設定へ戻す。
     SetWriteZBuffer3D(true);
     SetUseBackCulling(previousCulling);
