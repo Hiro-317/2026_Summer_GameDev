@@ -1,30 +1,35 @@
-﻿#include "PurpleExplosionActor.h"
+﻿#include "ExplosionActor.h"
 
 #include <cmath>
 #include <stdexcept>
 
 #include "../Shader/ExplosionShader.h"
 
-PurpleExplosionActor::PurpleExplosionActor(const Vector3& position, float radius,
+ExplosionActor::ExplosionActor(const Vector3& position, float radius,
     float durationSeconds, float intensity, float seed, unsigned int color) :
     EffectBase(durationSeconds), radius(radius), intensity(intensity), seed(seed),
     color(color & 0xffffff),
-    explosionShader(nullptr)
+    explosionShader(nullptr),
+    position(position)
 {
     if (!std::isfinite(radius) || radius <= 0.0f ||
         !std::isfinite(intensity) || intensity < 0.0f || !std::isfinite(seed)) {
         throw std::invalid_argument("Invalid purple explosion parameters");
     }
-    SetPos(position);
 }
 
-void PurpleExplosionActor::DefaultCreateShader(void)
+void ExplosionActor::DefaultCreateShader(void)
 {
     explosionShader = new ExplosionShader(GetDurationSeconds(), intensity, seed, color);
     CreateShader(explosionShader);
 }
 
-void PurpleExplosionActor::Draw(void)
+void ExplosionActor::SubUpdate(void)
+{
+    SetPos(position);
+}
+
+void ExplosionActor::Draw(void)
 {
     if (!GetIsDraw() || IsFinished() || explosionShader == nullptr) { return; }
     explosionShader->SetElapsedSeconds(GetElapsedSeconds());
@@ -33,7 +38,7 @@ void PurpleExplosionActor::Draw(void)
     ActorBase::Draw();
 }
 
-void PurpleExplosionActor::SubDraw(void)
+void ExplosionActor::SubDraw(void)
 {
     // カメラの向きに合わせて板ポリゴンを毎回組み直す（ビルボード）。
     const Vector3 right(GetCameraRightVector());
@@ -68,7 +73,7 @@ void PurpleExplosionActor::SubDraw(void)
     SetDrawBlendMode(previousBlend, previousBlendParameter);
 }
 
-void PurpleExplosionActor::SubRelease(void)
+void ExplosionActor::SubRelease(void)
 {
     explosionShader = nullptr;
 }

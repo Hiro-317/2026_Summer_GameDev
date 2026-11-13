@@ -35,21 +35,21 @@ void EffectBase::BaseUpdate(void)
     elapsedSeconds += (1.0f / 60.0f) * TimeScale::Get();
     // 無期限の場合も時間は進め、ノイズなどのアニメーションを継続する。
     if (!IsInfinite() && elapsedSeconds >= durationSeconds) {
-        elapsedSeconds = durationSeconds;
+        elapsedSeconds = 0.0f;
         Stop();
     }
 }
 
 void EffectBase::Play(void)
 {
-    Restart();
+    finished = false;
+    SetIsDraw(true);
 }
 
 void EffectBase::Restart(void)
 {
     elapsedSeconds = 0.0f;
-    finished = false;
-    SetIsDraw(true);
+    Play();
 }
 
 void EffectBase::Stop(void)

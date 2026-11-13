@@ -815,10 +815,10 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   </ImportGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Common\Effect\EffectBase.cpp" />
-    <ClCompile Include="Src\Object\Common\Effect\PurpleExplosionActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Effect\ExplosionActor.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\ExplosionShader.cpp" />
     <ClInclude Include="Src\Object\Common\Effect\EffectBase.h" />
-    <ClInclude Include="Src\Object\Common\Effect\PurpleExplosionActor.h" />
+    <ClInclude Include="Src\Object\Common\Effect\ExplosionActor.h" />
     <ClInclude Include="Src\Object\Common\Shader\ExplosionShader.h" />
     <None Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
     <None Include="Src\Shader\PurpleExplosion\README.md" />

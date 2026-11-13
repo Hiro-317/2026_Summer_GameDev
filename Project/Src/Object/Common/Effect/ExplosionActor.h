@@ -8,7 +8,7 @@ class ExplosionShader;
 /// 指定座標へ火球・衝撃波・火花を描画する爆発アクター。
 /// </summary>
 /// <remarks>色の既定値は紫。EffectBaseが寿命と停止・再利用を管理する。</remarks>
-class PurpleExplosionActor : public EffectBase
+class ExplosionActor : public EffectBase
 {
 public:
 
@@ -21,7 +21,7 @@ public:
     /// <param name="intensity">発光の強さ（0以上）。1.0fが基準、2.0fで明るく、0.0fで発光なし。</param>
     /// <param name="seed">炎・火花の模様を決める有限の値。同じ値で同じ模様になる。</param>
     /// <param name="color">色（0xRRGGBB）。例: 0xff8020は橙、0x00aaffは青。省略時は紫。</param>
-    PurpleExplosionActor(
+    ExplosionActor(
         const Vector3& position,
         float radius = 150.0f,
         float durationSeconds = 1.2f,
@@ -32,7 +32,7 @@ public:
     /// <summary>
     /// 爆発アクターを破棄する。
     /// </summary>
-    ~PurpleExplosionActor() override = default;
+    ~ExplosionActor() override = default;
 
     /// <summary>
     /// 時間・色をシェーダーへ反映して爆発を描画する。終了済みなら描画しない。
@@ -53,9 +53,11 @@ public:
 
 private:
     void DefaultCreateShader(void) override;
+    void SubUpdate(void) override;
     void SubDraw(void) override;
     void SubRelease(void) override;
 
+    const Vector3& position;
     float radius;
     float intensity;
     float seed;

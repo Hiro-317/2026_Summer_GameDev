@@ -2,6 +2,9 @@
 
 #include "../../../../Common/ActorBase/ActorBase.h"
 
+#include "../../../../Common/Effect/ExplosionActor.h"
+
+
 struct CharacterStats;
 
 // 種類の列挙型定義
@@ -94,6 +97,7 @@ protected:
 	// 今開始されたか
 	bool now;
 
+	ExplosionActor* insRef;
 private:
 #pragma region 定数定義
 

@@ -34,6 +34,9 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model, int front, int back)
 	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
 	SetGravityFlg(true);
 	count = 0;
+
+	insRef = new ExplosionActor(trans.pos);
+	AddChildActor(insRef);
 }
 
 void GrapeBossKickBomb::Load(const CharacterStats& stats)
@@ -70,7 +73,8 @@ void GrapeBossKickBomb::SubUpdate(void)
 			SetViewScaleCircle((ATTACK_RANGE / MODEL_RADIUS) * (count / BOMBER_COUNT));
 		}
 		// 攻撃判定オン
-		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
+		else if (BOMBER_COUNT == count) {
+			insRef->Play();
 			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
 		}
 		//攻撃判定オフ、終わり
