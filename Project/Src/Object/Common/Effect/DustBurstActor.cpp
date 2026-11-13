@@ -48,9 +48,10 @@ void DustBurstActor::Restart(void)
 }
 float DustBurstActor::GetSpreadTime(void) const
 {
+    // Windowsのmin/maxマクロを展開させないため、標準関数名を括弧で囲む。
     // 有限寿命の最後を消滅演出に割り当てる。無期限では1秒で展開して残る。
     const float expansionSeconds = IsInfinite() ? 1.0f :
-        std::max(GetDurationSeconds() - std::min(settings.stopSeconds, GetDurationSeconds() * 0.5f), 0.05f);
+        (std::max)(GetDurationSeconds() - (std::min)(settings.stopSeconds, GetDurationSeconds() * 0.5f), 0.05f);
     return std::clamp(GetElapsedSeconds() / expansionSeconds, 0.0f, 1.0f);
 }
 void DustBurstActor::BeginStop(float seconds)
@@ -74,13 +75,13 @@ void DustBurstActor::Update(void)
     if (IsFinished()) { return; }
     const float dt = (1.0f / 60.0f) * TimeScale::Get();
     if (!stopping && !IsInfinite()) {
-        const float release = std::min(settings.stopSeconds, GetDurationSeconds() * 0.5f);
+        const float release = (std::min)(settings.stopSeconds, GetDurationSeconds() * 0.5f);
         const float releaseAt = GetDurationSeconds() - release;
         if (GetElapsedSeconds() + dt >= releaseAt) {
             BeginStop(release);
             // フレーム境界をまたいだ時間だけ演出へ進め、寿命内に消滅するようにする。
             if (stopping) {
-                stopElapsed = -std::max(releaseAt - GetElapsedSeconds(), 0.0f);
+                stopElapsed = -(std::max)(releaseAt - GetElapsedSeconds(), 0.0f);
                 stoppedSpreadTime = 1.0f;
             }
         }
