@@ -2,38 +2,24 @@
 
 #include "ShaderBase.h"
 
-/// <summary>
-/// ShaderResourceManagerの共有VS/PSを使用する、ブレス用のシェーダー制御。
-/// </summary>
+// ShaderResourceManagerの共有VS/PSを使用する、ブレス用のシェーダー制御。
 class FlameBreathShader : public ShaderBase
 {
 public:
-    /// <summary>
-    /// ブレスのシェーダー制御を生成する。GPUリソースはInitで準備する。
-    /// </summary>
+    // ブレスのシェーダー制御を生成する。GPUリソースはInitで準備する。
     FlameBreathShader();
-    /// <summary>
-    /// 自身の定数バッファを解放して破棄する。
-    /// </summary>
+    // 自身の定数バッファを解放して破棄する。
     ~FlameBreathShader() override;
     FlameBreathShader(const FlameBreathShader&) = delete;
     FlameBreathShader& operator=(const FlameBreathShader&) = delete;
 
-    /// <summary>
-    /// 共有VS/PSを取得し、ブレスごとの定数バッファとアクター共通処理を初期化する。
-    /// </summary>
+    // 共有VS/PSを取得し、ブレスごとの定数バッファとアクター共通処理を初期化する。
     void Init(void) override;
-    /// <summary>
-    /// 現在のパラメーターをGPUへ反映し、ブレスのVS/PSとPSのb4を適用する。
-    /// </summary>
+    // 現在のパラメーターをGPUへ反映し、ブレスのVS/PSとPSのb4を適用する。
     void Apply(void) override;
-    /// <summary>
-    /// ブレス用の定数バッファとシェーダーを解除する。
-    /// </summary>
+    // ブレス用の定数バッファとシェーダーを解除する。
     void ResetApply(void) override;
-    /// <summary>
-    /// 個別定数バッファとアクター所有リソースを解放する。共有VS/PSは削除しない。
-    /// </summary>
+    // 個別定数バッファとアクター所有リソースを解放する。共有VS/PSは削除しない。
     void Release(void) override;
 
     /// <summary>

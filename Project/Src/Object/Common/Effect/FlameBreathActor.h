@@ -4,49 +4,29 @@
 
 class FlameBreathShader;
 
-/// <summary>
-/// ブレスの距離・大きさ・寿命・色などをまとめた生成設定。
-/// </summary>
+// ブレスの距離・大きさ・寿命・色などをまとめた生成設定。
 struct FlameBreathSettings
 {
-    /// <summary>
-    /// 開始点からの最大到達距離（正のワールド単位）。
-    /// </summary>
+    // 開始点からの最大到達距離（正のワールド単位）。
     float distance = 600.0f;
-    /// <summary>
-    /// 円錐の終端円の半径（正のワールド単位）。展開完了時の外周と一致する。
-    /// </summary>
+    // 円錐の終端円の半径（正のワールド単位）。展開完了時の外周と一致する。
     float radius = 90.0f;
-    /// <summary>
-    /// 発生・消滅を含む寿命（秒）。0.0fならStopするまで無期限。
-    /// </summary>
+    // 発生・消滅を含む寿命（秒）。0.0fならStopするまで無期限。
     float durationSeconds = 1.5f;
-    /// <summary>
-    /// 発光の強さ（0以上）。0.0fで発光なし。
-    /// </summary>
+    // 発光の強さ（0以上）。0.0fで発光なし。
     float intensity = 2.0f;
-    /// <summary>
-    /// 炎の模様が先端へ流れる速さ（0以上）。0.0fで模様の移動を止める。
-    /// </summary>
+    // 炎の模様が先端へ流れる速さ（0以上）。0.0fで模様の移動を止める。
     float flowSpeed = 3.0f;
-    /// <summary>
-    /// 0xRRGGBB形式の色。例: 0xff7020は橙、0x00aaffは青。
-    /// </summary>
+    // 0xRRGGBB形式の色。例: 0xff7020は橙、0x00aaffは青。
     unsigned int color = 0xff7020;
-    /// <summary>
-    /// 炎の模様を変える有限の値。同じ値で同じ模様になる。
-    /// </summary>
+    // 炎の模様を変える有限の値。同じ値で同じ模様になる。
     float seed = 1.0f;
-    /// <summary>
-    /// Stop後、根元から先端へ炎が消え切るまでの秒数。0なら即時停止。
-    /// </summary>
+    // Stop後、根元から先端へ炎が消え切るまでの秒数。0なら即時停止。
     float stopSeconds = 0.24f;
 };
 
-/// <summary>
-/// 開始点から指定方向へまっすぐ伸びる炎ブレスのアクター。
-/// </summary>
-/// <remarks>EffectBaseが寿命・停止・再利用を管理する。</remarks>
+// 開始点から指定方向へまっすぐ伸びる炎ブレスのアクター。
+// EffectBaseが寿命・停止・再利用を管理する。
 class FlameBreathActor : public EffectBase
 {
 public:
@@ -60,43 +40,27 @@ public:
         const Vector3& center, float radius,
         const Vector3& normal = Vector3(0.0f, 1.0f, 0.0f),
         const FlameBreathSettings& settings = FlameBreathSettings{});
-    /// <summary>
     /// ブレスアクターを破棄する。
-    /// </summary>
     ~FlameBreathActor() override = default;
 
-    /// <summary>
-    /// 現在の向き・大きさ・色・時間でブレスを描画する。終了済みなら描画しない。
-    /// </summary>
+    // 現在の向き・大きさ・色・時間でブレスを描画する。終了済みなら描画しない。
     void Draw(void) override;
 
-    /// <summary>
-    /// 停止中の炎の後端もTimeScaleに従って進める。消え切るまで更新を続ける。
-    /// </summary>
+    // 停止中の炎の後端もTimeScaleに従って進める。消え切るまで更新を続ける。
     void Update(void) override;
-    /// <summary>
-    /// 伸び・停止状態と経過時間を全て戻し、根元から新しく再生する。
-    /// </summary>
+    // 伸び・停止状態と経過時間を全て戻し、根元から新しく再生する。
     void Restart(void) override;
-    /// <summary>
-    /// 根元から先端へ順に消す。無限再生中もstopSeconds後に完全停止する。
-    /// 繰り返し呼んでも停止の進みは戻らない。完全停止まではIsFinishedがfalseになる。
-    /// </summary>
+    // 根元から先端へ順に消す。無限再生中もstopSeconds後に完全停止する。
+    // 繰り返し呼んでも停止の進みは戻らない。完全停止まではIsFinishedがfalseになる。
     void Stop(void) override;
-    /// <summary>
-    /// 残っている炎と停止演出をその場で消す。Playで再利用できる。
-    /// </summary>
+    // 残っている炎と停止演出をその場で消す。Playで再利用できる。
     void StopImmediately(void);
 
-    /// <summary>
-    /// ブレスの開始点を変更する。口元などへの毎フレームの追従にも使用できる。
-    /// </summary>
-    /// <param name="startPoint">新しい開始点（ワールド座標）。各成分に有限の値を指定する。</param>
+    // ブレスの開始点を変更する。口元などへの毎フレームの追従にも使用できる。
+    // startPoint: 新しい開始点（ワールド座標）。各成分に有限の値を指定する。
     void SetStartPoint(const Vector3& startPoint);
-    /// <summary>
-    /// ブレスの向きを変更する。終端円の固定を解除し、円錐の底面はこの方向へ垂直にする。
-    /// </summary>
-    /// <param name="direction">新しい向き。内部で正規化する。ゼロベクトル・有限でない値は指定不可。</param>
+    // ブレスの向きを変更する。終端円の固定を解除し、円錐の底面はこの方向へ垂直にする。
+    // direction: 新しい向き。内部で正規化する。ゼロベクトル・有限でない値は指定不可。
     void SetDirection(const Vector3& direction);
     /// <summary>
     /// ブレスの距離・終端円の半径・明るさを変更し、終端円の固定を解除する。
@@ -116,26 +80,18 @@ public:
     /// <param name="normal">終端円の面に垂直な向き。標準は上向きで床と平行。正規化不要、ゼロは不可。</param>
     void SetEndCircle(const Vector3& center, float radius,
                       const Vector3& normal = Vector3(0.0f, 1.0f, 0.0f));
-    /// <summary>
-    /// 炎の模様が流れる速さを変更する。
-    /// </summary>
-    /// <param name="speed">0以上の有限値。0.0fで模様の移動を止める。</param>
+    // 炎の模様が流れる速さを変更する。
+    // speed: 0以上の有限値。0.0fで模様の移動を止める。
     void SetFlowSpeed(float speed);
-    /// <summary>
-    /// 次の描画から使用するブレスの色を変更する。
-    /// </summary>
-    /// <param name="rgb">0xRRGGBB形式の色。例: 0xff8020は橙、0x00aaffは青。</param>
+    // 次の描画から使用するブレスの色を変更する。
+    // rgb: 0xRRGGBB形式の色。例: 0xff8020は橙、0x00aaffは青。
     void SetColor(unsigned int rgb) { settings.color = rgb & 0xffffff; }
 
-    /// <summary>
-    /// 現在のブレスの向きを取得する。
-    /// </summary>
-    /// <returns>正規化済み方向ベクトルへの読み取り専用参照。</returns>
+    // 現在のブレスの向きを取得する。
+    // 戻り値: 正規化済み方向ベクトルへの読み取り専用参照。
     const Vector3& GetDirection(void) const { return direction; }
-    /// <summary>
-    /// 現在のブレス設定を取得する。
-    /// </summary>
-    /// <returns>設定への読み取り専用参照。変更には各Set関数を使用する。</returns>
+    // 現在のブレス設定を取得する。
+    // 戻り値: 設定への読み取り専用参照。変更には各Set関数を使用する。
     const FlameBreathSettings& GetSettings(void) const { return settings; }
 
 private:
