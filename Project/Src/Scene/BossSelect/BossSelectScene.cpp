@@ -2,6 +2,7 @@
 
 #include "../../Manager/Net/NetWorkManager.h"
 #include "../../Manager/Input/InputManager.h"
+#include "../../Manager/Sound/SoundManager.h"
 
 #include "../../Manager/Camera/CameraEvent/LookAtCameraEvent/LookAtCameraEvent.h"
 
@@ -29,6 +30,10 @@ BossSelectScene::BossSelectScene() :
 
 void BossSelectScene::SubPostLoad(void)
 {
+	if (!Snd::GetIns().IsLoadScene("Lobby")) {
+		Snd::GetIns().ChangeScene("Lobby");
+	}
+
 	AddActor(new BossSelectStage());
 	AddActor(new BossSelectSpotManager());
 	AddActor(new BossSelectSkyShip());
@@ -43,6 +48,10 @@ void BossSelectScene::SubPostLoad(void)
 
 void BossSelectScene::SubPostInit(void)
 {
+	if (!Snd::GetIns().IsPlay("Lobby")) {
+		Snd::GetIns().Play("Lobby");
+	}
+
 	if (Net::GetIns().GetState() == Net::NetState::None) { return; }
 
 	// ‘I‘ğƒLƒƒƒ‰‚ÌóM

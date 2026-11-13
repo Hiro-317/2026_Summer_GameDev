@@ -43,7 +43,7 @@ void BananaBossFireState::Update(void)
 		if (first) {
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
-			//Snd::GetIns().Play("Scratch");
+			Snd::GetIns().Play("Breath");
 			collOperator->EffectPlay();
 		}
 		// 二度目は通さないようにフラグを折る
@@ -65,6 +65,7 @@ void BananaBossFireState::Exit(void)
 {
 	collOperator->Off();
 	collOperator->EffectStop();
+	Snd::GetIns().Stop("Breath");
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB, false));
 }
 

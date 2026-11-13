@@ -4,6 +4,7 @@
 #include<map>
 #include<string>
 #include<algorithm>
+#include<cctype>
 
 class SoundManager
 {
@@ -104,6 +105,13 @@ public:
 	void SetSeVolume(float volume) { seVolume = std::clamp(volume, SE_VOLUME_MIN, SE_VOLUME_MAX); }
 	// SEボリューム割合を加算
 	void AddSeVolume(float volume) { seVolume = std::clamp(seVolume + volume, SE_VOLUME_MIN, SE_VOLUME_MAX); }
+
+	// その音声が再生されているか
+	bool IsPlay(const std::string& id);
+
+	// そのシーンがロードされているか
+	bool IsLoadScene(const std::string& scene);
+
 #pragma endregion
 
 private:
@@ -154,6 +162,13 @@ private:
 		// 生成
 		SoundTable(void) {}
 
+		/// <summary>CSVの各項目を変換してサウンド設定を作成する。</summary>
+		/// <param name="path">音声ファイルのパス。</param>
+		/// <param name="scene">読み込むシーン名。</param>
+		/// <param name="type">音声の種類（BGM/SE）。</param>
+		/// <param name="volume">音量の倍率。</param>
+		/// <param name="loop">ループ設定（TRUE/FALSE、大文字小文字を区別しない）。</param>
+		/// <param name="maxDupli">最大同時再生数。</param>
 		SoundTable(
 			const std::string& path,
 			const std::string& scene,
@@ -166,7 +181,11 @@ private:
 			scene(scene),
 			type(type),
 			volume(std::stof(volume)),
-			loop((loop == "TRUE") ? true : false),
+			loop([](std::string value) {
+				std::transform(value.begin(), value.end(), value.begin(),
+					[](unsigned char c) { return static_cast<char>(std::toupper(c)); });
+				return value == "TRUE";
+			}(loop)),
 			maxDupli((unsigned char)std::stoi(maxDupli))
 		{
 		}

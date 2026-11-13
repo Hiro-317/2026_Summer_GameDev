@@ -1,5 +1,7 @@
 #include "BananaBossBanadrill.h"
 
+#include "../../../../../../../Manager/Sound/SoundManager.h"
+
 #include "../../../../../../Common/Transform/Transform.h"
 #include "../../../../../../Common/Effect/ExplosionActor.h"
 #include "../../../../../../Common/Effect/DustBurstActor.h"
@@ -139,6 +141,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				boot = true;
 				duRef->Restart();
 				duRef->SetPos(Vector3(trans.pos.x, trans.pos.y - RADIUS, trans.pos.z));
+				Snd::GetIns().Play("Drill");
 			}
 			cnt++;
 			// UŒ‚”»’èƒIƒ“
@@ -153,6 +156,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				cnt = 0;
 				front.scale = Vector3(0.0f);
 				duRef->Stop();
+				Snd::GetIns().Stop("Drill");
 			}
 		}
 		else {
@@ -170,6 +174,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				attCollRef->SetJudgeFlg(true);
 				exRef->Play();
 				exRef->SetPos(trans.pos);
+				Snd::GetIns().Play("ExBanana");
 			}
 			if (BOOM_CNT + BOOM_DURATION <= cnt) {
 				attCollRef->SetJudgeFlg(false);

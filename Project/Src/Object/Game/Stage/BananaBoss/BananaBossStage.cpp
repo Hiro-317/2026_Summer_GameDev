@@ -4,7 +4,7 @@
 
 #include "../../../Common/Collider/BoxCollider.h"
 
-BananaBossStage::BananaBossStage() : ActorBase("Data/Parameter/Stage/Banana/"), backImage(-1) {}
+BananaBossStage::BananaBossStage() : ActorBase("Data/Parameter/Stage/Banana/"){}
 
 void BananaBossStage::Load(void)
 {
@@ -66,16 +66,4 @@ void BananaBossStage::Load(void)
 	}
 
 #pragma endregion
-
-	backImage = LoadGraph("Data/Model/Stage/BananaBoss/BackImage.png");
-}
-
-void BananaBossStage::SubDraw(void)
-{
-	DrawRotaGraph(App::SCREEN_SIZE_X_HALF, App::SCREEN_SIZE_Y_HALF, 1, 0, backImage, true);
-}
-
-void BananaBossStage::SubRelease(void)
-{
-	DeleteGraph(backImage);
 }
