@@ -24,9 +24,6 @@ struct ExplosionOutput
 {
     float4 position : SV_POSITION;
     float2 localUV : TEXCOORD0;
-    nointerpolation float3 cameraRightWS : TEXCOORD1;
-    nointerpolation float3 cameraUpWS : TEXCOORD2;
-    nointerpolation float3 cameraFrontWS : TEXCOORD3;
 };
 
 ExplosionOutput main(PurpleExplosionVertexInput input)
@@ -38,11 +35,5 @@ ExplosionOutput main(PurpleExplosionVertexInput input)
     output.position = mul(float4(viewPosition, 1.0f), g_base.projectionMatrix);
     output.localUV = float2(input.uv.x * 2.0f - 1.0f,
                             1.0f - input.uv.y * 2.0f);
-    // ビュー行列の回転成分からカメラのワールド軸を取り出す。
-    // 3次元の炎の模様を、カメラ回転に追従する単なる2D模様にしないために渡す。
-    output.cameraRightWS = float3(g_base.viewMatrix[0][0], g_base.viewMatrix[1][0], g_base.viewMatrix[2][0]);
-    output.cameraUpWS = float3(g_base.viewMatrix[0][1], g_base.viewMatrix[1][1], g_base.viewMatrix[2][1]);
-    output.cameraFrontWS = float3(g_base.viewMatrix[0][2], g_base.viewMatrix[1][2], g_base.viewMatrix[2][2]);
     return output;
 }
-

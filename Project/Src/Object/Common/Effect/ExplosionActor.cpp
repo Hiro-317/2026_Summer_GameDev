@@ -36,7 +36,8 @@ void ExplosionActor::Draw(void)
 
 void ExplosionActor::SubDraw(void)
 {
-    // カメラの向きに合わせて板ポリゴンを毎回組み直す（ビルボード）。
+    // 画面の右・上方向から毎回組み直し、カメラの回転にかかわらず常に正面を向ける。
+    // アクターや親の回転は使わない。座標と半径だけを反映する。
     const Vector3 right(GetCameraRightVector());
     const Vector3 up(GetCameraUpVector());
     const Vector3 normal(GetCameraBackVector());
@@ -56,8 +57,7 @@ void ExplosionActor::SubDraw(void)
     int previousBlend = 0, previousBlendParameter = 0;
     GetDrawBlendMode(&previousBlend, &previousBlendParameter);
     const int previousCulling = GetUseBackCulling();
-    // 体積の密度で背景も遮る乗算済みα合成にし、火球の陰影を残す。
-    SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 255);
+    SetDrawBlendMode(DX_BLENDMODE_PMA_ADD, 255);
     SetUseBackCulling(DX_CULLING_NONE);
     // 通常の3Dシーンでは深度判定・書き込みが有効になっている。
     // 爆発は壁の裏に隠すが、透明部分で後続の描画を遮らないよう深度は書き込まない。
@@ -74,4 +74,3 @@ void ExplosionActor::SubRelease(void)
 {
     explosionShader = nullptr;
 }
-

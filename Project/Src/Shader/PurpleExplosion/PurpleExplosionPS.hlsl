@@ -16,15 +16,10 @@ struct ExplosionInput
 {
     float4 position : SV_POSITION;
     float2 localUV : TEXCOORD0;
-    nointerpolation float3 cameraRightWS : TEXCOORD1;
-    nointerpolation float3 cameraUpWS : TEXCOORD2;
-    nointerpolation float3 cameraFrontWS : TEXCOORD3;
 };
 
 float4 main(ExplosionInput input) : SV_TARGET
 {
     return EvaluatePurpleExplosion(input.localUV, elapsedSeconds,
-                                   durationSeconds, intensity, seed, colorRGB,
-                                   input.cameraRightWS, input.cameraUpWS, input.cameraFrontWS);
+                                   durationSeconds, intensity, seed, colorRGB);
 }
-
