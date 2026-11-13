@@ -1,6 +1,7 @@
 #include "BananaBossBanadrill.h"
 
 #include "../../../../../../Common/Transform/Transform.h"
+#include "../../../../../../Common/Effect/ExplosionActor.h"
 
 
 BananaBossBanadrill::BananaBossBanadrill(const int& model, const int& front, const int& back, const CharacterStats& stats) :
@@ -44,6 +45,10 @@ void BananaBossBanadrill::Load(void)
 	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
 
 	hp = HP;
+	boot = false;
+
+	exRef = new ExplosionActor(trans.pos, 350.0f, 1.2f, 1.2f, 1.0f, 0xffff00);
+	AddChildActor(exRef);
 }
 
 void BananaBossBanadrill::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -64,6 +69,13 @@ void BananaBossBanadrill::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& o
 				collRef->SetJudgeFlg(false);
 			}
 		}
+	}
+}
+
+void BananaBossBanadrill::EffectUpdate(void)
+{
+	if (!exRef->IsFinished()) {
+		exRef->Update();
 	}
 }
 
@@ -141,12 +153,13 @@ void BananaBossBanadrill::SubUpdate(void)
 			if (BOOM_CNT == cnt) {
 				front.scale = Vector3(BOOM_RADIUS / 100.0f);
 				attCollRef->SetJudgeFlg(true);
+				exRef->Play();
 			}
 			if (BOOM_CNT + BOOM_DURATION <= cnt) {
 				attCollRef->SetJudgeFlg(false);
 				collRef->SetJudgeFlg(false);
-				live = false;
 				prevLive = false;
+				live = false;
 				cnt = 0;
 				front.scale = Vector3(0.0f);
 				SetIsDraw(false);

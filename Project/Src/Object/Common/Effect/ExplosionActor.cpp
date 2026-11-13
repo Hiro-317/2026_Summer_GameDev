@@ -1,30 +1,36 @@
-﻿#include "PurpleExplosionActor.h"
+﻿#include "ExplosionActor.h"
 
 #include <cmath>
 #include <stdexcept>
 
 #include "../Shader/ExplosionShader.h"
 
-PurpleExplosionActor::PurpleExplosionActor(const Vector3& position, float radius,
+ExplosionActor::ExplosionActor(const Vector3& position, float radius,
     float durationSeconds, float intensity, float seed, unsigned int color) :
     EffectBase(durationSeconds), radius(radius), intensity(intensity), seed(seed),
     color(color & 0xffffff),
-    explosionShader(nullptr)
+    explosionShader(nullptr),
+    position(position)
 {
     if (!std::isfinite(radius) || radius <= 0.0f ||
         !std::isfinite(intensity) || intensity < 0.0f || !std::isfinite(seed)) {
         throw std::invalid_argument("Invalid purple explosion parameters");
     }
-    SetPos(position);
+    // 一時変数への参照を保持しない。再生時の着弾位置は呼び出し側がSetPosで指定する。
 }
 
-void PurpleExplosionActor::DefaultCreateShader(void)
+void ExplosionActor::DefaultCreateShader(void)
 {
     explosionShader = new ExplosionShader(GetDurationSeconds(), intensity, seed, color);
     CreateShader(explosionShader);
 }
 
-void PurpleExplosionActor::Draw(void)
+void ExplosionActor::SubUpdate(void)
+{
+    trans.pos = position;
+}
+
+void ExplosionActor::Draw(void)
 {
     if (!GetIsDraw() || IsFinished() || explosionShader == nullptr) { return; }
     explosionShader->SetElapsedSeconds(GetElapsedSeconds());
@@ -33,18 +39,18 @@ void PurpleExplosionActor::Draw(void)
     ActorBase::Draw();
 }
 
-void PurpleExplosionActor::SubDraw(void)
+void ExplosionActor::SubDraw(void)
 {
-    // カメラの向きに合わせて板ポリゴンを毎回組み直す（ビルボード）。
-    const Vector3 right(GetCameraRightVector());
-    const Vector3 up(GetCameraUpVector());
-    const Vector3 normal(GetCameraBackVector());
+    // 向きは頂点シェーダーのカメラ座標上で決める。
+    // CPUでは全頂点に中心座標を渡し、su/svに中心からの左右・上下の距離を渡す。
+    // 親の回転や、中心からカメラ位置への斜め方向で板が傾かないようにする。
     const float corners[4][2] = {{-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
     VERTEX3DSHADER vertices[4]{};
     for (int i = 0; i < 4; ++i) {
-        vertices[i].pos = (trans.pos + right * (corners[i][0] * radius) +
-                           up * (corners[i][1] * radius)).ToVECTOR();
-        vertices[i].norm = normal.ToVECTOR();
+        vertices[i].pos = trans.pos.ToVECTOR();
+        vertices[i].norm = VGet(0.0f, 0.0f, -1.0f); // このシェーダーでは法線を使わない。
+        vertices[i].su = corners[i][0] * radius;
+        vertices[i].sv = corners[i][1] * radius;
         vertices[i].dif = GetColorU8(255, 255, 255, 255);
         vertices[i].u = (corners[i][0] + 1.0f) * 0.5f;
         vertices[i].v = (1.0f - corners[i][1]) * 0.5f;
@@ -68,7 +74,7 @@ void PurpleExplosionActor::SubDraw(void)
     SetDrawBlendMode(previousBlend, previousBlendParameter);
 }
 
-void PurpleExplosionActor::SubRelease(void)
+void ExplosionActor::SubRelease(void)
 {
     explosionShader = nullptr;
 }

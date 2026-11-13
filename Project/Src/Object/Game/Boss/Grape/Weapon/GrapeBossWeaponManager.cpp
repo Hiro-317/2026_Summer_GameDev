@@ -1,4 +1,4 @@
-#include "GrapeBossWeaponManager.h"
+ï»¿#include "GrapeBossWeaponManager.h"
 
 #include "../../../../../Manager/Sound/SoundManager.h"
 
@@ -9,19 +9,19 @@
 GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSenderId, const CharacterStats& stats)
 	: operatorSenderId(operatorSenderId), stats(stats)
 {
-	// •¡»ƒnƒ“ƒhƒ‹
+	// è¤‡è£½ãƒãƒ³ãƒ‰ãƒ«
 	bombModel = MV1LoadModel("Data/Model/Character/Grape/Bomb.mv1");
 	frontModel = MV1LoadModel("Data/Model/Range/CircleRangeFront.mv1");
 	backModel = MV1LoadModel("Data/Model/Range/CircleRangeBack.mv1");
 
-	// ‰Šú‰»—p‚Ì”
+	// åˆæœŸåŒ–ç”¨ã®æ•°
 	int weaponNumber = 0;
 
-	// •Ší‚Ìí—Ş”‚Æ‚»‚Ì’†g‚Ì”‚Ü‚Å‰ñ‚·
+	// æ­¦å™¨ã®ç¨®é¡æ•°ã¨ãã®ä¸­èº«ã®æ•°ã¾ã§å›ã™
 	for (int i = 0; i < (int)WeaponType::Max; i++) {
 		for (int j = 0; j < WeponDuplicateNum[i]; j++) {
 
-			// ì‚Á‚Ä‚à‚ç‚Á‚½•Ší‚ğŠi”[
+			// ä½œã£ã¦ã‚‚ã‚‰ã£ãŸæ­¦å™¨ã‚’æ ¼ç´
 			weapons[weaponNumber] = GrapeBossWeaponFactory::Create(bombModel, i, frontModel, backModel);
 
 			AddChildActor(weapons[weaponNumber].weaponIns);
@@ -29,7 +29,7 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 			weapons[weaponNumber].weaponIns->SetColliderFlg(false);
 			weapons[weaponNumber].live = false;
 
-			// ”‚ÌXV
+			// æ•°ã®æ›´æ–°
 			weaponNumber++;
 		}
 	}
@@ -37,18 +37,22 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 
 void GrapeBossWeaponManager::Load(void)
 {
-	// •Ší‚Ì‰Šú‰»
+	// æ­¦å™¨ã®åˆæœŸåŒ–
 	for (auto& i : weapons) i.weaponIns->Load(stats);
 }
 
 void GrapeBossWeaponManager::Update()
 {
 	for (auto& i : weapons) {
-		// ¶‚«‚Ä‚¢‚é‚à‚Ì‚Ì‚İXV
+		// éç”Ÿå­˜ã®å¼¾ã¯ç§»å‹•ãƒ»æ”»æ’ƒã‚’æ­¢ã‚ã‚‹ãŒã€å­ã®çˆ†ç™ºã‚¨ãƒ•ã‚§ã‚¯ãƒˆã¯æ›´æ–°ã‚’ç¶šã‘ã‚‹ã€‚
+		if (!i.live) {
+			i.weaponIns->UpdateInactiveEffects();
+			continue;
+		}
 		if (i.live) {
 			i.weaponIns->Update();
 
-			// I—¹‚µ‚Ä‚¢‚é‚È‚çE‚·
+			// çµ‚äº†ã—ã¦ã„ã‚‹ãªã‚‰æ®ºã™
 			if (i.weaponIns->IsEnd()) {
 				
 				i.live = false;
@@ -56,7 +60,7 @@ void GrapeBossWeaponManager::Update()
 				i.weaponIns->SetColliderFlg(false);
 				Snd::GetIns().Play("Exprosion");
 			}
-			// —áŠOˆ—
+			// ä¾‹å¤–å‡¦ç†
 			if (i.weaponIns->GetTrans().pos.y < EXIT_HEIGHT) {
 
 				i.live = false;

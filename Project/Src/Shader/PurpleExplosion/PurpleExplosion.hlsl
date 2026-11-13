@@ -32,8 +32,17 @@ float ExplosionFBM(float2 p)
     return value;
 }
 
-// 中心を原点とする-1～1の座標から爆発色を計算する。
-// 戻り値のRGBにはフェードを乗算済み。描画側は乗算済みαの加算ブレンドを使う。
+/// <summary>
+/// 画面に正対するUVから火球・衝撃波・火花を計算する。
+/// カメラの角度を模様や明暗へ反映しない。RGBはフェード乗算済みで加算合成する。
+/// </summary>
+/// <param name="p">中心を原点とする-1～1の板ポリゴン座標。</param>
+/// <param name="elapsed">再生開始からの経過時間（秒）。</param>
+/// <param name="duration">寿命（秒）。0なら無期限。</param>
+/// <param name="intensity">発光の強さ。</param>
+/// <param name="seed">炎・火花の模様を決める値。</param>
+/// <param name="colorRGB">0～1のRGB。</param>
+/// <returns>フェード乗算済みRGBと不透明度。</returns>
 float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
                                float intensity, float seed, float3 colorRGB)
 {
