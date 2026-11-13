@@ -4,7 +4,7 @@
 
 `FlameBreathActor` は `EffectBase` を継承する描画用のエフェクトです。
 開始点・向き・最大到達距離・太さ・明るさ・色・寿命を指定できます。
-根元は細く、先へ行くほど太くなり、白く明るい芯と揺れる炎を描画します。
+根元から終端円へ広がる立体の円錐を描画します。側面と終端面を持ち、見る角度で一枚の板に潰れません。
 
 ## 最初に準備して、必要なときだけ再生する
 
@@ -79,6 +79,32 @@ bool finished = breath->IsFinished();
 シーンが所有するため、呼び出し側で `delete` しないでください。
 子アクターとして使う場合は、親の読み込み時に `AddChildActor` で登録します。
 
+## 予告円の円周に合わせる・終端面を傾ける
+
+```cpp
+// 開始点は口元。circleCenterは予告円のワールド中心、circleRadiusはその半径。
+breath->SetStartPoint(mouthPosition);
+breath->SetEndCircle(circleCenter, circleRadius); // 標準は水平な終端円。
+breath->Play();
+
+// 再生中に口元が動いても、終端円は指定した位置に残る。
+breath->SetStartPoint(mouthPosition);
+
+// 終端面の向きを変える場合。上向きなら水平な床と同じ向き。
+breath->SetEndCircle(circleCenter, circleRadius, Vector3(0.0f, 1.0f, 0.0f));
+// 例: 水平面から30度傾けた終端面（長さは内部で正規化する）。
+breath->SetEndCircle(circleCenter, circleRadius, Vector3(0.0f, 0.8660254f, 0.5f));
+```
+
+`SetEndCircle`の第3引数は角度の度数ではなく、終端面に垂直な方向ベクトルです。
+ブレスの軸は口元から終端円の中心へ向きます。終端面は軸と独立して傾けられるため、斜めのブレスでも水平な床の円周へ合わせられます。
+口元が終端面上にある指定は、円錐が潰れるため例外になります。
+
+既存の方向・距離指定も使えます。その場合は軸に垂直な終端円を作り、`settings.radius`が展開後の円の半径になります。
+`SetDirection`または`SetStrength`を呼ぶと終端円の位置固定を解除するため、固定したい場合は最後に`SetEndCircle`を呼んでください。
+発生直後は設定した時間で先端まで伸び、展開完了後に終端円へ一致します。
+先端付近を途中で消す処理は廃止し、円周まで炎を残しています。
+
 ## 描画・ビルド
 
 - HLSLは `Project/Src/Shader/FlameBreath/` に配置しています。
@@ -87,11 +113,10 @@ bool finished = breath->IsFinished();
 - C++とVS/PSは `Project.vcxproj` に登録済みです。HLSLは `main` / Shader Model 5.0でコンパイルします。
 - 出力は `Project/Data/Shader/FlameBreathVS.cso` / `FlameBreathPS.cso` です。
 - C++はUTF-8 BOM付き、HLSLはUTF-8 BOMなしで保存してください。
-- 始点と先端の中心軸を保ち、VSのカメラ座標上で投影された軸に垂直な幅を付けます。カメラ角度で板が横から薄く見えるのを防ぎます。
-- 軸の正面・真後ろでは長さが投影上縮むため、画面に正対する先端の補助炎を重ねます。表示量はVSがカメラ方向から計算します。
-- 太さはワールド単位です。遠くにあるブレスは距離に応じて小さく見えます。
-- 頂点のposは中心軸上の座標、normは方向×現在の距離、suは描画モード、svは本体の符号付き幅または補助炎の半径です。
-- 頂点の受け渡し方法を変更しているため、FlameBreathActor.cppとFlameBreathVS.hlslを一緒に更新してリビルドしてください。
+- 円錐は周方向32分割・長さ方向8分割の側面と、円形の終端面を持ちます。カメラに合わせて形状を回しません。
+- 半径はワールド単位です。展開後の終端円周の頂点が、指定した半径と終端面上に配置されます。
+- VSは通常のワールド→ビュー→射影変換を行い、PSは側面と終端円へ炎の模様を付けます。
+- `FlameBreathActor.cpp/.h`と`FlameBreathVS/PS.hlsl`を一緒に更新してリビルドしてください。
 - 加算合成と深度判定を使い、描画中は深度を書き込みません。壁との交差を滑らかにするソフトパーティクル処理は含みません。
 - 当たり判定やダメージ、発生タイミングは持ちません。攻撃ロジックから必要なタイミングで生成してください。
 - 時間は既存の `EffectBase` と同じく、60FPSと `TimeScale` に従います。
