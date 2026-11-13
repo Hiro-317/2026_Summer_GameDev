@@ -1,0 +1,66 @@
+# 中心から周囲へ広がる土埃
+
+`DustBurstActor : EffectBase` が、地面のXZ方向へ20個の丸い煙を広げます。
+内側の低い煙と、外側の巻き上がる大きな煙で、中心が抜ける土埃を作ります。
+基本色は薄い砂色です。`0xffffff`なら参考画像に近い白・灰色になります。
+煙は半透明の乗算済みα合成です。加算発光は使わず、下側の灰色と丸い塊の陰影を残します。
+各煙はVSで画面へ正対させます。地面に沿って広がる中心の配置はカメラを回しても変わりません。
+
+```cpp
+#include "../../Object/Common/Effect/DustBurstActor.h"
+
+// シーン/親アクターの読み込み時に、必要な分だけ準備する。
+DustBurstSettings settings;
+settings.radius = 180.0f;         // 中心から外へ広がる距離（ワールド単位）
+settings.height = 100.0f;         // 巻き上がる高さの基準
+settings.durationSeconds = 1.0f;  // 消滅演出を含む寿命。0なら無期限
+settings.stopSeconds = 0.3f;      // 中心から外周へ消える時間
+settings.opacity = 0.9f;          // 不透明度（0～1）
+settings.color = 0xffffff;        // 白い煙。砂色なら0xeee6d7など
+settings.seed = 1.0f;             // 形・配置のシード
+
+auto* dust = new DustBurstActor(groundPosition, settings);
+AddActor(dust);                  // 初期化のみ。親で所有するならAddChildActor
+
+// 着地・衝撃などの発生時に一度だけ呼ぶ。
+dust->SetPosition(groundPosition);
+dust->Restart();                // 毎回中心から伸びる。再生中でも最初からやり直す
+```
+
+同時に異なる場所で出す場合は、必要数のアクターを事前に準備します。
+アクターの所有権はシーンまたは親へ渡し、利用側でdeleteしません。
+一般エフェクト用の管理アクターは追加していません。
+
+## 中心から外周への消滅
+
+有限寿命では、最後の`min(stopSeconds, durationSeconds * 0.5)`秒を消滅演出に使います。
+短い寿命でも前半に出現時間を残します。寿命に達するころには煙が消え切ります。
+不透明度を一斉に下げるのではなく、中心からの地面上の距離に沿って消す範囲を広げます。
+
+```cpp
+dust->Stop();             // 寿命を待たず、中心から外周へ消す
+dust->StopImmediately();  // 消滅演出を待たず、その場で全て消す
+dust->Restart();          // 出現・消滅状態と時間を戻して再利用
+```
+
+`Stop()`を毎フレーム呼んでも演出は最初へ戻りません。
+演出中は`IsFinished()`がfalseです。完全停止するまでUpdate/Drawを続けてください。
+`TimeScale`が0の間は出現・消滅も進みません。
+`stopSeconds = 0.0f`なら、寿命切れ・Stopとも即時に消します。
+初期化前のStopも即時キャンセルします。
+
+寿命`0.0f`は無期限です。1秒で展開して残り、Stopを呼ぶと同じ中心からの消滅演出を行います。
+新しい発生にはRestartを使ってください。Playの共通実装は変更していません。
+
+## リソース・ビルド
+
+- シェーダーは`Project/Src/Shader/DustBurst/`に配置しています。
+- `DustBurstShader : ShaderBase`は`ShaderResourceManager`の共有VS/PSを初回Init時だけロードします。
+- 各アクターは48バイトの個別定数バッファを持ちます。テクスチャは使いません。
+- `Project.vcxproj`とfiltersへC++/HLSLを登録済みです。
+- VS/PSは`main` / Shader Model 5.0、出力先は`Data/Shader/DustBurstVS.cso`と`DustBurstPS.cso`です。
+- プル後はVisual Studioでリビルドしてください。C++はUTF-8 BOM付き、HLSLはBOMなしです。
+- 深度判定は有効、煙の深度書き込みは無効です。煙の塊は奥から順に描画します。
+- 壁と交差する部分のソフトパーティクル処理、当たり判定、ダメージ処理は含みません。
+
+Windows / Visual Studio / DxLibでのゲーム内表示確認は別途必要です。

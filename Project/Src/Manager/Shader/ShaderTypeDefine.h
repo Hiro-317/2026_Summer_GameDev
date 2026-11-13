@@ -38,6 +38,9 @@ enum class VERTEX_SHADER_TYPE
 
     // 直線状の炎ブレス
     FlameBreath,
+
+    // 中心から周囲へ広がる土埃
+    DustBurst,
 };
 
 // ピクセルシェーダーの種類
@@ -94,6 +97,9 @@ enum class PIXEL_SHADER_TYPE
 
     // 直線状の炎ブレス
     FlameBreath,
+
+    // 中心から周囲へ広がる土埃
+    DustBurst,
 };
 
 // 頂点タイプ
