@@ -91,9 +91,9 @@ private:
 	static constexpr int RANDOM = 10000;
 
 	// ‚»‚ê‚¼‚ê‚ÌŠm—¦
-	static constexpr int SCRATCH_LUCK = 4000;
-	static constexpr int BREATH_LUCK = 7000;
-	static constexpr int BANAMERANG_LUCK = 9000;
+	static constexpr int SCRATCH_LUCK = 3000;
+	static constexpr int BREATH_LUCK = 6000;
+	static constexpr int BANAMERANG_LUCK = 8500;
 
 	// ˆÚ“®‚ÉˆÚ‚é‹——£
 	static constexpr float DISTANCE = 400.0f;

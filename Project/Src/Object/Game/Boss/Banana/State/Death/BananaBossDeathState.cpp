@@ -19,7 +19,7 @@ BananaBossDeathState::BananaBossDeathState(
 
 void BananaBossDeathState::Enter(void)
 {
-	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
+	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect(0.008f, 20.0f, 120.0f));
 	PlayDeath();
 }
 
