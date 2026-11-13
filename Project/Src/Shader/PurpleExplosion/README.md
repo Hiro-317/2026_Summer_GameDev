@@ -1,13 +1,12 @@
 # 紫色の爆発エフェクト
 
-1回のAddActorで準備し、再生関数から複数地点へ同時表示したい場合は、
-[EffectPlayerの使い方](../../Object/Common/Effect/EffectPlayer.md) を参照してください。
+固有エフェクトは個別のアクターとして必要な分だけ保持します。共通ヒットエフェクトなどの管理は、その機能を追加するときに別途設計します。
 
 `EffectBase` は `ActorBase` を継承するエフェクト用の中間基底クラスです。
 `PurpleExplosionActor` はその派生で、指定したワールド座標に紫色の爆発を表示します。
 攻撃やキー入力など、固定の発生タイミングは設定していません。
 
-## 任意のタイミングで生成する
+## 最初に準備して、必要なときだけ再生する
 
 シーンの `SubPostLoad` や `SubPostUpdate` など、`AddActor` を呼べる場所で追加します。
 `SceneBase` が読み込み・初期化・更新・描画・解放を管理します。
@@ -15,18 +14,25 @@
 ```cpp
 #include "../../Object/Common/Effect/PurpleExplosionActor.h"
 
-// シーンの更新処理など、出したいタイミングで1回呼ぶ。
-AddActor(new PurpleExplosionActor(
+// シーンの読み込み処理などで、必要な分だけ生成して保持する。
+auto* explosion = new PurpleExplosionActor(
     Vector3(0.0f, 150.0f, 0.0f), // ワールド座標
     150.0f,                     // 最大半径（ワールド単位）
     1.2f,                       // 持続時間（秒）
     2.0f,                       // 明るさ
     1.0f                        // 模様のシード
-));
+);
+AddActor(explosion); // 読み込み・初期化だけ。ここではまだ表示しない。
+
+// 攻撃や着弾など、実際に出したいタイミングで呼ぶ。
+explosion->Play();
 ```
 
 親アクターから子として使用する場合は、その親の読み込み時に `AddChildActor` で追加してください。
 生成時の所有権はシーンまたは親アクターに渡すため、利用側で `delete` しません。
+
+初期化が済んだ後は、同じインスタンスに `Play()` を何度でも呼んで使い回せます。
+再生中に呼ぶとその再生を最初からやり直します。同時に独立した再生が必要な分は、個別のアクターを用意します。
 
 ## 無期限再生と即時停止
 
@@ -35,14 +41,15 @@ AddActor(new PurpleExplosionActor(
 
 ```cpp
 auto* explosion = new PurpleExplosionActor(Vector3(0.0f, 150.0f, 0.0f), 150.0f, 0.0f);
-AddActor(explosion);
+AddActor(explosion); // 準備のみ。
+explosion->Play();   // 実際の再生タイミングで呼ぶ。
 
 // 有限・無期限にかかわらず、残り寿命を無視して即座に消す。
 explosion->Stop();
 ```
 
 `Stop()` はフェードを待たずに更新・描画を止めます。deleteは所有者が解放時に行います。
-`Restart()` で再開でき、`IsInfinite()` で無期限かどうかを確認できます。
+`Play()` または `Restart()` で最初から再生でき、`IsInfinite()` で無期限かどうかを確認できます。
 
 ## 再利用する
 
@@ -52,7 +59,8 @@ explosion->Stop();
 ```cpp
 // シーンが所有するインスタンスへの参照を保持しておく。
 auto* explosion = new PurpleExplosionActor(Vector3(0.0f, 150.0f, 0.0f));
-AddActor(explosion);
+AddActor(explosion); // 準備のみ。
+explosion->Play();   // 実際の再生タイミングで呼ぶ。
 
 // 初期化後、別のタイミング・座標で再生する。
 explosion->SetPos(Vector3(300.0f, 150.0f, 0.0f));
@@ -74,7 +82,8 @@ bool finished = explosion->IsFinished();
 // コンストラクターの最後の引数で、生成時の色を指定する。
 auto* explosion = new PurpleExplosionActor(
     Vector3(0.0f, 150.0f, 0.0f), 150.0f, 1.2f, 2.0f, 1.0f, 0xff4000);
-AddActor(explosion);
+AddActor(explosion); // 準備のみ。
+explosion->Play();   // 実際の再生タイミングで呼ぶ。
 
 // 再生中にも変更可能。次の描画から青色に変わる。
 explosion->SetColor(0x00aaff);

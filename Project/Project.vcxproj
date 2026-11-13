@@ -854,9 +854,4 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
       <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Src\Object\Common\Effect\EffectPlayer.cpp" />
-    <ClInclude Include="Src\Object\Common\Effect\EffectPlayer.h" />
-    <None Include="Src\Object\Common\Effect\EffectPlayer.md" />
-  </ItemGroup>
 </Project>

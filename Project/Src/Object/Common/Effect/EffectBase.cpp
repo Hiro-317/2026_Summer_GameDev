@@ -6,7 +6,7 @@
 #include "../../../Manager/TimeScale/TimeScale.h"
 
 EffectBase::EffectBase(float durationSeconds) :
-    durationSeconds(durationSeconds), elapsedSeconds(0.0f), finished(false)
+    durationSeconds(durationSeconds), elapsedSeconds(0.0f), finished(true)
 {
     if (!std::isfinite(durationSeconds) || durationSeconds < 0.0f) {
         throw std::invalid_argument("Effect duration must be finite and nonnegative (zero means unlimited)");
@@ -15,11 +15,14 @@ EffectBase::EffectBase(float durationSeconds) :
     SetGravityFlg(false);
     SetPushFlg(false);
     SetDrawType(ACTOR_DRAW_TYPE::Alpha);
+    SetIsDraw(false);
 }
 
 void EffectBase::BaseInit(void)
 {
-    Restart();
+    // Initは下準備だけにする。初期化前にPlay/Restartした場合だけ開始要求を引き継ぐ。
+    if (finished) { SetIsDraw(false); }
+    else { Restart(); }
 }
 
 void EffectBase::Update(void)
@@ -35,6 +38,11 @@ void EffectBase::BaseUpdate(void)
         elapsedSeconds = durationSeconds;
         Stop();
     }
+}
+
+void EffectBase::Play(void)
+{
+    Restart();
 }
 
 void EffectBase::Restart(void)

@@ -11,7 +11,7 @@ class EffectBase : public ActorBase
 public:
 
     /// <summary>
-    /// エフェクトの寿命を設定する。
+    /// エフェクトの寿命を設定する。生成直後は再生せず待機する。
     /// </summary>
     /// <param name="durationSeconds">寿命（秒）。正の値で自動終了、0.0fでStopするまで無期限。負値・NaN・無限大は指定不可。</param>
     explicit EffectBase(float durationSeconds);
@@ -33,6 +33,12 @@ public:
     void Update(void) override;
 
     /// <summary>
+    /// 準備済みのエフェクトを、経過時間0から再生する。
+    /// </summary>
+    /// <remarks>AddActorとInitだけでは表示しない。表示したいタイミングで呼ぶ。再生中なら最初からやり直す。</remarks>
+    void Play(void);
+
+    /// <summary>
     /// 経過時間を0へ戻して更新・描画を再開する。
     /// </summary>
     /// <remarks>座標や色の設定は保持する。再生数は増えない。</remarks>
@@ -47,7 +53,7 @@ public:
     /// <summary>
     /// 寿命終了または明示停止済みか調べる。
     /// </summary>
-    /// <returns>終了・停止済みならtrue、再生中ならfalse。</returns>
+    /// <returns>再生前の待機中・終了・停止済みならtrue、再生中ならfalse。</returns>
     bool IsFinished(void) const { return finished; }
     /// <summary>
     /// 寿命が無期限か調べる。

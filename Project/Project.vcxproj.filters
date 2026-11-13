@@ -499,9 +499,4 @@
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathVS.hlsl" />
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Src\Object\Common\Effect\EffectPlayer.cpp" />
-    <ClInclude Include="Src\Object\Common\Effect\EffectPlayer.h" />
-    <None Include="Src\Object\Common\Effect\EffectPlayer.md" />
-  </ItemGroup>
 </Project>
