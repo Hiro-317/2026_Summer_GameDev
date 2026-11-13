@@ -166,6 +166,7 @@ private:
         { VERTEX_SHADER_TYPE::PurpleExplosion, "PurpleExplosionVS" },
         // 根元から先端へ伸びる炎のブレス
         { VERTEX_SHADER_TYPE::FlameBreath, "FlameBreathVS" },
+        { VERTEX_SHADER_TYPE::DustBurst, "DustBurstVS" },
 	};
 
 	// 頂点シェーダー
@@ -259,6 +260,7 @@ private:
 
         { PIXEL_SHADER_TYPE::PurpleExplosion, "PurpleExplosionPS" },
         { PIXEL_SHADER_TYPE::FlameBreath, "FlameBreathPS" },
+        { PIXEL_SHADER_TYPE::DustBurst, "DustBurstPS" },
 
 	};
 

@@ -498,4 +498,13 @@
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathVS.hlsl" />
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\DustBurstActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\DustBurstShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\DustBurstActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\DustBurstShader.h" />
+    <None Include="Src\Shader\DustBurst\README.md" />
+    <FxCompile Include="Src\Shader\DustBurst\DustBurstVS.hlsl" />
+    <FxCompile Include="Src\Shader\DustBurst\DustBurstPS.hlsl" />
+  </ItemGroup>
 </Project>

@@ -854,4 +854,23 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
       <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\DustBurstActor.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\DustBurstShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\DustBurstActor.h" />
+    <ClInclude Include="Src\Object\Common\Shader\DustBurstShader.h" />
+    <None Include="Src\Shader\DustBurst\README.md" />
+    <FxCompile Include="Src\Shader\DustBurst\DustBurstVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\DustBurst\DustBurstPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
 </Project>
