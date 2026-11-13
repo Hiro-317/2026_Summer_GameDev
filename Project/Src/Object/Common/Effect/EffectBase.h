@@ -28,20 +28,20 @@ public:
     /// </summary>
     void Load(void) override {}
     /// <summary>
-    /// 終了前のアクターを更新し、TimeScaleに従って寿命を進める。
+    /// 終了前のアクターを更新し、TimeScaleに従って寿命を進める。寿命が切れてたら初めからできるように経過時間を0にする。
     /// </summary>
     void Update(void) override;
 
     /// <summary>
     /// 準備済みのエフェクトを、経過時間0から再生する。
     /// </summary>
-    /// <remarks>AddActorとInitだけでは表示しない。表示したいタイミングで呼ぶ。再生中なら最初からやり直す。</remarks>
+    /// <remarks>AddActorとInitだけでは表示しない。表示したいタイミングで呼ぶ。再生中ならでもそのまま。寿命が切れてたら最初から</remarks>
     void Play(void);
 
     /// <summary>
     /// 経過時間を0へ戻して更新・描画を再開する。
     /// </summary>
-    /// <remarks>座標や色の設定は保持する。再生数は増えない。</remarks>
+    /// <remarks>座標や色の設定は保持する。再生数は増えない。再生中は最初から再生する。</remarks>
     void Restart(void);
 
     /// <summary>
