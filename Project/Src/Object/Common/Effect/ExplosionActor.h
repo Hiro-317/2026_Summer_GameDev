@@ -4,10 +4,8 @@
 
 class ExplosionShader;
 
-/// <summary>
-/// 指定座標へ火球・衝撃波・火花を描画する爆発アクター。
-/// </summary>
-/// <remarks>色の既定値は紫。EffectBaseが寿命と停止・再利用を管理する。</remarks>
+// 指定座標へ火球・衝撃波・火花を描画する爆発アクター。
+// 色の既定値は紫。EffectBaseが寿命と停止・再利用を管理する。
 class ExplosionActor : public EffectBase
 {
 public:
@@ -29,26 +27,18 @@ public:
         float seed = 1.0f,
         unsigned int color = 0x7509ff
     );
-    /// <summary>
-    /// 爆発アクターを破棄する。
-    /// </summary>
+    // 爆発アクターを破棄する。
     ~ExplosionActor() override = default;
 
-    /// <summary>
-    /// 時間・色をシェーダーへ反映して爆発を描画する。終了済みなら描画しない。
-    /// </summary>
+    // 時間・色をシェーダーへ反映して爆発を描画する。終了済みなら描画しない。
     void Draw(void) override;
 
-    /// <summary>
-    /// 次の描画から使用する色を変更する。
-    /// </summary>
-    /// <remarks>初期化前・再生中・再利用時のいずれでも変更可能。時間はリセットしない。</remarks>
-    /// <param name="rgb">0xRRGGBB形式の色。例: 0xff4000は赤橙、0x00aaffは青。上位8ビットは使用しない。</param>
+    // 次の描画から使用する色を変更する。
+    // 初期化前・再生中・再利用時のいずれでも変更可能。時間はリセットしない。
+    // rgb: 0xRRGGBB形式の色。例: 0xff4000は赤橙、0x00aaffは青。上位8ビットは使用しない。
     void SetColor(unsigned int rgb) { color = rgb & 0xffffff; }
-    /// <summary>
-    /// 現在の設定色を取得する。
-    /// </summary>
-    /// <returns>0xRRGGBB形式の色。</returns>
+    // 現在の設定色を取得する。
+    // 戻り値: 0xRRGGBB形式の色。
     unsigned int GetColor(void) const { return color; }
 
 private:

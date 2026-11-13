@@ -19,12 +19,12 @@ struct DustInput
 };
 float DustHash(float x) { return frac(sin(x * 12.9898) * 43758.5453); }
 
-/// <summary>楕円の塊を重ねて、煙の丸い輪郭と内部の陰影を作る。</summary>
-/// <param name="p">-1～1の煙のローカル座標。</param>
-/// <param name="center">塊の中心。</param>
-/// <param name="size">塊の半径。</param>
-/// <param name="distance">現在までの最小距離。</param>
-/// <param name="lobe">選ばれた塊内の座標。</param>
+// 楕円の塊を重ねて、煙の丸い輪郭と内部の陰影を作る。
+// p: -1～1の煙のローカル座標。
+// center: 塊の中心。
+// size: 塊の半径。
+// distance: 現在までの最小距離。
+// lobe: 選ばれた塊内の座標。
 void DustLobe(float2 p, float2 center, float2 size, inout float distance, inout float2 lobe)
 {
     float2 q = (p - center) / size;

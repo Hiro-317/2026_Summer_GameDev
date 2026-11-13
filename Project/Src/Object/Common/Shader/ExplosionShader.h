@@ -2,10 +2,8 @@
 
 #include "ShaderBase.h"
 
-/// <summary>
-/// 時間・色・明るさを受け取り、爆発の見た目を制御するシェーダー。
-/// </summary>
-/// <remarks>GPUシェーダー本体はShaderResourceManagerから取得する。</remarks>
+// 時間・色・明るさを受け取り、爆発の見た目を制御するシェーダー。
+// GPUシェーダー本体はShaderResourceManagerから取得する。
 class ExplosionShader : public ShaderBase
 {
 public:
@@ -24,40 +22,26 @@ public:
         float seed,
         unsigned int color = 0x7509ff
     );
-    /// <summary>
-    /// 自身の定数バッファを解放して破棄する。
-    /// </summary>
+    // 自身の定数バッファを解放して破棄する。
     ~ExplosionShader() override;
 
     ExplosionShader(const ExplosionShader&) = delete;
     ExplosionShader& operator=(const ExplosionShader&) = delete;
 
-    /// <summary>
-    /// 共有VS/PSを取得し、爆発ごとの定数バッファとアクター共通処理を初期化する。
-    /// </summary>
+    // 共有VS/PSを取得し、爆発ごとの定数バッファとアクター共通処理を初期化する。
     void Init(void) override;
-    /// <summary>
-    /// 時間・色・明るさをGPUへ反映し、爆発のVS/PSとPSのb4を適用する。
-    /// </summary>
+    // 時間・色・明るさをGPUへ反映し、爆発のVS/PSとPSのb4を適用する。
     void Apply(void) override;
-    /// <summary>
-    /// 爆発用の定数バッファとシェーダーを解除する。
-    /// </summary>
+    // 爆発用の定数バッファとシェーダーを解除する。
     void ResetApply(void) override;
-    /// <summary>
-    /// 個別定数バッファとアクター所有リソースを解放する。共有VS/PSは削除しない。
-    /// </summary>
+    // 個別定数バッファとアクター所有リソースを解放する。共有VS/PSは削除しない。
     void Release(void) override;
-    /// <summary>
-    /// 次の描画に使う経過時間を設定する。
-    /// </summary>
-    /// <param name="seconds">開始または再起動からの経過時間（秒）。通常はEffectBaseの値を渡す。</param>
+    // 次の描画に使う経過時間を設定する。
+    // seconds: 開始または再起動からの経過時間（秒）。通常はEffectBaseの値を渡す。
     void SetElapsedSeconds(float seconds) { parameters.elapsedSeconds = seconds; }
 
-    /// <summary>
-    /// 0xRRGGBBをGPU用の0～1のRGBへ変換して保持する。
-    /// </summary>
-    /// <param name="rgb">0xRRGGBB形式の色。例: 0xff8020は橙、0x00aaffは青。上位8ビットは使用しない。</param>
+    // 0xRRGGBBをGPU用の0～1のRGBへ変換して保持する。
+    // rgb: 0xRRGGBB形式の色。例: 0xff8020は橙、0x00aaffは青。上位8ビットは使用しない。
     void SetColor(unsigned int rgb);
 
 private:

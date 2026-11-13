@@ -1,23 +1,23 @@
 ﻿#pragma once
 #include "ShaderBase.h"
 
-/// <summary>共有の土埃VS/PSと、個別の48バイト定数バッファを扱う。</summary>
+// 共有の土埃VS/PSと、個別の48バイト定数バッファを扱う。
 class DustBurstShader : public ShaderBase
 {
 public:
-    /// <summary>リソースをまだロードせず、管理状態だけを準備する。</summary>
+    // リソースをまだロードせず、管理状態だけを準備する。
     DustBurstShader();
-    /// <summary>個別定数バッファを解放する。</summary>
+    // 個別定数バッファを解放する。
     ~DustBurstShader() override;
     DustBurstShader(const DustBurstShader&) = delete;
     DustBurstShader& operator=(const DustBurstShader&) = delete;
-    /// <summary>ShaderResourceManagerから共有VS/PSを取得し、個別バッファを準備する。</summary>
+    // ShaderResourceManagerから共有VS/PSを取得し、個別バッファを準備する。
     void Init(void) override;
-    /// <summary>現在の土埃のパラメーターをPSのb4へ反映する。</summary>
+    // 現在の土埃のパラメーターをPSのb4へ反映する。
     void Apply(void) override;
-    /// <summary>個別バッファとシェーダーの適用を解除する。</summary>
+    // 個別バッファとシェーダーの適用を解除する。
     void ResetApply(void) override;
-    /// <summary>個別バッファを解放する。共有VS/PSは管理クラスが所有する。</summary>
+    // 個別バッファを解放する。共有VS/PSは管理クラスが所有する。
     void Release(void) override;
     /// <summary>次の描画に使う時間・色・消滅位置を設定する。</summary>
     /// <param name="elapsed">経過時間（秒）。</param>
