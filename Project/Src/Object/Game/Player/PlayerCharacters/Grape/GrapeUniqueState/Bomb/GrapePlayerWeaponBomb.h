@@ -4,7 +4,7 @@
 
 struct CharacterStats;
 class SphereCollider;
-class PurpleExplosionActor;
+class ExplosionActor;
 
 class GrapePlayerWeaponBomb : public ActorBase
 {
@@ -39,7 +39,7 @@ private:
     SphereCollider* attackCollider;
     SphereCollider* terrainCollider;
     // 所有権は子Actorのリストへ渡す。ここでは操作用の参照だけを保持する。
-    PurpleExplosionActor* explosion;
+    ExplosionActor* explosion;
 
     void SubUpdate(void) override;
 };

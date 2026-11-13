@@ -3,6 +3,7 @@
 #include "../../../../../Common/ActorBase/ActorBase.h"
 
 #include "../../../../../Common/Collider/SphereCollider.h"
+#include "../../../../../Common/Effect/FlameBreathActor.h"
 
 struct CharacterStats;
 
@@ -27,6 +28,9 @@ public:
 
 	// UŒ‚”ÍˆÍ‚Ì•`‰æÝ’è
 	void SetDrawArea(bool flg) { isDrawArea = flg; }
+
+	void EffectPlay(void) { flRef->Play(); }
+	void EffectStop(void) { flRef->Stop(); }
 
 private:
 
@@ -57,4 +61,5 @@ private:
 	bool isDrawArea;
 
 	SphereCollider* collRef;
+	FlameBreathActor* flRef;
 };

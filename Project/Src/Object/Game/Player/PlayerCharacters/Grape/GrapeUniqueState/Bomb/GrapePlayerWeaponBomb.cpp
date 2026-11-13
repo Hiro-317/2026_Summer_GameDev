@@ -4,7 +4,7 @@
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
-#include "../../../../../../Common/Effect/PurpleExplosionActor.h"
+#include "../../../../../../Common/Effect/ExplosionActor.h"
 
 GrapePlayerWeaponBomb::GrapePlayerWeaponBomb(
     short ATTACK_RATE_PERCENT, const CharacterStats& playerStats,
@@ -48,7 +48,7 @@ void GrapePlayerWeaponBomb::Load(void)
     terrainCollider->SetPushFlg(true);
     AddCollider(terrainCollider);
 
-    explosion = new PurpleExplosionActor(Vector3(), BLAST_RADIUS, BLAST_EFFECT_TIME / 60.0f);
+    explosion = new ExplosionActor(Vector3(), BLAST_RADIUS, BLAST_EFFECT_TIME / 60.0f);
     AddChildActor(explosion);
     SetJudgeFlg(false);
     SetIsDraw(false);

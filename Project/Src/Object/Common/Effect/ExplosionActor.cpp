@@ -16,7 +16,6 @@ ExplosionActor::ExplosionActor(const Vector3& position, float radius,
         !std::isfinite(intensity) || intensity < 0.0f || !std::isfinite(seed)) {
         throw std::invalid_argument("Invalid purple explosion parameters");
     }
-    // 一時変数への参照を保持しない。再生時の着弾位置は呼び出し側がSetPosで指定する。
 }
 
 void ExplosionActor::DefaultCreateShader(void)
