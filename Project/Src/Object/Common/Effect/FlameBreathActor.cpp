@@ -8,6 +8,7 @@
 #include "../Shader/FlameBreathShader.h"
 
 FlameBreathActor::FlameBreathActor(const Vector3& startPoint, const Vector3& direction,
+    const Vector3& center, float radius, const Vector3& normal,
     const FlameBreathSettings& settings) :
     EffectBase(settings.durationSeconds), direction(), settings(settings),
     useEndCircle(false), endCircleCenter(), endCircleNormal(0.0f, 1.0f, 0.0f),
@@ -18,6 +19,7 @@ FlameBreathActor::FlameBreathActor(const Vector3& startPoint, const Vector3& dir
     SetStrength(settings.distance, settings.radius, settings.intensity);
     SetFlowSpeed(settings.flowSpeed);
     SetColor(settings.color);
+    SetEndCircle(center, radius, normal);
     if (!std::isfinite(settings.seed)) {
         throw std::invalid_argument("Flame breath seed must be finite");
     }

@@ -53,7 +53,9 @@ public:
     /// <param name="direction">向き。内部で正規化するため長さは到達距離に影響しない。ゼロベクトルは不可。</param>
     /// <param name="settings">距離・半径・寿命・発光・流速・色・模様の設定。寿命0.0fなら無期限。</param>
     FlameBreathActor(const Vector3& startPoint, const Vector3& direction,
-                     const FlameBreathSettings& settings = FlameBreathSettings{});
+        const Vector3& center, float radius,
+        const Vector3& normal = Vector3(0.0f, 1.0f, 0.0f),
+        const FlameBreathSettings& settings = FlameBreathSettings{});
     /// <summary>
     /// ブレスアクターを破棄する。
     /// </summary>

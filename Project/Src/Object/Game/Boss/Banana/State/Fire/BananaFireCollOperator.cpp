@@ -38,9 +38,9 @@ void BananaFireCollOperator::Load(void)
 	fbSettings.color = 0xffff00;
 	fbSettings.intensity = 1.0f;
 	fbSettings.durationSeconds = 0.0f;
-	fbSettings.radius = 500.0f;
-	fbSettings.distance = 1250.0f;
-	flRef = new FlameBreathActor(Vector3::YZonly(500.0f, 1350.0f), Vector3::YZonly(-0.25f, -0.5f), fbSettings);
+	fbSettings.radius = 1.0f;
+	fbSettings.distance = 1.0f;
+	flRef = new FlameBreathActor(Vector3::YZonly(500.0f, 1350.0f), Vector3::YZonly(-0.25f, -0.5f), POS, RADIUS, Vector3::Xonly(0.5f), fbSettings);
 	AddChildActor(flRef);
 }
 
