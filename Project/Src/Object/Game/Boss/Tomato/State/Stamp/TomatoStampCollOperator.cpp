@@ -66,7 +66,7 @@ void TomatoStampCollOperator::Load(void)
 	set.color = 0xffa078;
 	set.durationSeconds = 1.2f;
 	set.radius = ATTACK_RADIUS;
-	set.height = HEIGHT;
+	set.height = 100.0f;
 
 	duRef = new DustBurstActor(trans.pos, set);
 	AddChildActor(duRef);

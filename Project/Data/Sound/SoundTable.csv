@@ -25,7 +25,6 @@ Throw,Data/Sound/Se/Game/Boss/Grape/Throw.mp3,GrapeBoss,SE,0.7,False,1
 Lobby,Data/Sound/BGM/LobbyBgm.mp3,Lobby,BGM,0.5,True,1
 Boomerang,Data/Sound/Se/Game/Boss/Banana/Boomerang.mp3,BananaBoss,SE,0.8,True,1
 Breath,Data/Sound/Se/Game/Boss/Banana/Breath.mp3,BananaBoss,SE,0.85,True,1
-Drill,Data/Sound/Se/Game/Boss/Banana/Drill.mp3,BananaBoss,SE,1,True,3
 ExBanana,Data/Sound/Se/Game/Boss/Banana/Explosion.mp3,BananaBoss,SE,0.7,False,3
 Fly,Data/Sound/Se/Game/Boss/Banana/Fly.mp3,BananaBoss,SE,0.8,True,1
 Scratch,Data/Sound/Se/Game/Boss/Banana/Scratch.mp3,BananaBoss,SE,0.7,False,1

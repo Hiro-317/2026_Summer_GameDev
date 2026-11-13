@@ -41,7 +41,7 @@ private:
 	static constexpr float HEIGHT = 1000.0f;
 	static constexpr float VIEW_HEIGHT = 37.0f;
 
-	static constexpr int ATTACK_DURATION = 45;
+	static constexpr int ATTACK_DURATION = 60;
 	static constexpr int BOOM_DURATION = 3;
 
 	static constexpr int BOOM_CNT = 300;
