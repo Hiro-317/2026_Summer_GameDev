@@ -95,9 +95,6 @@ void PlayerTripleAttackState::Enter(void)
 
 	// ステップ初期化
 	step = STEP::Startup;
-
-	// 効果音
-	SoundManager::GetIns().Play("PlayerSimpleAttack");
 }
 
 void PlayerTripleAttackState::Update(void)
@@ -135,6 +132,9 @@ void PlayerTripleAttackState::Update(void)
 
 			// ステップを「攻撃判定発生中」へ
 			step = STEP::Active;
+
+			// 効果音
+			SoundManager::GetIns().Play("PlayerTripleAttack");
 
 			// 当たり判定を発生
 			collOperator.CollOn(attackStage);

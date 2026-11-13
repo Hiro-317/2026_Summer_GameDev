@@ -44,7 +44,7 @@ void TomatoBossStampState::Enter(void)
 	Vector3 tmp = *playerPos[target] - pos;
 	rotation = Quaternion::FromRotationY(atan2f(tmp.x, tmp.z));
 
-	SoundManager::GetIns().Play("StampJump");
+	SoundManager::GetIns().Play("TomatoPlayerStampJump");
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackB));
 }
 

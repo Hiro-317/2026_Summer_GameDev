@@ -12,7 +12,7 @@ SoundManager* SoundManager::ins = nullptr;
 
 SoundManager::SoundManager() :
 	masterVolume(255),
-	bgmVolume(1.0f),
+	bgmVolume(0.75f),
 	seVolume(1.0f)
 {
 }
@@ -22,6 +22,7 @@ bool SoundManager::IsPlay(const std::string& id)
 	for (auto& info : sounds.at(id)) {
 		return info.play();
 	}
+	return false;
 }
 
 bool SoundManager::IsLoadScene(const std::string& scene)
@@ -35,8 +36,8 @@ bool SoundManager::IsLoadScene(const std::string& scene)
 		if (soundInfos.contains(data.first) || sounds.contains(data.first)) {
 			return true;
 		}
-		return false;
 	}
+	return false;
 }
 
 void SoundManager::Init(void)

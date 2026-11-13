@@ -4,10 +4,13 @@ HURUHATA,Data/Sound/BGM/BGM.m4a,Title,BGM,0.5,True,1
 Battle,Data/Sound/BGM/Battle.mp3,Game,BGM,0.55,True,1
 CriticalDamaged,Data/Sound/Se/Game/Boss/CriticalDamaged.mp3,Game,SE,0.7,False,4
 Damaged,Data/Sound/Se/Game/Damaged.mp3,Game,SE,0.5,False,8
-PlayerSimpleAttack,Data/Sound/Se/Game/Player/PlayerSimpleAttack.mp3,Game,SE,0.5,False,1
+PlayerHeal,Data/Sound/Se/Game/Player/PlayerHeal.mp3,Game,SE,0.5,False,2
+PlayerSimpleAttack,Data/Sound/Se/Game/Player/PlayerSimpleAttack.mp3,Game,SE,0.75,False,2
 PlayerTripleAttack,Data/Sound/Se/Game/Player/PlayerTripleAttack.mp3,Game,SE,0.5,False,3
 TackleCharge,Data/Sound/Se/Game/Player/TackleCharge.mp3,Game,SE,0.8,False,1
 TackleMove,Data/Sound/Se/Game/Player/TackleMove.mp3,Game,SE,0.75,False,1
+TomatoPlayerHeadAttack,Data/Sound/Se/Game/Player/TomatoPlayerHeadAttack.mp3,Game,SE,0.8,False,1
+TomatoPlayerJump,Data/Sound/Se/Game/Player/TomatoPlayerJump.mp3,Game,SE,0.5,False,2
 Headbutt,Data/Sound/Se/Game/Boss/Tomato/Headbutt.mp3,TomatoBoss,SE,0.5,False,1
 StampJump,Data/Sound/Se/Game/Boss/Tomato/StampJump.mp3,TomatoBoss,SE,0.7,False,1
 StampLand,Data/Sound/Se/Game/Boss/Tomato/StampLand.mp3,TomatoBoss,SE,0.5,False,1

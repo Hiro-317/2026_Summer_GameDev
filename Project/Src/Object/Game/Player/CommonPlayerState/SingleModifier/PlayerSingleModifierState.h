@@ -73,4 +73,7 @@ private:
 #pragma endregion
 
 	float coolTimeCounter;
+
+	// サウンド再生フラグ
+	bool isPlaySound;
 };

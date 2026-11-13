@@ -79,7 +79,7 @@ void PlayerDodgeState::Update(void)
 {
 	// 移動速度の補正を毎フレーム反映し、直前のダッシュ速度を引き継がない。
 	const float moveSpeed = static_cast<float>(stats.speedPower.Value());
-	ACCEL_MAX = moveSpeed;
+	ACCEL_MAX = moveSpeed * 1.5f;
 
 	// アニメーションの再生割合を取得
 	const float animeRatio = getAnimePlayRatio();
@@ -89,9 +89,6 @@ void PlayerDodgeState::Update(void)
 
 	case STEP::Startup: {
 		// 前隙
-
-		// 現在の移動速度に比例した加速量で、正面へ回避する。
-		moveAccel(rotation.Rotate(Vector3::Zonly(moveSpeed * 0.5f)));
 
 		// 無敵判定発生開始
 		if (INVI_START_TIME <= animeRatio) {
@@ -108,6 +105,9 @@ void PlayerDodgeState::Update(void)
 
 	case STEP::Active: {
 		// 攻撃判定発生中
+
+		// 現在の移動速度に比例した加速量で、正面へ回避する。
+		moveAccel(rotation.Rotate(Vector3::Zonly(moveSpeed * 0.5f)));
 
 		// 攻撃判定発生終了
 		if (INVI_END_TIME <= animeRatio) {

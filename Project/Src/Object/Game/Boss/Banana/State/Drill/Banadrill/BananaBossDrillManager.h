@@ -46,5 +46,8 @@ private:
 	int backModel;
 	int frontModel;
 
-	bool end;
+	bool end = false;
+
+	// 複数のドリルで一つのループ音を共有する。
+	bool drillSoundPlaying = false;
 };

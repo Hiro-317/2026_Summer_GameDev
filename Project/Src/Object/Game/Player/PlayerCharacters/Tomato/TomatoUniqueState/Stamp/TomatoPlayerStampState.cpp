@@ -7,6 +7,7 @@
 #include "../../../../../../../Manager/Input/InputManager.h"
 #include "../../../../../../../Manager/Camera/CurrentCamera.h"
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
+#include "../../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../CommonPlayerState/SimpleAttack/PlayerSimpleAttackCollOperator.h"
 
 TomatoPlayerStampState::TomatoPlayerStampState(
@@ -65,6 +66,8 @@ void TomatoPlayerStampState::Enter(void)
     // ’ÊíˆÚ“®‚Ì‘O“]p¨‚ğ‹N‚±‚µ‚Ä’µ‚Ñã‚ª‚éB
     const Vector3 right = playerTrans.VTrans(Vector3(1.0f, 0.0f, 0.0f));
     playerTrans.SetRotation(Quaternion::FromRotationY(std::atan2(-right.z, right.x)));
+
+    Snd::GetIns().Play("TomatoPlayerJump");
 }
 
 void TomatoPlayerStampState::Update(void)

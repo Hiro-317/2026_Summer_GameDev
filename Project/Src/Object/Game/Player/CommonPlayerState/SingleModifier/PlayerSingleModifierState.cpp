@@ -2,7 +2,6 @@
 
 #include "../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../Manager/Sound/SoundManager.h"
-#include "../../../../../Manager/Net/NetWorkManager.h"
 
 #include "PlayerSingleModifierCollOperator.h"
 
@@ -31,7 +30,8 @@ PlayerSingleModifierState::PlayerSingleModifierState(
 	getAnimePlayRatio(getAnimePlayRatio),
 	defaultChangeState(defaultChangeState),
 
-	coolTimeCounter()
+	coolTimeCounter(),
+	isPlaySound(false)
 {
 }
 
@@ -55,11 +55,19 @@ void PlayerSingleModifierState::Enter(void)
 
 	// アニメーション再生
 	playHealAnime();
+
+	// サウンド再生フラグをリセット
+	isPlaySound = false;
 }
 
 void PlayerSingleModifierState::Update(void)
 {
 	if (getAnimePlayRatio() > COLL_START_TIME) {
+
+		if (!isPlaySound) {
+			isPlaySound = true;
+			Snd::GetIns().Play("PlayerHeal");
+		}
 
 		collOperator.CollOn();
 

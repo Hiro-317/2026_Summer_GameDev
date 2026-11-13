@@ -128,10 +128,10 @@ private:
 	Vector3 moveDir;
 
 	// 攻撃のクールタイム
-	int coolTime;
+	float coolTime;
 
 	// ゲームクリア時のカウントダウン
-	int gameOverCnt;
+	float gameOverCnt;
 
 	// ダメージに使うヒットUIクラスの参照
 	HitUI* hitUiRef;

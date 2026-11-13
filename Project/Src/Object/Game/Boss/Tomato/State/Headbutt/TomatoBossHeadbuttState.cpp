@@ -35,6 +35,8 @@ void TomatoBossHeadbuttState::Enter(void)
 	SetCoolTime();
 	collOperator->SetDrawArea(true);
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA));
+
+	Snd::GetIns().Play("TomatoPlayerHeadAttack");
 }
 
 void TomatoBossHeadbuttState::Update(void)

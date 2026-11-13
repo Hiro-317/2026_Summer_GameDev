@@ -76,9 +76,6 @@ void PlayerSimpleAttackState::Enter(void)
 
 	// 攻撃アニメーションを再生する
 	playAttackAnime();
-
-	// 効果音
-	SoundManager::GetIns().Play("PlayerSimpleAttack");
 }
 
 void PlayerSimpleAttackState::Update(void)
@@ -116,6 +113,9 @@ void PlayerSimpleAttackState::Update(void)
 
 			// ステップを「攻撃判定発生中」へ
 			step = STEP::Active;
+
+			// 効果音
+			SoundManager::GetIns().Play("PlayerSimpleAttack");
 
 			// 当たり判定を発生
 			collOperator.CollOn();

@@ -264,6 +264,9 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// “_–Å
 			CreateShader(new ModelDamageFlashShader(24, 3, 0.85f, GetVertexType()));
+
+			// ‰¹‚ð–Â‚ç‚·
+			Snd::GetIns().Play("Damaged");
 		}
 	}
 }

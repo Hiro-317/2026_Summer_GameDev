@@ -108,6 +108,7 @@ void BananaBossBanadrill::SubUpdate(void)
 		prevLive = live;
 		SetIsDraw(true);
 		attack = true;
+		drilling = false;
 		collRef->SetJudgeFlg(true);
 		hp = HP;
 		attCollRef->SetSkillStats(new SkillStats(85, &stats));
@@ -141,7 +142,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				boot = true;
 				duRef->Restart();
 				duRef->SetPos(Vector3(trans.pos.x, trans.pos.y - RADIUS, trans.pos.z));
-				Snd::GetIns().Play("Drill");
+				drilling = true;
 			}
 			cnt++;
 			// UŒ‚”»’èƒIƒ“
@@ -156,7 +157,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				cnt = 0;
 				front.scale = Vector3(0.0f);
 				duRef->Stop();
-				Snd::GetIns().Stop("Drill");
+				drilling = false;
 			}
 		}
 		else {

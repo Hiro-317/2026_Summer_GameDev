@@ -2,6 +2,8 @@
 
 #include "BananaBossBanadrill.h"
 
+#include "../../../../../../../Manager/Sound/SoundManager.h"
+
 
 BananaBossDrillManager::BananaBossDrillManager(
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
@@ -23,6 +25,8 @@ BananaBossDrillManager::BananaBossDrillManager(
 
 void BananaBossDrillManager::Update()
 {
+	bool anyDrilling = false;
+
 	// 武器の更新
 	for (int i = 0; i < DRILL_NUM; i++) {
 		if (drills[i]->GetLive()) {
@@ -45,11 +49,27 @@ void BananaBossDrillManager::Update()
 			drills[i]->ResetBoot();
 		}
 		drills[i]->EffectUpdate();
+		anyDrilling = anyDrilling || drills[i]->IsDrilling();
+	}
+	// 全本の更新後に判定し、別のドリルが回転中なら音を止めない。
+	if (anyDrilling && !drillSoundPlaying) {
+		Snd::GetIns().Play("Drill");
+		drillSoundPlaying = true;
+	}
+	else if (!anyDrilling && drillSoundPlaying) {
+		Snd::GetIns().Stop("Drill");
+		drillSoundPlaying = false;
 	}
 }
 
 void BananaBossDrillManager::Release()
 {
+	// シーン終了時にもループ音を残さない。
+	if (drillSoundPlaying) {
+		Snd::GetIns().Stop("Drill");
+		drillSoundPlaying = false;
+	}
+
 	// 武器の解放
 	MV1DeleteModel(drillModel);
 	MV1DeleteModel(frontModel);
@@ -58,6 +78,7 @@ void BananaBossDrillManager::Release()
 
 void BananaBossDrillManager::Start(void)
 {
+	end = false;
 	drills[0]->SetLive(true);
 	drills[0]->SetPos(*playerPos[target]);
 }
