@@ -47,7 +47,7 @@ void GrapePlayer::PlayerLoad(void)
 #pragma region 下位オブジェクトの生成
 
 	weaponShotRef = new GrapePlayerWeaponShot(
-		GetParameter("GrapeShot", "AttackRate"),
+		static_cast<short>(GetParameterToInt("GrapeShot", "AttackRate")),
 		characterStats,
 		trans,
 		controlSenderId
@@ -55,7 +55,7 @@ void GrapePlayer::PlayerLoad(void)
 	AddChildActor(weaponShotRef);
 
 	weaponThrowRef = new GrapePlayerWeaponThrow(
-		GetParameter("GrapeThrowBomb", "AttackRate"),
+		static_cast<short>(GetParameterToInt("GrapeThrowBomb", "AttackRate")),
 		characterStats,
 		trans,
 		controlSenderId
@@ -63,7 +63,7 @@ void GrapePlayer::PlayerLoad(void)
 	AddChildActor(weaponThrowRef);
 
 	weaponBombRef = new GrapePlayerWeaponBomb(
-		GetParameter("GrapeBomb", "AttackRate"),
+		static_cast<short>(GetParameterToInt("GrapeBomb", "AttackRate")),
 		characterStats,
 		GetParameter("GrapeBomb", "CountTime"),
 		trans,
@@ -106,7 +106,7 @@ void GrapePlayer::PlayerLoad(void)
 	AddState(
 		STATE::SKILL_1,
 		new GrapePlayerShotState(
-			GetParameter("GrapeShot", "CoolTime"),
+			GetParameterToInt("GrapeShot", "CoolTime"),
 			*weaponShotRef,
 			trans,
 			bossPos,
@@ -119,7 +119,7 @@ void GrapePlayer::PlayerLoad(void)
 	AddState(
 		STATE::SKILL_2,
 		new GrapePlayerThrowState(
-			GetParameter("GrapeThrowBomb", "CoolTime"),
+			GetParameterToInt("GrapeThrowBomb", "CoolTime"),
 			*weaponThrowRef,
 			trans,
 			bossPos,
@@ -133,7 +133,7 @@ void GrapePlayer::PlayerLoad(void)
 	AddState(
 		STATE::SKILL_3,
 		new GrapePlayerBombState(
-			GetParameter("GrapeBomb", "CoolTime"),
+			GetParameterToInt("GrapeBomb", "CoolTime"),
 			*weaponBombRef,
 			trans,
 			[&]() { AnimePlay(ANIME_TYPE::KICK_DOWN, false); },
@@ -232,7 +232,7 @@ void GrapePlayer::PlayerLoad(void)
 		// スタミナUIの登録
 		AddChildActor(
 			new PlayerStaminaUI(
-				GetParameter("Move", "DashStaminaMax"),
+				static_cast<short>(GetParameterToInt("Move", "DashStaminaMax")),
 				dynamic_cast<PlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
 				trans.pos
 			)
@@ -242,7 +242,7 @@ void GrapePlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL1_UI_DRAW_POS,
-				GetParameter("GrapeShot", "CoolTime"),
+				GetParameterToInt("GrapeShot", "CoolTime"),
 				dynamic_cast<GrapePlayerShotState*>(&GetStateIns(STATE::SKILL_1))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Yellow,
 				"SkillSlotShot"
@@ -253,7 +253,7 @@ void GrapePlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL2_UI_DRAW_POS,
-				GetParameter("GrapeThrowBomb", "CoolTime"),
+				GetParameterToInt("GrapeThrowBomb", "CoolTime"),
 				dynamic_cast<GrapePlayerThrowState*>(&GetStateIns(STATE::SKILL_2))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Purple,
 				"SkillSlotGrapeBombThrow"
@@ -264,7 +264,7 @@ void GrapePlayer::PlayerLoad(void)
 		AddChildActor(
 			new PlayerSkillUI(
 				SKILL3_UI_DRAW_POS,
-				GetParameter("GrapeBomb", "CoolTime"),
+				GetParameterToInt("GrapeBomb", "CoolTime"),
 				dynamic_cast<GrapePlayerBombState*>(&GetStateIns(STATE::SKILL_3))->GetCoolTimeCounter(),
 				PlayerSkillUI::SKILL_UI_COLOR::Purple,
 				"SkillSlotGrapeBombPut"

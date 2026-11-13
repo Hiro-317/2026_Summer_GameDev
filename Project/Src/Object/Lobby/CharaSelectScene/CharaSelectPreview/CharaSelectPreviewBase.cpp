@@ -5,7 +5,7 @@
 
 #include "../../../../Manager/Camera/DisplayAuto/DisplayAutoCamera.h"
 
-#include "../../../Common/AnimationController/AnimationController.h""
+#include "../../../Common/AnimationController/AnimationController.h"
 
 CharaSelectPreviewBase::CharaSelectPreviewBase() :
 	ActorBase(),

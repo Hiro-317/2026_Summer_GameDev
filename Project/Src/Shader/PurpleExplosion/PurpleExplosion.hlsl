@@ -46,13 +46,15 @@ float ExplosionFBM(float2 p)
 float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
                                float intensity, float seed, float3 colorRGB)
 {
-    if (duration < 0.0 || elapsed < 0.0 || (duration > 0.0 && elapsed >= duration))
-        return float4(0, 0, 0, 0);
+    // 途中でreturnせず、最後の乗算で無効な再生時間の出力を消す。
+    // 最適化なしのFXCでも、全経路で計算結果が定義される形にする。
+    float active = (duration >= 0.0 && elapsed >= 0.0 &&
+                    (duration == 0.0 || elapsed < duration)) ? 1.0 : 0.0;
 
     // 無期限では展開した形状を保ち、炎の揺れを継続する。
     // 有限寿命の形状・消滅タイミングはこれまでと同じ。
     float t = 0.35;
-    if (duration > 0.0) { t = elapsed / duration; }
+    if (duration > 0.0) { t = saturate(elapsed / max(duration, 0.000001)); }
     float r = length(p);
     float edge = 1.0 - smoothstep(0.90, 1.0, r);
     float fade = 1.0 - smoothstep(0.45, 1.0, t);
@@ -104,7 +106,7 @@ float4 EvaluatePurpleExplosion(float2 p, float elapsed, float duration,
     float3 paleColor = lerp(baseColor, float3(peak, peak, peak), 0.65);
     float3 radiance = lerp(baseColor, hotColor, saturate(noise)) * fire * 2.0;
     radiance += baseColor * ring * 1.5 + paleColor * (flash * 3.5 + sparks * 2.0);
-    float envelope = edge * fade * onset;
+    float envelope = edge * fade * onset * active;
     float alpha = saturate((fire + ring + flash + sparks) * envelope);
     return float4(radiance * envelope * max(intensity, 0.0), alpha);
 }

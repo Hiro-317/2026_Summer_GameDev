@@ -17,6 +17,8 @@ public:
 	/// 回避
 	/// </summary>
 	/// <param name="DODGE_KEY">使用するキー</param>
+	/// <param name="stats">現在の移動速度を取得するステータス</param>
+	/// <param name="ACCEL_MAX">移動速度上限の参照</param>
 	/// <param name="COOL_TIME">クールタイム</param>
 	/// <param name="INVI_START_TIME">無敵判定発生開始時間</param>
 	/// <param name="INVI_END_TIME">無敵判定発生終了時間</param>
@@ -28,6 +30,8 @@ public:
 	/// <param name="defaultChangeState">回避行動終了後の状態遷移関数</param>
 	PlayerDodgeState(
 		KEY_TYPE DODGE_KEY,
+		const CharacterStats& stats,
+		float& ACCEL_MAX,
 
 		int COOL_TIME,
 
@@ -90,6 +94,10 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
+	// 現在の移動速度と、プレイヤー本体の速度上限
+	const CharacterStats& stats;
+	float& ACCEL_MAX;
+
 	// 角度
 	const Quaternion& rotation;
 
@@ -113,5 +121,5 @@ private:
 	STEP step;
 
 	// クールタイム計測
-	int coolTimeCounter;
+	float coolTimeCounter;
 };

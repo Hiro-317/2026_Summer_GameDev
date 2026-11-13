@@ -80,7 +80,8 @@ void PeachPlayer::PlayerLoad(void)
 			controlSenderId,
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerHeal,
 			targetPlayerPos,
-			100
+			100,
+			0x90e8ac // やさしい緑色。
 		);
 	// 追加
 	AddChildActor(healCollOperatorRef);
@@ -93,6 +94,7 @@ void PeachPlayer::PlayerLoad(void)
 			MsgDataPlayerCollOperator::COLLIDER_TYPE::PeachPlayerBuff,
 			targetPlayerPos,
 			80,
+			0xffdc66, // わずかに赤みを含む黄色。
 			150,
 			ModifierType::PeachPlayerSkillBuff
 		);
@@ -286,7 +288,7 @@ void PeachPlayer::PlayerLoad(void)
 		// スタミナUIの登録
 		AddChildActor(
 			new PlayerStaminaUI(
-				GetParameter("Move", "DashStaminaMax"),
+				static_cast<short>(GetParameterToInt("Move", "DashStaminaMax")),
 				dynamic_cast<PlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
 				trans.pos
 			)

@@ -233,6 +233,9 @@ void OrangePlayer::PlayerLoad(void)
 		new PlayerDodgeState(
 			// 使用するキー
 			KEY_TYPE::PlayerSkill3,
+			// バフ・デバフを含む移動速度と、速度上限の参照
+			characterStats,
+			ACCEL_MAX,
 			// クールタイム
 			GetParameterToInt("Dodge", "CoolTime"),
 			// 無敵判定発生開始時間
@@ -343,7 +346,7 @@ void OrangePlayer::PlayerLoad(void)
 		// スタミナUIの登録
 		AddChildActor(
 			new PlayerStaminaUI(
-				GetParameter("Move", "DashStaminaMax"),
+				static_cast<short>(GetParameterToInt("Move", "DashStaminaMax")),
 				dynamic_cast<PlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
 				trans.pos
 			)

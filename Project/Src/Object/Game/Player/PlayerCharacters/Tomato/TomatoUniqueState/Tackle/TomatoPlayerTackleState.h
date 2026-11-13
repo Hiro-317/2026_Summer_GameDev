@@ -4,6 +4,7 @@
 #include "../../../../../../../Common/Vector3.h"
 
 class PlayerSimpleAttackCollOperator;
+class RushAuraActor;
 struct Transform;
 
 class TomatoPlayerTackleState : public CharacterStateBase
@@ -12,6 +13,7 @@ public:
     TomatoPlayerTackleState(
         PlayerSimpleAttackCollOperator& collOperator,
         Transform& playerTrans,
+        RushAuraActor& aura,
         Vector3& velocity,
         float moveSpeed,
         float rotationPower,
@@ -41,6 +43,7 @@ private:
     Transform& playerTrans;
     Vector3& velocity;
     PlayerSimpleAttackCollOperator& collOperator;
+    RushAuraActor& aura;
 
     // ‰ñ“]p¨‚©‚ç“Ëi•ûŒü‚ğÄŒvZ‚¹‚¸A…•½‚ÌŒü‚«‚Æ‘O“]Šp‚ğ•ÊX‚É‚ÂB
     Vector3 moveDir;

@@ -4,7 +4,7 @@
 
 struct CharacterStats;
 
-struct XZCircleCollider;
+class XZCircleCollider;
 
 class TomatoHeadbuttCollOperator : public ActorBase
 {

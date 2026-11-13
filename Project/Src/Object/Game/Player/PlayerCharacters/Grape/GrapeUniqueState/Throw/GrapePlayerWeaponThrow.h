@@ -3,6 +3,7 @@
 #include "../../../../../../Common/ActorBase/ActorBase.h"
 
 struct CharacterStats;
+class ExplosionActor;
 
 
 class GrapePlayerWeaponThrow : public ActorBase
@@ -93,4 +94,9 @@ private:
 	float lifeCounter;
 
 	STATE state;
+
+	// ExplosionActorが参照する座標を保持し、次の投擲から切り離す。
+	Vector3 explosionPosition;
+	ExplosionActor* explosion;
+	bool hasExploded;
 };

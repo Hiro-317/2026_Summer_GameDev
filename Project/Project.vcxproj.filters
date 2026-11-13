@@ -479,9 +479,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Common\Effect\EffectBase.cpp" />
+    <ClCompile Include="Src\Object\Common\Effect\RushAuraActor.cpp" />
     <ClCompile Include="Src\Object\Common\Effect\ExplosionActor.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\ExplosionShader.cpp" />
     <ClInclude Include="Src\Object\Common\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Object\Common\Effect\RushAuraActor.h" />
     <ClInclude Include="Src\Object\Common\Effect\ExplosionActor.h" />
     <ClInclude Include="Src\Object\Common\Shader\ExplosionShader.h" />
     <None Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
@@ -497,5 +499,35 @@
     <None Include="Src\Shader\FlameBreath\README.md" />
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathVS.hlsl" />
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Shader\RushAuraShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\RushAuraShader.h" />
+    <FxCompile Include="Src\Shader\RushAura\RushAuraVS.hlsl" />
+    <FxCompile Include="Src\Shader\RushAura\RushAuraPS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\StampDustActor.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\StampDustActor.h" />
+    <ClCompile Include="Src\Object\Common\Shader\StampDustShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\StampDustShader.h" />
+    <FxCompile Include="Src\Shader\StampDust\StampDustVS.hlsl" />
+    <FxCompile Include="Src\Shader\StampDust\StampDustPS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\SupportParticleActor.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\SupportParticleActor.h" />
+    <ClCompile Include="Src\Object\Common\Shader\SupportParticleShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\SupportParticleShader.h" />
+    <FxCompile Include="Src\Shader\SupportParticle\SupportParticleVS.hlsl" />
+    <FxCompile Include="Src\Shader\SupportParticle\SupportParticlePS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\HitSparkActor.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\HitSparkActor.h" />
+    <ClCompile Include="Src\Object\Common\Shader\HitSparkShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\HitSparkShader.h" />
+    <FxCompile Include="Src\Shader\HitSpark\HitSparkVS.hlsl" />
+    <FxCompile Include="Src\Shader\HitSpark\HitSparkPS.hlsl" />
   </ItemGroup>
 </Project>

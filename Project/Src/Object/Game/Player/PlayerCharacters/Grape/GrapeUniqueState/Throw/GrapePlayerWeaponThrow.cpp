@@ -6,6 +6,7 @@
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../../Common/Effect/ExplosionActor.h"
 
 GrapePlayerWeaponThrow::GrapePlayerWeaponThrow(
     short ATTACK_RATE_PERCENT,
@@ -20,7 +21,10 @@ GrapePlayerWeaponThrow::GrapePlayerWeaponThrow(
     controlSenderId(controlSenderId),
     moveVec(),
     lifeCounter(0.0f),
-    state(STATE::None)
+    state(STATE::None),
+    explosionPosition(),
+    explosion(nullptr),
+    hasExploded(false)
 {
     ActorBase::controlSenderId = controlSenderId;
 }
@@ -43,6 +47,10 @@ void GrapePlayerWeaponThrow::Load(void)
     auto* terrain = new SphereCollider(COLLIDER_TAG::BossAttackArea, COLLIDER_RADIUS);
     terrain->SetPushFlg(true);
     AddCollider(terrain);
+
+    // GrapeBossと同じ既定の色・大きさ・寿命で準備する。
+    explosion = new ExplosionActor(explosionPosition);
+    AddChildActor(explosion);
 
     SetJudgeFlg(false);
     SetIsDraw(false);
@@ -91,6 +99,7 @@ void GrapePlayerWeaponThrow::Shot(const Vector3& pos, const Vector3& vec, bool s
     velocity = Vector3::Yonly(BOUNCE_SPEED);
     lifeCounter = static_cast<float>(LIFE_TIME);
     state = STATE::Move;
+    hasExploded = false;
     SetGravityFlg(false);
     SetPushFlg(true);
     SetJudgeFlg(true);
@@ -106,6 +115,14 @@ void GrapePlayerWeaponThrow::Blast(void)
 
 void GrapePlayerWeaponThrow::Blast(const Vector3& pos, bool send)
 {
+    // 寿命による再生と受信通知が重なっても、同じ爆発を再開始しない。
+    if (hasExploded) { return; }
+    hasExploded = true;
+    // 消える瞬間の座標で一度再生する。子Actorなので本体が非表示でも更新される。
+    explosionPosition = pos;
+    explosion->SetPos(explosionPosition);
+    explosion->Restart();
+
     trans.pos = pos;
     moveVec = Vector3();
     velocity = Vector3();

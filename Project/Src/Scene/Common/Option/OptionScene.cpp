@@ -271,6 +271,6 @@ float OptionScene::GetVolumeRatio(int volumeSelect) const
 
 	case OptionScene::SELECT::SeVolume: { return Snd::GetIns().SeVolume(); }
 
-	default: { break; }
+	default: { return 0.0f; }
 	}
 }

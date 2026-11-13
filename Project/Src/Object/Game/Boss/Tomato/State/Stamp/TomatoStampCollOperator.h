@@ -4,7 +4,7 @@
 
 #include "../../../../../Common/Collider/ColliderBase.h"
 
-struct XZCircleCollider;
+class XZCircleCollider;
 
 struct CharacterStats;
 

@@ -1,4 +1,4 @@
-#include "ScreenShakePostEffect.h"
+﻿#include "ScreenShakePostEffect.h"
 
 #include <algorithm>
 #include <cmath>

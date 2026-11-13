@@ -26,7 +26,7 @@ public:
 		trans.scale = 10.0f;
 
 		// モデルのズレ
-		trans.centerDiff = Vector3(0.0f, -416.71, 0.0f) * trans.scale;
+		trans.centerDiff = Vector3(0.0f, -416.71f, 0.0f) * trans.scale;
 
 		// コライダー
 		AddCollider(new BoxCollider(COLLIDER_TAG::Stage, Vector3(20000, 10000, 2000), Vector3::Zonly(-8500.0f)));

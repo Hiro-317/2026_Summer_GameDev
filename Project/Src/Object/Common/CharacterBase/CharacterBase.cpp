@@ -57,10 +57,10 @@ CharacterBase::CharacterBase(
 	ActorBase(parameterPath),
 
 	characterStats(
-		GetParameter(fileName, hpParameterID),
-		GetParameter(fileName, attackPowerParameterID),
-		GetParameter(fileName, defensePowerParameterID),
-		GetParameter(fileName, moveSpeedParameterID)
+		static_cast<short>(GetParameter(fileName, hpParameterID)),
+		static_cast<short>(GetParameter(fileName, attackPowerParameterID)),
+		static_cast<short>(GetParameter(fileName, defensePowerParameterID)),
+		static_cast<short>(GetParameter(fileName, moveSpeedParameterID))
 	),
 
 	state(-1),
