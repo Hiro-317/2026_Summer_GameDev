@@ -87,52 +87,34 @@ void FlameBreathActor::SubDraw(void)
     const float radius = settings.radius * (0.25f + 0.75f * growth);
     const Vector3 tip = trans.pos + direction * distance;
 
-    // 軸を変えずにカメラへ面を向ける、軸固定ビルボード。
-    Vector3 toCamera = Vector3(GetCameraPosition()) - (trans.pos + direction * (distance * 0.5f));
-    if (toCamera.LengthSq() < 0.000001f) { toCamera = -Vector3(GetCameraFrontVector()); }
-    toCamera.Normalize();
-    Vector3 side = direction.Cross(toCamera);
-    if (side.LengthSq() < 0.000001f) {
-        // カメラが軸と平行でも、ゼロベクトルの正規化で壊れないようにする。
-        const Vector3 right(GetCameraRightVector());
-        side = right - direction * right.Dot(direction);
-        if (side.LengthSq() < 0.000001f) {
-            const Vector3 up(GetCameraUpVector());
-            side = up - direction * up.Dot(direction);
-        }
-    }
-    side.Normalize();
-
+    // 中心軸上の座標だけを渡し、横幅は頂点シェーダーのカメラ座標上で付ける。
+    // NORMALには描画用の法線ではなく、方向×現在の距離を入れる。
+    // TEXCOORD1はxが本体/補助炎の区別、yが幅オフセットまたは補助炎の半径。
     VERTEX3DSHADER vertices[8]{};
     const float signs[4] = {-1.0f, 1.0f, -1.0f, 1.0f};
     for (int i = 0; i < 4; ++i) {
         const bool isTip = i >= 2;
-        vertices[i].pos = ((isTip ? tip : trans.pos) + side * (radius * signs[i])).ToVECTOR();
+        vertices[i].pos = (isTip ? tip : trans.pos).ToVECTOR();
         vertices[i].u = isTip ? 1.0f : 0.0f;
         vertices[i].v = (signs[i] + 1.0f) * 0.5f;
         vertices[i].su = 0.0f; // 本体の描画モード
-        vertices[i].sv = 1.0f;
+        vertices[i].sv = radius * signs[i]; // カメラ座標で付ける符号付きの横幅
     }
 
-    // 正面・真後ろから見ると本体の板が薄くなるため、先端に補助の炎を重ねる。
-    // 横から見た場合は表示量を0にして、参考画像の細長い輪郭を保つ。
-    float capVisibility = std::clamp((std::abs(direction.Dot(toCamera)) - 0.75f) / 0.23f, 0.0f, 1.0f);
-    capVisibility = capVisibility * capVisibility * (3.0f - 2.0f * capVisibility);
+    // 軸方向から見て本体の長さが縮む場合に備え、先端側に画面正対の補助炎を置く。
+    // 表示量は描画時のカメラ行列からVSが求めるため、CPUのカメラ軸へ依存しない。
     const Vector3 capCenter = trans.pos + direction * (distance * 0.85f);
-    const Vector3 cameraRight(GetCameraRightVector());
-    const Vector3 cameraUp(GetCameraUpVector());
     const float corners[4][2] = {{-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
     for (int i = 0; i < 4; ++i) {
         auto& vertex = vertices[i + 4];
-        vertex.pos = (capCenter + cameraRight * (corners[i][0] * radius * 0.75f) +
-                      cameraUp * (corners[i][1] * radius * 0.75f)).ToVECTOR();
+        vertex.pos = capCenter.ToVECTOR();
         vertex.u = (corners[i][0] + 1.0f) * 0.5f;
         vertex.v = (corners[i][1] + 1.0f) * 0.5f;
         vertex.su = 1.0f; // 正面用の描画モード
-        vertex.sv = capVisibility;
+        vertex.sv = radius * 0.75f; // 補助炎の半径
     }
     for (auto& vertex : vertices) {
-        vertex.norm = toCamera.ToVECTOR();
+        vertex.norm = (direction * distance).ToVECTOR();
         vertex.dif = GetColorU8(255, 255, 255, 255);
     }
     const unsigned short indices[12] = {0, 1, 2, 1, 3, 2, 4, 5, 6, 5, 7, 6};

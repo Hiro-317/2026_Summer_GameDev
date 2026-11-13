@@ -84,7 +84,7 @@ float4 main(FlameBreathInput input) : SV_TARGET
         core = (1.0 - smoothstep(0.12, 0.48, radial)) * (0.75 + detail * 0.35) * ends;
         glow = (1.0 - smoothstep(0.5, 1.25, radial)) * 0.16 * ends;
     } else {
-        // 軸方向から見た場合の補助炎。横から見る場合の表示量はCPU側で0にする。
+        // 軸方向から見た場合の補助炎。横から見る場合の表示量はVS側で0にする。
         float2 p = input.uv * 2.0 - 1.0;
         float noise = BreathFBM(p * 3.5 + float2(-time, time * 0.3) + seed);
         float radius = length(p) + (noise - 0.5) * 0.22;
