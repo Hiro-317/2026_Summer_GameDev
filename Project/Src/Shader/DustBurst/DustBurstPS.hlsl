@@ -61,7 +61,7 @@ float4 main(DustInput input) : SV_TARGET
         float ridges = 1.0 - smoothstep(0.07, 0.20, abs(noise - 0.51));
         float breakup = smoothstep(0.35, 0.62, fine);
         float silhouette = 1.0 - smoothstep(0.55, 1.0, length(float2(p.x, p.y * 1.08)));
-        float top = 1.0 - smoothstep(0.15, 1.0, p.y);
+        float top = 1.0 - smoothstep(0.55, 1.0, p.y);
         alpha = ridges * breakup * silhouette * top * 0.82;
         color *= 0.72 + noise * 0.28;
     }

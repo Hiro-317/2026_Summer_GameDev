@@ -44,7 +44,19 @@ void DustBurstActor::Restart(void)
 {
     stopping = false;
     stopElapsed = stopDuration = stoppedSpreadTime = 0.0f;
+    // 基底のRestartが仮想Playを呼んでも再びRestartへ入らないよう、先に再生状態にする。
+    EffectBase::Play();
     EffectBase::Restart();
+}
+void DustBurstActor::Play(void)
+{
+    if (IsFinished() || stopping) {
+        // 待機・終了・消滅途中からは、前回の時間と消滅状態を引き継がず新しく出す。
+        Restart();
+        return;
+    }
+    // 通常の再生中なら時間は戻さない。繰り返し呼んでも寿命は延びない。
+    EffectBase::Play();
 }
 float DustBurstActor::GetSpreadTime(void) const
 {
@@ -122,11 +134,11 @@ void DustBurstActor::SubDraw(void)
         const float speed = outer ? 0.72f + random * 0.22f : 0.44f + random * 0.23f;
         const float reach = settings.radius * expansion * speed;
         auto& puff = puffs[i];
-        // 外周近くの背の高い破片と、内側の低い破片を重ねる。
+        // 床の輪とは別に、煙を時間とともに上昇させる。高さを潰して床へ貼り付けない。
         puff.width = settings.radius * (outer ? 0.27f : 0.20f) * swelling * (0.85f + random * 0.3f);
-        puff.height = settings.height * (outer ? 0.40f : 0.28f) * swelling * (0.85f + random * 0.3f);
+        puff.height = settings.height * (outer ? 0.85f : 0.60f) * swelling * (0.85f + random * 0.3f);
         puff.center = trans.pos + Vector3(std::cos(angle) * reach,
-            puff.height * 0.45f + settings.height * 0.08f * t, std::sin(angle) * reach);
+            puff.height * 0.55f + settings.height * 0.30f * t * t, std::sin(angle) * reach);
         puff.seed = id + settings.seed;
         puff.depth = (puff.center - camera).Dot(front);
     }
