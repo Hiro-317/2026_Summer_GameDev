@@ -1,5 +1,8 @@
 # 直線状の炎ブレス
 
+1回のAddActorで準備し、再生関数から複数地点へ同時表示したい場合は、
+[EffectPlayerの使い方](../../Object/Common/Effect/EffectPlayer.md) を参照してください。
+
 `FlameBreathActor` は `EffectBase` を継承する描画用のエフェクトです。
 開始点・向き・最大到達距離・太さ・明るさ・色・寿命を指定できます。
 根元は細く、先へ行くほど太くなり、白く明るい芯と揺れる炎を描画します。

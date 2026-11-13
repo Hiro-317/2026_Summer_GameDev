@@ -1,5 +1,8 @@
 # 紫色の爆発エフェクト
 
+1回のAddActorで準備し、再生関数から複数地点へ同時表示したい場合は、
+[EffectPlayerの使い方](../../Object/Common/Effect/EffectPlayer.md) を参照してください。
+
 `EffectBase` は `ActorBase` を継承するエフェクト用の中間基底クラスです。
 `PurpleExplosionActor` はその派生で、指定したワールド座標に紫色の爆発を表示します。
 攻撃やキー入力など、固定の発生タイミングは設定していません。

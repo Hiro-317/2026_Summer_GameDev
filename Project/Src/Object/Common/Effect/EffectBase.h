@@ -24,7 +24,7 @@ public:
     void Restart(void);
     // 有限・無期限のどちらでも、残り寿命を無視して即座に更新と描画を停止する。
     // フェード待ちは行わない。オブジェクト自体は所有者が解放する。
-    void Stop(void);
+    virtual void Stop(void);
     // 所有者が回収・再利用を判断するときに使用する。
     bool IsFinished(void) const { return finished; }
     bool IsInfinite(void) const { return durationSeconds == 0.0f; }
