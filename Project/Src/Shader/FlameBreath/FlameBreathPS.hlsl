@@ -14,6 +14,8 @@ struct FlameBreathInput
     float4 position : SV_POSITION;
     float2 uv : TEXCOORD0;
     nointerpolation float2 drawParameters : TEXCOORD1;
+    float3 normalVS : TEXCOORD2;
+    float3 viewPosition : TEXCOORD3;
 };
 
 float BreathHash(float2 p)
@@ -66,31 +68,32 @@ float4 main(FlameBreathInput input) : SV_TARGET
 
     if (input.drawParameters.x < 0.5) {
         float u = saturate(input.uv.x);
-        float y = input.uv.y * 2.0 - 1.0;
-        // ノイズの座標を逆方向へ動かすと、模様は根元→先端へ流れる。
-        float noise = BreathFBM(float2(u * 7.0 - time * 2.0, y * 4.0) + seed);
-        float detail = BreathFBM(float2(u * 18.0 - time * 3.5, y * 9.0) + seed * 2.3);
-        // 根元は細く、先に行くほど太くする。中心軸の位置は変えない。
-        float width = 0.025 + 0.80 * pow(u, 0.80);
-        float ripple = (noise - 0.45) * width * 0.30;
-        float radial = abs(y - ripple) / max(width, 0.001);
-        float turbulentEdge = 0.82 + noise * 0.30 + detail * 0.16;
-        float aa = max(fwidth(radial), 0.015);
-        float mask = 1.0 - smoothstep(turbulentEdge - 0.25, turbulentEdge + aa, radial);
-        // 先端と根元をフェードして、板ポリゴンの直線の端を見せない。
-        float ends = smoothstep(0.0, 0.012, u) * (1.0 - smoothstep(0.84, 1.0, u));
-        ends *= 1.0 - smoothstep(0.90, 1.0, abs(y));
-        fire = mask * (0.55 + noise * 0.8 + detail * 0.35) * ends;
-        core = (1.0 - smoothstep(0.12, 0.48, radial)) * (0.75 + detail * 0.35) * ends;
-        glow = (1.0 - smoothstep(0.5, 1.25, radial)) * 0.16 * ends;
+        float angle = input.uv.y * 6.2831853;
+        // 周方向の模様をsin/cosでつなぎ、円周のUVの継ぎ目を隠す。
+        float2 circle = float2(cos(angle), sin(angle));
+        float noise = BreathFBM(circle * 3.2 + float2(u * 6.0 - time * 2.0, u * 2.0) + seed);
+        float detail = BreathFBM(circle * 8.5 + float2(u * 15.0 - time * 3.5, -u * 4.0) + seed * 2.3);
+        float root = smoothstep(0.0, 0.02, u);
+        // 側面は終端まで描く。旧処理のu=0.84～1で消すフェードを使わない。
+        float facing = saturate(abs(dot(input.normalVS, -input.viewPosition)) *
+            rsqrt(max(dot(input.normalVS, input.normalVS) *
+                      dot(input.viewPosition, input.viewPosition), 0.000001)));
+        fire = (0.35 + noise * 0.65 + detail * 0.25) * root * (0.55 + facing * 0.45);
+        core = smoothstep(0.50, 0.88, noise + detail * 0.25) * root * 0.45;
+        glow = fire * 0.10;
+        // 裏表の側面を加算しても、平板の白い塊になりすぎないよう調整する。
+        fire *= 0.55;
+        core *= 0.55;
     } else {
-        // 軸方向から見た場合の補助炎。横から見る場合の表示量はVS側で0にする。
+        // 補助の板ではなく、設定した終端円そのものを塗る。
         float2 p = input.uv * 2.0 - 1.0;
+        float radius = length(p);
         float noise = BreathFBM(p * 3.5 + float2(-time, time * 0.3) + seed);
-        float radius = length(p) + (noise - 0.5) * 0.22;
-        fire = (1.0 - smoothstep(0.40, 0.90, radius)) * (0.6 + noise * 0.6);
-        core = (1.0 - smoothstep(0.05, 0.45, radius)) * 0.8;
-        glow = (1.0 - smoothstep(0.50, 1.0, radius)) * 0.15;
+        // ノイズで輪郭を縮めず、円周まで炎を残す。揺れは明るさに付ける。
+        float edge = 1.0 - smoothstep(0.985, 1.015, radius);
+        fire = edge * (0.35 + noise * 0.45);
+        core = (1.0 - smoothstep(0.15, 0.85, radius)) * (0.35 + noise * 0.25);
+        glow = edge * 0.10;
     }
 
     // 外側を指定色にし、内側は白に近づけて高温の炎らしく光らせる。

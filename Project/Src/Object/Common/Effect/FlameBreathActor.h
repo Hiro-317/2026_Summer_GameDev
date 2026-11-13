@@ -14,7 +14,7 @@ struct FlameBreathSettings
     /// </summary>
     float distance = 600.0f;
     /// <summary>
-    /// 先端付近の最大半径（正のワールド単位）。最大の太さはおよそこの2倍。
+    /// 円錐の終端円の半径（正のワールド単位）。展開完了時の外周と一致する。
     /// </summary>
     float radius = 90.0f;
     /// <summary>
@@ -70,17 +70,28 @@ public:
     /// <param name="startPoint">新しい開始点（ワールド座標）。各成分に有限の値を指定する。</param>
     void SetStartPoint(const Vector3& startPoint);
     /// <summary>
-    /// ブレスの向きを変更する。
+    /// ブレスの向きを変更する。終端円の固定を解除し、円錐の底面はこの方向へ垂直にする。
     /// </summary>
     /// <param name="direction">新しい向き。内部で正規化する。ゼロベクトル・有限でない値は指定不可。</param>
     void SetDirection(const Vector3& direction);
     /// <summary>
-    /// ブレスの距離・最大半径・明るさをまとめて変更する。
+    /// ブレスの距離・終端円の半径・明るさを変更し、終端円の固定を解除する。
     /// </summary>
     /// <param name="distance">最大到達距離（正のワールド単位）。</param>
     /// <param name="radius">最大半径（正のワールド単位）。</param>
     /// <param name="intensity">発光の強さ（0以上）。1.0fが基準、2.0fで明るく、0.0fで発光なし。</param>
     void SetStrength(float distance, float radius, float intensity);
+
+    /// <summary>
+    /// 円錐の終端を円の中心・半径・面の向きで指定する。床の予告円へ合わせる場合に使う。
+    /// SetStartPointで口元が動いても終端円はこの座標に固定される。
+    /// SetDirectionまたはSetStrengthを呼ぶと、通常の方向・距離指定へ戻る。
+    /// </summary>
+    /// <param name="center">終端円の中心（ワールド座標）。開始点と異なり、開始点を含む面は不可。</param>
+    /// <param name="radius">終端円の半径（正のワールド単位）。直径ではない。</param>
+    /// <param name="normal">終端円の面に垂直な向き。標準は上向きで床と平行。正規化不要、ゼロは不可。</param>
+    void SetEndCircle(const Vector3& center, float radius,
+                      const Vector3& normal = Vector3(0.0f, 1.0f, 0.0f));
     /// <summary>
     /// 炎の模様が流れる速さを変更する。
     /// </summary>
@@ -110,6 +121,10 @@ private:
 
     Vector3 direction;
     FlameBreathSettings settings;
+    bool useEndCircle;
+    Vector3 endCircleCenter;
+    Vector3 endCircleNormal;
     // 所有権はActorBaseへ渡す。このポインターは描画前の値更新にだけ使用する。
     FlameBreathShader* breathShader;
 };
+

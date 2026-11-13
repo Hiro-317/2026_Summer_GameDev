@@ -1,6 +1,7 @@
 ﻿#include "FlameBreathActor.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <stdexcept>
 
@@ -8,7 +9,9 @@
 
 FlameBreathActor::FlameBreathActor(const Vector3& startPoint, const Vector3& direction,
     const FlameBreathSettings& settings) :
-    EffectBase(settings.durationSeconds), direction(), settings(settings), breathShader(nullptr)
+    EffectBase(settings.durationSeconds), direction(), settings(settings),
+    useEndCircle(false), endCircleCenter(), endCircleNormal(0.0f, 1.0f, 0.0f),
+    breathShader(nullptr)
 {
     SetStartPoint(startPoint);
     SetDirection(direction);
@@ -27,6 +30,13 @@ void FlameBreathActor::SetStartPoint(const Vector3& startPoint)
         throw std::invalid_argument("Flame breath start point must be finite");
     }
     SetPos(startPoint);
+    if (useEndCircle) {
+        const Vector3 delta = endCircleCenter - startPoint;
+        if (delta.LengthSq() > 0.00000001f) {
+            direction = delta.Normalized();
+            settings.distance = delta.Length();
+        }
+    }
 }
 
 void FlameBreathActor::SetDirection(const Vector3& value)
@@ -36,6 +46,7 @@ void FlameBreathActor::SetDirection(const Vector3& value)
         throw std::invalid_argument("Flame breath direction must be finite and nonzero");
     }
     direction = value.Normalized();
+    useEndCircle = false;
 }
 
 void FlameBreathActor::SetStrength(float distance, float radius, float intensity)
@@ -46,9 +57,33 @@ void FlameBreathActor::SetStrength(float distance, float radius, float intensity
         !std::isfinite(intensity) || intensity < 0.0f) {
         throw std::invalid_argument("Invalid flame breath strength");
     }
+    useEndCircle = false;
     settings.distance = distance;
     settings.radius = radius;
     settings.intensity = intensity;
+}
+
+void FlameBreathActor::SetEndCircle(const Vector3& center, float radius, const Vector3& normal)
+{
+    const Vector3 delta = center - trans.pos;
+    const float distanceSquared = delta.LengthSq();
+    const float normalSquared = normal.LengthSq();
+    if (!std::isfinite(distanceSquared) || distanceSquared <= 0.00000001f ||
+        !std::isfinite(normalSquared) || normalSquared <= 0.00000001f ||
+        !std::isfinite(radius) || radius <= 0.0f) {
+        throw std::invalid_argument("Invalid flame breath end circle");
+    }
+    const Vector3 unitNormal = normal.Normalized();
+    // 開始点が終端面上にあると、円錐が一枚の平面へ潰れてしまう。
+    if (std::abs(delta.Dot(unitNormal)) <= 0.0001f) {
+        throw std::invalid_argument("Flame breath start must be outside the end circle plane");
+    }
+    endCircleCenter = center;
+    endCircleNormal = unitNormal;
+    direction = delta.Normalized();
+    settings.distance = std::sqrt(distanceSquared);
+    settings.radius = radius;
+    useEndCircle = true;
 }
 
 void FlameBreathActor::SetFlowSpeed(float speed)
@@ -83,41 +118,91 @@ void FlameBreathActor::SubDraw(void)
     float growth = std::clamp(GetElapsedSeconds() / growthSeconds, 0.0f, 1.0f);
     growth = growth * growth * (3.0f - 2.0f * growth);
     const float reach = 0.05f + 0.95f * growth;
-    const float distance = settings.distance * reach;
+    Vector3 axis = direction;
+    float maximumDistance = settings.distance;
+    if (useEndCircle) {
+        // SetPosで口元を移動した場合も、終端円を追いかけて位置を固定する。
+        const Vector3 delta = endCircleCenter - trans.pos;
+        if (delta.LengthSq() <= 0.00000001f) { return; }
+        axis = delta.Normalized();
+        maximumDistance = delta.Length();
+    }
+    const float distance = maximumDistance * reach;
     const float radius = settings.radius * (0.25f + 0.75f * growth);
-    const Vector3 tip = trans.pos + direction * distance;
+    const Vector3 tip = trans.pos + axis * distance;
 
-    // 中心軸上の座標だけを渡し、横幅は頂点シェーダーのカメラ座標上で付ける。
-    // NORMALには描画用の法線ではなく、方向×現在の距離を入れる。
-    // TEXCOORD1はxが本体/補助炎の区別、yが幅オフセットまたは補助炎の半径。
-    VERTEX3DSHADER vertices[8]{};
-    const float signs[4] = {-1.0f, 1.0f, -1.0f, 1.0f};
-    for (int i = 0; i < 4; ++i) {
-        const bool isTip = i >= 2;
-        vertices[i].pos = (isTip ? tip : trans.pos).ToVECTOR();
-        vertices[i].u = isTip ? 1.0f : 0.0f;
-        vertices[i].v = (signs[i] + 1.0f) * 0.5f;
-        vertices[i].su = 0.0f; // 本体の描画モード
-        vertices[i].sv = radius * signs[i]; // カメラ座標で付ける符号付きの横幅
-    }
+    // カメラに向けた板ではなく、円周を結んだ立体の円錐を作る。
+    // 終端円指定時は床・斜面の向きを使い、通常はブレス軸に垂直な円を使う。
+    const Vector3 planeNormal = useEndCircle ? endCircleNormal : axis;
+    if (std::abs((tip - trans.pos).Dot(planeNormal)) <= 0.0001f) { return; }
+    const Vector3 helper = std::abs(planeNormal.y) < 0.9f ?
+        Vector3(0.0f, 1.0f, 0.0f) : Vector3(1.0f, 0.0f, 0.0f);
+    const Vector3 side = helper.Cross(planeNormal).Normalized();
+    const Vector3 up = planeNormal.Cross(side).Normalized();
+    constexpr int radialSegments = 32;
+    constexpr int lengthSegments = 8;
+    constexpr int ringStride = radialSegments + 1;
+    constexpr int bodyVertexCount = (lengthSegments + 1) * ringStride;
+    constexpr int capCenterIndex = bodyVertexCount;
+    constexpr int capRingStart = capCenterIndex + 1;
+    constexpr int vertexCount = capRingStart + ringStride;
+    constexpr int indexCount = lengthSegments * radialSegments * 6;
+    constexpr float twoPi = 6.28318530718f;
+    std::array<VERTEX3DSHADER, vertexCount> vertices{};
+    std::array<unsigned short, indexCount> indices{};
 
-    // 軸方向から見て本体の長さが縮む場合に備え、先端側に画面正対の補助炎を置く。
-    // 表示量は描画時のカメラ行列からVSが求めるため、CPUのカメラ軸へ依存しない。
-    const Vector3 capCenter = trans.pos + direction * (distance * 0.85f);
-    const float corners[4][2] = {{-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
-    for (int i = 0; i < 4; ++i) {
-        auto& vertex = vertices[i + 4];
-        vertex.pos = capCenter.ToVECTOR();
-        vertex.u = (corners[i][0] + 1.0f) * 0.5f;
-        vertex.v = (corners[i][1] + 1.0f) * 0.5f;
-        vertex.su = 1.0f; // 正面用の描画モード
-        vertex.sv = radius * 0.75f; // 補助炎の半径
+    for (int ring = 0; ring <= lengthSegments; ++ring) {
+        const float u = static_cast<float>(ring) / lengthSegments;
+        const Vector3 center = trans.pos + axis * (distance * u);
+        for (int segment = 0; segment <= radialSegments; ++segment) {
+            const float v = static_cast<float>(segment) / radialSegments;
+            const float angle = twoPi * v;
+            const Vector3 radial = side * std::cos(angle) + up * std::sin(angle);
+            auto& vertex = vertices[ring * ringStride + segment];
+            // 半径をuに比例させる。末端は指定した半径そのものになり、手前で切れない。
+            vertex.pos = (center + radial * (radius * u)).ToVECTOR();
+            const Vector3 tangent = -side * std::sin(angle) + up * std::cos(angle);
+            vertex.norm = tangent.Cross(axis * distance + radial * radius).Normalized().ToVECTOR();
+            vertex.u = u;
+            vertex.v = v;
+            vertex.su = 0.0f; // 円錐の側面
+            vertex.sv = 1.0f;
+        }
     }
-    for (auto& vertex : vertices) {
-        vertex.norm = (direction * distance).ToVECTOR();
-        vertex.dif = GetColorU8(255, 255, 255, 255);
+    // 終端面も円周まで埋める。UVは円の中心が(0.5,0.5)、外周が半径0.5。
+    auto& capCenter = vertices[capCenterIndex];
+    capCenter.pos = tip.ToVECTOR();
+    capCenter.u = capCenter.v = 0.5f;
+    for (int segment = 0; segment <= radialSegments; ++segment) {
+        const float angle = twoPi * static_cast<float>(segment) / radialSegments;
+        auto& vertex = vertices[capRingStart + segment];
+        vertex.pos = vertices[lengthSegments * ringStride + segment].pos;
+        vertex.u = 0.5f + std::cos(angle) * 0.5f;
+        vertex.v = 0.5f + std::sin(angle) * 0.5f;
     }
-    const unsigned short indices[12] = {0, 1, 2, 1, 3, 2, 4, 5, 6, 5, 7, 6};
+    for (int i = capCenterIndex; i < vertexCount; ++i) {
+        vertices[i].norm = planeNormal.ToVECTOR();
+        vertices[i].su = 1.0f; // 実際の終端円。視線方向では隠さない。
+        vertices[i].sv = 1.0f;
+    }
+    for (auto& vertex : vertices) { vertex.dif = GetColorU8(255, 255, 255, 255); }
+    int index = 0;
+    for (int ring = 0; ring < lengthSegments; ++ring) {
+        for (int segment = 0; segment < radialSegments; ++segment) {
+            const unsigned short a = static_cast<unsigned short>(ring * ringStride + segment);
+            const unsigned short b = a + ringStride;
+            // 頂点が一点に集まる根元では、面積0の三角形を作らない。
+            if (ring > 0) {
+                indices[index++] = a; indices[index++] = b; indices[index++] = a + 1;
+            }
+            indices[index++] = a + 1; indices[index++] = b; indices[index++] = b + 1;
+        }
+    }
+    for (int segment = 0; segment < radialSegments; ++segment) {
+        indices[index++] = capCenterIndex;
+        indices[index++] = static_cast<unsigned short>(capRingStart + segment);
+        indices[index++] = static_cast<unsigned short>(capRingStart + segment + 1);
+    }
 
     int previousBlend = 0, previousBlendParameter = 0;
     GetDrawBlendMode(&previousBlend, &previousBlendParameter);
@@ -127,7 +212,7 @@ void FlameBreathActor::SubDraw(void)
     // 壁には隠れるが、透明部分で後続の物体を遮らないよう深度を書き込まない。
     SetUseZBuffer3D(true);
     SetWriteZBuffer3D(false);
-    DrawPolygonIndexed3DToShader(vertices, 8, indices, 4);
+    DrawPolygonIndexed3DToShader(vertices.data(), vertexCount, indices.data(), indexCount / 3);
     // 既存の3Dシーンが使用する通常設定へ戻す。
     SetWriteZBuffer3D(true);
     SetUseBackCulling(previousCulling);
