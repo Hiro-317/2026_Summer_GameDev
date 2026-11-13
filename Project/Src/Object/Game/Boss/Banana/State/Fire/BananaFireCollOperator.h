@@ -2,7 +2,7 @@
 
 #include "../../../../../Common/ActorBase/ActorBase.h"
 
-#include "../../../../../Common/Collider/SphereCollider.h"
+#include "../../../../../Common/Collider/XZCircleCollider.h"
 #include "../../../../../Common/Effect/FlameBreathActor.h"
 
 struct CharacterStats;
@@ -37,6 +37,9 @@ private:
 	// コライダーの半径
 	const float RADIUS = 500.0f;
 
+	// コライダの高さ
+	const float HEIGHT = RADIUS / 2.0f;
+
 	// コライダー描画の拡大率
 	const float SCALE = RADIUS / 100.0f;
 
@@ -66,6 +69,6 @@ private:
 	// 攻撃範囲描画フラグ
 	bool isDrawArea;
 
-	SphereCollider* collRef;
+	XZCircleCollider* collRef;
 	FlameBreathActor* flRef;
 };
