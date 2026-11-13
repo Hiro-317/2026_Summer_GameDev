@@ -8,6 +8,7 @@
 struct Transform;
 
 class ExplosionActor;
+class DustBurstActor;
 
 class BananaBossBanadrill : public ActorBase
 {
@@ -69,4 +70,5 @@ private:
 	float hp;
 
 	ExplosionActor* exRef;
+	DustBurstActor* duRef;
 };

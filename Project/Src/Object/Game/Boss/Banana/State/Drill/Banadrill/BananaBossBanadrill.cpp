@@ -2,6 +2,7 @@
 
 #include "../../../../../../Common/Transform/Transform.h"
 #include "../../../../../../Common/Effect/ExplosionActor.h"
+#include "../../../../../../Common/Effect/DustBurstActor.h"
 
 
 BananaBossBanadrill::BananaBossBanadrill(const int& model, const int& front, const int& back, const CharacterStats& stats) :
@@ -49,6 +50,13 @@ void BananaBossBanadrill::Load(void)
 
 	exRef = new ExplosionActor(trans.pos, 350.0f, 1.2f, 1.2f, 1.0f, 0xffff00);
 	AddChildActor(exRef);
+
+	DustBurstSettings set;
+	set.durationSeconds = 0.0f;
+	set.color = 0xffff99;
+
+	duRef = new DustBurstActor(trans.pos, set);
+	AddChildActor(duRef);
 }
 
 void BananaBossBanadrill::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -76,6 +84,9 @@ void BananaBossBanadrill::EffectUpdate(void)
 {
 	if (!exRef->IsFinished()) {
 		exRef->Update();
+	}
+	if (!duRef->IsFinished()) {
+		duRef->Update();
 	}
 }
 
@@ -125,6 +136,8 @@ void BananaBossBanadrill::SubUpdate(void)
 		if(attack){
 			if (cnt == 0) {
 				boot = true;
+				duRef->Restart();
+				duRef->SetPos(Vector3(trans.pos.x, trans.pos.y - RADIUS, trans.pos.z));
 			}
 			cnt++;
 			// UŒ‚”»’èƒIƒ“
@@ -138,6 +151,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				attack = false;
 				cnt = 0;
 				front.scale = Vector3(0.0f);
+				duRef->Stop();
 			}
 		}
 		else {
@@ -154,6 +168,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				front.scale = Vector3(BOOM_RADIUS / 100.0f);
 				attCollRef->SetJudgeFlg(true);
 				exRef->Play();
+				exRef->SetPos(trans.pos);
 			}
 			if (BOOM_CNT + BOOM_DURATION <= cnt) {
 				attCollRef->SetJudgeFlg(false);

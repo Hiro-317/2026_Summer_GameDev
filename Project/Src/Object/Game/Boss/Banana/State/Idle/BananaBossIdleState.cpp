@@ -52,13 +52,13 @@ void BananaBossIdleState::Update(void)
 	int luck = GetRand(RANDOM);
 
 	if (luck <= KICKDOWN_LUCK) {
-		FireChangeState();
+		BanadrillChangeState();
 	}
 	else if (luck <= STRAIGHT_LUCK){
-		FireChangeState();
+		BanadrillChangeState();
 	}
 	else {
-		FireChangeState();
+		BanadrillChangeState();
 	}
 
 	//// Šm—¦‚Å•Ï‚¦‚é
