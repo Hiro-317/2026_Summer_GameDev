@@ -36,14 +36,15 @@ void EffectBase::BaseUpdate(void)
     // 無期限の場合も時間は進め、ノイズなどのアニメーションを継続する。
     if (!IsInfinite() && elapsedSeconds >= durationSeconds) {
         // 終了時は寿命の値で止め、再生を開始するまで0へ戻さない。
-        elapsedSeconds = 0.0f;
+        // Stopの派生処理が終了時の時刻を使えるよう、ここでは0へ戻さない。
+        elapsedSeconds = durationSeconds;
         Stop();
     }
 }
 
 void EffectBase::Play(void)
 {
-    // Playは「一度の再生開始」。呼び出し側はイベントの発生時に一度だけ呼ぶ。
+    // 時間を戻さず再生状態にする。新しく発生させる場合はRestartを使う。
     finished = false;
     SetIsDraw(true);
 }
