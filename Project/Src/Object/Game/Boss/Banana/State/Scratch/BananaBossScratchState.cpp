@@ -40,7 +40,7 @@ void BananaBossScratchState::Update(void)
 		if (first) {
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
-			//Snd::GetIns().Play("Scratch");
+			Snd::GetIns().Play("Scratch");
 		}
 		// 二度目は通さないようにフラグを折る
 		first = false;

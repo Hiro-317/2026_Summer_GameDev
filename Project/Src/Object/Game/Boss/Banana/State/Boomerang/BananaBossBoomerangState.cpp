@@ -63,6 +63,7 @@ void BananaBossBoomerangState::Update(void)
 			collOperator->CollSet(true);
 			first = false;
 			cnt = 0;
+			Snd::GetIns().Play("Boomerang");
 		}
 	}
 	// UŒ‚’†‚È‚ç
@@ -88,6 +89,7 @@ void BananaBossBoomerangState::Exit(void)
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 	collOperator->SetScale(0.0f);
 	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, Vector3()));
+	Snd::GetIns().Stop("Boomerang");
 }
 
 void BananaBossBoomerangState::AlwaysUpdate(void)

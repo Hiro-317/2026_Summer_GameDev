@@ -5,6 +5,7 @@
 
 #include "Banadrill/BananaBossDrillManager.h"
 
+#include "../../../../../../Manager/Sound/SoundManager.h"
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 
@@ -37,6 +38,7 @@ void BananaBossDrillState::Enter(void)
 		scene = dynamic_cast<GameScene*>(SceneManager::GetIns().GetScene());
 	}
 	cnt = 0;
+	Snd::GetIns().Play("Fly");
 }
 
 void BananaBossDrillState::Update(void)
@@ -49,6 +51,7 @@ void BananaBossDrillState::Update(void)
 				}
 				scene->FocusLock(false);
 			}
+			Snd::GetIns().Stop("Fly");
 		}
 		if (cnt < START_CNT) {
 			cnt++;
@@ -59,6 +62,7 @@ void BananaBossDrillState::Update(void)
 		if (drills->GetEnd()) {
 			SwitchInvisible();
 			scene->FocusLock(true);
+			Snd::GetIns().Play("Fly");
 			if (tmpFlg) {
 				scene->SetFocus(true);
 				tmpFlg = false;
@@ -90,6 +94,7 @@ void BananaBossDrillState::Exit(void)
 	pos = defaultPos;
 	SetCoolTime();
 	cnt = 0;
+	Snd::GetIns().Stop("Fly");
 }
 
 void BananaBossDrillState::AlwaysUpdate(void)

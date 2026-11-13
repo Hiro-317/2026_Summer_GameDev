@@ -25,8 +25,4 @@ private:
 
 #pragma endregion
 
-	void SubDraw(void)override;
-	void SubRelease(void)override;
-
-	int backImage;
 };

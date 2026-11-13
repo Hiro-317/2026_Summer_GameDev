@@ -105,6 +105,13 @@ public:
 	void SetSeVolume(float volume) { seVolume = std::clamp(volume, SE_VOLUME_MIN, SE_VOLUME_MAX); }
 	// SEボリューム割合を加算
 	void AddSeVolume(float volume) { seVolume = std::clamp(seVolume + volume, SE_VOLUME_MIN, SE_VOLUME_MAX); }
+
+	// その音声が再生されているか
+	bool IsPlay(const std::string& id);
+
+	// そのシーンがロードされているか
+	bool IsLoadScene(const std::string& scene);
+
 #pragma endregion
 
 private:

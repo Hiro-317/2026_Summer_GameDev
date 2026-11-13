@@ -17,6 +17,28 @@ SoundManager::SoundManager() :
 {
 }
 
+bool SoundManager::IsPlay(const std::string& id)
+{
+	for (auto& info : sounds.at(id)) {
+		return info.play();
+	}
+}
+
+bool SoundManager::IsLoadScene(const std::string& scene)
+{
+	// テーブルを探索する
+	for (std::pair<const std::string, SoundTable>& data : SOUND_TABLE) {
+		// 指定のもの以外はスキップ
+		if (data.second.scene != scene) { continue; }
+
+		// 読み込んでデータ追加
+		if (soundInfos.contains(data.first) || sounds.contains(data.first)) {
+			return true;
+		}
+		return false;
+	}
+}
+
 void SoundManager::Init(void)
 {
 #pragma region サウンドテーブルを読み込む

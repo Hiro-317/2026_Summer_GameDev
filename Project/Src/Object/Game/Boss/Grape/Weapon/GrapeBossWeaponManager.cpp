@@ -58,7 +58,7 @@ void GrapeBossWeaponManager::Update()
 				i.live = false;
 				i.weaponIns->ResetEnd();
 				i.weaponIns->SetColliderFlg(false);
-				Snd::GetIns().Play("Exprosion");
+				Snd::GetIns().Play("ExGrape");
 			}
 			// 例外処理
 			if (i.weaponIns->GetTrans().pos.y < EXIT_HEIGHT) {

@@ -53,7 +53,7 @@ void BananaBossIdleState::Update(void)
 	else if (luck <= BREATH_LUCK){
 		FireChangeState();
 	}
-	else if (luck <= BREATH_LUCK){
+	else if (luck <= BANAMERANG_LUCK){
 		BanamerangChangeState();
 	}
 	else {

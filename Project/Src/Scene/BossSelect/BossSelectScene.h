@@ -32,4 +32,6 @@ private:
 	int boardImage;
 
 	int operatorGuideImage[2];
+
+	bool UseSkyBox(void) const override { return true; }
 };

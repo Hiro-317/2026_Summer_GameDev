@@ -4,6 +4,7 @@
 
 #include "../../../../Manager/Net/NetWorkManager.h"
 #include "../../../../Manager/Font/FontManager.h"
+#include "../../../../Manager/Sound/SoundManager.h"
 
 #include "../../../Common/Collider/LineCollider.h"
 #include "../../../Common/Collider/CapsuleCollider.h"
@@ -32,7 +33,7 @@ BananaBoss::BananaBoss() :
 		"Data/Parameter/Character/Boss/Banagon/",
 		"Banana/Banagon")
 {
-
+	Snd::GetIns().AddScene("BananaBoss");
 	coolTime = 120;
 }
 

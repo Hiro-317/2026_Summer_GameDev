@@ -9,6 +9,9 @@ GrapeBossWeaponBase::GrapeBossWeaponBase(int model, int front, int back)
 	trans.model = model;
 	collFront.model = front;
 	collBack.model = back;
+
+	insRef = new ExplosionActor(trans.pos);
+	AddChildActor(insRef);
 }
 
 void GrapeBossWeaponBase::SetColliderFlg(bool flg)

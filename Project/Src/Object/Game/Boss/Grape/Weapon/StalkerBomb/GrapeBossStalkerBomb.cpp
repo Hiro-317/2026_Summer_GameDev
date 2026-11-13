@@ -33,9 +33,6 @@ GrapeBossStalkerBomb::GrapeBossStalkerBomb(int model, int front, int back)
 	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetPushFlg(false);
 	SetGravityFlg(true);
 	count = 0;
-
-	insRef = new ExplosionActor(trans.pos);
-	AddChildActor(insRef);
 }
 
 void GrapeBossStalkerBomb::Load(const CharacterStats& stats)
