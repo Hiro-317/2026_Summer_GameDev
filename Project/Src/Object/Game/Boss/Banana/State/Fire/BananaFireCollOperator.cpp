@@ -13,12 +13,13 @@ BananaFireCollOperator::BananaFireCollOperator(
 void BananaFireCollOperator::Load(void)
 {
 	// プレイヤー当たり判定を生成する（球体コライダー）
-	collRef = new SphereCollider(COLLIDER_TAG::BossAttack, RADIUS);
+	collRef = new XZCircleCollider(COLLIDER_TAG::BossAttack, RADIUS, HEIGHT);
 	AddCollider(collRef);
 
 	collRef->SetSkillStats(new SkillStats(100, &stats));
-	SetPushFlg(false);
+	SetPushFlg(true);
 	SetJudgeFlg(false);
+	SetPushWeight(255);
 
 	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetTransformPos(POS);
 
