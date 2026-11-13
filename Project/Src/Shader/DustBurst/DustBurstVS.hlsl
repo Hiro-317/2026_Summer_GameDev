@@ -19,7 +19,7 @@ struct DustOutput
 {
     float4 position : SV_POSITION;
     float2 local : TEXCOORD0;
-    nointerpolation float puffSeed : TEXCOORD1;
+    nointerpolation float2 puffData : TEXCOORD1; // x: 模様ID、y: 砂煙=0/地面の輪=1
     float3 worldPosition : TEXCOORD2;
 };
 DustOutput main(DustInput input)
@@ -29,8 +29,8 @@ DustOutput main(DustInput input)
     // カメラ座標で広げ、どの角度からも煙の板が薄くならないようにする。
     view.xy += input.offset;
     output.position = mul(float4(view, 1.0), g_base.projectionMatrix);
-    output.local = float2(input.uv.x * 2.0 - 1.0, 1.0 - input.uv.y * 2.0);
-    output.puffSeed = input.puffData.x;
+    output.local = input.uv; // 砂煙と輪でUVの意味をPSが切り替える。
+    output.puffData = input.puffData.xy;
     float3 rightWS = float3(g_base.viewMatrix[0][0], g_base.viewMatrix[1][0], g_base.viewMatrix[2][0]);
     float3 upWS = float3(g_base.viewMatrix[0][1], g_base.viewMatrix[1][1], g_base.viewMatrix[2][1]);
     // 煙の各ピクセルの地面上の距離を求めるため、実際の板のワールド座標も渡す。

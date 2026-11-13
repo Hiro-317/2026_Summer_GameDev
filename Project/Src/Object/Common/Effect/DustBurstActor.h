@@ -3,7 +3,7 @@
 
 class DustBurstShader;
 
-// 中心から地面の周囲へ広がる土埃の設定。距離はワールド単位。
+// 地面を広がる輪と、細かな砂煙の設定。距離はワールド単位。
 struct DustBurstSettings
 {
     // 煙の中心が外側へ移動する最大半径。正の有限値。
@@ -16,13 +16,13 @@ struct DustBurstSettings
     float stopSeconds = 0.3f;
     // 煙の不透明度（0～1）。加算発光ではなく半透明合成を使う。
     float opacity = 0.9f;
-    // 煙の基本色（0xRRGGBB）。白なら0xffffff、茶色なら0xbca078など。
-    unsigned int color = 0xeee6d7;
+    // 輪と砂煙の基本色（0xRRGGBB）。標準は橙。砂色なら0xbca078など。
+    unsigned int color = 0xffa04a;
     // 煙の形・配置を変える有限の値。
     float seed = 1.0f;
 };
 
-// 丸い煙の塊が中心から周囲へ広がる土埃。EffectBaseが所有・寿命管理を担当する。
+// 地面の輪と崩れた砂煙が中心から周囲へ広がる土埃。EffectBaseが所有・寿命管理を担当する。
 // 最初にAddActor/AddChildActorで準備し、発生時はRestartを一度呼ぶ。
 class DustBurstActor : public EffectBase
 {

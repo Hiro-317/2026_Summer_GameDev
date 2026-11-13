@@ -1,4 +1,4 @@
-// UTF-8 BOMなしで保存する。C++のParametersと同じ48バイト。
+// UTF-8 BOMなし。C++のParametersと同じ48バイト。
 cbuffer DustParameters : register(b4)
 {
     float elapsed;
@@ -14,59 +14,63 @@ struct DustInput
 {
     float4 position : SV_POSITION;
     float2 local : TEXCOORD0;
-    nointerpolation float puffSeed : TEXCOORD1;
+    nointerpolation float2 puffData : TEXCOORD1;
     float3 worldPosition : TEXCOORD2;
 };
-float DustHash(float x) { return frac(sin(x * 12.9898) * 43758.5453); }
-
-// 楕円の塊を重ねて、煙の丸い輪郭と内部の陰影を作る。
-// p: -1～1の煙のローカル座標。
-// center: 塊の中心。
-// size: 塊の半径。
-// distance: 現在までの最小距離。
-// lobe: 選ばれた塊内の座標。
-void DustLobe(float2 p, float2 center, float2 size, inout float distance, inout float2 lobe)
+float DustHash(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
+float DustNoise(float2 p)
 {
-    float2 q = (p - center) / size;
-    float d = length(q) - 1.0;
-    if (d < distance) { distance = d; lobe = q; }
+    float2 cell = floor(p);
+    float2 f = frac(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return lerp(lerp(DustHash(cell), DustHash(cell + float2(1, 0)), f.x),
+                lerp(DustHash(cell + float2(0, 1)), DustHash(cell + float2(1, 1)), f.x), f.y);
+}
+float DustDetail(float2 p)
+{
+    return DustNoise(p) * 0.6 + DustNoise(p * 2.07 + 13.7) * 0.28 +
+           DustNoise(p * 4.13 - 7.3) * 0.12;
 }
 float4 main(DustInput input) : SV_TARGET
 {
-    float2 p = input.local;
-    float id = input.puffSeed + seed * 1.7;
-    float jitter = (DustHash(id) - 0.5) * 0.28;
-    // 横に並んだ大小の塊をつなぐ。上へ段積みする形と細い頂点は作らない。
-    p.x *= DustHash(id + 7.0) > 0.5 ? -1.0 : 1.0;
-    float d = 100.0;
-    float2 lobe = 0.0;
-    DustLobe(p, float2(0.0, -0.35), float2(0.86, 0.34), d, lobe);
-    DustLobe(p, float2(-0.59, -0.10 + jitter), float2(0.33, 0.36), d, lobe);
-    DustLobe(p, float2(-0.23, 0.03 + jitter), float2(0.42, 0.43), d, lobe);
-    DustLobe(p, float2(0.26, 0.06 - jitter), float2(0.44, 0.40), d, lobe);
-    DustLobe(p, float2(0.62, -0.17), float2(0.30, 0.31), d, lobe);
-    if (DustHash(id + 3.1) > 0.65) {
-        // 少数の煙だけを横へ巻き上げる。小さな球を縦に連結しない。
-        DustLobe(p, float2(0.56, 0.20), float2(0.20, 0.30), d, lobe);
+    float2 offsetXZ = input.worldPosition.xz - origin.xz;
+    float angle = atan2(offsetXZ.y, offsetXZ.x);
+    float warm = 0.5 + 0.5 * sin(angle + seed * 0.3);
+    float3 warmTint = float3(1.0, lerp(0.42, 1.0, warm), lerp(0.35, 0.8, warm));
+    // 白や青などの指定色は保ち、赤・橙系のときだけ参考画像の暖色差を強める。
+    float warmAmount = saturate((colorRGB.r - max(colorRGB.g, colorRGB.b)) * 3.0);
+    float3 tint = lerp(float3(1, 1, 1), warmTint, warmAmount);
+    float3 color = saturate(colorRGB * tint * 1.35);
+    float alpha;
+    if (input.puffData.y > 0.5) {
+        // 地面を走る柔らかい帯。内外の端だけをぼかし、輪のつながりを残す。
+        float across = input.local.y * 2.0 - 1.0;
+        float2 circle = float2(cos(input.local.x * 6.2831853), sin(input.local.x * 6.2831853));
+        float noise = DustDetail(circle * 6.0 + elapsed * 0.35 + seed);
+        float band = 1.0 - smoothstep(0.28, 1.0, abs(across + (noise - 0.5) * 0.20));
+        float core = 1.0 - smoothstep(0.0, 0.45, abs(across));
+        alpha = band * (0.72 + noise * 0.28);
+        color = saturate(color * (1.0 + core * 0.28));
+    } else {
+        // 煙を塗りつぶさず、ノイズの細い稜線を崩した破片として残す。
+        float2 p = float2(input.local.x * 2.0 - 1.0, 1.0 - input.local.y * 2.0);
+        float id = input.puffData.x + seed * 1.7;
+        float2 curl = p + float2(sin(p.y * 4.0 + id), cos(p.x * 4.5 - id)) * 0.20;
+        float noise = DustDetail(curl * 3.8 + float2(id * 2.3, -elapsed * 0.7));
+        float fine = DustNoise(curl * 10.0 + id - elapsed * 0.3);
+        float ridges = 1.0 - smoothstep(0.07, 0.20, abs(noise - 0.51));
+        float breakup = smoothstep(0.35, 0.62, fine);
+        float silhouette = 1.0 - smoothstep(0.55, 1.0, length(float2(p.x, p.y * 1.08)));
+        float top = 1.0 - smoothstep(0.15, 1.0, p.y);
+        alpha = ridges * breakup * silhouette * top * 0.82;
+        color *= 0.72 + noise * 0.28;
     }
-    float detail = sin(p.x * 12.0 + id) * sin(p.y * 10.0 - elapsed * 1.5);
-    d += detail * 0.035;
-    // 外周を少し広めにぼかし、硬い固形物ではなく薄い土煙にする。
-    float aa = max(fwidth(d), 0.055);
-    float alpha = (1.0 - smoothstep(-aa, aa, d)) * saturate(opacity);
-    float density = 0.76 + 0.18 * sin(p.x * 3.0 + id) * sin(p.y * 4.0 - elapsed * 0.8);
-    alpha *= density * smoothstep(0.0, 0.045, elapsed);
+    alpha *= saturate(opacity) * smoothstep(0.0, 0.045, elapsed);
     if (clearProgress >= 0.0) {
-        // 実際の地面上の距離で消すので、手前・奥の煙も中心から外周へ消える。
-        float r = length(input.worldPosition.xz - origin.xz) / max(radius, 0.001);
+        float r = length(offsetXZ) / max(radius, 0.001);
         float clearRadius = clearProgress * 1.45;
         alpha *= smoothstep(clearRadius - 0.08, clearRadius + 0.06, r);
     }
-    // 塊ごとの丸い段差には影を付けず、煙全体に連続した明暗を付ける。
-    // 灰色の帯が何段も重なって見えるのを防ぐ。
-    float light = 0.80 + 0.20 * smoothstep(-0.55, 0.35, p.y);
-    light += detail * 0.025;
-    float3 color = saturate(colorRGB * light);
-    // 乗算済みαで背景を隠し、灰色の影を残す。加算で白飛びさせない。
+    // 乗算済みα合成。中央を透明に保ち、輪と破片だけを地面へ重ねる。
     return float4(color * alpha, alpha);
 }

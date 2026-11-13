@@ -1,11 +1,11 @@
 # 中心から周囲へ広がる土埃
 
-`DustBurstActor : EffectBase` が、地面のXZ方向へ20個の丸い煙を広げます。
-内側の低い煙と、外側へ巻く横長の大きな煙で、中心が抜ける土埃を作ります。
-塊を縦に積まず、段状の影と尖った頂点を使わない、薄い煙の輪郭にしています。
-基本色は薄い砂色です。`0xffffff`なら参考画像に近い白・灰色になります。
-煙は半透明の乗算済みα合成です。加算発光は使わず、下側の灰色と丸い塊の陰影を残します。
-各煙はVSで画面へ正対させます。地面に沿って広がる中心の配置はカメラを回しても変わりません。
+`DustBurstActor : EffectBase` が、地面を広がる太い輪と、その内側・周囲を舞う20個の細かな砂煙を描きます。
+地面の輪は64分割の円形メッシュで、カメラに合わせて回転しません。
+砂煙は穴のあいたノイズの破片として描き、丸い塊を塗りつぶす形を使いません。
+基本色は参考画像に合わせた橙色です。角度に応じて赤寄り・黄寄りの明るさを付けます。
+`SetColor()`で白、砂色、別の色へ変えることもできます。
+輪は内外の端を柔らかくぼかし、砂煙は画面へ正対させて幅を保ちます。
 
 ```cpp
 #include "../../Object/Common/Effect/DustBurstActor.h"
@@ -17,7 +17,7 @@ settings.height = 100.0f;         // 巻き上がる高さの基準
 settings.durationSeconds = 1.0f;  // 消滅演出を含む寿命。0なら無期限
 settings.stopSeconds = 0.3f;      // 中心から外周へ消える時間
 settings.opacity = 0.9f;          // 不透明度（0～1）
-settings.color = 0xffffff;        // 白い煙。砂色なら0xeee6d7など
+settings.color = 0xffa04a;        // 参考画像に近い橙。砂色なら0xbca078など
 settings.seed = 1.0f;             // 形・配置のシード
 
 auto* dust = new DustBurstActor(groundPosition, settings);
@@ -57,11 +57,13 @@ dust->Restart();          // 出現・消滅状態と時間を戻して再利用
 
 - シェーダーは`Project/Src/Shader/DustBurst/`に配置しています。
 - `DustBurstShader : ShaderBase`は`ShaderResourceManager`の共有VS/PSを初回Init時だけロードします。
-- 各アクターは48バイトの個別定数バッファを持ちます。テクスチャは使いません。
+- 既存のDustBurstActorとVS/PSを変更し、DustBurstShaderの共有ハンドルと定数バッファをそのまま利用します。別のエフェクトや管理クラスは追加していません。
+- 各アクターは既存と同じ48バイトの個別定数バッファを持ちます。テクスチャは使いません。
+- VS/PSへ渡す描画モードが変わるため、C++とDustBurstVS/PS.hlslを一緒にリビルドしてください。
 - `Project.vcxproj`とfiltersへC++/HLSLを登録済みです。
 - VS/PSは`main` / Shader Model 5.0、出力先は`Data/Shader/DustBurstVS.cso`と`DustBurstPS.cso`です。
 - プル後はVisual Studioでリビルドしてください。C++はUTF-8 BOM付き、HLSLはBOMなしです。
-- 深度判定は有効、煙の深度書き込みは無効です。煙の塊は奥から順に描画します。
+- 深度判定は有効、深度書き込みは無効です。床とのちらつきを避けて輪を少し上に置き、輪→奥から並べた砂煙の順に描画します。
 - 壁と交差する部分のソフトパーティクル処理、当たり判定、ダメージ処理は含みません。
 
 Windows / Visual Studio / DxLibでのゲーム内表示確認は別途必要です。

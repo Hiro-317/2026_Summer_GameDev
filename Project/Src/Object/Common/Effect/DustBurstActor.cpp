@@ -119,21 +119,25 @@ void DustBurstActor::SubDraw(void)
         const float random = DustRandom(id + settings.seed * 3.7f);
         const float angle = twoPi * (outer ? id / 12.0f : (id - 12.0f) / 8.0f + 0.04f) +
             (random - 0.5f) * 0.32f;
-        const float speed = outer ? 0.72f + random * 0.28f : 0.30f + random * 0.22f;
+        const float speed = outer ? 0.72f + random * 0.22f : 0.44f + random * 0.23f;
         const float reach = settings.radius * expansion * speed;
         auto& puff = puffs[i];
-        // 低く横へ重ね、同じ高さの山が並ぶ見た目を避ける。
-        puff.width = settings.radius * (outer ? 0.30f : 0.23f) * swelling * (0.85f + random * 0.3f);
-        puff.height = settings.height * (outer ? 0.42f : 0.24f) * swelling * (0.85f + random * 0.3f);
+        // 外周近くの背の高い破片と、内側の低い破片を重ねる。
+        puff.width = settings.radius * (outer ? 0.27f : 0.20f) * swelling * (0.85f + random * 0.3f);
+        puff.height = settings.height * (outer ? 0.40f : 0.28f) * swelling * (0.85f + random * 0.3f);
         puff.center = trans.pos + Vector3(std::cos(angle) * reach,
-            puff.height * 0.55f + settings.height * 0.055f * t, std::sin(angle) * reach);
+            puff.height * 0.45f + settings.height * 0.08f * t, std::sin(angle) * reach);
         puff.seed = id + settings.seed;
         puff.depth = (puff.center - camera).Dot(front);
     }
     // 不透明な加算ではなく、奥から半透明の煙を重ねる。
     std::sort(puffs.begin(), puffs.end(), [](const Puff& a, const Puff& b) { return a.depth > b.depth; });
-    std::array<VERTEX3DSHADER, puffCount * 4> vertices{};
-    std::array<unsigned short, puffCount * 6> indices{};
+    constexpr int ringSegments = 64;
+    constexpr int ringVertexStart = puffCount * 4;
+    constexpr int vertexCount = ringVertexStart + (ringSegments + 1) * 2;
+    constexpr int indexCount = ringSegments * 6 + puffCount * 6;
+    std::array<VERTEX3DSHADER, vertexCount> vertices{};
+    std::array<unsigned short, indexCount> indices{};
     const float corners[4][2] = {{-1, 1}, {1, 1}, {-1, -1}, {1, -1}};
     for (int i = 0; i < puffCount; ++i) {
         const auto& puff = puffs[i];
@@ -150,8 +154,36 @@ void DustBurstActor::SubDraw(void)
         const unsigned short b = static_cast<unsigned short>(i * 4);
         const unsigned short face[6] = {b, static_cast<unsigned short>(b+1), static_cast<unsigned short>(b+2),
             static_cast<unsigned short>(b+1), static_cast<unsigned short>(b+3), static_cast<unsigned short>(b+2)};
-        std::copy(face, face + 6, indices.begin() + i * 6);
+        std::copy(face, face + 6, indices.begin() + ringSegments * 6 + i * 6);
     }
+    // 床上の輪はワールド座標で作る。カメラへ向けず、地面に沿う円を保つ。
+    const float ringRadius = settings.radius * expansion;
+    const float halfWidth = settings.radius * 0.11f * swelling;
+    const float innerRadius = (std::max)(ringRadius - halfWidth, 0.0f);
+    const float outerRadius = ringRadius + halfWidth;
+    const float groundY = trans.pos.y + settings.radius * 0.012f;
+    for (int segment = 0; segment <= ringSegments; ++segment) {
+        const float u = static_cast<float>(segment) / ringSegments;
+        const float angle = twoPi * u;
+        for (int edge = 0; edge < 2; ++edge) {
+            auto& v = vertices[ringVertexStart + segment * 2 + edge];
+            const float r = edge == 0 ? innerRadius : outerRadius;
+            v.pos = VGet(trans.pos.x + std::cos(angle) * r, groundY,
+                         trans.pos.z + std::sin(angle) * r);
+            v.norm = VGet(settings.seed, 1.0f, 0.0f); // y=1は地面の輪。su/svは0のまま。
+            v.dif = GetColorU8(255, 255, 255, 255);
+            v.u = u;
+            v.v = static_cast<float>(edge);
+        }
+    }
+    for (int segment = 0; segment < ringSegments; ++segment) {
+        const unsigned short a = static_cast<unsigned short>(ringVertexStart + segment * 2);
+        const unsigned short b = a + 2;
+        const int i = segment * 6;
+        indices[i] = a; indices[i+1] = b; indices[i+2] = a + 1;
+        indices[i+3] = a + 1; indices[i+4] = b; indices[i+5] = b + 1;
+    }
+    // インデックスは輪→奥から並べた砂煙の順。煙が輪の上へ重なるようにする。
     int blend = 0, blendValue = 0;
     GetDrawBlendMode(&blend, &blendValue);
     const int culling = GetUseBackCulling();
@@ -159,7 +191,7 @@ void DustBurstActor::SubDraw(void)
     SetUseBackCulling(DX_CULLING_NONE);
     SetUseZBuffer3D(true);
     SetWriteZBuffer3D(false);
-    DrawPolygonIndexed3DToShader(vertices.data(), static_cast<int>(vertices.size()), indices.data(), puffCount * 2);
+    DrawPolygonIndexed3DToShader(vertices.data(), static_cast<int>(vertices.size()), indices.data(), indexCount / 3);
     SetWriteZBuffer3D(true);
     SetUseBackCulling(culling);
     SetDrawBlendMode(blend, blendValue);
