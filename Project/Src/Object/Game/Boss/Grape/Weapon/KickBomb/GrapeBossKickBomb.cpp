@@ -41,7 +41,7 @@ GrapeBossKickBomb::GrapeBossKickBomb(int model, int front, int back)
 
 void GrapeBossKickBomb::Load(const CharacterStats& stats)
 {
-	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(75, &stats));
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(80, &stats));
 
 	collBack.scale = Vector3::XZonly(ATTACK_RANGE / MODEL_RADIUS, ATTACK_RANGE / MODEL_RADIUS);
 	collFront.scale = Vector3(0.0f);

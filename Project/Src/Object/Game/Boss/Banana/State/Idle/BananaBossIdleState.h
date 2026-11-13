@@ -80,12 +80,8 @@ private:
 	const std::function<void(void)> FireChangeState;
 	// バナメランへ
 	const std::function<void(void)> BanamerangChangeState;
-	// 追従へ
+	// バナドリルへ
 	const std::function<void(void)> BanadrillChangeState;
-	// たくさんの追従へ
-	const std::function<void(void)> StalkerChangeState;
-	// ランダムへ
-	const std::function<void(void)> RandomChangeState;
 
 #pragma endregion
 
@@ -95,12 +91,9 @@ private:
 	static constexpr int RANDOM = 10000;
 
 	// それぞれの確率
-	static constexpr int KICKDOWN_LUCK = 4000;
-	static constexpr int STRAIGHT_LUCK = 6000;
-	static constexpr int STAMP_LUCK = 6000;
-	static constexpr int SINGLE_LUCK = 9000;
-	static constexpr int STALKER_LUCK = 11000;
-	static constexpr int RELOOT_LUCK = 4500;
+	static constexpr int SCRATCH_LUCK = 4000;
+	static constexpr int BREATH_LUCK = 7000;
+	static constexpr int BANAMERANG_LUCK = 9000;
 
 	// 移動に移る距離
 	static constexpr float DISTANCE = 400.0f;

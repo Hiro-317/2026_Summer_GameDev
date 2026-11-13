@@ -26,18 +26,14 @@ private:
 
 	// UŒ‚``````````````````````````````````````````````
 
-	// ‚©‚©‚Æ—‚Æ‚µ‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	// ‚Ğ‚Á‚©‚«‚ÌƒN[ƒ‹ƒ^ƒCƒ€
 	const int SCRATCH_COOLTIME = GetParameterToInt("Attack", "ScratchCoolTime");
-	//// ’¼ü“Š±‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	//const int STRAIGHT_COOLTIME = GetParameterToInt("Attack", "StraightCoolTime");
-	//// ƒXƒ^ƒ“ƒvUŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	//const int STAMP_COOLTIME = GetParameterToInt("Attack", "StampCoolTime");
-	//// ˆê‚Â‚ÌUŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	//const int SINGLE_COOLTIME = GetParameterToInt("Attack", "SingleCoolTime");
-	//// ’Ç]UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	//const int STALKER_COOLTIME = GetParameterToInt("Attack", "StalkerCoolTime");
-	//// ƒ‰ƒ“ƒ_ƒ€UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	//const int RANDOM_COOLTIME = GetParameterToInt("Attack", "RandomCoolTime");
+	// ƒuƒŒƒX‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int BREATH_COOLTIME = GetParameterToInt("Attack", "BreathCoolTime");
+	// ƒoƒiƒƒ‰ƒ“‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int BANAMERANG_COOLTIME = GetParameterToInt("Attack", "BanamerangCoolTime");
+	// ƒoƒiƒhƒŠƒ‹‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	const int BANADRILL_COOLTIME = GetParameterToInt("Attack", "BanadrillCoolTime");
 
 	// ``````````````````````````````````````````````UŒ‚
 

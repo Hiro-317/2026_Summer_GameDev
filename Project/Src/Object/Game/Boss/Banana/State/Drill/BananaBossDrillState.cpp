@@ -44,7 +44,9 @@ void BananaBossDrillState::Update(void)
 	if (!Invisible()) {
 		if (cnt == 0) {
 			if (scene != nullptr) {
-				scene->SetFocus(false);
+				if (tmpFlg) {
+					scene->SetFocus(false);
+				}
 				scene->FocusLock(false);
 			}
 		}
@@ -57,7 +59,10 @@ void BananaBossDrillState::Update(void)
 		if (drills->GetEnd()) {
 			SwitchInvisible();
 			scene->FocusLock(true);
-			scene->SetFocus(tmpFlg);
+			if (tmpFlg) {
+				scene->SetFocus(true);
+				tmpFlg = false;
+			}
 		}
 	}
 	else {
@@ -65,8 +70,10 @@ void BananaBossDrillState::Update(void)
 			pos.y += UP;
 			if (pos.y > SWITCH_POS) {
 				SwitchInvisible();
-				tmpFlg = scene->GetFocus();
 				pos.y = -SWITCH_POS;
+				if (scene->GetFocus()) {
+					tmpFlg = true;
+				}
 			}
 		}
 		if (defaultPos.y > pos.y) {

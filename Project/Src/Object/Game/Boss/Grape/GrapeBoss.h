@@ -128,7 +128,7 @@ private:
 	Vector3 moveDir;
 
 	// 攻撃のクールタイム
-	float coolTime;
+	int coolTime;
 
 	// ゲームクリア時のカウントダウン
 	int gameOverCnt;

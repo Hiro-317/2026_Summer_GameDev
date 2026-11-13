@@ -33,7 +33,7 @@ GrapeBossStraight::GrapeBossStraight(int model, int front, int back)
 
 void GrapeBossStraight::Load(const CharacterStats& stats)
 {
-	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(50, &stats));
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(80, &stats));
 
 	collBack.scale = Vector3::XZonly(ATTACK_SIZE, ATTACK_SIZE);
 	collFront.scale = Vector3::Zonly(ATTACK_SIZE);

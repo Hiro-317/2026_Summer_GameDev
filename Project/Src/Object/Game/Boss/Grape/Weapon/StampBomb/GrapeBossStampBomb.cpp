@@ -41,7 +41,7 @@ GrapeBossStampBomb::GrapeBossStampBomb(int model, int front, int back)
 
 void GrapeBossStampBomb::Load(const CharacterStats& stats)
 {
-	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(75, &stats));
+	ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetSkillStats(new SkillStats(80, &stats));
 
 	const float ATTACK_RANGE = this->ATTACK_RANGE / this->MODEL_RADIUS;
 	collBack.scale = Vector3::XZonly(ATTACK_RANGE, ATTACK_RANGE);

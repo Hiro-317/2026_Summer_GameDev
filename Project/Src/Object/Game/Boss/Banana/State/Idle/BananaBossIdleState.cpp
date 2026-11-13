@@ -11,9 +11,7 @@ BananaBossIdleState::BananaBossIdleState(
 	const std::function<void(void)> ScratchChangeState,
 	const std::function<void(void)> FireChangeState,
 	const std::function<void(void)> BanamerangChangeState,
-	const std::function<void(void)> BanadrillChangeState/*,
-	const std::function<void(void)> StalkerChangeState,
-	const std::function<void(void)> RandomChangeState*/
+	const std::function<void(void)> BanadrillChangeState
 )
 	:CharacterStateBase(),
 	pos(pos), rotation(rotation),
@@ -25,8 +23,6 @@ BananaBossIdleState::BananaBossIdleState(
 	FireChangeState(FireChangeState),
 	BanamerangChangeState(BanamerangChangeState),
 	BanadrillChangeState(BanadrillChangeState),
-	/*StalkerChangeState(StalkerChangeState),
-	RandomChangeState(RandomChangeState),*/
 	cnt(0), target(0), angleFlg(true)
 {
 }
@@ -51,11 +47,14 @@ void BananaBossIdleState::Update(void)
 	float distance = (*playerPos[target] - pos).Length();
 	int luck = GetRand(RANDOM);
 
-	if (luck <= KICKDOWN_LUCK) {
-		BanadrillChangeState();
+	if (luck <= SCRATCH_LUCK) {
+		ScratchChangeState();
 	}
-	else if (luck <= STRAIGHT_LUCK){
-		BanadrillChangeState();
+	else if (luck <= BREATH_LUCK){
+		FireChangeState();
+	}
+	else if (luck <= BREATH_LUCK){
+		BanamerangChangeState();
 	}
 	else {
 		BanadrillChangeState();

@@ -120,7 +120,7 @@ void BananaBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = SCRATCH_COOLTIME; }
+			[&]() { coolTime = BREATH_COOLTIME; }
 		)
 	);
 	AddState(
@@ -142,7 +142,7 @@ void BananaBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = SCRATCH_COOLTIME; }
+			[&]() { coolTime = BANAMERANG_COOLTIME; }
 		)
 	);
 	AddState(
@@ -154,7 +154,7 @@ void BananaBoss::BossLoad(void)
 			[&]() { return GetIsDraw(); },
 			[&]() { SetIsDraw(); },
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = SCRATCH_COOLTIME + 30; }
+			[&]() { coolTime = BANADRILL_COOLTIME; }
 		)
 	);
 
