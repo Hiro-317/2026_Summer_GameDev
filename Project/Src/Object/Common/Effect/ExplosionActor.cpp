@@ -9,24 +9,20 @@ ExplosionActor::ExplosionActor(const Vector3& position, float radius,
     float durationSeconds, float intensity, float seed, unsigned int color) :
     EffectBase(durationSeconds), radius(radius), intensity(intensity), seed(seed),
     color(color & 0xffffff),
-    explosionShader(nullptr),
-    position(position)
+    explosionShader(nullptr)
 {
     if (!std::isfinite(radius) || radius <= 0.0f ||
         !std::isfinite(intensity) || intensity < 0.0f || !std::isfinite(seed)) {
         throw std::invalid_argument("Invalid purple explosion parameters");
     }
+    // 一時変数への参照を保持しない。再生時の着弾位置は呼び出し側がSetPosで指定する。
+    SetPos(position);
 }
 
 void ExplosionActor::DefaultCreateShader(void)
 {
     explosionShader = new ExplosionShader(GetDurationSeconds(), intensity, seed, color);
     CreateShader(explosionShader);
-}
-
-void ExplosionActor::SubUpdate(void)
-{
-    SetPos(position);
 }
 
 void ExplosionActor::Draw(void)

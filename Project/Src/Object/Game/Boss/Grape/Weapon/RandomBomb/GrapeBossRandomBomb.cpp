@@ -1,4 +1,4 @@
-#include "GrapeBossRandomBomb.h"
+ï»¿#include "GrapeBossRandomBomb.h"
 
 #include "../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../Common/Collider/XZCircleCollider.h"
@@ -10,7 +10,7 @@ GrapeBossRandomBomb::GrapeBossRandomBomb(int model, int front, int back)
 {
 	SetPushFlg(true);
 
-	// “–‚½‚è”»’è‚ð¶¬‚·‚éiXZƒRƒ‰ƒCƒ_[j
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ç”Ÿæˆã™ã‚‹ï¼ˆXZã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ï¼‰
 	AddCollider(
 		new XZCircleCollider(
 			COLLIDER_TAG::BossAttack,
@@ -19,7 +19,7 @@ GrapeBossRandomBomb::GrapeBossRandomBomb(int model, int front, int back)
 		)
 	);
 
-	// “–‚½‚è”»’è‚ð¶¬‚·‚éi‹…‘ÌƒRƒ‰ƒCƒ_[j
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ç”Ÿæˆã™ã‚‹ï¼ˆçƒä½“ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ï¼‰
 	AddCollider(
 		new SphereCollider(
 			COLLIDER_TAG::BossAttackArea,
@@ -49,35 +49,34 @@ void GrapeBossRandomBomb::Load(const CharacterStats& stats)
 
 void GrapeBossRandomBomb::SubUpdate(void)
 {
-	// ’n–Ê‚É‚Â‚¢‚Ä‚È‚¢‚È‚ç‰Á‘¬‚µ‚Ä—Ž‚¿‚é
+	// åœ°é¢ã«ã¤ã„ã¦ãªã„ãªã‚‰åŠ é€Ÿã—ã¦è½ã¡ã‚‹
 	if (!isGround) {
 
 		trans.pos.y -= 8.0f;
 	}
-	// ‚Â‚¢‚Ä‚é‚È‚ç”š”­ƒJƒEƒ“ƒg‚ði‚ß‚é
+	// ã¤ã„ã¦ã‚‹ãªã‚‰çˆ†ç™ºã‚«ã‚¦ãƒ³ãƒˆã‚’é€²ã‚ã‚‹
 	else {
-		// ‘OƒtƒŒ[ƒ€‚Ì”»’è‚ªŽc‚Á‚Ä‚é‚Ì‚Å
-		// ‚»‚ê–hŽ~‚É
-		// ŠJŽn‚³‚ê‚½ƒtƒŒ[ƒ€‚ÌŒŸ’m
+		// å‰ãƒ•ãƒ¬ãƒ¼ãƒ ã®åˆ¤å®šãŒæ®‹ã£ã¦ã‚‹ã®ã§
+		// ãã‚Œé˜²æ­¢ã«
+		// é–‹å§‹ã•ã‚ŒãŸãƒ•ãƒ¬ãƒ¼ãƒ ã®æ¤œçŸ¥
 		if (!now) {
-			// ¡ŠJŽn‚³‚ê‚½‚çƒtƒ‰ƒO‚ð—§‚Ä‚é
+			// ä»Šé–‹å§‹ã•ã‚ŒãŸã‚‰ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 			now = true;
-			// ‚Ù‚ñ‚Æ‚Í‚Â‚¢‚Ä‚È‚¢‚Ì‚Å—Ž‰º
+			// ã»ã‚“ã¨ã¯ã¤ã„ã¦ãªã„ã®ã§è½ä¸‹
 			trans.pos.y -= 8.0f;
 			return;
 		}
 		count++;
-		// ƒJƒEƒ“ƒg‚É‰ž‚¶‚Äó‘Ô‚ð•Ï‚¦‚é
+		// ã‚«ã‚¦ãƒ³ãƒˆã«å¿œã˜ã¦çŠ¶æ…‹ã‚’å¤‰ãˆã‚‹
 		if (BOMBER_COUNT >= count) {
 
 			SetViewScaleCircle((ATTACK_RANGE / MODEL_RADIUS) * (count / BOMBER_COUNT));
 		}
-		// UŒ‚”»’èƒIƒ“
+		// æ”»æ’ƒåˆ¤å®šã‚ªãƒ³
 		else if ((BOMBER_COUNT + ATTACK_DURATION) >= count) {
-			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true);
-			insRef->Play();
+			BeginExplosionAttack();
 		}
-		//UŒ‚”»’èƒIƒtAI‚í‚è
+		//æ”»æ’ƒåˆ¤å®šã‚ªãƒ•ã€çµ‚ã‚ã‚Š
 		else {
 			ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(false);
 			end = true;

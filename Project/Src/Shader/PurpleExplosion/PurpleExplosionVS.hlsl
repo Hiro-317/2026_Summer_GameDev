@@ -4,10 +4,20 @@
 
 // DxLibのVERTEX3DSHADERから使う頂点属性を直接定義する。
 // 条件付きインクルードのVS_INPUT別名に依存せず、エディターでも型を解決できるようにする。
+// DxLibの固定入力レイアウトと同じ9要素・同じ順番を必ず宣言する。
+// 未使用項目を省くと、固定レイアウトのUV入力位置とシェーダー側のレジスターがずれる。
+// POSITION0=v0、TEXCOORD0=v7、TEXCOORD1=v8。使わない値も削除しないこと。
 struct PurpleExplosionVertexInput
 {
     float3 positionWS : POSITION0;
+    float4 sparePosition : POSITION1;
+    float3 normal : NORMAL0;
+    float3 tangent : TANGENT0;
+    float3 binormal : BINORMAL0;
+    float4 diffuse : COLOR0;
+    float4 specular : COLOR1;
     float2 uv : TEXCOORD0;
+    float2 drawParameters : TEXCOORD1;
 };
 
 struct ExplosionOutput

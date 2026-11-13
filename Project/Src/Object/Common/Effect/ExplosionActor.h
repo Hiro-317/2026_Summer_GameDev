@@ -15,7 +15,7 @@ public:
     /// <summary>
     /// 指定した位置・大きさ・色で爆発アクターを生成する。
     /// </summary>
-    /// <param name="position">爆発の中心（ワールド座標）。</param>
+    /// <param name="position">爆発の中心（ワールド座標）。値をコピーして保持し、参照先には追従しない。</param>
     /// <param name="radius">最大半径（ワールド単位、0より大きい値）。</param>
     /// <param name="durationSeconds">寿命（秒）。正の値で自動終了、0.0fでStopするまで無期限。負値・NaN・無限大は指定不可。</param>
     /// <param name="intensity">発光の強さ（0以上）。1.0fが基準、2.0fで明るく、0.0fで発光なし。</param>
@@ -53,11 +53,9 @@ public:
 
 private:
     void DefaultCreateShader(void) override;
-    void SubUpdate(void) override;
     void SubDraw(void) override;
     void SubRelease(void) override;
 
-    const Vector3& position;
     float radius;
     float intensity;
     float seed;

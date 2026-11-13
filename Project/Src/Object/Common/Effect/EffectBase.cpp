@@ -35,21 +35,23 @@ void EffectBase::BaseUpdate(void)
     elapsedSeconds += (1.0f / 60.0f) * TimeScale::Get();
     // 無期限の場合も時間は進め、ノイズなどのアニメーションを継続する。
     if (!IsInfinite() && elapsedSeconds >= durationSeconds) {
-        elapsedSeconds = 0.0f;
+        // 終了時は寿命の値で止め、再生を開始するまで0へ戻さない。
+        elapsedSeconds = durationSeconds;
         Stop();
     }
 }
 
 void EffectBase::Play(void)
 {
-    finished = false;
-    SetIsDraw(true);
+    // Playは「一度の再生開始」。呼び出し側はイベントの発生時に一度だけ呼ぶ。
+    Restart();
 }
 
 void EffectBase::Restart(void)
 {
     elapsedSeconds = 0.0f;
-    Play();
+    finished = false;
+    SetIsDraw(true);
 }
 
 void EffectBase::Stop(void)
