@@ -1,4 +1,4 @@
-#include "DamageFlashPostEffect.h"
+﻿#include "DamageFlashPostEffect.h"
 
 #include <algorithm>
 

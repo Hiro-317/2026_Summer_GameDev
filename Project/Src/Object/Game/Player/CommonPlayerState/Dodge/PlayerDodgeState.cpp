@@ -1,5 +1,7 @@
 #include "PlayerDodgeState.h"
 
+#include "../../../../Common/CharacterBase/CharacterStatsDefine.h"
+
 #include "../../../../../Common/Vector3.h"
 #include "../../../../../Common/Quaternion.h"
 
@@ -7,6 +9,8 @@
 
 PlayerDodgeState::PlayerDodgeState(
 	KEY_TYPE DODGE_KEY,
+	const CharacterStats& stats,
+	float& ACCEL_MAX,
 	
 	int COOL_TIME,
 
@@ -28,6 +32,9 @@ PlayerDodgeState::PlayerDodgeState(
 
 	INVI_START_TIME(INVI_START_TIME),
 	INVI_END_TIME(INVI_END_TIME),
+
+	stats(stats),
+	ACCEL_MAX(ACCEL_MAX),
 
 	rotation(rotation),
 
@@ -70,6 +77,10 @@ void PlayerDodgeState::Enter(void)
 
 void PlayerDodgeState::Update(void)
 {
+	// 移動速度の補正を毎フレーム反映し、直前のダッシュ速度を引き継がない。
+	const float moveSpeed = static_cast<float>(stats.speedPower.Value());
+	ACCEL_MAX = moveSpeed;
+
 	// アニメーションの再生割合を取得
 	const float animeRatio = getAnimePlayRatio();
 
@@ -79,11 +90,8 @@ void PlayerDodgeState::Update(void)
 	case STEP::Startup: {
 		// 前隙
 
-		// 移動ベクトル
-		Vector3 moveVec = {};
-
-		// 回避の移動処理
-		moveAccel(rotation.Rotate(Vector3::Zonly(1.0f)));
+		// 現在の移動速度に比例した加速量で、正面へ回避する。
+		moveAccel(rotation.Rotate(Vector3::Zonly(moveSpeed * 0.5f)));
 
 		// 無敵判定発生開始
 		if (INVI_START_TIME <= animeRatio) {

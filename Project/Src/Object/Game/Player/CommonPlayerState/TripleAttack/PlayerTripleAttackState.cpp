@@ -88,7 +88,7 @@ void PlayerTripleAttackState::Enter(void)
 	collOperator.ResetIsHit();
 
 	// 次段に繋がるまでのカウンターをセットする
-	attackNextStageContinueTimeCounter = ATTACK_NEXT_STAGE_CONTINUE_TIME;
+	attackNextStageContinueTimeCounter = static_cast<float>(ATTACK_NEXT_STAGE_CONTINUE_TIME);
 
 	// 攻撃段数に応じた攻撃アニメーションを再生する
 	playAttackAnimes[(int)attackStage]();

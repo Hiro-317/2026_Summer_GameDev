@@ -155,5 +155,5 @@ void BossSelectScene::CreateCamera(void)
 		0.0f
 	);
 
-	camera->StartEvent(new LookAtCameraEvent(ActorSerch<BossSelectSkyShip>(actors)->GetTrans().pos, Vector3::Zonly(500.0f), INT_MAX));
+	camera->StartEvent(new LookAtCameraEvent(ActorSerch<BossSelectSkyShip>(actors)->GetTrans().pos, Vector3::Zonly(500.0f), static_cast<float>(INT_MAX)));
 }

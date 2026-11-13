@@ -46,7 +46,7 @@ void PlayerStaminaUI::SubDraw()
 		Vector2 drawPos = Vector2(temp.x, temp.y);
 
 		// スタミナの描画
-		DrawRotaGraph(drawPos.x + 100, drawPos.y - 50, 1, 0, images[index], true);
+		DrawRotaGraphF(drawPos.x + 100.0f, drawPos.y - 50.0f, 1, 0, images[index], true);
 	}
 }
 

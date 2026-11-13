@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -71,6 +71,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <TargetName>FruitDefenseForce</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -815,9 +818,11 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   </ImportGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Common\Effect\EffectBase.cpp" />
+    <ClCompile Include="Src\Object\Common\Effect\RushAuraActor.cpp" />
     <ClCompile Include="Src\Object\Common\Effect\ExplosionActor.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\ExplosionShader.cpp" />
     <ClInclude Include="Src\Object\Common\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Object\Common\Effect\RushAuraActor.h" />
     <ClInclude Include="Src\Object\Common\Effect\ExplosionActor.h" />
     <ClInclude Include="Src\Object\Common\Shader\ExplosionShader.h" />
     <None Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
@@ -848,6 +853,76 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
       <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Src\Shader\FlameBreath\FlameBreathPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Shader\RushAuraShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\RushAuraShader.h" />
+    <FxCompile Include="Src\Shader\RushAura\RushAuraVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\RushAura\RushAuraPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\StampDustActor.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\StampDustActor.h" />
+    <ClCompile Include="Src\Object\Common\Shader\StampDustShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\StampDustShader.h" />
+    <FxCompile Include="Src\Shader\StampDust\StampDustVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\StampDust\StampDustPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\SupportParticleActor.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\SupportParticleActor.h" />
+    <ClCompile Include="Src\Object\Common\Shader\SupportParticleShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\SupportParticleShader.h" />
+    <FxCompile Include="Src\Shader\SupportParticle\SupportParticleVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\SupportParticle\SupportParticlePS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Effect\HitSparkActor.cpp" />
+    <ClInclude Include="Src\Object\Common\Effect\HitSparkActor.h" />
+    <ClCompile Include="Src\Object\Common\Shader\HitSparkShader.cpp" />
+    <ClInclude Include="Src\Object\Common\Shader\HitSparkShader.h" />
+    <FxCompile Include="Src\Shader\HitSpark\HitSparkVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>$(ProjectDir)Data\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\HitSpark\HitSparkPS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>

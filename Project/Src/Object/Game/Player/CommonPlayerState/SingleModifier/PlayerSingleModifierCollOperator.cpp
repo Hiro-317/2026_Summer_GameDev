@@ -1,4 +1,5 @@
 #include "PlayerSingleModifierCollOperator.h"
+#include "../../../../Common/Effect/SupportParticleActor.h"
 
 #include "../../../../../Manager/Net/NetWorkManager.h"
 
@@ -16,6 +17,7 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 	const Vector3* const& targetPos,
 
 	const short SKILL_POWER,
+	const unsigned int effectColor,
 	const short SKILL_TIME,
 	const ModifierType MODIFIER_TYPE
 ) :
@@ -27,6 +29,7 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 
 	targetPos(targetPos),
 
+	EFFECT_COLOR(effectColor & 0xffffff),
 	SKILL_POWER(SKILL_POWER),
 	SKILL_TIME(SKILL_TIME),
 	MODIFIER_TYPE(MODIFIER_TYPE),
@@ -35,7 +38,7 @@ PlayerSingleModifierCollOperator::PlayerSingleModifierCollOperator(
 
 	isHit(false),
 
-	targetTrans()
+	effect(nullptr)
 {
 }
 
@@ -76,6 +79,10 @@ void PlayerSingleModifierCollOperator::Load(void)
 
 	// 当たり判定を切る
 	SetJudgeFlg(false);
+
+	// 回復・バフの種類ではなく、生成時に指定した色で同じ演出を使う。
+	effect = new SupportParticleActor(EFFECT_COLOR);
+	AddChildActor(effect);
 }
 
 void PlayerSingleModifierCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -107,12 +114,15 @@ void PlayerSingleModifierCollOperator::SubUpdate(void)
 
 	// 追従
 	trans.pos = *targetPos;
-	targetTrans.pos = *targetPos;
+
 }
 
 void PlayerSingleModifierCollOperator::CollOn(void)
 {
-	if (isHit) { return; }
+	// 毎フレームのCollOn要求では再生し直さず、最初の発動時だけ開始する。
+	if (isHit || GetJudgeFlg() || targetPos == nullptr) { return; }
+	trans.pos = *targetPos;
+	effect->Emit(targetPos);
 
 	// 当たり判定開始
 	SetJudgeFlg(true);

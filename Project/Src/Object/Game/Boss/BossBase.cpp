@@ -1,4 +1,5 @@
 #include "BossBase.h"
+#include "../../Common/Effect/HitSparkActor.h"
 
 #include "../../../Manager/Net/NetWorkManager.h"
 #include "../../../Manager/Font/FontManager.h"
@@ -126,6 +127,26 @@ void BossBase::Load(void)
 	hitUiRef = new HitUI();
 	AddChildActor(hitUiRef);
 #pragma endregion
+    // 衝突中にnew/deleteやActor配列の変更を行わず、事前生成した演出を使う。
+    for (std::size_t i = 0; i < hitEffects.size(); ++i) {
+        hitEffects[i] = new HitSparkActor(static_cast<float>(i) + 1.0f);
+        AddChildActor(hitEffects[i]);
+    }
+}
+
+void BossBase::PlayHitEffect(const Vector3& point, bool critical)
+{
+    // 空いている演出を優先し、全て再生中の場合のみ最も古い枠を再利用する。
+    for (std::size_t offset = 0; offset < hitEffects.size(); ++offset) {
+        const std::size_t index = (nextHitEffect + offset) % hitEffects.size();
+        if (hitEffects[index]->IsFinished()) {
+            hitEffects[index]->Emit(point, critical);
+            nextHitEffect = (index + 1) % hitEffects.size();
+            return;
+        }
+    }
+    hitEffects[nextHitEffect]->Emit(point, critical);
+    nextHitEffect = (nextHitEffect + 1) % hitEffects.size();
 }
 
 void BossBase::SubInit(void)
@@ -202,6 +223,9 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
+
+			// 攻撃者や致死ダメージかどうかに関係なく、衝突点で一度再生する。
+			PlayHitEffect(result.point, isClitical);
 
 			// ダメージ情報を送信する
 			Net::GetIns().Send(MsgDataBossHit(damage, isClitical, other.GetActor()->GetControlSenderId(), result.point));
@@ -293,6 +317,9 @@ void BossBase::ReceptionUpdate(void)
 
 		// HPを減らす
 		characterStats.hp -= dataPtr->damage;
+
+		// 既存のヒット通知に含まれる衝突点を使い、受信側でも同じ演出を出す。
+		PlayHitEffect(dataPtr->collisionPoint, dataPtr->clitical);
 
 		// このPCの操作権プレイヤーによるダメージなら演出
 		if (dataPtr->controlSenderId == Net::GetIns().GetSenderId()) {

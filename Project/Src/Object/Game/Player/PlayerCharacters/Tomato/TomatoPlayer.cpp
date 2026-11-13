@@ -1,4 +1,6 @@
 #include "TomatoPlayer.h"
+#include "../../../../Common/Effect/RushAuraActor.h"
+#include "../../../../Common/Effect/StampDustActor.h"
 
 #include "../../../../../Manager/TimeScale/TimeScale.h"
 
@@ -102,7 +104,7 @@ void TomatoPlayer::PlayerLoad(void)
 		new TomatoPlayerMoveState(
 			characterStats,
 			1.5f,
-			100,
+			static_cast<short>(GetParameterToInt("Move", "DashStaminaMax")),
 			std::bind(&TomatoPlayer::MoveRollingAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
 			trans,
@@ -130,6 +132,10 @@ void TomatoPlayer::PlayerLoad(void)
 		)
 	);
 
+	// 突進中だけ再生する赤いオーラ。所有権はプレイヤーへ渡す。
+	auto* tackleAura = new RushAuraActor(trans, MODEL_SIZE.x * 0.7f, MODEL_SIZE.x * 3.5f);
+	AddChildActor(tackleAura);
+
 	// スキル2
 	AddState(
 		STATE::SKILL_2,
@@ -138,6 +144,7 @@ void TomatoPlayer::PlayerLoad(void)
 			*tackleCollOperatorRef,
 			// 座標 / 角度と、チャージ中に止める通常移動の慣性。
 			trans,
+			*tackleAura,
 			velocity,
 			TACKLE_SPEED,
 			ROTATION_POW,
@@ -154,12 +161,17 @@ void TomatoPlayer::PlayerLoad(void)
 		)
 	);
 
+	// 接地後はプレイヤーから独立して最後まで再生する。
+	auto* stampDust = new StampDustActor(300.0f, MODEL_SIZE.y * 0.5f);
+	AddChildActor(stampDust);
+
 	AddState(
 		STATE::SKILL_3,
 		new TomatoPlayerStampState(
 			trans,
 			// スタンプ攻撃の当たり判定発生管理用クラス
 			*stampCollOperatorRef,
+			*stampDust,
 			std::bind(&TomatoPlayer::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
 			velocity,
@@ -252,7 +264,7 @@ void TomatoPlayer::PlayerLoad(void)
 		// スタミナUIの登録
 		AddChildActor(
 			new PlayerStaminaUI(
-				GetParameter("Move", "DashStaminaMax"),
+				static_cast<short>(GetParameterToInt("Move", "DashStaminaMax")),
 				dynamic_cast<TomatoPlayerMoveState*>(&GetStateIns(STATE::MOVE))->GetDashStamina(),
 				trans.pos
 			)

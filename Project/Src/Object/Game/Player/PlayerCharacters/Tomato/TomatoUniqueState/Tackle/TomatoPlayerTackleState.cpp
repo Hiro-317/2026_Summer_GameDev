@@ -1,4 +1,5 @@
 #include "TomatoPlayerTackleState.h"
+#include "../../../../../../Common/Effect/RushAuraActor.h"
 
 #include <algorithm>
 #include <cmath>
@@ -12,6 +13,7 @@
 TomatoPlayerTackleState::TomatoPlayerTackleState(
     PlayerSimpleAttackCollOperator& collOperator,
     Transform& playerTrans,
+    RushAuraActor& aura,
     Vector3& velocity,
     float moveSpeed,
     float rotationPower,
@@ -26,6 +28,7 @@ TomatoPlayerTackleState::TomatoPlayerTackleState(
     playerTrans(playerTrans),
     velocity(velocity),
     collOperator(collOperator),
+    aura(aura),
     moveDir(),
     heading(0.0f),
     spinAngle(0.0f),
@@ -47,6 +50,7 @@ void TomatoPlayerTackleState::OwnStateConditionUpdate(void)
 
 void TomatoPlayerTackleState::Enter(void)
 {
+    aura.Stop();
     collOperator.CollOff();
     collOperator.ResetIsHit();
     collOperator.SetAttackWorldOffset(Vector3());
@@ -60,6 +64,10 @@ void TomatoPlayerTackleState::Enter(void)
     chargeCounter = 0.0f;
     coolTimeCounter = 0.0f;
     step = STEP::Charge;
+
+    // チャージ開始で一度だけ再生し、突進へ切り替わっても時間をリセットしない。
+    aura.SetDirection(moveDir);
+    aura.Restart();
 
     // 通常移動の慣性だけを止める。重力・接地は共通基盤に任せる。
     velocity.x = velocity.z = 0.0f;
@@ -77,6 +85,9 @@ void TomatoPlayerTackleState::Update(void)
             moveDir = input.Normalized();
             heading = std::atan2(moveDir.x, moveDir.z);
         }
+
+        // チャージ中の方向転換にもオーラの流れる向きを合わせる。
+        aura.SetDirection(moveDir);
 
         // 入力がない場合は最後に向いた方向を維持する。
         if (Input::GetIns().GetInfo(KEY_TYPE::PlayerSkill2).now) {
@@ -105,6 +116,7 @@ void TomatoPlayerTackleState::StartTackle(void)
     // 最大チャージ時の補正は開始時に一度だけ適用する。
     if (chargeCounter >= CHARGE_TIME) { chargeAttackBuff(); }
     collOperator.CollOn();
+    aura.SetDirection(moveDir);
 }
 
 void TomatoPlayerTackleState::Tackle(void)
@@ -130,6 +142,7 @@ void TomatoPlayerTackleState::UpdateRotation(void)
 
 void TomatoPlayerTackleState::Exit(void)
 {
+    aura.Stop();
     collOperator.CollOff();
     collOperator.ResetIsHit();
     collOperator.SetAttackWorldOffset(Vector3());

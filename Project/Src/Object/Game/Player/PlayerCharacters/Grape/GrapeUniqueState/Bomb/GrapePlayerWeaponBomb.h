@@ -29,7 +29,7 @@ private:
     static constexpr float PUT_RADIUS = 100.0f;
     static constexpr float BLAST_RADIUS = 500.0f;
     static constexpr float BLAST_ATTACK_TIME = 2.0f;
-    static constexpr float BLAST_EFFECT_TIME = 48.0f;
+
 
     const CharacterStats& playerStats;
     const MSG_SENDER_ID& controlSenderId;
@@ -39,6 +39,7 @@ private:
     SphereCollider* attackCollider;
     SphereCollider* terrainCollider;
     // 所有権は子Actorのリストへ渡す。ここでは操作用の参照だけを保持する。
+    Vector3 explosionPosition;
     ExplosionActor* explosion;
 
     void SubUpdate(void) override;

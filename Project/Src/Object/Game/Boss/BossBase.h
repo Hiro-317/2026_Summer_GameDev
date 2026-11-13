@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <cstddef>
+
 #include "../../../Application/Application.h"
 
 #include "../../../Manager/Net/NetWorkManager.h"
@@ -9,6 +12,7 @@
 #include "../../../Manager/Shader/ShaderTypeDefine.h"
 
 class HitUI;
+class HitSparkActor;
 
 class BossBase : public CharacterBase
 {
@@ -36,6 +40,11 @@ private:
 	void SubInit(void)override;
 	void SubUpdate(void)override;
 	void SubRelease(void)override;
+
+	// ƒ{ƒX‚ªŠ—L‚·‚éÄ—˜—p—p‚Ìƒqƒbƒg‰‰oB“¯ƒqƒbƒg‚ğ•ÊX‚ÌˆÊ’u‚ÅÄ¶‚·‚éB
+	std::array<HitSparkActor*, 16> hitEffects{};
+	std::size_t nextHitEffect = 0;
+	void PlayHitEffect(const Vector3& point, bool critical);
 	// ``````````````ƒƒCƒ“ˆ—
 
 protected:

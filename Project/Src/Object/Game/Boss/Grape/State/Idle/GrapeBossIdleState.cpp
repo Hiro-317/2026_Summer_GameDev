@@ -10,7 +10,7 @@ GrapeBossIdleState::GrapeBossIdleState(
 
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 
-	const std::function<int(void)> CoolTime,
+	const std::function<float(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayIdleAnim,
 	const std::function<void(void)> PlayWalkAnim,

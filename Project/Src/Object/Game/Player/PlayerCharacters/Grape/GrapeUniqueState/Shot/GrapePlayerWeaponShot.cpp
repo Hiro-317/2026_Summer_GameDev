@@ -7,6 +7,7 @@
 #include "../../../../../../../Manager/TimeScale/TimeScale.h"
 #include "../../../../../../Common/Collider/SphereCollider.h"
 #include "../../../../../../Common/CharacterBase/CharacterStatsDefine.h"
+#include "../../../../../../Common/Effect/ExplosionActor.h"
 
 GrapePlayerWeaponShot::GrapePlayerWeaponShot(
     short ATTACK_RATE_PERCENT,
@@ -21,7 +22,10 @@ GrapePlayerWeaponShot::GrapePlayerWeaponShot(
     controlSenderId(controlSenderId),
     moveVec(),
     lifeCounter(0.0f),
-    state(STATE::None)
+    state(STATE::None),
+    explosionPosition(),
+    explosion(nullptr),
+    hasExploded(false)
 {
     // 所有プレイヤーと同じ操作権・ダメージ送信者IDを武器にも設定する。
     ActorBase::controlSenderId = controlSenderId;
@@ -38,6 +42,10 @@ void GrapePlayerWeaponShot::Load(void)
     auto* coll = new SphereCollider(COLLIDER_TAG::PlayerAttack, 50.0f);
     coll->SetSkillStats(new SkillStats(ATTACK_RATE_PERCENT, &playerStats));
     AddCollider(coll);
+    // GrapeBossと同じ既定の色・大きさ・寿命で準備する。
+    explosion = new ExplosionActor(explosionPosition);
+    AddChildActor(explosion);
+
     SetJudgeFlg(false);
     SetIsDraw(false);
     state = STATE::None;
@@ -50,7 +58,12 @@ void GrapePlayerWeaponShot::SubUpdate(void)
     if (state != STATE::Move) { return; }
 
     if (lifeCounter <= 0.0f) {
-        Blast(trans.pos, Net::GetIns().IsHost());
+        // スキル1の寿命切れは爆発なしで消す。命中時だけBlast通知で再生する。
+        moveVec = Vector3();
+        velocity = Vector3();
+        state = STATE::None;
+        SetJudgeFlg(false);
+        SetIsDraw(false);
         return;
     }
 
@@ -81,6 +94,7 @@ void GrapePlayerWeaponShot::Shot(const Vector3& pos, const Vector3& vec, bool se
     velocity = Vector3();
     lifeCounter = static_cast<float>(LIFE_TIME);
     state = STATE::Move;
+    hasExploded = false;
     SetJudgeFlg(true);
     SetIsDraw(true);
 
@@ -94,7 +108,15 @@ void GrapePlayerWeaponShot::Blast(void)
 
 void GrapePlayerWeaponShot::Blast(const Vector3& pos, bool send)
 {
-    // 命中・寿命のどちらでも、判定と描画を即座に止めて次の発射に再利用する。
+    // 寿命による再生と受信通知が重なっても、同じ爆発を再開始しない。
+    if (hasExploded) { return; }
+    hasExploded = true;
+    // 消える瞬間の座標で一度再生する。子Actorなので本体が非表示でも更新される。
+    explosionPosition = pos;
+    explosion->SetPos(explosionPosition);
+    explosion->Restart();
+
+    // 命中時に判定と描画を止め、次の発射に再利用する。
     trans.pos = pos;
     moveVec = Vector3();
     lifeCounter = 0.0f;

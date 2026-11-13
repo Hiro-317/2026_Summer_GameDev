@@ -20,6 +20,7 @@ GrapePlayerWeaponBomb::GrapePlayerWeaponBomb(
     triggerCollider(nullptr),
     attackCollider(nullptr),
     terrainCollider(nullptr),
+    explosionPosition(),
     explosion(nullptr)
 {
     ActorBase::controlSenderId = controlSenderId;
@@ -48,7 +49,7 @@ void GrapePlayerWeaponBomb::Load(void)
     terrainCollider->SetPushFlg(true);
     AddCollider(terrainCollider);
 
-    explosion = new ExplosionActor(Vector3(), BLAST_RADIUS, BLAST_EFFECT_TIME / 60.0f);
+    explosion = new ExplosionActor(explosionPosition);
     AddChildActor(explosion);
     SetJudgeFlg(false);
     SetIsDraw(false);
@@ -57,7 +58,7 @@ void GrapePlayerWeaponBomb::Load(void)
 void GrapePlayerWeaponBomb::Init(void)
 {
     ActorBase::Init();
-    // 子Actorの初期化で再生状態になるため、その後に待機させる。
+    // 初期化だけでは再生せず、起爆まで待機する。
     explosion->Stop();
 }
 
@@ -71,7 +72,7 @@ void GrapePlayerWeaponBomb::SubUpdate(void)
     else if (state == STATE::Blast) {
         lifeCounter += TimeScale::Get();
         if (lifeCounter >= BLAST_ATTACK_TIME) { attackCollider->SetJudgeFlg(false); }
-        if (lifeCounter >= BLAST_EFFECT_TIME) {
+        if (explosion->IsFinished()) {
             state = STATE::None;
             SetJudgeFlg(false);
             explosion->Stop();
@@ -138,7 +139,9 @@ void GrapePlayerWeaponBomb::Blast(const Vector3& pos, bool send)
     triggerCollider->SetJudgeFlg(false);
     terrainCollider->SetJudgeFlg(false);
     attackCollider->SetJudgeFlg(true);
-    explosion->SetPos(pos);
+    // 攻撃判定の半径は維持し、描画はGrapeBossと同じパラメーターを使う。
+    explosionPosition = pos;
+    explosion->SetPos(explosionPosition);
     explosion->Restart();
     if (send) { Net::GetIns().Send(MsgDataGrapePlayerBombBlast(pos), controlSenderId); }
 }

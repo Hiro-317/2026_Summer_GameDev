@@ -140,7 +140,7 @@ void GrapeBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = KICKDOWN_COOLTIME; }
+			[&]() { coolTime = static_cast<float>(KICKDOWN_COOLTIME); }
 		)
 	);
 	AddState(
@@ -163,7 +163,7 @@ void GrapeBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = STRAIGHT_COOLTIME; }
+			[&]() { coolTime = static_cast<float>(STRAIGHT_COOLTIME); }
 		)
 	);
 	AddState(
@@ -199,7 +199,7 @@ void GrapeBoss::BossLoad(void)
 			// ボス自体のコライダの再生
 			[&]() { SetJudgeFlg(true); },
 			// クールタイムの設定
-			[&]() { coolTime = STAMP_COOLTIME; }
+			[&]() { coolTime = static_cast<float>(STAMP_COOLTIME); }
 		)
 	);
 	AddState(
@@ -220,7 +220,7 @@ void GrapeBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = SINGLE_COOLTIME; }
+			[&]() { coolTime = static_cast<float>(SINGLE_COOLTIME); }
 		)
 	);
 	AddState(
@@ -241,7 +241,7 @@ void GrapeBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = STAMP_COOLTIME; }
+			[&]() { coolTime = static_cast<float>(STAMP_COOLTIME); }
 		)
 	);
 	AddState(
@@ -260,7 +260,7 @@ void GrapeBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = RANDOM_COOLTIME; }
+			[&]() { coolTime = static_cast<float>(RANDOM_COOLTIME); }
 		)
 	);
 

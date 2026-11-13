@@ -3,6 +3,7 @@
 #include "../../../../../../Common/CharacterBase/CharacterStateBase.h"
 
 class PlayerSimpleAttackCollOperator;
+class StampDustActor;
 struct Transform;
 struct Vector3;
 
@@ -12,6 +13,7 @@ public:
     TomatoPlayerStampState(
         Transform& playerTrans,
         PlayerSimpleAttackCollOperator& collOperator,
+        StampDustActor& landingDust,
         const std::function<void(const Vector3&)>& moveAccel,
         float& accelMax,
         Vector3& velocity,
@@ -45,6 +47,7 @@ private:
 
     Transform& playerTrans;
     PlayerSimpleAttackCollOperator& collOperator;
+    StampDustActor& landingDust;
     const std::function<void(const Vector3&)> moveAccel;
     float& accelMax;
     Vector3& velocity;

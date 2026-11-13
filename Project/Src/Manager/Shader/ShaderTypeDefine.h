@@ -1,9 +1,9 @@
-ï»¿#pragma once
+#pragma once
 
-// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç¨®é¡ž
+// ’¸“_ƒVƒF[ƒ_[‚ÌŽí—Þ
 enum class VERTEX_SHADER_TYPE
 {
-    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
+    // ƒfƒtƒHƒ‹ƒg
     Default1Frame,
     Default4Frame,
     Default8Frame,
@@ -11,7 +11,7 @@ enum class VERTEX_SHADER_TYPE
     DefaultNMap4Frame,
     DefaultNMap8Frame,
 
-    // ãƒªãƒ ãƒ©ã‚¤ãƒˆ
+    // ƒŠƒ€ƒ‰ƒCƒg
     RimLight1Frame,
     RimLight4Frame,
     RimLight8Frame,
@@ -19,7 +19,7 @@ enum class VERTEX_SHADER_TYPE
     RimLightNMap4Frame,
     RimLightNMap8Frame,
 
-    // ãƒ€ãƒ¡ãƒ¼ã‚¸ï¼ˆãƒ¢ãƒ‡ãƒ«ï¼‰
+    // ƒ_ƒ[ƒWiƒ‚ƒfƒ‹j
     ModelDamageFlash1Frame,
     ModelDamageFlash4Frame,
     ModelDamageFlash8Frame,
@@ -27,82 +27,106 @@ enum class VERTEX_SHADER_TYPE
     ModelDamageFlashNMap4Frame,
     ModelDamageFlashNMap8Frame,
 
-	// æ°´é¢
+	// …–Ê
     Water,
 
-    // ã‚¹ã‚«ã‚¤ãƒœãƒƒã‚¯ã‚¹
+    // ƒXƒJƒCƒ{ƒbƒNƒX
     SkyBox,
 
-    // ç´«è‰²ã®çˆ†ç™º
+    // Ž‡F‚Ì”š”­
     PurpleExplosion,
 
-    // ç›´ç·šçŠ¶ã®ç‚Žãƒ–ãƒ¬ã‚¹
+    // ’¼üó‚Ì‰ŠƒuƒŒƒX
     FlameBreath,
 
-    // ä¸­å¿ƒã‹ã‚‰å‘¨å›²ã¸åºƒãŒã‚‹åœŸåŸƒ
+    // ’†S‚©‚çŽüˆÍ‚ÖL‚ª‚é“yšº
     DustBurst,
+
+    // “ËiŽž‚ÉŒã•û‚Ö—¬‚ê‚éƒI[ƒ‰B
+    RushAura,
+
+    // ƒXƒ^ƒ“ƒv’…’n‚Ì»šº‚ÆÔ‚¢ƒI[ƒ‰B
+    StampDust,
+
+    // ‰ñ•œEƒoƒt‹¤’Ê‚Ì”­Œõƒp[ƒeƒBƒNƒ‹B
+    SupportParticle,
+
+    // Õ“Ë“_‚Å”­¶‚·‚é’Z‚¢‘MŒõ‚Æ‰Î‰ÔB
+    HitSpark,
 };
 
-// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç¨®é¡ž
+// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ÌŽí—Þ
 enum class PIXEL_SHADER_TYPE
 {
-    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
+    // ƒfƒtƒHƒ‹ƒg
     Default,
 
-    // ãƒˆã‚¥ãƒ¼ãƒ³
+    // ƒgƒD[ƒ“
     Toon,
 
-    // ãƒªãƒ ãƒ©ã‚¤ãƒˆ
+    // ƒŠƒ€ƒ‰ƒCƒg
     RimLight,
 
-    // ãƒ€ãƒ¡ãƒ¼ã‚¸ï¼ˆãƒ¢ãƒ‡ãƒ«ï¼‰
+    // ƒ_ƒ[ƒWiƒ‚ƒfƒ‹j
     ModelDamageFlash,
 
-    // æ°´é¢
+    // …–Ê
     Water,
 
-#pragma region ãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+#pragma region ƒ|ƒXƒgƒGƒtƒFƒNƒg
 
-	// ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«ãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+	// ƒOƒŒ[ƒXƒP[ƒ‹ƒ|ƒXƒgƒGƒtƒFƒNƒg
     GrayScale,
 
-    // ãƒ–ãƒ©ã‚¦ãƒ³ç®¡ãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+    // ƒuƒ‰ƒEƒ“ŠÇƒ|ƒXƒgƒGƒtƒFƒNƒg
     CRT,
 
-    // é›†ä¸­ç·šãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+    // W’†üƒ|ƒXƒgƒGƒtƒFƒNƒg
     FocusLines,
 
-	// æ°´ä¸­ãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+	// …’†ƒ|ƒXƒgƒGƒtƒFƒNƒg
 	UnderWater,
 
-    // ã‚´ã‚´ã‚´ã‚´â€¦ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+    // ƒSƒSƒSƒScƒGƒtƒFƒNƒg
     Menacing,
 
-    // ç‚Žãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+    // ‰Šƒ|ƒXƒgƒGƒtƒFƒNƒg
     PurpleFlame,
 
-    // ãƒ€ãƒ¡ãƒ¼ã‚¸ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ãƒã‚¹ãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+    // ƒ_ƒ[ƒWƒtƒ‰ƒbƒVƒ…ƒ|ƒXƒgƒGƒtƒFƒNƒg
     DamageFlash,
 
-    // ç”»é¢æºã‚Œ
+    // ‰æ–Ê—h‚ê
     ScreenShake,
 
 #pragma endregion
 
-    // ã‚¹ã‚«ã‚¤ãƒœãƒƒã‚¯ã‚¹
+    // ƒXƒJƒCƒ{ƒbƒNƒX
     SkyBox,
 
-    // ç´«è‰²ã®çˆ†ç™º
+    // Ž‡F‚Ì”š”­
     PurpleExplosion,
 
-    // ç›´ç·šçŠ¶ã®ç‚Žãƒ–ãƒ¬ã‚¹
+    // ’¼üó‚Ì‰ŠƒuƒŒƒX
     FlameBreath,
 
-    // ä¸­å¿ƒã‹ã‚‰å‘¨å›²ã¸åºƒãŒã‚‹åœŸåŸƒ
+    // ’†S‚©‚çŽüˆÍ‚ÖL‚ª‚é“yšº
     DustBurst,
+
+    // “ËiŽž‚ÉŒã•û‚Ö—¬‚ê‚éƒI[ƒ‰B
+    RushAura,
+
+    // ƒXƒ^ƒ“ƒv’…’n‚Ì»šº‚ÆÔ‚¢ƒI[ƒ‰B
+    StampDust,
+
+    // ‰ñ•œEƒoƒt‹¤’Ê‚Ì”­Œõƒp[ƒeƒBƒNƒ‹B
+    SupportParticle,
+
+    // Õ“Ë“_‚Å”­¶‚·‚é’Z‚¢‘MŒõ‚Æ‰Î‰ÔB
+    HitSpark,
 };
 
-// é ‚ç‚¹ã‚¿ã‚¤ãƒ—
+// ’¸“_ƒ^ƒCƒv
 enum SHADER_VERTEX_TYPE
 {
     Frame1,

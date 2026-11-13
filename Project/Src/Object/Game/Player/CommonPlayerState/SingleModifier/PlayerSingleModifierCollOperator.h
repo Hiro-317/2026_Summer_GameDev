@@ -5,6 +5,7 @@
 #include "../../../../../Manager/Net/NetWorkDefine.h"
 
 class SphereCollider;
+class SupportParticleActor;
 
 class PlayerSingleModifierCollOperator : public ActorBase
 {
@@ -18,6 +19,7 @@ public:
 	/// <param name="sendColliderKinds">送信タイプ</param>
 	/// <param name="targetPos">バフ・回復対象の座標</param>
 	/// <param name="SKILL_POWER">バフ・回復量</param>
+	/// <param name="effectColor">演出の色（0xRRGGBB）</param>
 	/// <param name="SKILL_TIME">効果時間（-1ならヒールとして判断する</param>
 	/// <param name="MODIFIER_TYPE">バフタイプ</param>
 	PlayerSingleModifierCollOperator(
@@ -30,6 +32,7 @@ public:
 		const Vector3* const& targetPos,
 
 		const short SKILL_POWER,
+		const unsigned int effectColor,
 		const short SKILL_TIME = -1,
 		const ModifierType MODIFIER_TYPE = ModifierType::None
 	);
@@ -62,6 +65,8 @@ private:
 	// 当たり判定の半径
 	const float COLL_RADIUS = 1.0f;
 
+	const unsigned int EFFECT_COLOR;
+
 	// バフタイプ
 	const ModifierType MODIFIER_TYPE;
 
@@ -92,8 +97,8 @@ private:
 	// 攻撃のヒット管理のフラグ
 	bool isHit;
 
-	// バフ・回復対象のtrans（エフェクトマネージャーの引数用変数）
-	Transform targetTrans;
+	// 子Actorとして所有し、判定が終了した後も演出を更新する。
+	SupportParticleActor* effect;
 
 	// 更新処理
 	void SubUpdate(void)override;

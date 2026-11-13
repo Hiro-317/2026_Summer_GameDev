@@ -1,4 +1,5 @@
 #include "TomatoPlayerStampState.h"
+#include "../../../../../../Common/Effect/StampDustActor.h"
 
 #include <algorithm>
 #include <cmath>
@@ -11,6 +12,7 @@
 TomatoPlayerStampState::TomatoPlayerStampState(
     Transform& playerTrans,
     PlayerSimpleAttackCollOperator& collOperator,
+    StampDustActor& landingDust,
     const std::function<void(const Vector3&)>& moveAccel,
     float& accelMax,
     Vector3& velocity,
@@ -25,6 +27,7 @@ TomatoPlayerStampState::TomatoPlayerStampState(
     FALL_SPEED(fallSpeed),
     playerTrans(playerTrans),
     collOperator(collOperator),
+    landingDust(landingDust),
     moveAccel(moveAccel),
     accelMax(accelMax),
     velocity(velocity),
@@ -97,6 +100,8 @@ void TomatoPlayerStampState::OnGrounded(void)
     velocity = Vector3();
     UpdateColliderPosition();
     collOperator.CollOn();
+    // FallingからLandedへの切り替え時だけ、着地点に砂埃と赤いオーラを残す。
+    landingDust.Emit(playerTrans.pos);
 }
 
 void TomatoPlayerStampState::UpdateColliderPosition(void)
