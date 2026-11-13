@@ -76,6 +76,7 @@ void TomatoBossStampState::Update(void)
 		if (attackCnt == 0) {
 			SoundManager::GetIns().Play("StampLand");
 			collOperator->CollOn();
+			collOperator->EffectPlay();
 		}
 		// 持続時間過ぎたらステートを変える
 		if (attackCnt > ATTACK_DURATION) {

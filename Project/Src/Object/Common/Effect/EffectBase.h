@@ -36,7 +36,7 @@ public:
     /// 準備済みのエフェクトを、経過時間0から再生する。
     /// </summary>
     /// <remarks>AddActorとInitだけでは表示しない。表示したいタイミングで呼ぶ。再生中ならでもそのまま。寿命が切れてたら最初から</remarks>
-    void Play(void);
+    virtual void Play(void);
 
     /// <summary>
     /// 経過時間を0へ戻して更新・描画を再開する。

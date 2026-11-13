@@ -92,6 +92,11 @@ void DustBurstActor::Update(void)
     }
     EffectBase::Update();
 }
+void DustBurstActor::Play(void)
+{
+    stopping = false;
+    EffectBase::Play();
+}
 void DustBurstActor::Draw(void)
 {
     if (!GetIsDraw() || IsFinished() || dustShader == nullptr) { return; }

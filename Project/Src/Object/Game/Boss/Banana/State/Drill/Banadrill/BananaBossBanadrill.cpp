@@ -54,6 +54,7 @@ void BananaBossBanadrill::Load(void)
 	DustBurstSettings set;
 	set.durationSeconds = 0.0f;
 	set.color = 0xffff99;
+	set.height = RADIUS;
 
 	duRef = new DustBurstActor(trans.pos, set);
 	AddChildActor(duRef);

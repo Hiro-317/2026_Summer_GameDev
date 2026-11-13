@@ -4,7 +4,9 @@
 
 #include "../../../../../Common/Collider/ColliderBase.h"
 
-struct XZCircleCollider;
+#include "../../../../../Common/Effect/DustBurstActor.h"
+
+class XZCircleCollider;
 
 struct CharacterStats;
 
@@ -38,6 +40,8 @@ public:
 	void CollOn(void) { ColliderSerch(GetColliders(), COLLIDER_TAG::BossAttack).back()->SetJudgeFlg(true); }
 	void Off(void) { SetJudgeFlg(false); isDrawArea = false; }
 	void SetPos(const Vector3& pos){ trans.pos = pos; }
+
+	void EffectPlay(void) { duRef->Play(); duRef->SetPos(trans.pos); }
 
 private:
 
@@ -81,4 +85,5 @@ private:
 	void SubRelease(void) override;
 
 	XZCircleCollider* collRef;
+	DustBurstActor* duRef;
 };

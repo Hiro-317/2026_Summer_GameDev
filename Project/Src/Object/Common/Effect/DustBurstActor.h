@@ -35,6 +35,8 @@ public:
     ~DustBurstActor() override = default;
     /// <summary>時間と中心から外周への消滅演出を進める。停止演出が完了するまで更新する。</summary>
     void Update(void) override;
+    /// <summary>途中ならそのまま、中心から再生する。</summary>
+    void Play(void) override;
     /// <summary>経過時間・出現・消滅の状態を全て戻し、中心から再生する。</summary>
     void Restart(void) override;
     /// <summary>寿命を待たず、中心から外周へ順に消す。繰り返し呼んでも進みは戻らない。</summary>

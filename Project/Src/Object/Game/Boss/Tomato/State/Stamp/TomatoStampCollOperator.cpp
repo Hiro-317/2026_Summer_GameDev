@@ -61,6 +61,15 @@ void TomatoStampCollOperator::Load(void)
 	collFront.scale = Vector3(0);
 
 	SetDrawType(ACTOR_DRAW_TYPE::Alpha);
+
+	DustBurstSettings set;
+	set.color = 0xffa078;
+	set.durationSeconds = 1.2f;
+	set.radius = ATTACK_RADIUS;
+	set.height = 20.0f;
+
+	duRef = new DustBurstActor(trans.pos, set);
+	AddChildActor(duRef);
 }
 
 void TomatoStampCollOperator::SubUpdate(void)
