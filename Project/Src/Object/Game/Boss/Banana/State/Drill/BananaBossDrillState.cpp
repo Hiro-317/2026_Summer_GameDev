@@ -36,16 +36,31 @@ void BananaBossDrillState::Enter(void)
 	if (scene == nullptr) {
 		scene = dynamic_cast<GameScene*>(SceneManager::GetIns().GetScene());
 	}
+	cnt = 0;
 }
 
 void BananaBossDrillState::Update(void)
 {
 	if (!Invisible()) {
-		if (scene != nullptr) {
-			scene->SetFocus(false);
+		if (cnt == 0) {
+			if (scene != nullptr) {
+				scene->SetFocus(false);
+				scene->FocusLock(false);
+			}
+		}
+		if (cnt < START_CNT) {
+			cnt++;
+			if (cnt == START_CNT) {
+				drills->Start();
+			}
 		}
 		if (drills->GetEnd()) {
-			SwitchInvisible();
+			cnt++;
+			if (cnt > END_CNT) {
+				SwitchInvisible();
+				scene->FocusLock(true);
+				scene->SetFocus(tmpFlg);
+			}
 		}
 	}
 	else {
@@ -54,8 +69,6 @@ void BananaBossDrillState::Update(void)
 			if (pos.y > SWITCH_POS) {
 				SwitchInvisible();
 				tmpFlg = scene->GetFocus();
-				scene->SetFocus(false);
-				drills->Start();
 				pos.y = -SWITCH_POS;
 			}
 		}
@@ -71,7 +84,6 @@ void BananaBossDrillState::Update(void)
 void BananaBossDrillState::Exit(void)
 {
 	pos = defaultPos;
-	scene->SetFocus(tmpFlg);
 	SetCoolTime();
 }
 

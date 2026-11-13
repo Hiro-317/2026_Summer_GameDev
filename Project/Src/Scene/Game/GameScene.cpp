@@ -90,6 +90,7 @@ void GameScene::SubPostLoad(void)
 void GameScene::SubPostInit(void)
 {
 	focusFlg = false;
+	focus = true;
 
 	SoundManager::GetIns().Play("Battle");
 
@@ -123,28 +124,19 @@ void GameScene::SubPreUpdate(void)
 		delete dataPtr;
 	}
 
-	// 注目するか
-	if (Input::GetIns().GetInfo(KEY_TYPE::CameraFocus).down) {
-		focusFlg = !focusFlg;
-		if (focusFlg) {
-			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowAuto(
-				&playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
-				&bossInsRef->GetTrans().pos);
-		}
-		else {
-			dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowYaw(
-				&playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
-				Vector3::YZonly(250, -550),
-				playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
-				Deg2Rad(4.0f)
-			);
-		}
-	}
 }
 
 void GameScene::SubPostUpdate(void)
 {
 #pragma region 遷移判定（ポーズも含む）
+
+	// 注目するか
+	if (focus) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::CameraFocus).down) {
+			focusFlg = !focusFlg;
+			Focus();
+		}
+	}
 	// ポーズ判定
 	if (Input::GetIns().GetInfo(KEY_TYPE::Pause).down) {
 
@@ -227,4 +219,22 @@ void GameScene::CreateCamera(void)
 		ActorSerch<PlayerManager>(actors)->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
 		Deg2Rad(4.0f)
 	);
+}
+
+void GameScene::Focus(void)
+{
+	if (focusFlg) {
+		dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowAuto(
+			&playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+			&bossInsRef->GetTrans().pos);
+	}
+	else {
+		dynamic_cast<MultifuncCamera*>(camera)->ChangeModeFollowYaw(
+			&playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetTrans().pos,
+			Vector3::YZonly(250, -550),
+			playerInsRef->GetPlayerIns(Net::GetIns().GetSenderId())->GetInterestPos(),
+			Deg2Rad(4.0f)
+		);
+
+	}
 }

@@ -63,6 +63,7 @@
     <FxCompile Include="Src\Shader\Toon\ToonPS.hlsl" />
     <FxCompile Include="Src\Shader\Water\WaterPS.hlsl" />
     <FxCompile Include="Src\Shader\Water\WaterVS.hlsl" />
+    <FxCompile Include="Src\Shader\PurpleExplosion\PurpleExplosion.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Application\Application.cpp" />
