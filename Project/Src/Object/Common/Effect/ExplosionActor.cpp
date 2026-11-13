@@ -56,7 +56,8 @@ void ExplosionActor::SubDraw(void)
     int previousBlend = 0, previousBlendParameter = 0;
     GetDrawBlendMode(&previousBlend, &previousBlendParameter);
     const int previousCulling = GetUseBackCulling();
-    SetDrawBlendMode(DX_BLENDMODE_PMA_ADD, 255);
+    // 体積の密度で背景も遮る乗算済みα合成にし、火球の陰影を残す。
+    SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 255);
     SetUseBackCulling(DX_CULLING_NONE);
     // 通常の3Dシーンでは深度判定・書き込みが有効になっている。
     // 爆発は壁の裏に隠すが、透明部分で後続の描画を遮らないよう深度は書き込まない。
@@ -73,3 +74,4 @@ void ExplosionActor::SubRelease(void)
 {
     explosionShader = nullptr;
 }
+

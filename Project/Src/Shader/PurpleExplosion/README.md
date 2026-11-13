@@ -3,7 +3,7 @@
 固有エフェクトは個別のアクターとして必要な分だけ保持します。共通ヒットエフェクトなどの管理は、その機能を追加するときに別途設計します。
 
 `EffectBase` は `ActorBase` を継承するエフェクト用の中間基底クラスです。
-`PurpleExplosionActor` はその派生で、指定したワールド座標に紫色の爆発を表示します。
+`ExplosionActor` はその派生で、指定したワールド座標に紫色の爆発を表示します。
 攻撃やキー入力など、固定の発生タイミングは設定していません。
 
 ## 最初に準備して、必要なときだけ再生する
@@ -12,10 +12,10 @@
 `SceneBase` が読み込み・初期化・更新・描画・解放を管理します。
 
 ```cpp
-#include "../../Object/Common/Effect/PurpleExplosionActor.h"
+#include "../../Object/Common/Effect/ExplosionActor.h"
 
 // シーンの読み込み処理などで、必要な分だけ生成して保持する。
-auto* explosion = new PurpleExplosionActor(
+auto* explosion = new ExplosionActor(
     Vector3(0.0f, 150.0f, 0.0f), // ワールド座標
     150.0f,                     // 最大半径（ワールド単位）
     1.2f,                       // 持続時間（秒）
@@ -40,7 +40,7 @@ explosion->Play();
 展開した爆発の形状を保ち、炎の揺れを継続します。
 
 ```cpp
-auto* explosion = new PurpleExplosionActor(Vector3(0.0f, 150.0f, 0.0f), 150.0f, 0.0f);
+auto* explosion = new ExplosionActor(Vector3(0.0f, 150.0f, 0.0f), 150.0f, 0.0f);
 AddActor(explosion); // 準備のみ。
 explosion->Play();   // 実際の再生タイミングで呼ぶ。
 
@@ -58,7 +58,7 @@ explosion->Stop();
 
 ```cpp
 // シーンが所有するインスタンスへの参照を保持しておく。
-auto* explosion = new PurpleExplosionActor(Vector3(0.0f, 150.0f, 0.0f));
+auto* explosion = new ExplosionActor(Vector3(0.0f, 150.0f, 0.0f));
 AddActor(explosion); // 準備のみ。
 explosion->Play();   // 実際の再生タイミングで呼ぶ。
 
@@ -80,7 +80,7 @@ bool finished = explosion->IsFinished();
 
 ```cpp
 // コンストラクターの最後の引数で、生成時の色を指定する。
-auto* explosion = new PurpleExplosionActor(
+auto* explosion = new ExplosionActor(
     Vector3(0.0f, 150.0f, 0.0f), 150.0f, 1.2f, 2.0f, 1.0f, 0xff4000);
 AddActor(explosion); // 準備のみ。
 explosion->Play();   // 実際の再生タイミングで呼ぶ。
@@ -93,9 +93,20 @@ explosion->SetColor(0x00ff80);
 explosion->Restart();
 ```
 
-火球・衝撃波・火花が指定色に合わせて変わり、中心と火花は明るい色になります。
+火球・周囲の発光・火花が指定色に合わせて変わり、中心と火花は明るい色になります。
 黒（`0x000000`）は発光しません。明るさは引き続き `intensity` で指定します。
 各アクターが色を保持するため、同時に別々の色で再生できます。
+
+## 球状の見た目
+
+火球は球の内部を奥行き方向に8回サンプリングし、3次元ノイズの密度と発光を重ねて描画します。
+中央の厚み、薄い縁、表面の凹凸、明るい芯と陰になる側で球体感を出します。
+模様と火花はワールド方向で計算するため、カメラを回しても平面の模様が回転する見た目を抑えます。
+輪状の衝撃波は描かず、球の周囲には薄い発光と火花を残しています。
+
+描画用の形状はビルボードです。球の見た目はピクセルシェーダーの体積計算で作ります。
+深度判定の形状は板ポリゴンのままなので、物体と交差する部分まで球面の深度にはなりません。
+色・大きさ・寿命・Play/Stopの呼び出し方法は共通です。
 
 ## シェーダーとビルド
 
@@ -105,9 +116,10 @@ explosion->Restart();
 - `PurpleExplosionVS.hlsl` / `PurpleExplosionPS.hlsl` を `main`、Shader Model 5.0でビルドします。
 - `Project.vcxproj` に登録済みで、出力先は `Project/Data/Shader/PurpleExplosionVS.cso` と `PurpleExplosionPS.cso` です。
 - `PurpleExplosion.hlsl` は共通の評価関数で、単体のコンパイル対象ではありません。
-- 描画は半透明パスで行い、乗算済みαの加算ブレンドを使います。深度判定は有効、描画中の深度書き込みは無効です。
+- 描画は半透明パスで行い、乗算済みαのアルファブレンドで球の密度と背景を合成します。深度判定は有効、描画中の深度書き込みは無効です。
 - 描画後はブレンド・カリングを元に戻し、深度書き込みは既存3Dシーンの通常設定（有効）へ戻します。
 
 HLSLファイルはUTF-8の署名なし（BOMなし）で保存してください。C++ファイルはUTF-8 BOM付きです。
 
 Windows版Visual Studio / DxLibでの実行確認は別途必要です。
+
