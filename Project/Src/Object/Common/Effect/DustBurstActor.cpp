@@ -117,14 +117,16 @@ void DustBurstActor::SubDraw(void)
         const bool outer = i < 12;
         const float id = static_cast<float>(i);
         const float random = DustRandom(id + settings.seed * 3.7f);
-        const float angle = twoPi * (outer ? id / 12.0f : (id - 12.0f) / 8.0f + 0.04f);
+        const float angle = twoPi * (outer ? id / 12.0f : (id - 12.0f) / 8.0f + 0.04f) +
+            (random - 0.5f) * 0.32f;
         const float speed = outer ? 0.72f + random * 0.28f : 0.30f + random * 0.22f;
         const float reach = settings.radius * expansion * speed;
         auto& puff = puffs[i];
-        puff.width = settings.radius * (outer ? 0.24f : 0.18f) * swelling * (0.85f + random * 0.3f);
-        puff.height = settings.height * (outer ? 0.60f : 0.35f) * swelling * (0.85f + random * 0.3f);
+        // 低く横へ重ね、同じ高さの山が並ぶ見た目を避ける。
+        puff.width = settings.radius * (outer ? 0.30f : 0.23f) * swelling * (0.85f + random * 0.3f);
+        puff.height = settings.height * (outer ? 0.42f : 0.24f) * swelling * (0.85f + random * 0.3f);
         puff.center = trans.pos + Vector3(std::cos(angle) * reach,
-            puff.height * 0.65f + settings.height * 0.16f * t, std::sin(angle) * reach);
+            puff.height * 0.55f + settings.height * 0.055f * t, std::sin(angle) * reach);
         puff.seed = id + settings.seed;
         puff.depth = (puff.center - camera).Dot(front);
     }

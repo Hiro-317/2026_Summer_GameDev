@@ -36,35 +36,36 @@ float4 main(DustInput input) : SV_TARGET
     float2 p = input.local;
     float id = input.puffSeed + seed * 1.7;
     float jitter = (DustHash(id) - 0.5) * 0.28;
-    // 左右反転と上部の塊の違いで、同じ形の山が並ぶのを避ける。
+    // 横に並んだ大小の塊をつなぐ。上へ段積みする形と細い頂点は作らない。
     p.x *= DustHash(id + 7.0) > 0.5 ? -1.0 : 1.0;
-    p.x += p.y * p.y * jitter;
-    // 低い土煙から、上へ丸く巻く大きな塊と小さな先端をつなげる。
     float d = 100.0;
     float2 lobe = 0.0;
-    DustLobe(p, float2(0.0, -0.52), float2(0.92, 0.30), d, lobe);
-    DustLobe(p, float2(-0.49, -0.18), float2(0.38, 0.42), d, lobe);
-    DustLobe(p, float2(-0.12 + jitter, 0.08), float2(0.49, 0.43), d, lobe);
-    DustLobe(p, float2(0.39, -0.15), float2(0.43, 0.44), d, lobe);
-    DustLobe(p, float2(0.15 + jitter, 0.34), float2(0.34, 0.31), d, lobe);
-    if (DustHash(id + 3.1) > 0.55) {
-        DustLobe(p, float2(-0.02 + jitter, 0.65), float2(0.20, 0.19), d, lobe);
-        DustLobe(p, float2(-0.16 + jitter, 0.85), float2(0.10, 0.09), d, lobe);
+    DustLobe(p, float2(0.0, -0.35), float2(0.86, 0.34), d, lobe);
+    DustLobe(p, float2(-0.59, -0.10 + jitter), float2(0.33, 0.36), d, lobe);
+    DustLobe(p, float2(-0.23, 0.03 + jitter), float2(0.42, 0.43), d, lobe);
+    DustLobe(p, float2(0.26, 0.06 - jitter), float2(0.44, 0.40), d, lobe);
+    DustLobe(p, float2(0.62, -0.17), float2(0.30, 0.31), d, lobe);
+    if (DustHash(id + 3.1) > 0.65) {
+        // 少数の煙だけを横へ巻き上げる。小さな球を縦に連結しない。
+        DustLobe(p, float2(0.56, 0.20), float2(0.20, 0.30), d, lobe);
     }
-    // 微かなうねりだけを付け、写実ノイズより参考画像の丸い輪郭を優先する。
-    d += sin(p.x * 18.0 + id) * sin(p.y * 15.0 - elapsed * 1.5) * 0.018;
-    float aa = max(fwidth(d), 0.012);
+    float detail = sin(p.x * 12.0 + id) * sin(p.y * 10.0 - elapsed * 1.5);
+    d += detail * 0.035;
+    // 外周を少し広めにぼかし、硬い固形物ではなく薄い土煙にする。
+    float aa = max(fwidth(d), 0.055);
     float alpha = (1.0 - smoothstep(-aa, aa, d)) * saturate(opacity);
-    alpha *= smoothstep(0.0, 0.045, elapsed);
+    float density = 0.76 + 0.18 * sin(p.x * 3.0 + id) * sin(p.y * 4.0 - elapsed * 0.8);
+    alpha *= density * smoothstep(0.0, 0.045, elapsed);
     if (clearProgress >= 0.0) {
         // 実際の地面上の距離で消すので、手前・奥の煙も中心から外周へ消える。
         float r = length(input.worldPosition.xz - origin.xz) / max(radius, 0.001);
         float clearRadius = clearProgress * 1.45;
         alpha *= smoothstep(clearRadius - 0.08, clearRadius + 0.06, r);
     }
-    float light = 0.68 + 0.32 * smoothstep(-0.65, 0.45, p.y);
-    light -= 0.10 * smoothstep(0.15, 0.85, -lobe.y);
-    light += 0.05 * saturate(-lobe.x + lobe.y);
+    // 塊ごとの丸い段差には影を付けず、煙全体に連続した明暗を付ける。
+    // 灰色の帯が何段も重なって見えるのを防ぐ。
+    float light = 0.80 + 0.20 * smoothstep(-0.55, 0.35, p.y);
+    light += detail * 0.025;
     float3 color = saturate(colorRGB * light);
     // 乗算済みαで背景を隠し、灰色の影を残す。加算で白飛びさせない。
     return float4(color * alpha, alpha);
