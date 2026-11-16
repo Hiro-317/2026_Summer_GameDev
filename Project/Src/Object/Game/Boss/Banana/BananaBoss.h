@@ -8,12 +8,14 @@ class BananaFireCollOperator;
 class BananaBossBanamerang;
 class BananaBossDrillManager;
 
+/// <summary>ひっかき・ブレス・投擲攻撃と攻撃範囲の受信同期を組み立てる。</summary>
 class BananaBoss : public BossBase
 {
 public:
 	BananaBoss();
 	~BananaBoss()override = default;
 
+	/// <summary>共通の受信処理に続き、このボス固有の攻撃表示を同期する。</summary>
 	virtual void ReceptionUpdate(void)override;
 
 private:

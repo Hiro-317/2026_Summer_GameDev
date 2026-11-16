@@ -17,19 +17,15 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
+	/// <param name="rotation">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="CoolTime">クールタイムの取得</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
 	/// <param name="PlayIdleAnim">アイドルアニメーションの再生</param>
-	/// <param name="PlayWalkAnim">歩きアニメーションの再生</param>
-	/// <param name="MoveChangeState">歩くへのステート</param>
 	/// <param name="ScratchChangeState">ひっかきへのステート</param>
 	/// <param name="FireChangeState">吐く攻撃へのステート</param>
 	/// <param name="BanamerangChangeState">バナメランへのステート</param>
 	/// <param name="BanadrillChangeState">バナドリルへのステート</param>
-	/// <param name="StalkerChangeState">追従攻撃へのステート</param>
-	/// <param name="RandomChangeState">ランダム攻撃へのステート</param>
 	BananaBossIdleState(
 		Vector3& pos, Quaternion& rotation,
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],

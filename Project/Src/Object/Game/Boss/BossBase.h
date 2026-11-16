@@ -14,24 +14,42 @@
 class HitUI;
 class HitSparkActor;
 
+/// <summary>各ボスに共通する被ダメージ、ターゲット選択、通信同期を扱う基底クラス。</summary>
 class BossBase : public CharacterBase
 {
 public:
 
+	/// <summary>接続人数に対応した能力値とボスモデルを読み込む。</summary>
+	/// <param name="parameterPath">ボスの能力値・挙動パラメーターの格納先。</param>
+	/// <param name="modelPath">Character/からの相対モデルパス。</param>
 	BossBase(const std::string& parameterPath, std::string modelPath);
 
 	~BossBase()override = default;
 
+	/// <summary>固有データを読み込み、共通コライダー・UI・ヒット演出を生成する。</summary>
 	void Load(void)override;
 
+	/// <summary>ホスト側で被ダメージを確定し、ヒット通知と死亡状態への遷移を行う。</summary>
+	/// <param name="ownTag">衝突した自分側のコライダータグ。</param>
+	/// <param name="other">相手側のコライダー。攻撃時は能力値と攻撃者を参照する。</param>
+	/// <param name="result">ヒット演出とダメージ表示に使う衝突情報。</param>
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
+	/// <summary>受信した位置、アニメーション、被ダメージ、ターゲット情報を反映する。</summary>
 	virtual void ReceptionUpdate(void)override;
+	/// <summary>操作権を持つ端末からボスの位置・回転・拡縮を送信する。</summary>
 	virtual void SendUpdate(void)override;
 
+	/// <summary>死亡ステートで設定される死亡フラグを参照する。</summary>
 	const bool& GetIsDeath(void)const { return isDeath; }
 
+	/// <summary>対象プレイヤーの座標を借用する。参照先はボスの利用中、有効である必要がある。</summary>
+	/// <param name="id">配列添字として使う有効な送信者ID。</param>
+	/// <param name="pos">追跡対象の座標。所有権は移さない。</param>
 	void SetPlayerPos(MSG_SENDER_ID id, const Vector3* pos) { playerPos[(int)id] = pos; }
+	/// <summary>対象プレイヤーの死亡フラグを借用する。ターゲット更新前に設定する。</summary>
+	/// <param name="id">配列添字として使う有効な送信者ID。</param>
+	/// <param name="isDeath">死亡時にtrueになるフラグ。所有権は移さない。</param>
 	void SetPlayerIsDeath(MSG_SENDER_ID id, const bool* isDeath) { playerIsDeath[(int)id] = isDeath; }
 
 private:
@@ -44,11 +62,15 @@ private:
 	// ボスが所有する再利用用のヒット演出。同時ヒットを別々の位置で再生する。
 	std::array<HitSparkActor*, 16> hitEffects{};
 	std::size_t nextHitEffect = 0;
+	/// <summary>空き演出を優先し、空きがなければ巡回位置の演出を再利用する。</summary>
+	/// <param name="point">ワールド座標の衝突位置。</param>
+	/// <param name="critical">クリティカル用の演出を使うか。</param>
 	void PlayHitEffect(const Vector3& point, bool critical);
 	// ～～～～～～～～～～～～～～メイン処理
 
 protected:
 
+	// 派生クラスはモデル固有のアニメーション、攻撃用Actor、ステートを登録する。
 	virtual void BossLoad(void) = 0;
 	virtual void BossInit(void) {}
 	virtual void BossUpdate(void) {}

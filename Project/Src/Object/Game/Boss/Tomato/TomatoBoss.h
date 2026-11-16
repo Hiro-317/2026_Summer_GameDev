@@ -6,6 +6,7 @@
 #include "State/Stamp/TomatoStampCollOperator.h"
 
 
+/// <summary>頭突き・スタンプ・突進のステートと当たり判定を組み立てる。</summary>
 class TomatoBoss : public BossBase
 {
 public:
@@ -27,6 +28,7 @@ public:
 	}
 
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
+	/// <summary>共通の受信処理に続き、このボス固有の攻撃表示を同期する。</summary>
 	virtual void ReceptionUpdate(void)override;
 
 private:

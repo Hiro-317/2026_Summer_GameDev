@@ -51,6 +51,7 @@ void BossBase::Load(void)
 {
 #pragma region モデル
 	// モデルを読み込む
+	// 固有処理の登録後、この関数の後半で共通UIなどを追加する。
 	BossLoad();
 
 	// モデルのスケールを設定
@@ -167,12 +168,14 @@ void BossBase::SubUpdate(void)
 #pragma region ターゲット更新
 
 	// ターゲットの生存確認
+	// 注意: targetNumの範囲と参照先の有効性を前提とする。全員死亡時の扱いは修正候補。
 	if (*playerIsDeath[targetNum]) { targetNum = -1; }
 
 	// 与ダメの最大値を探す
 	for (int id = 0; id < Net::GetIns().GetConnectStatus().EntryCount(); id++) {
 
 		// 生存確認
+		// 注意: 現状は生存者を除外している。生存者から選ぶ仕様なら条件の反転が必要。
 		if (!*playerIsDeath[id]) { continue; }
 
 		// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
@@ -216,6 +219,7 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 		if (other.GetTag() == COLLIDER_TAG::PlayerAttack) {
 
 			// クリティカルフラグ取得
+			// HPの確定と通知はホストで一度だけ行い、受信側は通知値を反映する。
 			bool isClitical = false;
 
 			// 防御力も含めたダメージを取得
@@ -279,6 +283,7 @@ void BossBase::ChangeState(int nextState)
 		Net::GetIns().Send(MsgDataBossChangeState(nextState));
 	}
 
+	// 基底クラスが実際のステート終了・開始処理を担当する。
 	CharacterBase::ChangeState(nextState);
 }
 

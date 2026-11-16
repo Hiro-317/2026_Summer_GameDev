@@ -39,6 +39,8 @@ BananaBoss::BananaBoss() :
 
 void BananaBoss::BossLoad(void)
 {
+	// 共通STATEと固有攻撃の対応: ATTACK_A=ひっかき、B=ブレス、C=バナメラン、D=バナドリル。
+	// 登録するコールバックはボスのメンバーを参照するため、ボスと同じ寿命で利用する。
 	// アニメーション～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 	// アニメーションコントローラーを生成する
@@ -201,6 +203,7 @@ void BananaBoss::BossLoad(void)
 
 void BananaBoss::ReceptionUpdate(void)
 {
+	// 位置・HPなどは基底側、攻撃範囲などの固有情報はこの後の受信ループで反映する。
 	BossBase::ReceptionUpdate();
 
 	// エリアの同期

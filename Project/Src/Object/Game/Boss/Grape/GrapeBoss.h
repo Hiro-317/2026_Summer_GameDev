@@ -4,12 +4,14 @@
 
 class HitUI;
 
+/// <summary>爆弾プールを各攻撃ステートへ渡し、攻撃範囲と爆弾の受信同期を行う。</summary>
 class GrapeBoss : public BossBase
 {
 public:
 	GrapeBoss();
 	~GrapeBoss()override = default;
 
+	/// <summary>共通の受信処理に続き、このボス固有の攻撃表示を同期する。</summary>
 	virtual void ReceptionUpdate(void)override;
 
 private:
