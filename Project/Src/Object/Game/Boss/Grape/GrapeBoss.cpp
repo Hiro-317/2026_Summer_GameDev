@@ -243,7 +243,7 @@ void GrapeBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(STAMP_COOLTIME); }
+			[&]() { coolTime = static_cast<float>(STALKER_COOLTIME); }
 		)
 	);
 	AddState(
@@ -281,38 +281,14 @@ void GrapeBoss::BossLoad(void)
 	);
 
 #pragma endregion
-
-#pragma region UIの登録と設定
-
-	// HPバーUIの登録
-	AddChildActor(
-		new HpBarUI(
-			"Data/Image/Game/UI/Boss/HP/" + HP_FRAME_IMAGE_NAME,
-			"Data/Image/Game/UI/Boss/HP/" + HP_IMAGE_NAME,
-			"Data/Image/Game/UI/Boss/HP/" + HP_LOST_IMAGE_NAME,
-			
-			Vector2I(667,50),
-			Vector2I(629,50),
-
-			HP_UI_POS,
-
-			characterStats
-		)
-	);
-
-	// ヒットUIの生成 / 登録
-	hitUiRef = new HitUI();
-	AddChildActor(hitUiRef);
-
-#pragma endregion 
-
 }
 
 void GrapeBoss::BossUpdate(void)
 {
-	if (coolTime > 0.0f) {
-		coolTime -= TimeScale::Get();
-		if (coolTime < 0.0f) { coolTime = 0.0f; }
+	if (GetAnimePlayType() == (int)(ANIME_TYPE::DAMAGE)) {
+		if (IsAnimeEnd()) {
+			AnimePlay((int)ANIME_TYPE::IDLE, true);
+		}
 	}
 }
 

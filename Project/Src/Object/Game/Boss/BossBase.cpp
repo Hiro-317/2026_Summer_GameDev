@@ -168,15 +168,13 @@ void BossBase::SubUpdate(void)
 #pragma region ターゲット更新
 
 	// ターゲットの生存確認
-	// 注意: targetNumの範囲と参照先の有効性を前提とする。全員死亡時の扱いは修正候補。
 	if (*playerIsDeath[targetNum]) { targetNum = -1; }
 
 	// 与ダメの最大値を探す
 	for (int id = 0; id < Net::GetIns().GetConnectStatus().EntryCount(); id++) {
 
 		// 生存確認
-		// 注意: 現状は生存者を除外している。生存者から選ぶ仕様なら条件の反転が必要。
-		if (!*playerIsDeath[id]) { continue; }
+		if (*playerIsDeath[id]) { continue; }
 
 		// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
 		if (targetNum == -1 || damaged[targetNum] < damaged[id]) {
@@ -191,6 +189,8 @@ void BossBase::SubUpdate(void)
 
 #pragma endregion
 
+	// それぞれのボスの固有更新
+	BossUpdate();
 
 #ifdef _DEBUG
 	if (CheckHitKey(KEY_INPUT_0)) {

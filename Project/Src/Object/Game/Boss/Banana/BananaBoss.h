@@ -20,6 +20,8 @@ public:
 
 private:
 
+	void BossUpdate(void) override;
+
 	// ダメージアニメーション再生
 	void PlayDamage(void) override;
 	void BossInit(void)override;

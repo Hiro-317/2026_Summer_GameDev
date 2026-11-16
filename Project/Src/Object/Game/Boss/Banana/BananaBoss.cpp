@@ -172,33 +172,15 @@ void BananaBoss::BossLoad(void)
 	);
 
 #pragma endregion
+}
 
-
-#pragma region èÛë‘ê›íË
-
-#pragma endregion
-
-
-#pragma region UIê∂ê¨
-	// HPÉoÅ[ê∂ê¨
-	AddChildActor(
-		new HpBarUI(
-			"Data/Image/Game/UI/Boss/HP/" + HP_FRAME_IMAGE_NAME,
-			"Data/Image/Game/UI/Boss/HP/" + HP_IMAGE_NAME,
-			"Data/Image/Game/UI/Boss/HP/" + HP_LOST_IMAGE_NAME,
-
-			Vector2I(667, 50),
-			Vector2I(629, 50),
-
-			HP_UI_POS,
-
-			characterStats
-		)
-	);
-
-	AddChildActor(new HitUI());
-#pragma endregion
-
+void BananaBoss::BossUpdate(void)
+{
+	if (GetAnimePlayType() == (int)(ANIME_TYPE::DAMAGE)) {
+		if (IsAnimeEnd()) {
+			AnimePlay((int)ANIME_TYPE::IDLE, true);
+		}
+	}
 }
 
 void BananaBoss::ReceptionUpdate(void)
