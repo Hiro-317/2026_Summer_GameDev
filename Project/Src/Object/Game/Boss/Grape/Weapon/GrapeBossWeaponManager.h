@@ -11,11 +11,11 @@ static constexpr int ArraySum(const int* const array, unsigned char arrayNum) {
 	return ret;
 }
 
-struct BombType {
+struct BombPoolEntry {
 
 	WeaponType type = WeaponType::None;
-	GrapeBossWeaponBase* weaponIns = nullptr;
-	bool live = false;
+	GrapeBossWeaponBase* weaponActor = nullptr;
+	bool isActive = false;
 };
 
 class GrapeBossWeaponManager : public ActorBase{
@@ -29,19 +29,29 @@ public:
 
 	/// <summary>指定種類の先頭要素を返す。該当なしの場合はnullptr。</summary>
 	/// <param name="type">取得する爆弾の種類。</param>
-	/// <returns>内部配列の借用ポインター。添字は該当種類のWeponDuplicateNum未満に制限する。</returns>
-	BombType* GetWeapons(WeaponType type) {
+	/// <returns>内部配列の借用ポインター。添字は該当種類のWeaponPoolCounts未満に制限する。</returns>
+	BombPoolEntry* GetWeaponPool(WeaponType type) {
 
-		// 配列分出す
+		// 同じ種類を連続配置しているため、最初の一致がそのプールの先頭になる。
 		for (auto& weapon : weapons) {
-			// 配列内のタイプとほしいものが同じなら
 			if (weapon.type == type) {
-				// 格納
 				return &weapon;
 			}
 		}
-		// ないならぬるぽ
+		// 未登録の種類は取得できない。
 		return nullptr;
+	}
+
+	/// <summary>種類内の添字を検証し、爆弾プールの要素を取得する。</summary>
+	/// <param name="type">取得する爆弾の種類。</param>
+	/// <param name="index">種類内の添字。負数や個数以上の値は無効。</param>
+	/// <returns>内部要素への借用ポインター。種類・添字が無効ならnullptr。</returns>
+	BombPoolEntry* GetWeapon(WeaponType type, int index) {
+		const int typeIndex = static_cast<int>(type);
+		if (typeIndex < 0 || typeIndex >= static_cast<int>(WeaponType::Max)
+			|| index < 0 || index >= WeaponPoolCounts[typeIndex]) { return nullptr; }
+		BombPoolEntry* pool = GetWeaponPool(type);
+		return pool != nullptr ? &pool[index] : nullptr;
 	}
 
 	void Load(void) override;
@@ -67,5 +77,5 @@ private:
 	int frontModel;
 
 	// 武器の配列
-	BombType weapons[ArraySum(WeponDuplicateNum, (int)WeaponType::Max)];
+	BombPoolEntry weapons[ArraySum(WeaponPoolCounts, (int)WeaponType::Max)];
 };

@@ -7,7 +7,7 @@ TomatoBossIdleState::TomatoBossIdleState(
 	const std::function<int(void)> CoolTime,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> HeadbuttChangeState,
-	const std::function<void(void)> MoveChangeState, 
+	const std::function<void(void)> MoveChangeState,
 	const std::function<void(void)> StampChangeState,
 	const std::function<void(void)> TackleChangeState,
 	const std::function<bool(void)> hitRock,
@@ -28,19 +28,22 @@ TomatoBossIdleState::TomatoBossIdleState(
 
 void TomatoBossIdleState::Enter(void)
 {
-	cnt = CoolTime();
-	target = GetTarget();
+	remainingCooldownFrames = CoolTime();
+	targetPlayerIndex = GetTarget();
 }
 
 void TomatoBossIdleState::Update(void)
 {
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// クールタイムまで待つ
-	if (cnt > 0) {
-		cnt--;
+	if (remainingCooldownFrames > 0) {
+		remainingCooldownFrames--;
 		return;
 	}
 	// 距離と確率を出す
-	float distance = (*playerPos[target] - pos).Length();
+	float distance = (*playerPos[targetPlayerIndex] - pos).Length();
 	int luck = GetRand(RANDOM);
 
 	// 確率で変える

@@ -28,9 +28,10 @@ TomatoBossHeadbuttState::TomatoBossHeadbuttState(
 
 void TomatoBossHeadbuttState::Enter(void)
 {
-	target = GetTarget();
-	moveDir = (*playerPos[target] - pos).Normalized();
-	time = -START_CNT;
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+	movementDirection = (*playerPos[targetPlayerIndex] - pos).Normalized();
+	elapsedFrames = -START_CNT;
 	DeleteColl();
 	SetCoolTime();
 	collOperator->SetDrawArea(true);
@@ -41,35 +42,38 @@ void TomatoBossHeadbuttState::Enter(void)
 
 void TomatoBossHeadbuttState::Update(void)
 {
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// 前隙用の時間加算
-	time++;
+	elapsedFrames++;
 	// 前隙中は予測線の更新
-	if (time < 0) {
+	if (elapsedFrames < 0) {
 
-		rotation = Quaternion::FromRotationY(atan2f(moveDir.x, moveDir.z));
-		float s = (((float)time + START_CNT) / START_CNT);
+		rotation = Quaternion::FromRotationY(atan2f(movementDirection.x, movementDirection.z));
+		float telegraphScale = (((float)elapsedFrames + START_CNT) / START_CNT);
 
-		collOperator->SetScale(s);
+		collOperator->SetScale(telegraphScale);
 		collOperator->SetViewPos(pos);
 		collOperator->SetAngle(-rotation.ToEulerXZY().y);
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, s, -rotation.ToEulerXZY().y));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackA, pos, telegraphScale, -rotation.ToEulerXZY().y));
 		return;
 	}
 	// 初めなら音と当たり判定を出す
-	if (time == 0) {
+	if (elapsedFrames == 0) {
 		SoundManager::GetIns().Play("Headbutt");
 		if (Net::GetIns().IsHost()) {
 			collOperator->CollSet(true);
 		}
 	}
 	// 持続時間を超えたらステートを変える
-	if (time > ATTACK_TIME) {
+	if (elapsedFrames > ATTACK_TIME) {
 		DefaultChangeState();
+		return;
 	}
 	else {
 		// 位置の更新
-		float cnt = time <= ATTACK_TIME / 2.0f ? time : time - (ATTACK_TIME + 1.0f);
-		pos += moveDir * MOVE_SPEED * cnt;
+		float movementWeight = elapsedFrames <= ATTACK_TIME / 2.0f ? elapsedFrames : elapsedFrames - (ATTACK_TIME + 1.0f);
+		pos += movementDirection * MOVE_SPEED * movementWeight;
 	}
 	collOperator->SetPos(pos);
 }

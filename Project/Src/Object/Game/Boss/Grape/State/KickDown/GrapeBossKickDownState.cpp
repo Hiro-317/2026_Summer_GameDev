@@ -10,7 +10,7 @@
 GrapeBossKickDownState::GrapeBossKickDownState(
 	Transform& bossTrans,
 	const Quaternion LOCAL_ROT,
-	BombType* bombType,
+	BombPoolEntry* bombPool,
 	const Vector3& MODEL_SCALE,
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	GrapeKickDownCollOperator* collOperator,
@@ -21,9 +21,9 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 ):
-	bossTrans(bossTrans), 
+	bossTrans(bossTrans),
 	LOCAL_ROT(LOCAL_ROT),
-	bombType(bombType),
+	bombPool(bombPool),
 	MODEL_SCALE(MODEL_SCALE),
 	playerPos(playerPos),
 	collOperator(collOperator),
@@ -33,19 +33,20 @@ GrapeBossKickDownState::GrapeBossKickDownState(
 	IsAnimeEnd(IsAnimeEnd),
 	DefaultChangeState(DefaultChangeState),
 	SetCoolTime(SetCoolTime),
-	cnt(0), first(false), target(0)
+	activeAttackFrames(0), isAttackPending(false), targetPlayerIndex(0)
 {
 }
 
 void GrapeBossKickDownState::Enter(void)
 {
 	PlayAttackAnim();
-	first = true;
-	cnt = 0;
+	isAttackPending = true;
+	activeAttackFrames = 0;
 	SetCoolTime();
-	target = GetTarget();
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
 
-	bossTrans.rotation = Quaternion::FromRotationY(atan2f(playerPos[target]->x - bossTrans.pos.x, playerPos[target]->z - bossTrans.pos.z));
+	bossTrans.rotation = Quaternion::FromRotationY(atan2f(playerPos[targetPlayerIndex]->x - bossTrans.pos.x, playerPos[targetPlayerIndex]->z - bossTrans.pos.z));
 
 	attackPos = Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z) + bossTrans.rotation.Rotate(LOCAL_ROT.Rotate(FOOT_VIEW_POS * MODEL_SCALE));
 
@@ -57,12 +58,14 @@ void GrapeBossKickDownState::Enter(void)
 
 void GrapeBossKickDownState::Update(void)
 {
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// アニメーションが終わっていたらステートを抜ける
 	if (IsAnimeEnd()) {
 		// アニメーションの再生割合で生成
-		if (first) {
+		if (isAttackPending) {
 			// 生成数まで回す
-			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::KickBomb]; i++) {
+			for (int i = 0; i < WeaponPoolCounts[(int)WeaponType::KickBomb]; i++) {
 
 				// 前後左右の制定
 				float FB = (float)GetRand(RADIUS);
@@ -90,27 +93,27 @@ void GrapeBossKickDownState::Update(void)
 
 				// スタート位置の設定
 				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
-				bombType[i].weaponIns->SetStartPos(tmpPos);
-				bombType[i].weaponIns->SetColliderFlg(true);
-				bombType[i].weaponIns->SetViewPosCircle();
-				
+				bombPool[i].weaponActor->SetStartPos(tmpPos);
+				bombPool[i].weaponActor->SetColliderFlg(true);
+				bombPool[i].weaponActor->SetViewPosCircle();
+
 				// 起動を通知
 				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::KickBomb, i, tmpPos));
 
 				// 起動
-				bombType[i].live = true;
+				bombPool[i].isActive = true;
 			}
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
 			Snd::GetIns().Play("Kick");
 		}
 		// 二度目は通さないようにフラグを折る
-		first = false;
+		isAttackPending = false;
 		// 攻撃持続時間の加算
-		cnt++;
+		activeAttackFrames++;
 
 		// 攻撃持続時間の判定
-		if (cnt > ATTACK_DURATION) {
+		if (activeAttackFrames > ATTACK_DURATION) {
 
 			DefaultChangeState();
 		}

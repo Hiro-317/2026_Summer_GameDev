@@ -64,7 +64,7 @@ void BananaBossBanadrill::Load(void)
 
 void BananaBossBanadrill::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (!attack && live) {
+	if (!attack && isActive) {
 		if (other.GetTag() == COLLIDER_TAG::PlayerAttack && ownTag == COLLIDER_TAG::Boss) {
 			// –hŒä—Í‚àŠÜ‚ß‚½ƒ_ƒ[ƒW‚ðŽæ“¾
 			short damage = CalculateDamage(other.GetSkillStats()->Power(), stats.defensePower.Value());
@@ -73,7 +73,7 @@ void BananaBossBanadrill::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& o
 			hp -= damage;
 
 			if (hp <= 0) {
-				live = false;
+				isActive = false;
 				prevLive = false;
 				hp = HP;
 				SetIsDraw(false);
@@ -103,9 +103,9 @@ void BananaBossBanadrill::SubDraw(void)
 
 void BananaBossBanadrill::SubUpdate(void)
 {
-	if (!prevLive && live) {
+	if (!prevLive && isActive) {
 		first = true;
-		prevLive = live;
+		prevLive = isActive;
 		SetIsDraw(true);
 		attack = true;
 		drilling = false;
@@ -181,7 +181,7 @@ void BananaBossBanadrill::SubUpdate(void)
 				attCollRef->SetJudgeFlg(false);
 				collRef->SetJudgeFlg(false);
 				prevLive = false;
-				live = false;
+				isActive = false;
 				cnt = 0;
 				front.scale = Vector3(0.0f);
 				SetIsDraw(false);

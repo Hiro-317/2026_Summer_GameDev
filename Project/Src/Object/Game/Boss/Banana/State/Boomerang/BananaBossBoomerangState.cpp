@@ -31,9 +31,9 @@ BananaBossBoomerangState::BananaBossBoomerangState(
 
 void BananaBossBoomerangState::Enter(void)
 {
-	first = true;
-	startAnim = true;
-	cnt = 0.0f;
+	isCharging = true;
+	isPlayingChargeStart = true;
+	elapsedFrames = 0.0f;
 	SetCoolTime();
 	PlayStartAnim();
 	collOperator->SetDrawArea(true);
@@ -43,38 +43,39 @@ void BananaBossBoomerangState::Enter(void)
 void BananaBossBoomerangState::Update(void)
 {
 	// 共通のカウント
-	cnt++;
+	elapsedFrames++;
 	// 溜めなら
-	if (first) {
+	if (isCharging) {
 		// 溜め開始アニメーションが終わっていたらループに変える
-		if (startAnim && IsAnimeEnd()) {
+		if (isPlayingChargeStart && IsAnimeEnd()) {
 			PlayLoopAnim();
-			startAnim = false;
+			isPlayingChargeStart = false;
 		}
 		// 攻撃描画を更新
-		collOperator->SetScale(cnt / START_TIME);
+		collOperator->SetScale(elapsedFrames / START_TIME);
 		// バナメランを追従
 		collOperator->SetBanameranPos(HandPos());
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, HandPos(), cnt / START_TIME));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, HandPos(), elapsedFrames / START_TIME));
 		// ため時間を超えてたら
-		if (cnt >= START_TIME) {
+		if (elapsedFrames >= START_TIME) {
 			// 攻撃の発生とカウントの初期化
 			PlayAttackAnim();
 			collOperator->CollSet(true);
-			first = false;
-			cnt = 0;
+			isCharging = false;
+			elapsedFrames = 0;
 			Snd::GetIns().Play("Boomerang");
 		}
 	}
 	// 攻撃中なら
 	else {
 		// 回転させる
-		collOperator->SetBanameranRot(Quaternion::FromRotationY(Deg2Rad(cnt * 20.0f)));
-		collOperator->SetBanameranPos(Vector3(POS.x * cosf(Deg2Rad(cnt)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(cnt))));
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, Vector3(POS.x * cosf(Deg2Rad(cnt)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(cnt))), 1.0f, Deg2Rad(cnt * 10.0f)));
+		collOperator->SetBanameranRot(Quaternion::FromRotationY(Deg2Rad(elapsedFrames * 20.0f)));
+		collOperator->SetBanameranPos(Vector3(POS.x * cosf(Deg2Rad(elapsedFrames)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(elapsedFrames))));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, Vector3(POS.x * cosf(Deg2Rad(elapsedFrames)), POS.y, POS.z + DIFF * -sinf(Deg2Rad(elapsedFrames))), 1.0f, Deg2Rad(elapsedFrames * 20.0f)));
 		// 時間が越えてたら終わる
-		if (cnt >= END_TIME) {
+		if (elapsedFrames >= END_TIME) {
 			DefaultChangeState();
+			return;
 		}
 		// 攻撃のアニメーションが終了してたらアイドルへ
 		if (IsAnimeEnd()) {

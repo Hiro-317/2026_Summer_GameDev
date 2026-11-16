@@ -23,7 +23,7 @@ TomatoBossMoveState::TomatoBossMoveState(
 
 void TomatoBossMoveState::Enter(void)
 {
-    target = GetTarget();
+    targetPlayerIndex = GetTarget();
     // ステート開始時の向きを基準にする（転がりはリセット）
     facingRotation = bossTrans.rotation;
     rollAngle = 0.0f;
@@ -31,19 +31,26 @@ void TomatoBossMoveState::Enter(void)
 
 void TomatoBossMoveState::Update(void)
 {
-    if (target < 0 || target >= (int)MSG_SENDER_ID::Max || playerPos[target] == nullptr) {
+    targetPlayerIndex = GetTarget();
+    if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) {
         return;
     }
 
-    Vector3 diff = *playerPos[target] - bossTrans.pos;
+    // 同じ位置でも正規化前に攻撃へ移行し、移動ステートで止まり続けないようにする。
+    if ((*playerPos[targetPlayerIndex] - bossTrans.pos).Length() <= HEADBUTT_DISTANCE) {
+        HeadbuttChangeState();
+        return;
+    }
+
+    Vector3 diff = *playerPos[targetPlayerIndex] - bossTrans.pos;
     diff.y = 0.0f;
     if (diff.Length() <= 0.0001f) {
         return;
     }
-    moveDir = diff.Normalized();
+    movementDirection = diff.Normalized();
 
     // 転がりを含まない「正面方向」だけを補間する
-    const float targetAngle = atan2f(moveDir.x, moveDir.z);
+    const float targetAngle = atan2f(movementDirection.x, movementDirection.z);
     const Quaternion targetRotation = Quaternion::FromRotationY(targetAngle);
     const float t = 0.25f * TimeScale::Get();
     facingRotation = Quaternion::Slerp(
@@ -62,9 +69,9 @@ void TomatoBossMoveState::Update(void)
     // ワールドで向きを決め、そのローカルX軸に沿って転がす
     bossTrans.SetRotation(facingRotation * rollRotation);
 
-    bossTrans.pos += moveDir * (MOVE_SPEED * TimeScale::Get());
+    bossTrans.pos += movementDirection * (MOVE_SPEED * TimeScale::Get());
 
-    if ((*playerPos[target] - bossTrans.pos).Length() <= 350.0f) {
+    if ((*playerPos[targetPlayerIndex] - bossTrans.pos).Length() <= HEADBUTT_DISTANCE) {
         HeadbuttChangeState();
     }
 }

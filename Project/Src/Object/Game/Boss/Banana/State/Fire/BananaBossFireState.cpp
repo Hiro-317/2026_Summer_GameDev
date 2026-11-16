@@ -23,8 +23,7 @@ BananaBossFireState::BananaBossFireState(
 
 void BananaBossFireState::Enter(void)
 {
-	first = true;
-	effect = false;
+	isAttackPending = true;
 	SetCoolTime();
 	PlayAttackAnim();
 	collOperator->SetDrawArea(true);
@@ -33,21 +32,16 @@ void BananaBossFireState::Enter(void)
 
 void BananaBossFireState::Update(void)
 {
-	// アニメーションのある再生割合以上で
-	if (GetAnimPlayRatio() >= EFFECT_RATE && !effect) {
-		// エフェクト生成
-		effect = true;
-	}
 	if (GetAnimPlayRatio() >= ATTACK_RATE) {
 		// アニメーションの再生割合で生成
-		if (first) {
+		if (isAttackPending) {
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
 			Snd::GetIns().Play("Breath");
 			collOperator->EffectPlay();
 		}
 		// 二度目は通さないようにフラグを折る
-		first = false;
+		isAttackPending = false;
 		// アニメーションが終わったら終わり
 		if (IsAnimeEnd()) {
 

@@ -23,28 +23,30 @@ BananaBossIdleState::BananaBossIdleState(
 	FireChangeState(FireChangeState),
 	BanamerangChangeState(BanamerangChangeState),
 	BanadrillChangeState(BanadrillChangeState),
-	cnt(0), target(0), angleFlg(true)
+	remainingCooldownFrames(0), targetPlayerIndex(0), needsFacingUpdate(true)
 {
 }
 
 void BananaBossIdleState::Enter(void)
 {
-	cnt = CoolTime();
-	target = GetTarget();
+	remainingCooldownFrames = CoolTime();
+	targetPlayerIndex = GetTarget();
 	PlayIdleAnim();
-	angleFlg = true;
+	needsFacingUpdate = true;
 }
 
 void BananaBossIdleState::Update(void)
 {
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// クールタイムの間
-	if (cnt > 0) {
-		cnt--;
-		
+	if (remainingCooldownFrames > 0) {
+		remainingCooldownFrames--;
+
 		return;
 	}
-	// 距離と確率を出す
-	float distance = (*playerPos[target] - pos).Length();
+	// 攻撃を抽選する
 	int luck = GetRand(RANDOM);
 
 	if (luck <= SCRATCH_LUCK) {
@@ -60,41 +62,6 @@ void BananaBossIdleState::Update(void)
 		BanadrillChangeState();
 	}
 
-	//// 確率で変える
-	//if (luck <= KICKDOWN_LUCK) {
-	//	// 距離が近いなら頭突き
-	//	if (distance <= DISTANCE) {
-	//		KickDownChangeState();
-	//	}
-	//}
-	//else if (luck <= STRAIGHT_LUCK) {
-	//	// 距離が遠いなら直線投擲
-	//	if (distance >= DISTANCE) {
-	//		StraightChangeState();
-	//	}
-	//	// 近いならかかと落としか追従
-	//	else if (luck <= RELOOT_LUCK){
-	//		KickDownChangeState();
-	//	}
-	//	else {
-	//		StalkerChangeState();
-	//	}
-	//}
-	//else if (luck <= STAMP_LUCK) {
-
-	//	StampChangeState();
-	//}
-	//else if (luck <= SINGLE_LUCK) {
-
-	//	SingleChangeState();
-	//}
-	//else if (luck <= STALKER_LUCK) {
-
-	//	StalkerChangeState();
-	//}
-	//else {
-	//	RandomChangeState();
-	//}
 }
 
 void BananaBossIdleState::Exit(void)

@@ -145,10 +145,10 @@ private:
 	// ``````````````ƒƒCƒ“ˆ—
 
 	// Šâ‚É“–‚½‚Á‚½‚©
-	bool rockHit;
+	bool hasHitRock;
 
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	int coolTime;
+	int attackCooldownFrames;
 
 	TomatoHeadbuttCollOperator* headbuttRef;
 	TomatoStampCollOperator* stampRef;

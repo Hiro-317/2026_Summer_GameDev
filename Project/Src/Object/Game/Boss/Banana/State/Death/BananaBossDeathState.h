@@ -8,13 +8,11 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ROTATION_POW">回転量</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="PlayDeath">死亡アニメーションを再生する。</param>
+	/// <param name="MarkDead">死亡完了フラグを設定する。</param>
 	BananaBossDeathState(
 		const std::function<void(void)>& PlayDeath,
-		const std::function<void(void)> IsDeath
+		const std::function<void(void)> MarkDead
 	);
 	~BananaBossDeathState()override = default;
 
@@ -32,11 +30,12 @@ public:
 	void AlwaysUpdate(void)override;
 
 private:
+	bool hasNotifiedDeath = false;
 #pragma region 参照関数
 
 	// 死亡判定移行
 	const std::function<void(void)> PlayDeath;
-	const std::function<void(void)> IsDeath;
+	const std::function<void(void)> MarkDead;
 
 #pragma endregion 参照関数
 
@@ -46,5 +45,5 @@ private:
 
 #pragma endregion 定数定義
 
-	int cnt;
+	int elapsedFrames;
 };

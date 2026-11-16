@@ -5,14 +5,14 @@
 #include "../../../../../../Manager/Net/NetWorkManager.h"
 
 GrapeBossRandomState::GrapeBossRandomState(
-	const Vector3& pos, BombType* bombType,
+	const Vector3& pos, BombPoolEntry* bombPool,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
 	const std::function<bool(void)> IsAnimeEnd,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 ) :
-	pos(pos), bombType(bombType),
+	pos(pos), bombPool(bombPool),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
 	IsAnimeEnd(IsAnimeEnd),
@@ -32,7 +32,7 @@ void GrapeBossRandomState::Update(void)
 	// アニメーションが終わっていたらフラグを立てる
 	if (IsAnimeEnd()) {
 		// 生成数まで回す
-		for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::RandomBomb]; i++) {
+		for (int i = 0; i < WeaponPoolCounts[(int)WeaponType::RandomBomb]; i++) {
 
 			// 前後左右の制定
 			float FB = (float)GetRand(RADIUS);
@@ -60,15 +60,15 @@ void GrapeBossRandomState::Update(void)
 
 			// スタート位置の設定
 			Vector3 tmpPos = Vector3(pos.x + posX, HEIGHT, pos.z + posZ);
-			bombType[i].weaponIns->SetStartPos(tmpPos);
-			bombType[i].weaponIns->SetColliderFlg(true);
-			bombType[i].weaponIns->SetViewPosCircle();
+			bombPool[i].weaponActor->SetStartPos(tmpPos);
+			bombPool[i].weaponActor->SetColliderFlg(true);
+			bombPool[i].weaponActor->SetViewPosCircle();
 
 			// 起動を通知
 			Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::RandomBomb, i, tmpPos));
 
 			// 起動
-			bombType[i].live = true;
+			bombPool[i].isActive = true;
 		}
 		// ステートを変える
 		DefaultChangeState();

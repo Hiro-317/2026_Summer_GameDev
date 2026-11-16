@@ -6,7 +6,7 @@
 
 GrapeBossStalkerState::GrapeBossStalkerState(
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
-	BombType* bombType,
+	BombPoolEntry* bombPool,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
@@ -15,7 +15,7 @@ GrapeBossStalkerState::GrapeBossStalkerState(
 	const std::function<void(void)> SetCoolTime
 ) :
 	playerPos(playerPos),
-	bombType(bombType),
+	bombPool(bombPool),
 	GetTarget(GetTarget),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
@@ -28,42 +28,45 @@ GrapeBossStalkerState::GrapeBossStalkerState(
 void GrapeBossStalkerState::Enter(void)
 {
 	PlayAttackAnim();
-	end = false;
-	target = GetTarget();
+	isSpawningBombs = false;
+	targetPlayerIndex = GetTarget();
 	SetCoolTime();
-	num = 0;
+	spawnedBombCount = 0;
+	spawnIntervalFrames = 0;
 }
 
 void GrapeBossStalkerState::Update(void)
 {
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// アニメーションが終わっていたらフラグを立てる
-	if (IsAnimeEnd()) {
+	if (!isSpawningBombs && IsAnimeEnd()) {
 
 		PlayAttackAnim();
-		end = true;
+		isSpawningBombs = true;
 	}
 
 	// フラグを立ってるなら
-	if (end) {
+	if (isSpawningBombs) {
 		// 間隔をとる
-		if (disp >= DISP_TIME) {
-			disp = 0;
+		if (spawnIntervalFrames >= DISP_TIME) {
+			spawnIntervalFrames = 0;
 			// 生成数まで回す
-			if (num < WeponDuplicateNum[(int)WeaponType::StalkerBomb]) {
+			if (spawnedBombCount < WeaponPoolCounts[(int)WeaponType::StalkerBomb]) {
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(playerPos[target]->x, HEIGHT, playerPos[target]->z);
-				bombType[num].weaponIns->SetStartPos(tmpPos);
-				bombType[num].weaponIns->SetColliderFlg(true);
-				bombType[num].weaponIns->SetViewPosCircle();
+				Vector3 spawnPosition = Vector3(playerPos[targetPlayerIndex]->x, HEIGHT, playerPos[targetPlayerIndex]->z);
+				bombPool[spawnedBombCount].weaponActor->SetStartPos(spawnPosition);
+				bombPool[spawnedBombCount].weaponActor->SetColliderFlg(true);
+				bombPool[spawnedBombCount].weaponActor->SetViewPosCircle();
 
 				// 起動を通知
-				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::StalkerBomb, num, tmpPos));
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::StalkerBomb, spawnedBombCount, spawnPosition));
 
 				// 起動
-				bombType[num].live = true;
+				bombPool[spawnedBombCount].isActive = true;
 
-				num++;
+				spawnedBombCount++;
 			}
 			// 全生成したらデフォルトに戻る
 			else {
@@ -71,7 +74,7 @@ void GrapeBossStalkerState::Update(void)
 			}
 		}
 		else {
-			disp++;
+			spawnIntervalFrames++;
 		}
 	}
 }

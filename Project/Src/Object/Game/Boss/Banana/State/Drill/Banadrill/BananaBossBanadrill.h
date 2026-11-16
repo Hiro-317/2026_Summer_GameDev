@@ -18,10 +18,10 @@ public:
 
 	void Load(void) override;
 
-	bool GetLive(void) { return live; }
+	bool GetLive(void) { return isActive; }
 	// 接地後のドリル回転中だけ、共有の掘削音を必要とする。
-	bool IsDrilling(void) const { return live && drilling; }
-	void SetLive(bool flg) { live = flg; }
+	bool IsDrilling(void) const { return isActive && drilling; }
+	void SetLive(bool flg) { isActive = flg; }
 
 	void SetPos(const Vector3& pos) { trans.pos = Vector3(pos.x, HEIGHT, pos.z); front.pos = Vector3(pos.x, VIEW_HEIGHT, pos.z); back.pos = Vector3(pos.x, VIEW_HEIGHT, pos.z); }
 
@@ -60,7 +60,7 @@ private:
 	SphereCollider* collRef;
 	XZCircleCollider* attCollRef;
 
-	bool live = false;
+	bool isActive = false;
 	bool prevLive = false;
 
 	bool boot = false;

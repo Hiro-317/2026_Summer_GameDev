@@ -37,7 +37,8 @@ void BananaBossDrillManager::Update()
 				// Ÿ‚Ì‚à‚Ì‚ğ‹N“®‚·‚é‚©‚Ç‚¤‚©
 				if (drills[i]->GetBoot()) {
 					drills[i + 1]->SetLive(true);
-					drills[i + 1]->SetPos(*playerPos[target]);
+					const bool hasTarget = target >= 0 && target < (int)MSG_SENDER_ID::Max && playerPos[target] != nullptr;
+					drills[i + 1]->SetPos(hasTarget ? *playerPos[target] : drills[i]->GetTrans().pos);
 				}
 			}
 			// ÅŒã‚Ìê‡
@@ -78,6 +79,10 @@ void BananaBossDrillManager::Release()
 
 void BananaBossDrillManager::Start(void)
 {
+	if (target < 0 || target >= (int)MSG_SENDER_ID::Max || playerPos[target] == nullptr) {
+		end = true;
+		return;
+	}
 	end = false;
 	drills[0]->SetLive(true);
 	drills[0]->SetPos(*playerPos[target]);

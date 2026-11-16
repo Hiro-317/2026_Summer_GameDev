@@ -15,8 +15,6 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="CoolTime">クールタイムの取得</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
@@ -29,6 +27,7 @@ public:
 	/// <param name="SingleChangeState">一発攻撃へのステート</param>
 	/// <param name="StalkerChangeState">追従攻撃へのステート</param>
 	/// <param name="RandomChangeState">ランダム攻撃へのステート</param>
+	/// <param name="bossTrans">ボスの座標・回転への参照。</param>
 	GrapeBossIdleState(
 		Transform& bossTrans,
 
@@ -117,11 +116,11 @@ private:
 #pragma endregion
 
 	// カウント
-	float cnt;
+	float remainingCooldownFrames;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 
 	// アングル合わせるフラグ
-	bool angleFlg;
+	bool needsFacingUpdate;
 };

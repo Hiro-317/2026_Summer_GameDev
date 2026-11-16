@@ -14,10 +14,8 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
 	/// <param name="isGround">地面かどうか</param>
-	/// <param name="bombType">攻撃種のクラス取得</param>
+	/// <param name="bombPool">攻撃種のクラス取得</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="collOperator">当たり判定オペレータの参照</param>
 	/// <param name="JUMP_START_ANIM_TYPE">踏み切りアニメーションのenumタイプ</param>
@@ -28,14 +26,16 @@ public:
 	/// <param name="PlayStampAnim">スタンプアニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
-	/// <param name="DeleteColl">ボス自体のコライダの消滅</param>
-	/// <param name="ReviveColl">ボス自体のコライダの再生</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
+	/// <param name="bossTrans">ボスの座標・回転への参照。</param>
+	/// <param name="GetAnimType">現在のアニメーション種類を取得する。</param>
+	/// <param name="offCollider">ボス本体の当たり判定を無効にする。</param>
+	/// <param name="onCollider">ボス本体の当たり判定を復帰する。</param>
 	GrapeBossStampState(
 		Transform& bossTrans,
 		const bool& isGround,
-		BombType* bombType,
+		BombPoolEntry* bombPool,
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		GrapeStampCollOperator* collOperator,
 		const int JUMP_START_ANIM_TYPE,
@@ -91,7 +91,7 @@ private:
 	const bool& isGround;
 
 	// ボムの参照
-	BombType* bombType;
+	BombPoolEntry* bombPool;
 
 	// プレイヤーの座標の参照
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
@@ -104,7 +104,7 @@ private:
 
 	// プレイヤーの標的番号
 	const std::function<int(void)> GetTarget;
-	
+
 	// アタックアニメーションの再生
 	const std::function<void(void)> PlayJumpStartAnim;
 	const std::function<void(void)> PlayJumpAnim;
@@ -112,13 +112,13 @@ private:
 
 	// アニメーションのタイプの取得
 	const std::function<int(void)> GetAnimType;
-	
+
 	// アニメーションの再生割合取得
 	const std::function<float(void)> GetAnimPlayRatio;
-	
+
 	// アニメーションが終わっているかどうか
 	const std::function<bool(void)> IsAnimeEnd;
-	
+
 	// ステートを抜けたあとのステート
 	const std::function<void(void)> DefaultChangeState;
 
@@ -130,33 +130,30 @@ private:
 #pragma endregion
 
 	// 一度だけ通すように
-	bool first;
+	bool isLandingAttackPending;
 
 	// 攻撃持続のカウント
-	int cnt;
+	int activeAttackFrames;
 
 	// 予測線描画座標
 	Vector3 viewPos;
 
 	// 標的番号
-	int target;
+	int targetPlayerIndex;
 
 	// 攻撃座標
 	Vector3 attackPos;
 
 	// 攻撃する距離
-	Vector3 attackDistRate;
+	Vector3 horizontalMoveStep;
 
 	// 今の攻撃タイム
-	int nowAttackTime;
-
-	// 攻撃発生中フレーム
-	int attackCnt;
+	int horizontalMoveFrames;
 
 	// 攻撃中かフラグ
-	bool isAttack;
+	bool isJumpPending;
 
 	// 直前の座標
-	float prevPos;
+	float previousHeight;
 
 };

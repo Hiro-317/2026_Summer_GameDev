@@ -102,11 +102,11 @@ private:
 #pragma endregion
 
 	// カウント
-	int cnt;
+	int remainingCooldownFrames;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 
 	// アングル合わせるフラグ
-	bool angleFlg;
+	bool needsFacingUpdate;
 };

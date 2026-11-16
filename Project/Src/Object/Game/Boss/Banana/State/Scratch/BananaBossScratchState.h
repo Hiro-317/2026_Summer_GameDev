@@ -17,6 +17,7 @@ public:
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
+	/// <param name="UpdateFrame">攻撃判定に使うボーン座標を更新する。</param>
 	BananaBossScratchState(
 		BananaScratchCollOperator* collOperator,
 		const std::function<void(void)> UpdateFrame,
@@ -73,5 +74,5 @@ private:
 #pragma endregion
 
 	// 一度だけ通すように
-	bool first;
+	bool isAttackPending;
 };

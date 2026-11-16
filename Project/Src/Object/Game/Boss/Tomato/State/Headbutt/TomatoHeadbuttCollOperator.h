@@ -17,7 +17,7 @@ public:
 		const float TO_PLAYER_DISTANCE,
 		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats,
-		const ParameterLoad& collParam
+		const ParameterLoad& attackRangeParameters
 	);
 	~TomatoHeadbuttCollOperator()override = default;
 

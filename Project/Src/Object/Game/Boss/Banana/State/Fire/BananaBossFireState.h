@@ -43,7 +43,6 @@ private:
 
 	// 再生割合
 	static constexpr float ATTACK_RATE = 0.35f;
-	static constexpr float EFFECT_RATE = 0.32f;
 
 	// エフェクトの再生位置
 	const Vector3 EFFECT_POS = Vector3(0.0f, 280.0f, 1325.0f);
@@ -73,10 +72,7 @@ private:
 #pragma endregion
 
 	// 一度だけ通すように
-	bool first;
-	bool effect;
+	bool isAttackPending;
 
-	// 攻撃持続のカウント
-	int cnt;
 
 };

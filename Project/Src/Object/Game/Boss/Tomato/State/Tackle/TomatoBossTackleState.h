@@ -14,14 +14,16 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="ROTATION_POW">回転量</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="trans">情報の読み取り</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="ResetAngle">角度を戻す</param>
 	/// <param name="DeleteColl">XZのコライダを消す</param>
 	/// <param name="ReviveColl">XZのコライダを復活させる</param>
 	/// <param name="DefaultChangeState">戻すステート</param>
+	/// <param name="bossTrans">ボスの座標・回転への参照。</param>
+	/// <param name="SetCoolTime">次の攻撃までの待機時間を設定する。</param>
+	/// <param name="MOVE_SPEED">移動速度。</param>
+	/// <param name="GetTarget">有効な対象プレイヤーの添字を取得する。</param>
+	/// <param name="collOperator">攻撃判定と予告表示の操作先。</param>
 	TomatoBossTackleState(
 		float MOVE_SPEED, float ROTATION_POW,
 		Transform& bossTrans,
@@ -95,16 +97,16 @@ private:
 
 #pragma endregion
 
-	Vector3 moveDir;
+	Vector3 movementDirection;
 
-	float rotPow;
+	float rollSpeed;
 
-	int time;
+	int elapsedFrames;
 
 	// 進行方向の回転と転がり角度を独立して保持
 	Quaternion facingRotation;
 	float rollAngle = 0.0f;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 };

@@ -25,8 +25,8 @@ TomatoBoss::TomatoBoss() :
 		"Tomato/Tomato"
 	)
 {
-	coolTime = DEFAULT_COOLTIME;
-	rockHit = false;
+	attackCooldownFrames = DEFAULT_COOLTIME;
+	hasHitRock = false;
 	Snd::GetIns().AddScene("TomatoBoss");
 }
 
@@ -72,11 +72,11 @@ void TomatoBoss::BossLoad(void)
 
 #pragma region トマトが抱える下位クラスを生成する
 
-	headbuttRef = new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam);
+	headbuttRef = new TomatoHeadbuttCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *attackRangeParameters);
 	AddChildActor(headbuttRef);
-	stampRef = new TomatoStampCollOperator(500.0f, isGround, controlSenderId, characterStats, *collParam);
+	stampRef = new TomatoStampCollOperator(500.0f, isGround, controlSenderId, characterStats, *attackRangeParameters);
 	AddChildActor(stampRef);
-	tackleRef = new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *collParam);
+	tackleRef = new TomatoTackleCollOperator(GetParameter("Collider", "ToPlayerDistanceRadius"), controlSenderId, characterStats, *attackRangeParameters);
 	AddChildActor(tackleRef);
 
 #pragma endregion
@@ -90,9 +90,9 @@ void TomatoBoss::BossLoad(void)
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, playerPos,
 			// クールタイム
-			[&]() { return coolTime; },
+			[&]() { return attackCooldownFrames; },
 			// 現在のターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// 頭突きへの状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_A); },
 			// 移動への状態遷移関数のポインタ
@@ -102,9 +102,9 @@ void TomatoBoss::BossLoad(void)
 			// 突進への状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::ATTACK_C); },
 			// 岩に当たっているか
-			[&]() { return rockHit; },
+			[&]() { return hasHitRock; },
 			// 岩の当たり判定戻し
-			[&]() { rockHit = false; }
+			[&]() { hasHitRock = false; }
 			)
 	);
 	AddState(
@@ -115,7 +115,7 @@ void TomatoBoss::BossLoad(void)
 			// 自分の座標と角度、プレイヤーの座標の読み取り
 			trans, playerPos,
 			// 現在のターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// 角度を戻す
 			[&]() { trans.rotation = Quaternion(); },
 			// 移動後攻撃に状態遷移関数のポインタ
@@ -132,7 +132,7 @@ void TomatoBoss::BossLoad(void)
 			// コリジョンオペレーターの参照渡し
 			headbuttRef,
 			// 現在のターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// XZコライダを消す
 			[&]() { for (auto& coll : ColliderSerch(GetColliders(), COLLIDER_TAG::Boss)) { if (coll->GetShape() == COLLIDER_SHAPE::XzCircle) { coll->SetJudgeFlg(false); } } },
 			// XZコライダを戻す
@@ -140,7 +140,7 @@ void TomatoBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = HEADBUTT_COOLTIME; }
+			[&]() { attackCooldownFrames = HEADBUTT_COOLTIME; }
 		)
 	);
 	AddState(
@@ -151,7 +151,7 @@ void TomatoBoss::BossLoad(void)
 			// 自分の座標の読み取り、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, isGround, playerPos,
 			// 現在のターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// 攻撃時に当たり判定を消すように
@@ -159,7 +159,7 @@ void TomatoBoss::BossLoad(void)
 			// 落下中は当たり判定を再生させる
 			[&]() { SetJudgeFlg(true); },
 			// クールタイムの設定
-			[&]() { coolTime = STAMP_COOLTIME; }
+			[&]() { attackCooldownFrames = STAMP_COOLTIME; }
 		)
 	);
 	AddState(
@@ -172,7 +172,7 @@ void TomatoBoss::BossLoad(void)
 			// コリジョンオペレーターの参照渡し
 			tackleRef,
 			// 現在のターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// 角度を戻す
 			[&]() { trans.rotation = Quaternion::FromRotationY(0.0f); },
 			// XZコライダを消す
@@ -182,7 +182,7 @@ void TomatoBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = TACKLE_COOLTIME; }
+			[&]() { attackCooldownFrames = TACKLE_COOLTIME; }
 			)
 	);
 	AddState(
@@ -208,7 +208,7 @@ void TomatoBoss::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, con
 		if (other.GetTag() == COLLIDER_TAG::Stage) {
 			if (other.GetShape() == COLLIDER_SHAPE::XzCircle) {
 
-				rockHit = true;
+				hasHitRock = true;
 			}
 		}
 	}

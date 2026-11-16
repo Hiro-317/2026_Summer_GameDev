@@ -13,10 +13,9 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="MOVE_SPEED"></param>
-	/// <param name="ATTACK_TIME"></param>
+	/// <param name="MOVE_SPEED">頭突きの移動量に掛ける速度。</param>
+	/// <param name="ATTACK_TIME">往復移動を続けるフレーム数。</param>
 	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="collOperator">当たり判定オペレータの参照</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
@@ -24,6 +23,7 @@ public:
 	/// <param name="ReviveColl">ボス自体のコライダの再生</param>
 	/// <param name="DefaultChangeState">攻撃後のステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
+	/// <param name="rotation">ボスの回転への参照。</param>
 	TomatoBossHeadbuttState(
 		const float MOVE_SPEED, const float ATTACK_TIME,
 		Vector3& pos, Quaternion& rotation,
@@ -88,10 +88,10 @@ private:
 
 #pragma endregion
 
-	Vector3 moveDir;
+	Vector3 movementDirection;
 
-	float time;
+	float elapsedFrames;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 };

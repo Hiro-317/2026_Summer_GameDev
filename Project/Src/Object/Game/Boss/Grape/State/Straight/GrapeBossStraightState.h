@@ -13,9 +13,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angel">角度の参照</param>
-	/// <param name="bombType">攻撃種のクラス取得</param>
+	/// <param name="bombPool">攻撃種のクラス取得</param>
 	/// <param name="playerPos">プレイヤーの座標取得</param>
 	/// <param name="GetTarget">プレイヤーの標的番号</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
@@ -23,9 +21,10 @@ public:
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
+	/// <param name="bossTrans">ボスの座標・回転への参照。</param>
 	GrapeBossStraightState(
 		Transform& bossTrans,
-		BombType* bombType,
+		BombPoolEntry* bombPool,
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayAttackAnim,
@@ -62,7 +61,7 @@ private:
 	Transform& bossTrans;
 
 	// ボムの参照
-	BombType* bombType;
+	BombPoolEntry* bombPool;
 
 	// プレイヤーの座標の読み取り
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
@@ -75,21 +74,21 @@ private:
 
 	// アニメーションの再生割合取得
 	const std::function<float(void)> GetAnimPlayRatio;
-	
+
 	// アニメーションが終わっているかどうか
 	const std::function<bool(void)> IsAnimeEnd;
-	
+
 	// ステートを抜けたあとのステート
 	const std::function<void(void)> DefaultChangeState;
 	const std::function<void(void)> SetCoolTime;
 #pragma endregion
 
 	// 一度だけ通すように
-	bool first;
+	bool isAttackPending;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 
 	// 弾の開始角度三つ分
-	Vector3 dir[WeponDuplicateNum[(int)WeaponType::Straight]];
+	Vector3 dir[WeaponPoolCounts[(int)WeaponType::Straight]];
 };

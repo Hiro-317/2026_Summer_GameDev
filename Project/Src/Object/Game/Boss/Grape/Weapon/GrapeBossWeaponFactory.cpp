@@ -7,10 +7,10 @@
 #include "StalkerBomb/GrapeBossStalkerBomb.h"
 #include "RandomBomb/GrapeBossRandomBomb.h"
 
-BombType GrapeBossWeaponFactory::Create(int model, int type, int front, int back)
+BombPoolEntry GrapeBossWeaponFactory::Create(int model, int type, int front, int back)
 {
 	// 返り値用
-	BombType res;
+	BombPoolEntry res;
 
 	// タイプの取得
 	res.type = (WeaponType)type;
@@ -20,32 +20,32 @@ BombType GrapeBossWeaponFactory::Create(int model, int type, int front, int back
 	{
 	case WeaponType::Straight:
 	{
-		res.weaponIns = new GrapeBossStraight(model, front, back);
+		res.weaponActor = new GrapeBossStraight(model, front, back);
 		break;
 	}
 	case WeaponType::KickBomb:
 	{
-		res.weaponIns = new GrapeBossKickBomb(model, front, back);
+		res.weaponActor = new GrapeBossKickBomb(model, front, back);
 		break;
 	}
 	case WeaponType::StampBomb:
 	{
-		res.weaponIns = new GrapeBossStampBomb(model, front, back);
+		res.weaponActor = new GrapeBossStampBomb(model, front, back);
 		break;
 	}
 	case WeaponType::SingleBomb:
 	{
-		res.weaponIns = new GrapeBossSingleBomb(model, front, back);
+		res.weaponActor = new GrapeBossSingleBomb(model, front, back);
 		break;
 	}
 	case WeaponType::StalkerBomb:
 	{
-		res.weaponIns = new GrapeBossStalkerBomb(model, front, back);
+		res.weaponActor = new GrapeBossStalkerBomb(model, front, back);
 		break;
 	}
 	case WeaponType::RandomBomb:
 	{
-		res.weaponIns = new GrapeBossRandomBomb(model, front, back);
+		res.weaponActor = new GrapeBossRandomBomb(model, front, back);
 		break;
 	}
 	default:

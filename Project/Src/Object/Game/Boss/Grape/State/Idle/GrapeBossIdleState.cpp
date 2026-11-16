@@ -35,72 +35,75 @@ GrapeBossIdleState::GrapeBossIdleState(
 	SingleChangeState(SingleChangeState),
 	StalkerChangeState(StalkerChangeState),
 	RandomChangeState(RandomChangeState),
-	cnt(0.0f), target(0), angleFlg(true)
+	remainingCooldownFrames(0.0f), targetPlayerIndex(0), needsFacingUpdate(true)
 {
 }
 
 void GrapeBossIdleState::Enter(void)
 {
-	cnt = CoolTime();
-	target = GetTarget();
+	remainingCooldownFrames = CoolTime();
+	targetPlayerIndex = GetTarget();
 	PlayIdleAnim();
-	angleFlg = true;
+	needsFacingUpdate = true;
 }
 
 void GrapeBossIdleState::Update(void)
 {
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// クールタイムの間
-	if (cnt > 0.0f) {
-		cnt -= TimeScale::Get();
-		
+	if (remainingCooldownFrames > 0.0f) {
+		remainingCooldownFrames -= TimeScale::Get();
+
 		// プレイヤーとの角度を出す
-		Vector3 tmp = (*playerPos[target]) - bossTrans.pos;
-		float dir = atan2f(tmp.x, tmp.z);
+		Vector3 toTarget = (*playerPos[targetPlayerIndex]) - bossTrans.pos;
+		float targetYaw = atan2f(toTarget.x, toTarget.z);
 		Vector3 forward = bossTrans.rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f));
-		float norm = dir - atan2f(forward.x, forward.z);
+		float yawDifference = targetYaw - atan2f(forward.x, forward.z);
 
 		// 角度があってなかったら
-		if (abs(norm) > NOT_ROT) {
+		if (abs(yawDifference) > NOT_ROT) {
 
 			// フラグを立てる
-			angleFlg = true;
+			needsFacingUpdate = true;
 		}
 
 		// 角度合わせフラグが立ってるなら
-		if (angleFlg) {
+		if (needsFacingUpdate) {
 			// 歩きのアニメーションを流す
 			PlayWalkAnim();
 
 			// 自身との向きを-π～+πの範囲にする
-			while (norm > DX_PI_F) {
+			while (yawDifference > DX_PI_F) {
 
-				norm -= DX_TWO_PI_F;
+				yawDifference -= DX_TWO_PI_F;
 			}
-			while (norm < -DX_PI_F) {
+			while (yawDifference < -DX_PI_F) {
 
-				norm += DX_TWO_PI_F;
+				yawDifference += DX_TWO_PI_F;
 			}
 
 			// 右なら足す
-			if (norm > 0.0f) {
-				if (norm > ROT_POW) {
+			if (yawDifference > 0.0f) {
+				if (yawDifference > ROT_POW) {
 					bossTrans.rotation = Quaternion::FromRotationY(atan2f(forward.x, forward.z) + ROT_POW);
 				}
 				else {
 					// 角度があってるならおろす
-					bossTrans.rotation = Quaternion::FromRotationY(dir);
-					angleFlg = false;
+					bossTrans.rotation = Quaternion::FromRotationY(targetYaw);
+					needsFacingUpdate = false;
 				}
 			}
 			// 左なら引く
 			else {
-				if (norm < -ROT_POW) {
+				if (yawDifference < -ROT_POW) {
 					bossTrans.rotation = Quaternion::FromRotationY(atan2f(forward.x, forward.z) - ROT_POW);
 				}
 				else {
 					// 角度があってるならおろす
-					bossTrans.rotation = Quaternion::FromRotationY(dir);
-					angleFlg = false;
+					bossTrans.rotation = Quaternion::FromRotationY(targetYaw);
+					needsFacingUpdate = false;
 				}
 			}
 		}
@@ -112,7 +115,7 @@ void GrapeBossIdleState::Update(void)
 		return;
 	}
 	// 距離と確率を出す
-	float distance = ((*playerPos[target]) - bossTrans.pos).Length();
+	float distance = ((*playerPos[targetPlayerIndex]) - bossTrans.pos).Length();
 	int luck = GetRand(RANDOM);
 
 	// 確率で変える

@@ -13,7 +13,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
-	/// <param name="bombType">攻撃種のクラス取得</param>
+	/// <param name="bombPool">攻撃種のクラス取得</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
@@ -22,7 +22,7 @@ public:
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossSingleState(
 		const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
-		BombType* bombType,
+		BombPoolEntry* bombPool,
 		const std::function<int(void)> GetTarget,
 		const std::function<void(void)> PlayAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
@@ -63,7 +63,7 @@ private:
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max];
 
 	// ボムの参照
-	BombType* bombType;
+	BombPoolEntry* bombPool;
 
 	// プレイヤーのターゲット番号
 	const std::function<int(void)> GetTarget;
@@ -73,15 +73,15 @@ private:
 
 	// アニメーションの再生割合取得
 	const std::function<float(void)> GetAnimPlayRatio;
-	
+
 	// アニメーションが終わっているかどうか
 	const std::function<bool(void)> IsAnimeEnd;
-	
+
 	// ステートを抜けたあとのステート
 	const std::function<void(void)> DefaultChangeState;
 	const std::function<void(void)> SetCoolTime;
 #pragma endregion
 
 	// ターゲット番号の保持
-	int target;
+	int targetPlayerIndex;
 };

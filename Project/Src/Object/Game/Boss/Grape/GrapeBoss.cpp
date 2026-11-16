@@ -37,7 +37,7 @@ GrapeBoss::GrapeBoss() :
 		"Grape/GrapeModel"
 	)
 {
-	coolTime = 120;
+	attackCooldownFrames = 120;
 	Snd::GetIns().AddScene("GrapeBoss");
 }
 
@@ -75,9 +75,9 @@ void GrapeBoss::BossLoad(void)
 			playerPos,
 
 			// クールタイム
-			[&]() { return coolTime; },
+			[&]() { return attackCooldownFrames; },
 			// ターゲット番号の取得
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 
 			// アイドルアニメーションの再生
 			[&]() { AnimePlay(ANIME_TYPE::IDLE); },
@@ -110,7 +110,7 @@ void GrapeBoss::BossLoad(void)
 			trans,
 			playerPos,
 			// ターゲット番号の取得
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// 走りアニメーションの再生
 			[&]() { AnimePlay(ANIME_TYPE::RUN); },
 			// 移動後攻撃に状態遷移関数のポインタ
@@ -124,7 +124,7 @@ void GrapeBoss::BossLoad(void)
 			// 自分の座標と角度とローカル角度
 			trans, MODEL_LOCAL_ROT,
 			// 攻撃の種類の情報
-			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeaponPool(WeaponType::KickBomb),
 			// モデルの拡大率
 			MODEL_SCALE,
 			// プレイヤーの座標の読み取り
@@ -132,17 +132,17 @@ void GrapeBoss::BossLoad(void)
 			// 当たり判定オペレータの参照
 			ChildActorSerch<GrapeKickDownCollOperator>(),
 			// アニメーションの再生関数のポインタ
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::KICKDOWN); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(KICKDOWN_COOLTIME); }
+			[&]() { attackCooldownFrames = static_cast<float>(KICKDOWN_COOLTIME); }
 		)
 	);
 	AddState(
@@ -151,31 +151,31 @@ void GrapeBoss::BossLoad(void)
 			// 自分の座標と角度
 			trans,
 			// 攻撃の種類の情報
-			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeaponPool(WeaponType::Straight),
 			// プレイヤーの座標
 			playerPos,
 			// プレイヤーのターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::FORWARD_THROW, false); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(STRAIGHT_COOLTIME); }
+			[&]() { attackCooldownFrames = static_cast<float>(STRAIGHT_COOLTIME); }
 		)
 	);
 	AddState(
 		STATE::ATTACK_C,
 		new GrapeBossStampState(
 			// 自分の座標と角度
-			trans, 
+			trans,
 			isGround,
 			// 攻撃の種類の情報
-			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeaponPool(WeaponType::StampBomb),
 			// プレイヤーの座標
 			playerPos,
 			ChildActorSerch<GrapeStampCollOperator>(),
@@ -183,14 +183,14 @@ void GrapeBoss::BossLoad(void)
 			(int)ANIME_TYPE::JUMP_START,
 			(int)ANIME_TYPE::STAMP,
 			// プレイヤーのターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::JUMP_START, false); },
 			[&]() { AnimePlay((int)ANIME_TYPE::JUMP_LOOP, true); },
 			[&]() { AnimePlay((int)ANIME_TYPE::STAMP, false); },
 			// アニメーションのスタンプタイプ
 			[&]() { return GetAnimePlayType(); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
@@ -201,7 +201,7 @@ void GrapeBoss::BossLoad(void)
 			// ボス自体のコライダの再生
 			[&]() { SetJudgeFlg(true); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(STAMP_COOLTIME); }
+			[&]() { attackCooldownFrames = static_cast<float>(STAMP_COOLTIME); }
 		)
 	);
 	AddState(
@@ -210,19 +210,19 @@ void GrapeBoss::BossLoad(void)
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeaponPool(WeaponType::SingleBomb),
 			// プレイヤーのターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(SINGLE_COOLTIME); }
+			[&]() { attackCooldownFrames = static_cast<float>(SINGLE_COOLTIME); }
 		)
 	);
 	AddState(
@@ -231,19 +231,19 @@ void GrapeBoss::BossLoad(void)
 			// プレイヤーの座標と角度
 			playerPos,
 			// 攻撃の種類の情報
-			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeaponPool(WeaponType::StalkerBomb),
 			// プレイヤーのターゲット番号
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(STALKER_COOLTIME); }
+			[&]() { attackCooldownFrames = static_cast<float>(STALKER_COOLTIME); }
 		)
 	);
 	AddState(
@@ -252,17 +252,17 @@ void GrapeBoss::BossLoad(void)
 			// 座標の参照
 			trans.pos,
 			// 攻撃の種類の情報
-			ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb),
+			ChildActorSerch<GrapeBossWeaponManager>()->GetWeaponPool(WeaponType::RandomBomb),
 			// アニメーションの再生関数のポインタ
 			[&]() { AnimePlay((int)ANIME_TYPE::TOSS, false); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = static_cast<float>(RANDOM_COOLTIME); }
+			[&]() { attackCooldownFrames = static_cast<float>(RANDOM_COOLTIME); }
 		)
 	);
 
@@ -281,14 +281,16 @@ void GrapeBoss::BossLoad(void)
 	);
 
 #pragma endregion
+
+	// HPバーとヒットUIはBossBase::Loadで共通生成する。
+
 }
 
 void GrapeBoss::BossUpdate(void)
 {
-	if (GetAnimePlayType() == (int)(ANIME_TYPE::DAMAGE)) {
-		if (IsAnimeEnd()) {
-			AnimePlay((int)ANIME_TYPE::IDLE, true);
-		}
+	// 被ダメージ演出が終わったら待機アニメーションに戻す。
+	if (GetAnimePlayType() == (int)ANIME_TYPE::DAMAGE && IsAnimeEnd()) {
+		AnimePlay((int)ANIME_TYPE::IDLE, true);
 	}
 }
 
@@ -349,59 +351,32 @@ void GrapeBoss::ReceptionUpdate(void)
 	}
 	while (MsgDataBossBombInform* dataPtr = Net::GetIns().GetMsgData<MsgDataBossBombInform>(controlSenderId)) {
 
-		// 受け取ったボムの起動
-		switch (dataPtr->inform)
-		{
-		case MsgDataBossBombInform::INFORM_TYPE::Straight:
-		{
-			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::Straight)[dataPtr->index];
-			weapon.weaponIns->SetStartPos(dataPtr->pos);
-			dynamic_cast<GrapeBossStraight*>(weapon.weaponIns)->SetStartDir(dataPtr->moveDir);
-			weapon.live = true;
-			break;
+		// 通知の種類をプールの種類へ変換し、共通の起動処理にまとめる。
+		WeaponType weaponType = WeaponType::None;
+		switch (dataPtr->inform) {
+		case MsgDataBossBombInform::INFORM_TYPE::Straight: weaponType = WeaponType::Straight; break;
+		case MsgDataBossBombInform::INFORM_TYPE::KickBomb: weaponType = WeaponType::KickBomb; break;
+		case MsgDataBossBombInform::INFORM_TYPE::StampBomb: weaponType = WeaponType::StampBomb; break;
+		case MsgDataBossBombInform::INFORM_TYPE::SingleBomb: weaponType = WeaponType::SingleBomb; break;
+		case MsgDataBossBombInform::INFORM_TYPE::StalkerBomb: weaponType = WeaponType::StalkerBomb; break;
+		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb: weaponType = WeaponType::RandomBomb; break;
+		default: break;
 		}
-		case MsgDataBossBombInform::INFORM_TYPE::KickBomb:
-		{
-			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::KickBomb)[dataPtr->index];
-			weapon.weaponIns->SetStartPos(dataPtr->pos);
-			weapon.weaponIns->SetViewPosCircle();
-			weapon.live = true;
-			break;
-		}
-		case MsgDataBossBombInform::INFORM_TYPE::StampBomb:
-		{
-			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StampBomb)[dataPtr->index];
-			weapon.weaponIns->SetStartPos(dataPtr->pos);
-			weapon.weaponIns->SetViewPosCircle();
-			weapon.live = true;
-			break;
-		}
-		case MsgDataBossBombInform::INFORM_TYPE::SingleBomb:
-		{
-			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::SingleBomb)[dataPtr->index];
-			weapon.weaponIns->SetStartPos(dataPtr->pos);
-			weapon.weaponIns->SetViewPosCircle();
-			weapon.live = true; 
-			break;
-		}
-		case MsgDataBossBombInform::INFORM_TYPE::StalkerBomb:
-		{
-			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::StalkerBomb)[dataPtr->index];
-			weapon.weaponIns->SetStartPos(dataPtr->pos);
-			weapon.weaponIns->SetViewPosCircle();
-			weapon.live = true; 
-			break;
-		}
-		case MsgDataBossBombInform::INFORM_TYPE::RandomBomb:
-		{
-			auto& weapon = ChildActorSerch<GrapeBossWeaponManager>()->GetWeapons(WeaponType::RandomBomb)[dataPtr->index];
-			weapon.weaponIns->SetStartPos(dataPtr->pos);
-			weapon.weaponIns->SetViewPosCircle();
-			weapon.live = true;
-			break;
-		}
-		default:
-			break;
+
+		auto* weaponManager = ChildActorSerch<GrapeBossWeaponManager>();
+		BombPoolEntry* bomb = weaponManager != nullptr ? weaponManager->GetWeapon(weaponType, dataPtr->index) : nullptr;
+		if (bomb != nullptr && bomb->weaponActor != nullptr) {
+			bomb->weaponActor->SetStartPos(dataPtr->pos);
+			if (weaponType == WeaponType::Straight) {
+				if (auto* straightBomb = dynamic_cast<GrapeBossStraight*>(bomb->weaponActor)) {
+					straightBomb->SetStartDir(dataPtr->moveDir);
+					bomb->isActive = true;
+				}
+			}
+			else {
+				bomb->weaponActor->SetViewPosCircle();
+				bomb->isActive = true;
+			}
 		}
 
 		delete dataPtr;

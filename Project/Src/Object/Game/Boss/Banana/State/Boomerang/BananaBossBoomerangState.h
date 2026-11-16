@@ -12,8 +12,11 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="collOperator">攻撃オペレーターの参照</param>
+	/// <param name="HandPos">投擲前に追従する手のワールド座標を取得する。</param>
+	/// <param name="PlayStartAnim">溜め開始アニメーションを再生する。</param>
+	/// <param name="PlayLoopAnim">溜め中のループアニメーションを再生する。</param>
+	/// <param name="PlayIdleAnim">投擲後の待機アニメーションを再生する。</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
-	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
@@ -90,10 +93,10 @@ private:
 #pragma endregion
 
 	// 一度だけ通すように
-	bool first;
-	bool startAnim;
+	bool isCharging;
+	bool isPlayingChargeStart;
 
 	// 攻撃のカウント
-	float cnt;
+	float elapsedFrames;
 
 };

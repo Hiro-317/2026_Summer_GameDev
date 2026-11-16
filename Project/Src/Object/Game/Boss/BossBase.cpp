@@ -42,9 +42,9 @@ BossBase::BossBase(const std::string& parameterPath, std::string modelPath) :
 
 	this->controlSenderId = Net::HOST_SENDER_ID;
 
-	collParam = new ParameterLoad("Data/Parameter/AttackRange/");
+	attackRangeParameters = new ParameterLoad("Data/Parameter/AttackRange/");
 
-	targetNum = 0;
+	targetPlayerIndex = 0;
 }
 
 void BossBase::Load(void)
@@ -156,7 +156,7 @@ void BossBase::SubInit(void)
 	trans.pos = INIT_POS;
 	trans.rotation = Quaternion::FromEulerXZY(INIT_ROT);
 
-	// 初期状態を移動状態にする
+	// 初期状態を待機状態にする
 	ChangeState(static_cast<int>(STATE::IDLE));
 
 	// 派生それぞれの初期化
@@ -165,31 +165,29 @@ void BossBase::SubInit(void)
 
 void BossBase::SubUpdate(void)
 {
-#pragma region ターゲット更新
+	// ターゲットと固有処理は操作権を持つホストだけが更新する。
+	if (!IsOwnControl()) { return; }
 
-	// ターゲットの生存確認
-	if (*playerIsDeath[targetNum]) { targetNum = -1; }
+	const int previousTarget = targetPlayerIndex;
+	const int playerCount = Net::GetIns().GetConnectStatus().EntryCount();
+	const auto IsAvailablePlayer = [&](int index) {
+		return index >= 0 && index < playerCount && index < (int)MSG_SENDER_ID::Max
+			&& playerPos[index] != nullptr && playerIsDeath[index] != nullptr
+			&& !*playerIsDeath[index];
+	};
 
-	// 与ダメの最大値を探す
-	for (int id = 0; id < Net::GetIns().GetConnectStatus().EntryCount(); id++) {
-
-		// 生存確認
-		if (*playerIsDeath[id]) { continue; }
-
-		// 今の最大ダメージを超えたダメージ蓄積をしたらターゲットを変える
-		if (targetNum == -1 || damaged[targetNum] < damaged[id]) {
-
-			// 新しいターゲットを保持
-			targetNum = id;
-
-			// ターゲット変更を送信
-			Net::GetIns().Send(MsgDataBossTarget((unsigned char)targetNum));
+	if (!IsAvailablePlayer(targetPlayerIndex)) { targetPlayerIndex = -1; }
+	for (int index = 0; index < playerCount && index < (int)MSG_SENDER_ID::Max; ++index) {
+		if (!IsAvailablePlayer(index)) { continue; }
+		if (targetPlayerIndex == -1 || damageDealtByPlayer[targetPlayerIndex] < damageDealtByPlayer[index]) {
+			targetPlayerIndex = index;
 		}
 	}
 
-#pragma endregion
-
-	// それぞれのボスの固有更新
+	// 全員死亡時の-1は通信上255で表す。変更した最終結果だけを送る。
+	if (targetPlayerIndex != previousTarget) {
+		Net::GetIns().Send(MsgDataBossTarget(static_cast<unsigned char>(targetPlayerIndex)));
+	}
 	BossUpdate();
 
 #ifdef _DEBUG
@@ -204,9 +202,9 @@ void BossBase::SubUpdate(void)
 
 void BossBase::SubRelease(void)
 {
-	collParam->Release();
-	delete collParam;
-	collParam = nullptr;
+	attackRangeParameters->Release();
+	delete attackRangeParameters;
+	attackRangeParameters = nullptr;
 }
 
 void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -220,19 +218,19 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 
 			// クリティカルフラグ取得
 			// HPの確定と通知はホストで一度だけ行い、受信側は通知値を反映する。
-			bool isClitical = false;
+			bool isCritical = false;
 
 			// 防御力も含めたダメージを取得
-			short damage = CalculateDamage(other.GetSkillStats()->Power(&isClitical), characterStats.defensePower.Value());
+			short damage = CalculateDamage(other.GetSkillStats()->Power(&isCritical), characterStats.defensePower.Value());
 
 			// ダメージ減らす
 			characterStats.hp -= damage;
 
 			// 攻撃者や致死ダメージかどうかに関係なく、衝突点で一度再生する。
-			PlayHitEffect(result.point, isClitical);
+			PlayHitEffect(result.point, isCritical);
 
 			// ダメージ情報を送信する
-			Net::GetIns().Send(MsgDataBossHit(damage, isClitical, other.GetActor()->GetControlSenderId(), result.point));
+			Net::GetIns().Send(MsgDataBossHit(damage, isCritical, other.GetActor()->GetControlSenderId(), result.point));
 
 			// アイドルだとアニメーションの再生
 			if (GetState() == (int)STATE::IDLE) { PlayDamage(); }
@@ -241,10 +239,10 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 			if (other.GetActor()->GetControlSenderId() == Net::GetIns().GetSenderId()) {
 
 				// ダメージ数値のUIを描画する
-				hitUiRef->DamageSetting(result.point, damage, isClitical);
+				hitUiRef->DamageSetting(result.point, damage, isCritical);
 
 				// クリティカルなら揺らしクリティカル音を出す
-				if (isClitical) {
+				if (isCritical) {
 					SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect());
 					Snd::GetIns().Play("CriticalDamaged");
 				}
@@ -264,7 +262,7 @@ void BossBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const
 			}
 
 			// 与ダメを足す
-			damaged[static_cast<int>(other.GetActor()->GetControlSenderId())] += damage;
+			damageDealtByPlayer[static_cast<int>(other.GetActor()->GetControlSenderId())] += damage;
 
 			// 点滅
 			CreateShader(new ModelDamageFlashShader(24, 3, 0.85f, GetVertexType()));
@@ -350,7 +348,7 @@ void BossBase::ReceptionUpdate(void)
 		}
 
 		// 与ダメを足す
-		damaged[static_cast<int>(dataPtr->controlSenderId)] += dataPtr->damage;
+		damageDealtByPlayer[static_cast<int>(dataPtr->controlSenderId)] += dataPtr->damage;
 
 		delete dataPtr;
 	}
@@ -358,7 +356,7 @@ void BossBase::ReceptionUpdate(void)
 	// 標的の受信
 	while (MsgDataBossTarget* dataPtr = Net::GetIns().GetMsgData<MsgDataBossTarget>()) {
 
-		targetNum = (int)dataPtr->targetNum;
+		targetPlayerIndex = dataPtr->targetNum < (int)MSG_SENDER_ID::Max ? (int)dataPtr->targetNum : -1;
 
 		delete dataPtr;
 	}

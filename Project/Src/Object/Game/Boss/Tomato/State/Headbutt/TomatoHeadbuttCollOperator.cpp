@@ -8,15 +8,15 @@ TomatoHeadbuttCollOperator::TomatoHeadbuttCollOperator(
 	const float TO_PLAYER_DISTANCE,
 	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats,
-	const ParameterLoad& collParam
+	const ParameterLoad& attackRangeParameters
 ) :
 	controlSenderId(controlSenderId),
 	stats(stats),
 	TO_PLAYER_DISTANCE(TO_PLAYER_DISTANCE + 5.0f),
-	HEIGHT(collParam.GetParameter("Wahoo", "Height")),
-	SCALE(collParam.GetParameterToVector3("Wahoo", "Scale")),
-	CENTER(collParam.GetParameterToVector3("Wahoo", "Center")* SCALE),
-	ANGLE(collParam.GetParameterToVector3("Wahoo", "Angle")),
+	HEIGHT(attackRangeParameters.GetParameter("Wahoo", "Height")),
+	SCALE(attackRangeParameters.GetParameterToVector3("Wahoo", "Scale")),
+	CENTER(attackRangeParameters.GetParameterToVector3("Wahoo", "Center")* SCALE),
+	ANGLE(attackRangeParameters.GetParameterToVector3("Wahoo", "Angle")),
 	collBack(),
 	collFront()
 {

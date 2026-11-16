@@ -16,7 +16,6 @@ public:
 	/// </summary>
 	/// <param name="collOperator">当たり判定オペレーターの参照</param>
 	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
 	/// <param name="isGround">地面に当たっているか</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="GetTarget">ターゲット番号取得</param>
@@ -24,6 +23,7 @@ public:
 	/// <param name="offCollider">ボス自体のコライダの消滅</param>
 	/// <param name="onCollider">ボス自体のコライダの再生</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
+	/// <param name="rotation">ボスの回転への参照。</param>
 	TomatoBossStampState(
 		TomatoStampCollOperator* collOperator,
 		Vector3& pos, Quaternion& rotation, const bool& isGround,
@@ -100,21 +100,21 @@ private:
 	Vector3 attackPos;
 
 	// 攻撃する距離
-	Vector3 attackDistRate;
+	Vector3 horizontalMoveStep;
 
 	// 今の攻撃タイム
-	int nowAttackTime;
+	int horizontalMoveFrames;
 
 	// 攻撃発生中フレーム
-	int attackCnt;
+	int activeAttackFrames;
 
 	// 攻撃中かフラグ
-	bool isAttack;
+	bool isJumpPending;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 
 	// 直前の座標
-	float prevPos;
+	float previousHeight;
 
 };

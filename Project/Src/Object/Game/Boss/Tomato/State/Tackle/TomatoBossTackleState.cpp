@@ -15,7 +15,7 @@ TomatoBossTackleState::TomatoBossTackleState(
 	const std::function<void(void)> ReviveColl,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
-) 
+)
 	:CharacterStateBase(),
 	MOVE_SPEED(MOVE_SPEED), ROTATION_POW(ROTATION_POW),
 	bossTrans(bossTrans),
@@ -28,18 +28,20 @@ TomatoBossTackleState::TomatoBossTackleState(
 	DefaultChangeState(DefaultChangeState),
 	SetCoolTime(SetCoolTime)
 {
-	rotPow = ROTATION_POW;
+	rollSpeed = ROTATION_POW;
 }
 
 void TomatoBossTackleState::Enter(void)
 {
-	time = 0;
-	rotPow = ROTATION_POW;
+	elapsedFrames = 0;
+	facingRotation = bossTrans.rotation;
+	rollAngle = 0.0f;
+	rollSpeed = ROTATION_POW;
 	DeleteColl();
-	target = GetTarget();
+	targetPlayerIndex = GetTarget();
 	collOperator->ResetStageHit();
 	SetCoolTime();
-	
+
 	SoundManager::GetIns().Play("TackleCharge");
 
 	collOperator->SetDrawArea(true);
@@ -48,44 +50,44 @@ void TomatoBossTackleState::Enter(void)
 
 void TomatoBossTackleState::Update(void)
 {
-	if (target < 0 || target >= (int)MSG_SENDER_ID::Max || playerPos[target] == nullptr) {
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) {
 		return;
 	}
 
 	// 一秒の溜め
-	if (time < CHARGE_POW) {
-		
-		time++;
+	if (elapsedFrames < CHARGE_POW) {
+
+		elapsedFrames++;
 
 		// 回転の更新
-		moveDir = (*playerPos[target] - bossTrans.pos).Normalized();
-		rotPow += ROTATION_POW;
+		movementDirection = (*playerPos[targetPlayerIndex] - bossTrans.pos).Normalized();
+		rollSpeed += ROTATION_POW;
 
 		// 予測線の更新
-		auto p = Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z);
-		float a = atan2f(moveDir.x, moveDir.z); 
-		auto s = ((float)time - 180.0f) / 180.0f + 1.0f;
+		auto telegraphPosition = Vector3::XZonly(bossTrans.pos.x, bossTrans.pos.z);
+		float telegraphYaw = atan2f(movementDirection.x, movementDirection.z);
+		const float telegraphScale = static_cast<float>(elapsedFrames) / CHARGE_POW;
 
-		collOperator->SetViewPos(p);
-		collOperator->SetAngle(a);
-		collOperator->SetScale(s);
+		collOperator->SetViewPos(telegraphPosition);
+		collOperator->SetAngle(telegraphYaw);
+		collOperator->SetScale(telegraphScale);
 
 		// 送信
-		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, p, s, a));
+		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, telegraphPosition, telegraphScale, telegraphYaw));
 	}
 	else {
-		// エフェクトの再生
-		if (time == CHARGE_POW) {
+		// 突進音の切り替えは開始時に一度だけ行う。
+		if (elapsedFrames == CHARGE_POW) {
+			Snd::GetIns().Stop("TackleCharge");
+			Snd::GetIns().Play("TackleMove");
 		}
 		// 位置の更新
-		bossTrans.pos += moveDir * MOVE_SPEED;
+		bossTrans.pos += movementDirection * MOVE_SPEED;
 
 		collOperator->CollSet(true);
-		
-		if (time < FORCE_MOVE_TIME) {
-			time++;
-			SoundManager::GetIns().Stop("TackleCharge");
-			SoundManager::GetIns().Play("TackleMove");
+
+		if (elapsedFrames < FORCE_MOVE_TIME) {
+			elapsedFrames++;
 			collOperator->ResetStageHit();
 		}
 		else if (collOperator->GetStageHit()) {
@@ -96,7 +98,7 @@ void TomatoBossTackleState::Update(void)
 	}
 
 	// 転がりを含まない「正面方向」だけを補間する
-	const float targetAngle = atan2f(moveDir.x, moveDir.z);
+	const float targetAngle = atan2f(movementDirection.x, movementDirection.z);
 	const Quaternion targetRotation = Quaternion::FromRotationY(targetAngle);
 	const float t = 0.25f * TimeScale::Get();
 	facingRotation = Quaternion::Slerp(
@@ -105,7 +107,7 @@ void TomatoBossTackleState::Update(void)
 	);
 
 	// X軸回転は累積して保持する
-	rollAngle += rotPow * TimeScale::Get();
+	rollAngle += rollSpeed * TimeScale::Get();
 	if (rollAngle > DX_TWO_PI_F) rollAngle -= DX_TWO_PI_F;
 	if (rollAngle < -DX_TWO_PI_F) rollAngle += DX_TWO_PI_F;
 	const Quaternion rollRotation = Quaternion::FromEulerXZY(
@@ -120,6 +122,8 @@ void TomatoBossTackleState::Update(void)
 
 void TomatoBossTackleState::Exit(void)
 {
+	Snd::GetIns().Stop("TackleCharge");
+	Snd::GetIns().Stop("TackleMove");
 	ResetAngle();
 	ReviveColl();
 	collOperator->SetDrawArea(false);

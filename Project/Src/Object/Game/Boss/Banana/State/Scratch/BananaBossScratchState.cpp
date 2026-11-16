@@ -25,7 +25,7 @@ BananaBossScratchState::BananaBossScratchState(
 
 void BananaBossScratchState::Enter(void)
 {
-	first = true;
+	isAttackPending = true;
 	SetCoolTime();
 	PlayAttackAnim();
 	collOperator->SetDrawArea(true);
@@ -37,13 +37,13 @@ void BananaBossScratchState::Update(void)
 	// アニメーションが終わっていたらステートを抜ける
 	if (GetAnimPlayRatio() >= ATTACK_RATE) {
 		// アニメーションの再生割合で生成
-		if (first) {
+		if (isAttackPending) {
 			// フレーム位置に攻撃と音を発生
 			collOperator->CollSet(true);
 			Snd::GetIns().Play("Scratch");
 		}
 		// 二度目は通さないようにフラグを折る
-		first = false;
+		isAttackPending = false;
 
 		// 攻撃持続時間の判定
 		if (GetAnimPlayRatio() >= END_RATE) {
@@ -54,6 +54,7 @@ void BananaBossScratchState::Update(void)
 		if (IsAnimeEnd()) {
 
 			DefaultChangeState();
+			return;
 		}
 		UpdateFrame();
 		collOperator->SetColliderFrame();
@@ -67,6 +68,9 @@ void BananaBossScratchState::Update(void)
 
 void BananaBossScratchState::Exit(void)
 {
+	// 死亡などで攻撃途中に抜けた場合も、攻撃判定と予告表示を残さない。
+	collOperator->Off();
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackA, false));
 }
 
 void BananaBossScratchState::AlwaysUpdate(void)

@@ -23,7 +23,7 @@ public:
 		const bool& isGournd,
 		const MSG_SENDER_ID controlSenderId,
 		const CharacterStats& stats,
-		const ParameterLoad& collParam
+		const ParameterLoad& attackRangeParameters
 	);
 	~TomatoStampCollOperator()override = default;
 

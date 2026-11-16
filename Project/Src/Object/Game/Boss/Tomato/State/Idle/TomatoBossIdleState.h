@@ -91,8 +91,8 @@ private:
 #pragma endregion
 
 	// カウント
-	int cnt;
+	int remainingCooldownFrames;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 };

@@ -15,12 +15,11 @@ public:
 	/// </summary>
 	/// <param name="MOVE_SPEED">移動速度</param>
 	/// <param name="ROTATION_POW">回転量</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
 	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
 	/// <param name="GetTarget">ターゲット番号の取得</param>
 	/// <param name="ResetAngle">角度のリセット</param>
 	/// <param name="HeadbuttChangeState">頭突き攻撃へのステート</param>
+	/// <param name="bossTrans">ボスの座標・回転への参照。</param>
 	TomatoBossMoveState(
 		float MOVE_SPEED, float ROTATION_POW,
 		Transform& bossTrans,
@@ -42,6 +41,8 @@ public:
 	void AlwaysUpdate(void)override;
 
 private:
+    // 頭突きへ切り替えるプレイヤーとの距離。
+    static constexpr float HEADBUTT_DISTANCE = 350.0f;
 
 #pragma region 定数
 
@@ -69,12 +70,12 @@ private:
 
 #pragma endregion
 
-	Vector3 moveDir;
+	Vector3 movementDirection;
 
 	// 進行方向の回転と転がり角度を独立して保持
 	Quaternion facingRotation;
 	float rollAngle = 0.0f;
 
 	// プレイヤーターゲット
-	int target;
+	int targetPlayerIndex;
 };

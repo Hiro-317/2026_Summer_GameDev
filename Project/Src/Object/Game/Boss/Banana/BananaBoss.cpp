@@ -34,7 +34,7 @@ BananaBoss::BananaBoss() :
 		"Banana/Banagon")
 {
 	Snd::GetIns().AddScene("BananaBoss");
-	coolTime = 120;
+	attackCooldownFrames = 120;
 }
 
 void BananaBoss::BossLoad(void)
@@ -53,16 +53,16 @@ void BananaBoss::BossLoad(void)
 
 #pragma region プレイヤーが抱える下位クラスを生成する
 
-	StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
-	EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
+	scratchStartPosition = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
+	scratchEndPosition = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 
-	scratchRef = new BananaScratchCollOperator(characterStats, INIT_POS, StartFrame, EndFrame);
+	scratchRef = new BananaScratchCollOperator(characterStats, INIT_POS, scratchStartPosition, scratchEndPosition);
 	AddChildActor(scratchRef);
 	fireRef = new BananaFireCollOperator(characterStats);
 	AddChildActor(fireRef);
 	banamerangRef = new BananaBossBanamerang(characterStats);
 	AddChildActor(banamerangRef);
-	banadrillRef = new BananaBossDrillManager(playerPos, targetNum, characterStats);
+	banadrillRef = new BananaBossDrillManager(playerPos, targetPlayerIndex, characterStats);
 	AddChildActor(banadrillRef);
 
 	AddState(
@@ -71,9 +71,9 @@ void BananaBoss::BossLoad(void)
 			// 自分の座標、プレイヤーの座標の読み取り
 			trans.pos, trans.rotation, playerPos,
 			// クールタイム
-			[&]() { return coolTime; },
+			[&]() { return attackCooldownFrames; },
 			// ターゲット番号の取得
-			[&]() { return targetNum; },
+			[&]() { return targetPlayerIndex; },
 			// アイドルアニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::IDLE, true); },
 			// ひっかきへの状態遷移関数のポインタ
@@ -94,19 +94,19 @@ void BananaBoss::BossLoad(void)
 			scratchRef,
 			// フレーム座標の更新
 			[&]() {
-				StartFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
-				EndFrame = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
+				scratchStartPosition = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "LowerArm.R")));
+				scratchEndPosition = Vector3(MV1GetFramePosition(trans.model, MV1SearchFrame(trans.model, "Ring.01.R")));
 			},
 			// 攻撃アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::SCRATCH, false); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = SCRATCH_COOLTIME; }
+			[&]() { attackCooldownFrames = SCRATCH_COOLTIME; }
 		)
 	);
 	AddState(
@@ -116,14 +116,14 @@ void BananaBoss::BossLoad(void)
 			fireRef,
 			// 攻撃アニメーションの再生
 			[&]() { AnimePlay((int)ANIME_TYPE::BREATH, false); },
-			// アニメーションの再生割合を取得する関数のポインタ 
+			// アニメーションの再生割合を取得する関数のポインタ
 			[&]() { return GetAnimeRatio(); },
 			// アニメーションの終了フラグを取得する関数のポインタ
 			[&]() { return IsAnimeEnd(); },
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = BREATH_COOLTIME; }
+			[&]() { attackCooldownFrames = BREATH_COOLTIME; }
 		)
 	);
 	AddState(
@@ -145,7 +145,7 @@ void BananaBoss::BossLoad(void)
 			// 攻撃終了後の状態遷移関数のポインタ
 			[&]() { ChangeState((int)STATE::IDLE); },
 			// クールタイムの設定
-			[&]() { coolTime = BANAMERANG_COOLTIME; }
+			[&]() { attackCooldownFrames = BANAMERANG_COOLTIME; }
 		)
 	);
 	AddState(
@@ -157,7 +157,7 @@ void BananaBoss::BossLoad(void)
 			[&]() { return GetIsDraw(); },
 			[&]() { SetIsDraw(); },
 			[&]() { ChangeState((int)STATE::IDLE); },
-			[&]() { coolTime = BANADRILL_COOLTIME; }
+			[&]() { attackCooldownFrames = BANADRILL_COOLTIME; }
 		)
 	);
 
@@ -172,14 +172,22 @@ void BananaBoss::BossLoad(void)
 	);
 
 #pragma endregion
+
+
+#pragma region 状態設定
+
+#pragma endregion
+
+
+	// HPバーとヒットUIはBossBase::Loadで共通生成する。
+
 }
 
 void BananaBoss::BossUpdate(void)
 {
-	if (GetAnimePlayType() == (int)(ANIME_TYPE::DAMAGE)) {
-		if (IsAnimeEnd()) {
-			AnimePlay((int)ANIME_TYPE::IDLE, true);
-		}
+	// 被ダメージ演出が終わったら待機アニメーションに戻す。
+	if (GetAnimePlayType() == (int)ANIME_TYPE::DAMAGE && IsAnimeEnd()) {
+		AnimePlay((int)ANIME_TYPE::IDLE, true);
 	}
 }
 
@@ -249,7 +257,7 @@ void BananaBoss::ReceptionUpdate(void)
 			}
 			else {
 				banamerangRef->Off();
-			}			
+			}
 			break;
 		}
 		default:
@@ -262,17 +270,8 @@ void BananaBoss::ReceptionUpdate(void)
 
 void BananaBoss::BossInit(void)
 {
-	// 位置を初期位置にする
-	trans.pos = INIT_POS;
-	trans.rotation = Quaternion::FromEulerXZY(INIT_ROT);
-
-	// 重力無効
+	// 座標・初期ステート・子Actorの初期化は共通処理に任せる。
 	ActorBase::SetGravityFlg(false);
-
-	// 初期状態を移動状態にする
-	ChangeState(static_cast<int>(STATE::IDLE));
-
-	for (ActorBase* c : GetChildActors()) { c->Init(); }
 }
 
 void BananaBoss::PlayDamage(void)

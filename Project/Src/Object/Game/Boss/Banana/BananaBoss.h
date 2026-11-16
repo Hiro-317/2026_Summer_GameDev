@@ -50,16 +50,6 @@ private:
 	// `````````````````````````````ˆÚ“®ó‘Ô
 
 
-	// ‰æ‘œ‚Ì–¼‘O
-	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame";
-	const std::string HP_IMAGE_NAME = "BossHp";
-	const std::string HP_LOST_IMAGE_NAME = "BossHpLost";
-
-	// HPƒo[‚Ì‰æ‘œƒTƒCƒY
-	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
-	const Vector2I HP_GAUGE_OFFSET = Vector2I(18, 0);
-	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, 0);
-
 	// ƒQ[ƒ€ƒNƒŠƒA‚Ì•ÏXŠÔ
 	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
 
@@ -82,7 +72,7 @@ private:
 		BREATH_READY_LOOP,
 		BREATH_ATTACK,
 		BREATH_ATTACK_LOOP,
-		
+
 		JUMP,
 		JUMP_START,
 		JUMP_LOOP,
@@ -150,11 +140,11 @@ private:
 	// ``````````````ƒƒCƒ“ˆ—
 
 	// UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€
-	int coolTime;
+	int attackCooldownFrames;
 
 	// ‚Ğ‚Á‚©‚«UŒ‚‚ÌƒtƒŒ[ƒ€À•W
-	Vector3 StartFrame;
-	Vector3 EndFrame;
+	Vector3 scratchStartPosition;
+	Vector3 scratchEndPosition;
 
 	// Ä‹A•Ï”
 	BananaScratchCollOperator* scratchRef;

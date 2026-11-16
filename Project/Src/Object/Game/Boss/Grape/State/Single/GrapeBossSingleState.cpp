@@ -6,7 +6,7 @@
 
 GrapeBossSingleState::GrapeBossSingleState(
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
-	BombType* bombType,
+	BombPoolEntry* bombPool,
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
 	const std::function<float(void)> GetAnimPlayRatio,
@@ -15,7 +15,7 @@ GrapeBossSingleState::GrapeBossSingleState(
 	const std::function<void(void)> SetCoolTime
 ) :
 	playerPos(playerPos),
-	bombType(bombType),
+	bombPool(bombPool),
 	GetTarget(GetTarget),
 	PlayAttackAnim(PlayAttackAnim),
 	GetAnimPlayRatio(GetAnimPlayRatio),
@@ -28,32 +28,34 @@ GrapeBossSingleState::GrapeBossSingleState(
 void GrapeBossSingleState::Enter(void)
 {
 	PlayAttackAnim();
-	target = GetTarget();
+	targetPlayerIndex = GetTarget();
 	SetCoolTime();
 }
 
 void GrapeBossSingleState::Update(void)
 {
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// アニメーションが終わっていたら
 	if (IsAnimeEnd()) {
 		// 生成数まで回す
-		for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::SingleBomb]; i++) {
+		for (int i = 0; i < WeaponPoolCounts[(int)WeaponType::SingleBomb]; i++) {
 
 			// スタート位置の設定
-			Vector3 tmpPos = Vector3(playerPos[target]->x, HEIGHT, playerPos[target]->z);
-			bombType[i].weaponIns->SetStartPos(tmpPos);
-			bombType[i].weaponIns->SetColliderFlg(true);
-			bombType[i].weaponIns->SetViewPosCircle();
+			Vector3 spawnPosition = Vector3(playerPos[targetPlayerIndex]->x, HEIGHT, playerPos[targetPlayerIndex]->z);
+			bombPool[i].weaponActor->SetStartPos(spawnPosition);
+			bombPool[i].weaponActor->SetColliderFlg(true);
+			bombPool[i].weaponActor->SetViewPosCircle();
 
 			// 起動を通知
-			Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::SingleBomb, i, tmpPos));
+			Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::SingleBomb, i, spawnPosition));
 
 			// 起動
-			bombType[i].live = true;
+			bombPool[i].isActive = true;
 
-			// ステートを抜ける
-			DefaultChangeState();
 		}
+		// 全弾の起動後に一度だけ遷移する。
+		DefaultChangeState();
 	}
 }
 

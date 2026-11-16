@@ -12,30 +12,34 @@ GrapeBossDeathState::GrapeBossDeathState(
 	const std::function<void(void)> DeathAnim,
 	const std::function<float(void)> AnimeTotalTime,
 	const std::function<bool(void)> IsAnimEnd,
-	const std::function<void(void)> IsDeath
+	const std::function<void(void)> MarkDead
 ):
 	DeathAnim(DeathAnim), AnimeTotalTime(AnimeTotalTime),
-	IsAnimEnd(IsAnimEnd), IsDeath(IsDeath)
+	IsAnimEnd(IsAnimEnd), MarkDead(MarkDead)
 {
 }
 
 void GrapeBossDeathState::Enter(void)
 {
+	elapsedFrames = 0;
+	hasNotifiedDeath = false;
 	DeathAnim();
-	changeTime = ((int)AnimeTotalTime() + DEATH_LAST_TIME);
+	deathDelayFrames = ((int)AnimeTotalTime() + DEATH_LAST_TIME);
 	SceneManager::GetIns().GetScene()->AddPostEffect(new ScreenShakePostEffect(0.008f, 20.0f, 120.0f));
-	cnt = 0;
+	elapsedFrames = 0;
 }
 
 void GrapeBossDeathState::Update(void)
 {
+	if (hasNotifiedDeath) { return; }
 	// アニメーションが終わっていたらシーン移行
-	if (cnt >= changeTime) {
+	if (elapsedFrames >= deathDelayFrames) {
+		hasNotifiedDeath = true;
 		Net::GetIns().Send(MsgDataBossIsDeath(true));
-		IsDeath();
+		MarkDead();
 	}
 	// チェンジ用のカウント
-	cnt++;
+	elapsedFrames++;
 }
 
 void GrapeBossDeathState::Exit(void)

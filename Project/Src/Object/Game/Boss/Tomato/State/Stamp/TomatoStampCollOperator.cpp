@@ -11,14 +11,14 @@ TomatoStampCollOperator::TomatoStampCollOperator
 	const bool& isGround,
 	const MSG_SENDER_ID controlSenderId,
 	const CharacterStats& stats,
-	const ParameterLoad& collParam
-)	: 
+	const ParameterLoad& attackRangeParameters
+)	:
 	ATTACK_RADIUS(ATTACK_RADIUS),
 	ground(isGround),
 	controlSenderId(controlSenderId),
 	stats(stats),
-	SCALE(collParam.GetParameterToVector3("Stamp","Scale")),
-	HEIGHT(collParam.GetParameter("Stamp","Height")),
+	SCALE(attackRangeParameters.GetParameterToVector3("Stamp","Scale")),
+	HEIGHT(attackRangeParameters.GetParameter("Stamp","Height")),
 	collBack(), collFront()
 {
 	isDrawArea = false;

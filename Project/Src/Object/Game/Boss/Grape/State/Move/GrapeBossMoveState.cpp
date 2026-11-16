@@ -19,25 +19,28 @@ GrapeBossMoveState::GrapeBossMoveState(
 	PlayRunAnime(PlayRunAnime),
 	KickDownChangeState(KickDownChangeState)
 {
-	
+
 }
 
 void GrapeBossMoveState::Enter(void)
 {
-	target = GetTarget();
+	targetPlayerIndex = GetTarget();
 	PlayRunAnime();
 }
 
 void GrapeBossMoveState::Update(void)
 {
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// 回転の更新
-	moveDir = (*playerPos[target] - bossTrans.pos).Normalized();
-	bossTrans.SetAngle(Vector3::Yonly(atan2f(moveDir.x, moveDir.z)));
+	movementDirection = (*playerPos[targetPlayerIndex] - bossTrans.pos).Normalized();
+	bossTrans.SetAngle(Vector3::Yonly(atan2f(movementDirection.x, movementDirection.z)));
 
 	// 位置の更新
-	bossTrans.pos += moveDir * MOVE_SPEED;
+	bossTrans.pos += movementDirection * MOVE_SPEED;
 
-	if (((*playerPos[target]) - bossTrans.pos).Length() <= 450.0f) {
+	if (((*playerPos[targetPlayerIndex]) - bossTrans.pos).Length() <= 450.0f) {
 		KickDownChangeState();
 	}
 }

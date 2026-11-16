@@ -19,15 +19,15 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 
 	// 武器の種類数とその中身の数まで回す
 	for (int i = 0; i < (int)WeaponType::Max; i++) {
-		for (int j = 0; j < WeponDuplicateNum[i]; j++) {
+		for (int j = 0; j < WeaponPoolCounts[i]; j++) {
 
 			// 作ってもらった武器を格納
 			weapons[weaponNumber] = GrapeBossWeaponFactory::Create(bombModel, i, frontModel, backModel);
 
-			AddChildActor(weapons[weaponNumber].weaponIns);
+			AddChildActor(weapons[weaponNumber].weaponActor);
 
-			weapons[weaponNumber].weaponIns->SetColliderFlg(false);
-			weapons[weaponNumber].live = false;
+			weapons[weaponNumber].weaponActor->SetColliderFlg(false);
+			weapons[weaponNumber].isActive = false;
 
 			// 数の更新
 			weaponNumber++;
@@ -38,34 +38,34 @@ GrapeBossWeaponManager::GrapeBossWeaponManager(const MSG_SENDER_ID& operatorSend
 void GrapeBossWeaponManager::Load(void)
 {
 	// 武器の初期化
-	for (auto& i : weapons) i.weaponIns->Load(stats);
+	for (auto& i : weapons) i.weaponActor->Load(stats);
 }
 
 void GrapeBossWeaponManager::Update()
 {
 	for (auto& i : weapons) {
 		// 非生存の弾は移動・攻撃を止めるが、子の爆発エフェクトは更新を続ける。
-		if (!i.live) {
-			i.weaponIns->UpdateInactiveEffects();
+		if (!i.isActive) {
+			i.weaponActor->UpdateInactiveEffects();
 			continue;
 		}
-		if (i.live) {
-			i.weaponIns->Update();
+		if (i.isActive) {
+			i.weaponActor->Update();
 
 			// 終了しているなら殺す
-			if (i.weaponIns->IsEnd()) {
-				
-				i.live = false;
-				i.weaponIns->ResetEnd();
-				i.weaponIns->SetColliderFlg(false);
+			if (i.weaponActor->IsEnd()) {
+
+				i.isActive = false;
+				i.weaponActor->ResetEnd();
+				i.weaponActor->SetColliderFlg(false);
 				Snd::GetIns().Play("ExGrape");
 			}
 			// 例外処理
-			if (i.weaponIns->GetTrans().pos.y < EXIT_HEIGHT) {
+			if (i.weaponActor->GetTrans().pos.y < EXIT_HEIGHT) {
 
-				i.live = false;
-				i.weaponIns->SetColliderFlg(false);
-				i.weaponIns->ResetEnd();
+				i.isActive = false;
+				i.weaponActor->SetColliderFlg(false);
+				i.weaponActor->ResetEnd();
 			}
 		}
 	}
@@ -74,8 +74,8 @@ void GrapeBossWeaponManager::Update()
 void GrapeBossWeaponManager::Draw()
 {
 	for (auto& i : weapons) {
-		if (i.live) {
-			i.weaponIns->Draw();
+		if (i.isActive) {
+			i.weaponActor->Draw();
 		}
 	}
 }
@@ -83,7 +83,7 @@ void GrapeBossWeaponManager::Draw()
 void GrapeBossWeaponManager::Release()
 {
 	for (auto& i : weapons) {
-		i.weaponIns = nullptr;
+		i.weaponActor = nullptr;
 	}
 	MV1DeleteModel(bombModel);
 	MV1DeleteModel(frontModel);

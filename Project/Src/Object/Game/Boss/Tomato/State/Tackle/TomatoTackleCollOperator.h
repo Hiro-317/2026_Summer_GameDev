@@ -22,7 +22,7 @@ public:
 
 		const CharacterStats& stats,
 
-		const ParameterLoad& collParam
+		const ParameterLoad& attackRangeParameters
 	);
 	~TomatoTackleCollOperator()override = default;
 
@@ -83,7 +83,7 @@ private:
 	// ステージとの当たり判定管理フラグ
 	bool stageHit;
 
-	// 
+	//
 	int rate;
 
 	// 攻撃範囲描画フラグ

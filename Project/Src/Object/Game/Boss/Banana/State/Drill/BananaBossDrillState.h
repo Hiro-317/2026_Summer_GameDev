@@ -13,14 +13,21 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ROTATION_POW">回転量</param>
+	/// <param name="IsVisible">ボスが描画されているかを取得する。</param>
+	/// <param name="ToggleVisibility">ボスの描画状態を反転する。</param>
+	/// <param name="pos">ボスの座標への参照。</param>
+	/// <param name="drills">連続ドリル攻撃の管理Actor。</param>
+	/// <param name="defaultPos">攻撃終了時に復帰する座標。</param>
+	/// <param name="PlayFly">飛行アニメーションを再生する。</param>
+	/// <param name="DefaultChangeState">攻撃終了後の待機ステートへ遷移する。</param>
+	/// <param name="SetCoolTime">次の攻撃までの待機時間を設定する。</param>
 	BananaBossDrillState(
 		Vector3& pos,
 		BananaBossDrillManager* drills,
 		const Vector3& defaultPos,
 		const std::function<void(void)> PlayFly,
-		const std::function<bool(void)> Invisible,
-		const std::function<void(void)> SwitchInvisible,
+		const std::function<bool(void)> IsVisible,
+		const std::function<void(void)> ToggleVisibility,
 		const std::function<void(void)> DefaultChangeState,
 		const std::function<void(void)> SetCoolTime
 	);
@@ -49,8 +56,8 @@ private:
 	// 死亡判定移行
 	const std::function<void(void)> PlayFly;
 	// 描画するかフラグ
-	const std::function<bool(void)> Invisible;
-	const std::function<void(void)> SwitchInvisible;
+	const std::function<bool(void)> IsVisible;
+	const std::function<void(void)> ToggleVisibility;
 
 	const std::function<void(void)> DefaultChangeState;
 	const std::function<void(void)> SetCoolTime;
@@ -66,10 +73,10 @@ private:
 
 #pragma endregion
 
-	GameScene* scene;
+	GameScene* gameScene = nullptr;
 	BananaBossDrillManager* drills;
 
-	bool tmpFlg;
+	bool shouldRestoreFocus = false;
 
-	int cnt;
+	int hiddenFrames;
 };

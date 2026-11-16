@@ -172,18 +172,18 @@ protected:
 	const bool* playerIsDeath[(int)MSG_SENDER_ID::Max];
 
 	// プレイヤーの与ダメカウント
-	int damaged[(int)MSG_SENDER_ID::Max];
+	int damageDealtByPlayer[(int)MSG_SENDER_ID::Max]{};
 
 	// 現在のターゲットプレイヤー番号
-	int targetNum;
+	int targetPlayerIndex;
 
 
 	// コライダーの当たり判定描画のパラメーター
-	ParameterLoad* collParam;
+	ParameterLoad* attackRangeParameters;
 
 	// ダメージUI管理クラス
 	HitUI* hitUiRef;
 
 	// 死亡判定
-	bool isDeath;
+	bool isDeath = false;
 };

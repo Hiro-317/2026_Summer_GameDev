@@ -14,8 +14,8 @@ BananaBossDrillState::BananaBossDrillState(
 	BananaBossDrillManager* drills,
 	const Vector3& defaultPos,
 	const std::function<void(void)> PlayFly,
-	const std::function<bool(void)> Invisible,
-	const std::function<void(void)> SwitchInvisible,
+	const std::function<bool(void)> IsVisible,
+	const std::function<void(void)> ToggleVisibility,
 	const std::function<void(void)> DefaultChangeState,
 	const std::function<void(void)> SetCoolTime
 ) :
@@ -23,8 +23,8 @@ BananaBossDrillState::BananaBossDrillState(
 	pos(pos), drills(drills),
 	defaultPos(defaultPos),
 	PlayFly(PlayFly),
-	Invisible(Invisible),
-	SwitchInvisible(SwitchInvisible),
+	IsVisible(IsVisible),
+	ToggleVisibility(ToggleVisibility),
 	DefaultChangeState(DefaultChangeState),
 	SetCoolTime(SetCoolTime)
 {
@@ -34,49 +34,50 @@ void BananaBossDrillState::Enter(void)
 {
 	PlayFly();
 	pos.y += UP;
-	if (scene == nullptr) {
-		scene = dynamic_cast<GameScene*>(SceneManager::GetIns().GetScene());
+	if (gameScene == nullptr) {
+		gameScene = dynamic_cast<GameScene*>(SceneManager::GetIns().GetScene());
 	}
-	cnt = 0;
+	shouldRestoreFocus = gameScene != nullptr && gameScene->GetFocus();
+	hiddenFrames = 0;
 	Snd::GetIns().Play("Fly");
 }
 
 void BananaBossDrillState::Update(void)
 {
-	if (!Invisible()) {
-		if (cnt == 0) {
-			if (scene != nullptr) {
-				if (tmpFlg) {
-					scene->SetFocus(false);
+	if (!IsVisible()) {
+		if (hiddenFrames == 0) {
+			if (gameScene != nullptr) {
+				if (shouldRestoreFocus) {
+					gameScene->SetFocus(false);
 				}
-				scene->FocusLock(false);
+				gameScene->FocusLock(false);
 			}
 			Snd::GetIns().Stop("Fly");
 		}
-		if (cnt < START_CNT) {
-			cnt++;
-			if (cnt == START_CNT) {
+		if (hiddenFrames < START_CNT) {
+			hiddenFrames++;
+			if (hiddenFrames == START_CNT) {
 				drills->Start();
 			}
 		}
 		if (drills->GetEnd()) {
-			SwitchInvisible();
-			scene->FocusLock(true);
+			ToggleVisibility();
+			if (gameScene != nullptr) { gameScene->FocusLock(true); }
 			Snd::GetIns().Play("Fly");
-			if (tmpFlg) {
-				scene->SetFocus(true);
-				tmpFlg = false;
+			if (shouldRestoreFocus && gameScene != nullptr) {
+				gameScene->SetFocus(true);
+				shouldRestoreFocus = false;
 			}
 		}
 	}
 	else {
-		if (defaultPos.y < pos.y && pos.y < SWITCH_POS) {
+		if (defaultPos.y < pos.y && pos.y <= SWITCH_POS) {
 			pos.y += UP;
-			if (pos.y > SWITCH_POS) {
-				SwitchInvisible();
+			if (pos.y >= SWITCH_POS) {
+				ToggleVisibility();
 				pos.y = -SWITCH_POS;
-				if (scene->GetFocus()) {
-					tmpFlg = true;
+				if (gameScene != nullptr && gameScene->GetFocus()) {
+					shouldRestoreFocus = true;
 				}
 			}
 		}
@@ -91,9 +92,16 @@ void BananaBossDrillState::Update(void)
 
 void BananaBossDrillState::Exit(void)
 {
+	// 死亡で中断されても、非表示・カメラロック解除を引き継がない。
+	if (!IsVisible()) { ToggleVisibility(); }
+	if (gameScene != nullptr) {
+		gameScene->FocusLock(true);
+		if (shouldRestoreFocus) { gameScene->SetFocus(true); }
+	}
+	shouldRestoreFocus = false;
 	pos = defaultPos;
 	SetCoolTime();
-	cnt = 0;
+	hiddenFrames = 0;
 	Snd::GetIns().Stop("Fly");
 }
 

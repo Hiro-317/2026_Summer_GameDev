@@ -8,17 +8,15 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="ownChangeState">自分の状態に遷移する関数</param>
-	/// <param name="isOwnState">自分の状態かどうかを返す関数</param>
-	/// <param name="ROTATION_POW">回転量</param>
-	/// <param name="pos">座標の参照</param>
-	/// <param name="angle">角度の参照</param>
-	/// <param name="playerPos">プレイヤーの座標の読み取り</param>
+	/// <param name="MarkDead">死亡完了フラグを設定する。</param>
+	/// <param name="AnimeTotalTime">死亡アニメーションの長さを取得する。</param>
+	/// <param name="IsAnimEnd">死亡アニメーションの終了判定を取得する。</param>
+	/// <param name="DeathAnim">死亡アニメーションを再生する。</param>
 	GrapeBossDeathState(
 		const std::function<void(void)> DeathAnim,
 		const std::function<float(void)> AnimeTotalTime,
 		const std::function<bool(void)> IsAnimEnd,
-		const std::function<void(void)> IsDeath
+		const std::function<void(void)> MarkDead
 	);
 	~GrapeBossDeathState()override = default;
 
@@ -36,6 +34,7 @@ public:
 	void AlwaysUpdate(void)override;
 
 private:
+	bool hasNotifiedDeath = false;
 #pragma region 参照関数
 
 	// 死亡アニメーション
@@ -48,7 +47,7 @@ private:
 	const std::function<bool(void)> IsAnimEnd;
 
 	// 死亡判定移行
-	const std::function<void(void)> IsDeath;
+	const std::function<void(void)> MarkDead;
 
 #pragma endregion 参照関数
 
@@ -60,7 +59,7 @@ private:
 
 #pragma endregion 定数定義
 
-	int changeTime;
+	int deathDelayFrames;
 
-	int cnt;
+	int elapsedFrames;
 };

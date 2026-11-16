@@ -6,5 +6,5 @@ class GrapeBossWeaponFactory {
 public:
 
 	// インスタンスの生産
-	static BombType Create(int model, int type, int front, int back);
+	static BombPoolEntry Create(int model, int type, int front, int back);
 };

@@ -46,16 +46,6 @@ private:
 
 	// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～移動状態
 
-	// 画像の名前
-	const std::string HP_FRAME_IMAGE_NAME = "BossHpFrame.png";
-	const std::string HP_IMAGE_NAME = "BossHp.png";
-	const std::string HP_LOST_IMAGE_NAME = "BossHpLost.png";
-
-	// HPバーの画像サイズ
-	const Vector2I HP_IMAGE_SIZE = Vector2I(629, 50);
-	const Vector2I HP_GAUGE_OFFSET = Vector2I(18, 0);
-	const Vector2I HP_UI_POS = Vector2I(App::SCREEN_SIZE_X_HALF - 314, (int)((float)HP_IMAGE_SIZE.y / 1.5f));
-
 	// ゲームクリア時の変更時間
 	static constexpr int GAMECLEAR_CHANGE_TIME = 120;
 
@@ -78,7 +68,7 @@ private:
 		TOSS,
 		JUMP_START,
 		JUMP_LOOP,
-		STAMP, 
+		STAMP,
 
 		MAX
 	};
@@ -130,11 +120,10 @@ private:
 	Vector3 moveDir;
 
 	// 攻撃のクールタイム
-	float coolTime;
+	float attackCooldownFrames;
 
 	// ゲームクリア時のカウントダウン
 	float gameOverCnt;
 
-	// ダメージに使うヒットUIクラスの参照
-	HitUI* hitUiRef;
+
 };

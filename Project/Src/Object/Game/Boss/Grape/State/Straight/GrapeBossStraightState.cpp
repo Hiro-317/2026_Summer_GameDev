@@ -10,7 +10,7 @@
 
 GrapeBossStraightState::GrapeBossStraightState(
 	Transform& bossTrans,
-	BombType* bombType,
+	BombPoolEntry* bombPool,
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	const std::function<int(void)> GetTarget,
 	const std::function<void(void)> PlayAttackAnim,
@@ -20,7 +20,7 @@ GrapeBossStraightState::GrapeBossStraightState(
 	const std::function<void(void)> SetCoolTime
 ) :
 	bossTrans(bossTrans),
-	bombType(bombType),
+	bombPool(bombPool),
 	playerPos(playerPos),
 	GetTarget(GetTarget),
 	PlayAttackAnim(PlayAttackAnim),
@@ -33,47 +33,47 @@ GrapeBossStraightState::GrapeBossStraightState(
 
 void GrapeBossStraightState::Enter(void)
 {
-	target = GetTarget();
+	targetPlayerIndex = GetTarget();
 	PlayAttackAnim();
-	first = true;
+	isAttackPending = true;
 	SetCoolTime();
 }
 
 void GrapeBossStraightState::Update(void)
 {
 	// アニメーションの再生割合で生成
-	if (first) {
+	if (isAttackPending) {
 		if (GetAnimPlayRatio() >= RATIO) {
 			// 正面から30度ずらした一発目
-			float ang = bossTrans.rotation.GetYaw() - Deg2Rad(30.0f);
-			
+			float shotYaw = bossTrans.rotation.GetYaw() - Deg2Rad(30.0f);
+
 			// 生成数まで回す
-			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::Straight]; i++) {
+			for (int i = 0; i < WeaponPoolCounts[(int)WeaponType::Straight]; i++) {
 
 				// キャストさせる
-				auto ins = dynamic_cast<GrapeBossStraight*>(bombType[i].weaponIns);
+				auto straightBomb = dynamic_cast<GrapeBossStraight*>(bombPool[i].weaponActor);
 
 				// スタート位置の設定
-				Vector3 tmpPos = Vector3(bossTrans.pos.x, HEIGHT, bossTrans.pos.z);
-				ins->SetStartPos(tmpPos);
+				Vector3 spawnPosition = Vector3(bossTrans.pos.x, HEIGHT, bossTrans.pos.z);
+				straightBomb->SetStartPos(spawnPosition);
 				// 進む向きを設定（ここのためにキャスト）
-				Vector3 tmpAng = Vector3(sinf(ang), 0.0f, cosf(ang));
-				ins->SetStartDir(tmpAng);
+				Vector3 shotDirection = Vector3(sinf(shotYaw), 0.0f, cosf(shotYaw));
+				straightBomb->SetStartDir(shotDirection);
 
 				// 起動を通知
-				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::Straight, i, tmpPos, tmpAng));
+				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::Straight, i, spawnPosition, shotDirection));
 
 				// 起動
-				bombType[i].live = true;
-				ins->SetColliderFlg(true);
+				bombPool[i].isActive = true;
+				straightBomb->SetColliderFlg(true);
 
 				//次の周のため角度をずらす
-				ang += Deg2Rad(30.0f);
+				shotYaw += Deg2Rad(30.0f);
 			}
 			//音を出す
 			Snd::GetIns().Play("Throw");
 			// 二度目は通さないようにフラグを折る
-			first = false;
+			isAttackPending = false;
 		}
 	}
 

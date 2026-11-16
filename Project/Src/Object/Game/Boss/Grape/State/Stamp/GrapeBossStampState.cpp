@@ -8,7 +8,7 @@
 GrapeBossStampState::GrapeBossStampState(
 	Transform& bossTrans,
 	const bool& isGround,
-	BombType* bombType,
+	BombPoolEntry* bombPool,
 	const Vector3* const (&playerPos)[(int)MSG_SENDER_ID::Max],
 	GrapeStampCollOperator* collOperator,
 	const int JUMP_START_ANIM_TYPE,
@@ -27,7 +27,7 @@ GrapeBossStampState::GrapeBossStampState(
 ) :
 	bossTrans(bossTrans),
 	isGround(isGround),
-	bombType(bombType), playerPos(playerPos),
+	bombPool(bombPool), playerPos(playerPos),
 	collOperator(collOperator),
 	JUMP_START_ANIM_TYPE(JUMP_START_ANIM_TYPE),
 	STAMP_ANIM_TYPE(STAMP_ANIM_TYPE),
@@ -42,34 +42,36 @@ GrapeBossStampState::GrapeBossStampState(
 	offCollider(offCollider),
 	onCollider(onCollider),
 	SetCoolTime(SetCoolTime),
-	attackCnt(0), cnt(0), first(false),
-	isAttack(false), nowAttackTime(0),
-	prevPos(0.0f), target(0)
+	activeAttackFrames(0), isLandingAttackPending(false),
+	isJumpPending(false), horizontalMoveFrames(0),
+	previousHeight(0.0f), targetPlayerIndex(0)
 {
 }
 
 void GrapeBossStampState::Enter(void)
 {
-	target = GetTarget();
-	collOperator->SetPos(*playerPos[target]);
+	targetPlayerIndex = GetTarget();
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+	collOperator->SetPos(*playerPos[targetPlayerIndex]);
 	attackPos = Vector3();
-	attackDistRate = Vector3();
+	horizontalMoveStep = Vector3();
 	collOperator->DrawAreaOn();
-	nowAttackTime = 0;
-	prevPos = bossTrans.pos.y - 0.5f;
-	attackCnt = 0;
-	isAttack = true;
+	horizontalMoveFrames = 0;
+	previousHeight = bossTrans.pos.y - 0.5f;
+	isJumpPending = true;
 	SetCoolTime();
 	PlayJumpStartAnim();
-	first = true;
-	cnt = 0;
+	isLandingAttackPending = true;
+	activeAttackFrames = 0;
 
 	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC));
-	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, *playerPos[target]));
+	Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, *playerPos[targetPlayerIndex]));
 }
 
 void GrapeBossStampState::Update(void)
 {
+	if (targetPlayerIndex < 0 || targetPlayerIndex >= (int)MSG_SENDER_ID::Max || playerPos[targetPlayerIndex] == nullptr) { return; }
+
 	// ジャンプはじめの時
 	if (GetAnimType() == JUMP_START_ANIM_TYPE) {
 		// 踏み切るまでスキップ
@@ -87,31 +89,32 @@ void GrapeBossStampState::Update(void)
 		if (IsAnimeEnd()) {
 
 			DefaultChangeState();
+			return;
 		}
 	}
 
-	if (!isGround || isAttack) {
-		if (isAttack) {
-			isAttack = false;
+	if (!isGround || isJumpPending) {
+		if (isJumpPending) {
+			isJumpPending = false;
 		}
-		if (prevPos < bossTrans.pos.y) {
-			prevPos = bossTrans.pos.y;
+		if (previousHeight < bossTrans.pos.y) {
+			previousHeight = bossTrans.pos.y;
 			bossTrans.pos.y += JUMP_POW;
 			offCollider();
 		}
 		else {
-			prevPos = bossTrans.pos.y;
+			previousHeight = bossTrans.pos.y;
 			onCollider();
 		}
 	}
 	else {
 		// 一回だけ通る
-		if (first) {
+		if (isLandingAttackPending) {
 			// 地上についたのでスタンプ
 			PlayStampAnim();
 			Snd::GetIns().Play("StampLand");
 			// 生成数まで回す
-			for (int i = 0; i < WeponDuplicateNum[(int)WeaponType::StampBomb]; i++) {
+			for (int i = 0; i < WeaponPoolCounts[(int)WeaponType::StampBomb]; i++) {
 
 				// 前後左右の制定
 				float FB = (float)GetRand(RADIUS);
@@ -139,27 +142,27 @@ void GrapeBossStampState::Update(void)
 
 				// スタート位置の設定
 				Vector3 tmpPos = Vector3(bossTrans.pos.x + posX, HEIGHT, bossTrans.pos.z + posZ);
-				bombType[i].weaponIns->SetStartPos(tmpPos);
-				bombType[i].weaponIns->SetColliderFlg(true);
-				bombType[i].weaponIns->SetViewPosCircle();
+				bombPool[i].weaponActor->SetStartPos(tmpPos);
+				bombPool[i].weaponActor->SetColliderFlg(true);
+				bombPool[i].weaponActor->SetViewPosCircle();
 
 				// 起動を通知
 				Net::GetIns().Send(MsgDataBossBombInform(MsgDataBossBombInform::INFORM_TYPE::StampBomb, i, tmpPos));
 
 				// 起動
-				bombType[i].live = true;
+				bombPool[i].isActive = true;
 			}
 			// 位置に攻撃を発生
 			collOperator->CollOn();
 		}
 		// 二度目は通さないようにフラグを折る
-		first = false;
-		
+		isLandingAttackPending = false;
+
 		// 攻撃持続時間の加算
-		cnt++;
+		activeAttackFrames++;
 
 		// 攻撃持続時間の判定
-		if (cnt > ATTACK_DURATION) {
+		if (activeAttackFrames > ATTACK_DURATION) {
 			// フレーム位置に攻撃を消去
 			collOperator->Off();
 			Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
@@ -168,16 +171,16 @@ void GrapeBossStampState::Update(void)
 		}
 	}
 
-	if (nowAttackTime < TIME_RATE) {
+	if (horizontalMoveFrames < TIME_RATE) {
 
 		attackPos = collOperator->GetAttackPos();
-		attackDistRate = Vector3::XZonly(attackPos.x - bossTrans.pos.x, attackPos.z - bossTrans.pos.z) / (TIME_RATE - (float)nowAttackTime);
+		horizontalMoveStep = Vector3::XZonly(attackPos.x - bossTrans.pos.x, attackPos.z - bossTrans.pos.z) / (TIME_RATE - (float)horizontalMoveFrames);
 
-		nowAttackTime++;
-		bossTrans.pos += attackDistRate;
+		horizontalMoveFrames++;
+		bossTrans.pos += horizontalMoveStep;
 
 		// 予測線の更新
-		float scale = 1.0f - (TIME_RATE - (float)nowAttackTime) / TIME_RATE;
+		float scale = 1.0f - (TIME_RATE - (float)horizontalMoveFrames) / TIME_RATE;
 		collOperator->SetScale(scale);
 		Net::GetIns().Send(MsgDataBossAttackDraw(MsgDataBossAttackDraw::INFORM_TYPE::ChangeAttackC, attackPos, scale));
 	}
@@ -185,6 +188,10 @@ void GrapeBossStampState::Update(void)
 
 void GrapeBossStampState::Exit(void)
 {
+	// 着地前に中断されても本体の判定を復帰し、攻撃判定を解除する。
+	onCollider();
+	collOperator->Off();
+	Net::GetIns().Send(MsgDataBossAttackDrawFlg(MsgDataBossAttackDrawFlg::INFORM_TYPE::ChangeAttackC, false));
 }
 
 void GrapeBossStampState::AlwaysUpdate(void)

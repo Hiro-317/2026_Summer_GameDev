@@ -11,11 +11,11 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="scale">ボスのスケール</param>
-	/// <param name="defaultScale">ボスの初期スケール</param>
-	/// <param name="IsDeath">アニメーション後の死んだ判定</param>
+	/// <param name="rotation">死亡演出で回転させるボスの姿勢。</param>
+	/// <param name="MarkDead">アニメーション後の死んだ判定</param>
 	TomatoBossDeathState(
 		Vector3& scale, Quaternion& rotation,
-		const std::function<void(void)> IsDeath
+		const std::function<void(void)> MarkDead
 	);
 	~TomatoBossDeathState()override = default;
 
@@ -30,6 +30,7 @@ public:
 	void AlwaysUpdate(void)override;
 
 private:
+	bool hasNotifiedDeath = false;
 #pragma region 参照関数
 
 	// ボスのサイズ
@@ -38,11 +39,9 @@ private:
 	// ボスの角度
 	Quaternion& rotation;
 
-	// ボスの初期サイズ
-	const Vector3& defaultScale;
 
 	// 死亡判定移行
-	const std::function<void(void)> IsDeath;
+	const std::function<void(void)> MarkDead;
 
 #pragma endregion 参照関数
 
@@ -54,5 +53,5 @@ private:
 
 #pragma endregion 定数定義
 
-	float cnt;
+	float elapsedFrames;
 };

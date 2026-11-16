@@ -13,14 +13,14 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="pos">座標の読み取り</param>
-	/// <param name="bombType">攻撃種のクラス取得</param>
+	/// <param name="bombPool">攻撃種のクラス取得</param>
 	/// <param name="PlayAttackAnim">攻撃アニメーションの再生</param>
 	/// <param name="GetAnimPlayRatio">攻撃アニメーションの再生割合取得</param>
 	/// <param name="IsAnimeEnd">アニメーションが終了しているか</param>
 	/// <param name="DefaultChangeState">攻撃後遷移ステート</param>
 	/// <param name="SetCoolTime">クールタイムの設定</param>
 	GrapeBossRandomState(
-		const Vector3& pos, BombType* bombType,
+		const Vector3& pos, BombPoolEntry* bombPool,
 		const std::function<void(void)> PlayAttackAnim,
 		const std::function<float(void)> GetAnimPlayRatio,
 		const std::function<bool(void)> IsAnimeEnd,
@@ -65,7 +65,7 @@ private:
 	const Vector3& pos;
 
 	// ボムの参照
-	BombType* bombType;
+	BombPoolEntry* bombPool;
 
 	// アタックアニメーションの再生
 	const std::function<void(void)> PlayAttackAnim;

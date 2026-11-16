@@ -32,7 +32,7 @@ enum class WeaponType {
 	Max
 };
 
-static constexpr int WeponDuplicateNum[(int)WeaponType::Max] = {
+static constexpr int WeaponPoolCounts[(int)WeaponType::Max] = {
 	// 直線投擲
 	3,
 
